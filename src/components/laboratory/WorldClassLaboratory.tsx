@@ -555,6 +555,23 @@ function EssaisDuJourTab({ labKpis }: { labKpis: { testsToday: number; conformes
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+      {/* LIVE STATUS STRIP */}
+      <section>
+        <div style={{ background: 'rgba(212,168,67,0.03)', borderLeft: '4px solid #D4A843', padding: '12px 20px', borderRadius: '0 8px 8px 0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 0, flexWrap: 'wrap', fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>
+            <Bdg label="● EN DIRECT" color={T.success} bg="rgba(34,197,94,0.12)" pulse />
+            <span style={{ margin: '0 10px', color: 'rgba(255,255,255,0.15)' }}>·</span>
+            <span>Prochain test: <span style={{ color: '#FFFFFF' }}>BN-0143</span> dans <span style={{ color: '#FFFFFF' }}>15 min</span></span>
+            <span style={{ margin: '0 10px', color: 'rgba(255,255,255,0.15)' }}>·</span>
+            <span>Malaxeur: <span style={{ color: '#FFFFFF' }}>ACTIF</span> batch <span style={{ color: '#FFFFFF' }}>#457-068</span></span>
+            <span style={{ margin: '0 10px', color: 'rgba(255,255,255,0.15)' }}>·</span>
+            <span>Formule: <span style={{ color: '#FFFFFF' }}>F-B25</span></span>
+            <span style={{ margin: '0 10px', color: 'rgba(255,255,255,0.15)' }}>·</span>
+            <span>Opérateur: <span style={{ color: '#FFFFFF' }}>Youssef M.</span></span>
+          </div>
+        </div>
+      </section>
+
       {/* KPIs */}
       <section>
         <SectionHeader icon={TrendingUp} label="Indicateurs du Jour" />
@@ -636,7 +653,8 @@ function EssaisDuJourTab({ labKpis }: { labKpis: { testsToday: number; conformes
             icon={FlaskConical}
             label="Résultats du Jour"
             right={
-              <div style={{ display: 'flex', gap: 8 }}>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <Bdg label="● LIVE" color={T.success} bg="rgba(34,197,94,0.12)" pulse />
                 <Bdg label="7 conformes"    color={T.success} bg="rgba(34,197,94,0.15)" border="1px solid rgba(34,197,94,0.3)" icon={CheckCircle} />
                 <Bdg label="1 non-conforme" color={T.danger}  bg="rgba(239,68,68,0.15)" border="1px solid rgba(239,68,68,0.3)" pulse icon={AlertTriangle} />
               </div>
@@ -802,6 +820,40 @@ function EssaisDuJourTab({ labKpis }: { labKpis: { testsToday: number; conformes
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           {PENDING.map((p, i) => <PendingCard key={p.id} p={p} delay={i * 120} />)}
         </div>
+      </section>
+
+      {/* PASSATION QUALITÉ */}
+      <section>
+        <SectionHeader icon={CheckCheck} label="✦ Passation Qualité — Shift" />
+        <Card style={{ borderTop: '2px solid #D4A843' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {[
+              { dot: T.success, text: <>7 tests conformes / 8 réalisés — 1 non-conformité traitée (<span style={{ color: T.gold, fontFamily: MONO }}>BN-0140</span>, correction appliquée)</> },
+              { dot: T.warning, text: <>2 résultats 28j en attente (<span style={{ color: T.gold, fontFamily: MONO }}>LAB-135</span> imminent <span style={{ fontFamily: MONO, color: T.textPri }}>93%</span>, <span style={{ color: T.gold, fontFamily: MONO }}>LAB-134</span> en cours <span style={{ fontFamily: MONO, color: T.textPri }}>68%</span>)</> },
+              { dot: T.danger, text: <>Certification <span style={{ fontFamily: MONO, color: T.gold }}>NM 10.1.271</span> : <span style={{ fontFamily: MONO, color: T.danger }}>26 jours restants</span> — 0/2 tests requis effectués — <strong style={{ color: T.danger }}>ACTION URGENTE</strong></> },
+              { dot: T.success, text: <>Stock réactifs lab : suffisant (&gt;30 jours)</> },
+            ].map((item, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: item.dot, flexShrink: 0, marginTop: 5 }} />
+                <p style={{ fontFamily: MONO, fontSize: 12, color: T.textSec, lineHeight: 1.6, margin: 0 }}>{item.text}</p>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 20, paddingTop: 16, borderTop: `1px solid ${T.cardBorder}`, flexWrap: 'wrap', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <button style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 20px', background: T.gold, border: 'none', borderRadius: 9, color: '#0F1629', fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+                <CheckCheck size={13} /> Valider Passation
+              </button>
+              <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', padding: '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4, background: 'rgba(212,168,67,0.06)' }}>
+                Généré par IA · Claude Opus
+              </span>
+            </div>
+            <span style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF' }}>
+              Prochain shift: 14h00 — Sarah L., Karim B.
+            </span>
+          </div>
+        </Card>
       </section>
     </div>
   );
