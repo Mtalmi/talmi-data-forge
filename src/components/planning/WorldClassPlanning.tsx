@@ -601,23 +601,12 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
   };
   const tabs = [
     { id: 'dispatch', label: 'Dispatch' },
-    { id: 'semaine', label: 'Semaine' },
-    { id: 'mois', label: 'Mois' },
-    { id: 'capacite', label: 'Capacité' },
+    { id: 'planning', label: 'Planning' },
+    { id: 'ia', label: 'Intelligence IA' },
   ];
 
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
-    const refMap: Record<string, React.RefObject<HTMLElement | null>> = {
-      dispatch: dispatchRef,
-      semaine: semaineRef,
-      mois: kpisRef,
-      capacite: capaciteRef,
-    };
-    const target = refMap[tabId]?.current;
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
   };
 
   return (
