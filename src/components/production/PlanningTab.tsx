@@ -177,7 +177,7 @@ function PlanningModal({ onClose }: { onClose: () => void }) {
 
 export default function PlanningTab({ openModal }: { openModal?: boolean }) {
   const [weekOffset, setWeekOffset] = useState(0);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [showModal, setShowModal] = useState(false);
 
   // Allow parent to trigger modal open
@@ -197,11 +197,20 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
     return map;
   }, [demoData]);
 
+  // Today's detail data for sidebar
+  const todayDetailItems = [
+    { id: 'td1', formule: 'F-B25', client: 'Saudi Readymix', volume: 50, heure: '08:00' },
+    { id: 'td2', formule: 'F-B25', client: 'BTP Maroc', volume: 35, heure: '10:30' },
+    { id: 'td3', formule: 'F-B20', client: 'BTP Maroc', volume: 20, heure: '14:00' },
+  ];
+
   const selectedDayChips = useMemo(() => {
     if (!selectedDate) return [];
     const dayIdx = weekDays.findIndex(d => isSameDay(d, selectedDate));
     return chipsByDayOffset[dayIdx] || [];
   }, [selectedDate, weekDays, chipsByDayOffset]);
+
+  const isSelectedToday = selectedDate && isToday(selectedDate);
 
   const weekCount = 18;
   const weekVolume = 1240;
@@ -378,10 +387,15 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
             borderRadius: 12, height: '100%', display: 'flex', flexDirection: 'column',
           }}>
             <div style={{ padding: '16px 16px 12px', borderBottom: `1px solid ${T.cardBorder}` }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>
-                {selectedDate ? format(selectedDate, 'EEEE dd MMMM', { locale: fr }) : 'Détail du jour'}
+              <span style={{ fontSize: 13, fontWeight: 600, color: '#fff', textTransform: 'capitalize' }}>
+                {selectedDate ? format(selectedDate, 'EEEE dd MMMM yyyy', { locale: fr }) : 'Détail du jour'}
               </span>
-              {selectedDate && selectedDayChips.length > 0 && (
+              {selectedDate && isSelectedToday && (
+                <p style={{ fontSize: 11, color: T.gold, fontFamily: 'JetBrains Mono, monospace', marginTop: 4 }}>
+                  3 livraisons · 105 m³
+                </p>
+              )}
+              {selectedDate && !isSelectedToday && selectedDayChips.length > 0 && (
                 <p style={{ fontSize: 11, color: T.gold, fontFamily: 'JetBrains Mono, monospace', marginTop: 4 }}>
                   {selectedDayChips.length} livraison{selectedDayChips.length > 1 ? 's' : ''} · {selectedDayChips.reduce((s, c) => s + c.volume, 0)}m³
                 </p>
@@ -390,7 +404,45 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
 
             <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }} className="scrollbar-thin">
               {selectedDate ? (
-                selectedDayChips.length > 0 ? (
+                isSelectedToday ? (
+                  <>
+                    {todayDetailItems.map(item => (
+                      <div
+                        key={item.id}
+                        style={{
+                          padding: '12px 16px', borderLeft: '3px solid #D4A843',
+                          margin: '0 12px 6px', borderRadius: '0 8px 8px 0',
+                          transition: 'background 150ms',
+                        }}
+                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.02)')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 400, color: '#fff' }}>
+                            {item.formule}
+                          </span>
+                          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>
+                            {item.heure}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 400, color: T.gold }}>
+                            {item.volume} m³
+                          </span>
+                        </div>
+                        <span style={{ fontSize: 10, color: T.textSec }}>{item.client}</span>
+                      </div>
+                    ))}
+                    <div style={{ padding: '12px 16px', marginTop: 8, borderTop: `1px solid ${T.cardBorder}` }}>
+                      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: T.gold }}>
+                        3 livraisons · 105 m³
+                      </p>
+                      <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 6 }}>
+                        ⚡ Capacité restante: 95 m³
+                      </p>
+                    </div>
+                  </>
+                ) : selectedDayChips.length > 0 ? (
                   selectedDayChips.map(chip => {
                     const cs = chipStyle(chip.status);
                     return (
