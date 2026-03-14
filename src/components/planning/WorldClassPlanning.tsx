@@ -1089,7 +1089,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0 }}>
                         {/* Three metrics — editorial style */}
                         {[
-                          { label: 'Capacité Max', value: '1 740', unit: 'm³', color: 'rgba(255,255,255,0.85)' },
+                          { label: 'Capacité Max', value: '1 740', unit: 'm³', color: '#FFFFFF' },
                           { label: 'Planifié', value: '1 250', unit: 'm³', color: '#D4A843' },
                           { label: 'Disponible', value: '490', unit: 'm³', color: '#22C55E' },
                         ].map((m, i) => (
