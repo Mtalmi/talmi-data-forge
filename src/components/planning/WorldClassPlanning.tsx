@@ -361,8 +361,8 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = f
         onMouseEnter={() => setHov(true)}
         onMouseLeave={() => setHov(false)}
       >
-        <span style={{ color: 'rgba(212, 168, 67, 0.5)', fontSize: 20, lineHeight: 1, opacity: hov ? 1 : 0, transition: 'opacity 200ms' }}>+</span>
-        <span style={{ color: 'rgba(212, 168, 67, 0.4)', fontSize: 10, marginTop: hov ? 2 : 0 }}>Disponible</span>
+        <span style={{ color: hov ? 'rgba(212, 168, 67, 0.6)' : 'rgba(212, 168, 67, 0.3)', fontSize: 20, lineHeight: 1, transition: 'color 200ms' }}>+</span>
+        <span style={{ color: 'rgba(212, 168, 67, 0.4)', fontSize: 10, marginTop: 2 }}>Disponible</span>
       </div>
     );
   }
