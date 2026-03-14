@@ -371,6 +371,24 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = f
   const isRisky = riskyClients?.has(slot.client.toLowerCase()) ?? false;
   const dotColor = isRisky ? T.danger : '#D4A843';
 
+  // Rentabilité mode styling
+  const HIGH_MARGIN = ['ciments du maroc', 'saudi readymix', 'oncf'];
+  const LOW_MARGIN = ['tgcc', 'jet con.'];
+  const clientLower = slot.client.toLowerCase();
+  let rentaBg = 'rgba(245, 158, 11, 0.08)';
+  let rentaBorder = color;
+  if (rentabilite) {
+    if (HIGH_MARGIN.some(c => clientLower.includes(c))) {
+      rentaBg = 'rgba(34,197,94,0.08)';
+      rentaBorder = '#22C55E';
+    } else if (LOW_MARGIN.some(c => clientLower.includes(c))) {
+      rentaBg = 'rgba(245,158,11,0.08)';
+      rentaBorder = '#F59E0B';
+    } else {
+      rentaBorder = '#D4A843';
+    }
+  }
+
   return (
     <div
       onMouseEnter={() => setHov(true)}
@@ -380,9 +398,9 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = f
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(12px)',
         transition: 'opacity 500ms ease-out, transform 500ms ease-out, box-shadow 200ms, border-color 200ms',
-        background: 'rgba(245, 158, 11, 0.08)',
+        background: rentabilite ? rentaBg : 'rgba(245, 158, 11, 0.08)',
         border: `1px solid ${hov ? 'rgba(245, 158, 11, 0.3)' : 'rgba(245, 158, 11, 0.15)'}`,
-        borderLeft: `3px solid ${color}`,
+        borderLeft: `3px solid ${rentabilite ? rentaBorder : color}`,
         borderRadius: 8, padding: '8px 10px',
         cursor: 'pointer', minHeight: 58,
         position: 'relative',
