@@ -81,9 +81,10 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
       overflow: 'hidden',
       background: 'rgba(255,255,255,0.05)',
       backdropFilter: 'blur(4px)',
+      borderTop: `2px solid ${isMorning ? '#D4A843' : '#9CA3AF'}`,
       border: `1px solid ${isMorning ? 'rgba(212,168,67,0.15)' : 'rgba(139,159,204,0.15)'}`,
       borderLeft: '2px solid rgba(212,168,67,0.4)',
-      boxShadow: `0 0 12px ${isMorning ? 'rgba(212,168,67,0.2)' : 'rgba(139,159,204,0.2)'}`,
+      boxShadow: isMorning ? '0 -1px 8px rgba(212,168,67,0.08), 0 0 12px rgba(212,168,67,0.2)' : '0 0 12px rgba(139,159,204,0.2)',
       borderRadius: 10, padding: '14px 16px',
       flex: 1, minWidth: 0,
       transition: 'all 200ms ease-out',
@@ -98,7 +99,7 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
       el.style.transform = 'translateY(0)';
       el.style.borderColor = isMorning ? 'rgba(212,168,67,0.15)' : 'rgba(139,159,204,0.15)';
     }}>
-      <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent, rgba(212,168,67,0.7),transparent)', zIndex:99 }} />
+      <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background: isMorning ? '#D4A843' : '#9CA3AF', zIndex:99 }} />
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
         {icon}
         <span style={{ fontSize: 13, fontWeight: 700, color: '#F1F5F9' }}>{label}</span>
@@ -107,8 +108,8 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
             {briefing.score_journee}
           </span>
         )}
-        <span className="text-xs text-white/40" style={{ marginLeft: 'auto' }}>
-          {isMorning ? 'Aujourd\'hui · 06h00' : 'Hier · 20h00'}
+        <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 9, padding: '2px 8px', borderRadius: 4, border: `1px solid ${isMorning ? 'rgba(212,168,67,0.3)' : 'rgba(139,159,204,0.3)'}`, color: isMorning ? '#D4A843' : '#9CA3AF', background: isMorning ? 'rgba(212,168,67,0.08)' : 'rgba(139,159,204,0.08)', marginLeft: 'auto', flexShrink: 0 }}>
+          Généré par IA · Claude Opus
         </span>
       </div>
 
