@@ -150,7 +150,7 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
       </div>
 
       {viewMode === 'map' ? (
-        <div style={{ height: 420, background: '#1A1F2E', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ height: 420, background: '#0F1629', position: 'relative', overflow: 'hidden' }}>
           {/* 7. TITLE - top center */}
           <div style={{ position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)', zIndex: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#22C55E', animation: 'map-live-dot 1.5s ease-in-out infinite', flexShrink: 0 }} />
@@ -179,39 +179,75 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
             </div>
           </div>
 
+          {/* 4. COMPASS - top right */}
+          <div style={{
+            position: 'absolute', top: 10, right: 10, zIndex: 10,
+            width: 32, height: 32, borderRadius: '50%',
+            border: '1px solid rgba(212,168,67,0.3)',
+            background: 'rgba(15,22,41,0.9)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <span style={{ fontSize: 12, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', color: '#D4A843', fontWeight: 700, lineHeight: 1 }}>N</span>
+            <span style={{ fontSize: 8, color: '#D4A843', lineHeight: 1, marginTop: -2 }}>▲</span>
+          </div>
+
           <svg width="100%" height="380" viewBox="0 0 700 380" style={{ display: 'block' }}>
             {/* CSS animations */}
             <defs>
               <style>{`
-                @keyframes map-plant-pulse { 0%, 100% { r: 22; opacity: 0.3; } 50% { r: 30; opacity: 0; } }
+                @keyframes map-plant-pulse { 0%, 100% { r: 22; opacity: 0.4; } 50% { r: 34; opacity: 0; } }
                 @keyframes map-live-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
                 @keyframes map-eta-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+                @keyframes map-route-flow { 0% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -24; } }
               `}</style>
             </defs>
 
-            {/* Background grid */}
-            {Array.from({ length: 14 }).map((_, i) => (
-              <line key={`vg${i}`} x1={i * 50} y1={0} x2={i * 50} y2={380} stroke="rgba(255,255,255,0.03)" strokeWidth={1} />
+            {/* 1. BACKGROUND GRID - 60px intervals for city block feel */}
+            {Array.from({ length: 12 }).map((_, i) => (
+              <line key={`vg${i}`} x1={i * 60} y1={0} x2={i * 60} y2={380} stroke="rgba(212,168,67,0.03)" strokeWidth={1} />
             ))}
-            {Array.from({ length: 8 }).map((_, i) => (
-              <line key={`hg${i}`} x1={0} y1={i * 50} x2={700} y2={i * 50} stroke="rgba(255,255,255,0.03)" strokeWidth={1} />
+            {Array.from({ length: 7 }).map((_, i) => (
+              <line key={`hg${i}`} x1={0} y1={i * 60} x2={700} y2={i * 60} stroke="rgba(212,168,67,0.03)" strokeWidth={1} />
             ))}
 
-            {/* 5. Route lines - distinct by status */}
+            {/* 2. ROAD LINES - major boulevards */}
+            {/* Horizontal roads */}
+            <line x1={0} y1={130} x2={700} y2={130} stroke="rgba(255,255,255,0.06)" strokeWidth={3} strokeLinecap="round" />
+            <line x1={0} y1={230} x2={700} y2={230} stroke="rgba(255,255,255,0.06)" strokeWidth={3} strokeLinecap="round" />
+            <line x1={0} y1={310} x2={700} y2={310} stroke="rgba(255,255,255,0.06)" strokeWidth={3} strokeLinecap="round" />
+            {/* Vertical roads */}
+            <line x1={220} y1={0} x2={220} y2={380} stroke="rgba(255,255,255,0.06)" strokeWidth={3} strokeLinecap="round" />
+            <line x1={450} y1={0} x2={450} y2={380} stroke="rgba(255,255,255,0.06)" strokeWidth={3} strokeLinecap="round" />
+            <line x1={600} y1={0} x2={600} y2={380} stroke="rgba(255,255,255,0.06)" strokeWidth={3} strokeLinecap="round" />
+
+            {/* Road labels */}
+            <text x={500} y={125} style={{ fontSize: 9, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: 'rgba(255,255,255,0.15)', letterSpacing: '0.5px' }}>Bd Zerktouni</text>
+            <text x={225} y={305} style={{ fontSize: 9, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: 'rgba(255,255,255,0.15)', letterSpacing: '0.5px' }}>Route de Médiouna</text>
+
+            {/* 6. ZONE LABELS - geographic context */}
+            <text x={80} y={60} style={{ fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: 'rgba(255,255,255,0.08)', fontStyle: 'italic' }}>Zone Industrielle Aïn Sebaâ</text>
+            <text x={450} y={360} style={{ fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: 'rgba(255,255,255,0.08)', fontStyle: 'italic' }}>Centre-Ville</text>
+            <text x={520} y={175} style={{ fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: 'rgba(255,255,255,0.08)', fontStyle: 'italic' }}>Maarif</text>
+
+            {/* 5. ROUTE LINES - distinct by status */}
             {/* TOU-03 completed route (gray solid, faded) */}
             <line x1={350} y1={190} x2={280} y2={310} stroke="#4A5568" strokeWidth={1.5} opacity={0.4} />
-            {/* TOU-01 active route (gold dashed) */}
-            <line x1={350} y1={190} x2={540} y2={95} stroke="#D4A843" strokeWidth={2} strokeDasharray="8 4" />
             {/* TOU-02 loading route (amber dashed) */}
             <line x1={350} y1={190} x2={160} y2={170} stroke="#F59E0B" strokeWidth={2} strokeDasharray="8 4" />
+            {/* TOU-01 active route (gold dashed, ANIMATED) */}
+            <line x1={350} y1={190} x2={540} y2={95} stroke="#D4A843" strokeWidth={2} strokeDasharray="8 4" style={{ animation: 'map-route-flow 3s linear infinite' }} />
 
-            {/* 2. Plant (TBOS) with pulse ring */}
-            <circle cx={350} cy={190} r={22} fill="none" stroke="rgba(212,168,67,0.3)" strokeWidth={2} style={{ animation: 'map-plant-pulse 3s ease-in-out infinite' }} />
-            <circle cx={350} cy={190} r={14} fill="rgba(212,168,67,0.15)" stroke="#D4A843" strokeWidth={1.5} />
-            <text x={350} y={194} textAnchor="middle" style={{ fontSize: 8, fontWeight: 700, fill: '#D4A843', letterSpacing: '0.1em' }}>TBOS</text>
-            <text x={350} y={214} textAnchor="middle" style={{ fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: '#D4A843', fontWeight: 500 }}>Atlas Concrete</text>
+            {/* 3. PLANT (TBOS) - gold hexagon with pulse */}
+            <circle cx={350} cy={190} fill="none" stroke="rgba(212,168,67,0.4)" strokeWidth={2} style={{ animation: 'map-plant-pulse 3s ease-in-out infinite' }}>
+              <animate attributeName="r" values="22;34;22" dur="3s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.4;0;0.4" dur="3s" repeatCount="indefinite" />
+            </circle>
+            {/* Hexagon shape */}
+            <polygon points="350,174 364,182 364,198 350,206 336,198 336,182" fill="#D4A843" stroke="rgba(212,168,67,0.6)" strokeWidth={1} />
+            <text x={350} y={193} textAnchor="middle" style={{ fontSize: 9, fontWeight: 700, fill: '#0F1629', letterSpacing: '0.1em' }}>TBOS</text>
+            <text x={350} y={222} textAnchor="middle" style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: '#D4A843', fontWeight: 500 }}>Atlas Concrete · Casablanca</text>
 
-            {/* 4. Client diamonds with glow */}
+            {/* 8. CLIENT DIAMONDS with shadow/glow */}
             {[
               { x: 540, y: 70, name: 'Constructions Modernes' },
               { x: 160, y: 140, name: 'Saudi Readymix' },
@@ -219,42 +255,45 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
               { x: 580, y: 230, name: 'Ciments du Maroc' },
               { x: 450, y: 300, name: 'ONCF' },
             ].map(c => (
-              <g key={c.name}>
-                <rect x={c.x - 5} y={c.y - 5} width={10} height={10} fill="#D4A843" transform={`rotate(45 ${c.x} ${c.y})`} opacity={0.7} style={{ filter: 'drop-shadow(0 0 4px rgba(212,168,67,0.3))' }} />
+              <g key={c.name} style={{ filter: 'drop-shadow(0 0 4px rgba(212,168,67,0.4))' }}>
+                <rect x={c.x - 5} y={c.y - 5} width={10} height={10} fill="#D4A843" transform={`rotate(45 ${c.x} ${c.y})`} opacity={0.7} />
                 <text x={c.x + 12} y={c.y + 3} style={{ fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>{c.name}</text>
               </g>
             ))}
 
-            {/* 3. TOU-01 truck (green, en route) */}
+            {/* 7. TOU-01 truck (green, directional arrow pointing toward Constructions Modernes) */}
             <g>
-              <circle cx={480} cy={120} r={10} fill="rgba(16,185,129,0.2)" stroke="#10B981" strokeWidth={1.5} />
-              <text x={480} y={123} textAnchor="middle" style={{ fontSize: 7, fontWeight: 700, fill: '#10B981' }}>🚛</text>
+              <polygon points="480,110 474,126 486,126" fill="rgba(16,185,129,0.25)" stroke="#10B981" strokeWidth={1.5} />
               <rect x={496} y={106} width={135} height={30} rx={6} fill="rgba(15,23,42,0.9)" stroke="rgba(16,185,129,0.3)" strokeWidth={1} />
               <text x={504} y={118} style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 600, fill: '#D4A843' }}>TOU-01</text>
               <text x={504} y={130} style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: '#9CA3AF' }}>En route · BL-2602-013</text>
             </g>
 
-            {/* 3. TOU-02 truck (amber, chargement) */}
+            {/* 7. TOU-02 truck (amber, arrow pointing left toward Saudi Readymix / near plant) */}
             <g>
-              <circle cx={200} cy={200} r={10} fill="rgba(245,158,11,0.2)" stroke="#F59E0B" strokeWidth={1.5} />
-              <text x={200} y={203} textAnchor="middle" style={{ fontSize: 7, fontWeight: 700, fill: '#F59E0B' }}>🚛</text>
+              <polygon points="190,200 206,194 206,206" fill="rgba(245,158,11,0.25)" stroke="#F59E0B" strokeWidth={1.5} />
               <rect x={216} y={186} width={150} height={30} rx={6} fill="rgba(15,23,42,0.9)" stroke="rgba(245,158,11,0.3)" strokeWidth={1} />
               <text x={224} y={198} style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 600, fill: '#D4A843' }}>TOU-02</text>
               <text x={224} y={210} style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: '#9CA3AF' }}>Chargement · BL-2602-014</text>
             </g>
 
-            {/* 3. TOU-03 truck (blue, livré) */}
+            {/* 7. TOU-03 truck (blue, arrow pointing down toward BTP Maroc) */}
             <g>
-              <circle cx={300} cy={300} r={10} fill="rgba(96,165,250,0.2)" stroke="#60A5FA" strokeWidth={1.5} />
-              <text x={300} y={303} textAnchor="middle" style={{ fontSize: 7, fontWeight: 700, fill: '#60A5FA' }}>🚛</text>
-              <rect x={316} y={286} width={135} height={30} rx={6} fill="rgba(15,23,42,0.9)" stroke="rgba(96,165,250,0.3)" strokeWidth={1} />
-              <text x={324} y={298} style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 600, fill: '#D4A843' }}>TOU-03</text>
-              <text x={324} y={310} style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: '#9CA3AF' }}>Livré · BL-2602-011</text>
+              <polygon points="300,294 294,280 306,280" fill="rgba(96,165,250,0.25)" stroke="#60A5FA" strokeWidth={1.5} />
+              <rect x={316} y={282} width={135} height={30} rx={6} fill="rgba(15,23,42,0.9)" stroke="rgba(96,165,250,0.3)" strokeWidth={1} />
+              <text x={324} y={294} style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 600, fill: '#D4A843' }}>TOU-03</text>
+              <text x={324} y={306} style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: '#9CA3AF' }}>Livré · BL-2602-011</text>
             </g>
+
+            {/* 5. SCALE BAR - bottom left */}
+            <line x1={20} y1={365} x2={100} y2={365} stroke="#D4A843" strokeWidth={1} />
+            <line x1={20} y1={361} x2={20} y2={369} stroke="#D4A843" strokeWidth={1} />
+            <line x1={100} y1={361} x2={100} y2={369} stroke="#D4A843" strokeWidth={1} />
+            <text x={60} y={358} textAnchor="middle" style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: '#D4A843' }}>2 km</text>
           </svg>
 
           {/* 6. Bottom summary bar */}
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px 20px', background: 'linear-gradient(to top, #1A1F2E, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px 20px', background: 'linear-gradient(to top, #0F1629, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ color: '#9CA3AF', fontSize: 12, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>
               <span style={{ color: '#D4A843' }}>3</span> toupies actives · <span style={{ color: '#D4A843' }}>2</span> en mission · <span style={{ color: '#D4A843' }}>1</span> livré · Prochaine arrivée: TOU-01 <span style={{ color: '#D4A843', animation: 'map-eta-pulse 1.5s ease-in-out infinite' }}>ETA 10:55</span>
             </span>
