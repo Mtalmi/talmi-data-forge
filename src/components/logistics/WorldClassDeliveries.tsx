@@ -589,6 +589,302 @@ function MiniSparkline({ trend, color }: { trend: string; color: string }) {
   );
 }
 
+// ─────────────────────────────────────────────────────
+// ANALYTIQUE TAB
+// ─────────────────────────────────────────────────────
+const PERF_30J_DATA = (() => {
+  const d = [];
+  let cumRev = 0;
+  const livr = [5,7,4,8,6,3,2,6,8,5,9,7,4,3,7,8,6,5,9,7,3,2,6,8,7,5,4,8,6,7];
+  for (let i = 0; i < 30; i++) {
+    const rev = livr[i] * 1500 + Math.round(Math.random() * 2000);
+    cumRev += rev;
+    d.push({ jour: `J${i + 1}`, livraisons: livr[i], revenu: rev, revenuCumule: cumRev });
+  }
+  return d;
+})();
+
+const HEATMAP_DATA = (() => {
+  const weeks = [];
+  const days = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  for (let w = 0; w < 4; w++) {
+    const row: { day: string; pct: number }[] = [];
+    for (let d = 0; d < 7; d++) {
+      let pct = 90 + Math.round(Math.random() * 10);
+      if (d === 4) pct = 70 + Math.round(Math.random() * 20); // Fridays worse
+      if (d >= 5) pct = 0; // weekend — no deliveries
+      row.push({ day: days[d], pct });
+    }
+    weeks.push(row);
+  }
+  return { weeks, days };
+})();
+
+function MiniGauge({ pct, label, size = 52 }: { pct: number; label: string; size?: number }) {
+  const strokeWidth = 4;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (pct / 100) * circumference;
+  const color = pct >= 85 ? T.success : pct >= 70 ? T.gold : pct >= 50 ? T.warning : T.danger;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+      <div style={{ position: 'relative', width: size, height: size }}>
+        <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
+          <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={strokeWidth} />
+          <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke={color} strokeWidth={strokeWidth}
+            strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round" style={{ transition: 'stroke-dashoffset 1s ease-out' }} />
+        </svg>
+        <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: MONO, fontSize: 13, fontWeight: 200, color }}>{pct}%</span>
+      </div>
+      <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>{label}</span>
+    </div>
+  );
+}
+
+function AnalytiqueTab() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+
+      {/* ROW 1 — HEADLINE */}
+      <section>
+        <SectionHeader icon={TrendingUp} label="✦ Performance Flotte — 30 Jours" />
+        <Card style={{ borderTop: `2px solid ${T.gold}` }}>
+          <ResponsiveContainer width="100%" height={320}>
+            <ComposedChart data={PERF_30J_DATA} margin={{ top: 10, right: 50, left: -10, bottom: 0 }}>
+              <defs>
+                <linearGradient id="barGrad30" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#D4A843" stopOpacity={0.9} />
+                  <stop offset="100%" stopColor="#C49A3C" stopOpacity={0.5} />
+                </linearGradient>
+                <linearGradient id="revArea30" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#D4A843" stopOpacity={0.12} />
+                  <stop offset="95%" stopColor="#D4A843" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} vertical={false} />
+              <XAxis dataKey="jour" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 9, fontFamily: MONO }} interval={4} />
+              <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} />
+              <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} tickFormatter={(v: number) => `${Math.round(v/1000)}k`} />
+              <RechartsTooltip content={<CustomTooltip />} />
+              {/* Capacity threshold */}
+              <Line yAxisId="left" dataKey={() => 10} name="Capacité" stroke={T.gold} strokeWidth={1} strokeDasharray="6 4" dot={false} />
+              <Bar yAxisId="left" dataKey="livraisons" name="Livraisons" fill="url(#barGrad30)" radius={[3,3,0,0]} />
+              <Area yAxisId="right" type="monotone" dataKey="revenuCumule" name="Revenu cumulé (DH)" stroke="#D4A843" fill="url(#revArea30)" strokeWidth={2} dot={LinePulseDot('#D4A843', PERF_30J_DATA.length)} />
+            </ComposedChart>
+          </ResponsiveContainer>
+          {/* Summary strip */}
+          <div style={{ display: 'flex', gap: 20, marginTop: 16, paddingTop: 14, borderTop: `1px solid ${T.cardBorder}`, flexWrap: 'wrap' }}>
+            {[
+              { label: 'TOTAL LIVR.', value: '172', color: T.textPri },
+              { label: 'VOLUME TOTAL', value: '1,480 m³', color: T.gold },
+              { label: 'REVENU TOTAL', value: '714,000 DH', color: T.gold },
+              { label: 'PONCTUALITÉ', value: '91%', color: T.success },
+              { label: 'VS MOIS DERN.', value: '+12%', color: T.success },
+            ].map(s => (
+              <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontFamily: MONO, fontSize: 12, color: T.textDim, letterSpacing: '0.05em' }}>{s.label}</span>
+                <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: s.color }}>{s.value}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </section>
+
+      {/* ROW 2 — BREAKDOWN */}
+      <section>
+        <SectionHeader icon={TrendingUp} label="Décomposition" />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+
+          {/* Card 1: Revenu par Toupie */}
+          <Card style={{ borderTop: `2px solid ${T.gold}` }}>
+            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: '1.5px', marginBottom: 16, textTransform: 'uppercase' as const }}>REVENU PAR TOUPIE</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {[
+                { name: 'T-04', rev: 285000, maint: 0 },
+                { name: 'T-07', rev: 198000, maint: 0 },
+                { name: 'T-12', rev: 142000, maint: 0 },
+                { name: 'T-09', rev: 89000, maint: 36000 },
+              ].map(t => {
+                const maxRev = 285000;
+                return (
+                  <div key={t.name}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
+                      <span style={{ fontFamily: MONO, fontSize: 11, color: T.textPri }}>{t.name}</span>
+                      <span style={{ fontFamily: MONO, fontSize: 11, color: T.gold }}>{t.rev.toLocaleString('fr-MA')} DH</span>
+                    </div>
+                    <div style={{ display: 'flex', height: 14, borderRadius: 3, overflow: 'hidden', background: 'rgba(255,255,255,0.03)' }}>
+                      <div style={{ width: `${((t.rev - t.maint) / maxRev) * 100}%`, background: `linear-gradient(90deg, #C49A3C, #D4A843)`, transition: 'width 0.8s ease' }} />
+                      {t.maint > 0 && <div style={{ width: `${(t.maint / maxRev) * 100}%`, background: T.danger, transition: 'width 0.8s ease' }} />}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
+
+          {/* Card 2: Livraisons par Client - Donut */}
+          <Card style={{ borderTop: `2px solid ${T.gold}` }}>
+            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: '1.5px', marginBottom: 16, textTransform: 'uppercase' as const }}>LIVRAISONS PAR CLIENT</p>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', padding: '10px 0' }}>
+              <svg width={140} height={140} viewBox="0 0 140 140">
+                {(() => {
+                  const slices = [
+                    { pct: 35, color: '#D4A843' },
+                    { pct: 25, color: '#E8C96A' },
+                    { pct: 20, color: '#A07C2E' },
+                    { pct: 20, color: '#6B7280' },
+                  ];
+                  const r = 55, cx = 70, cy = 70;
+                  const circ = 2 * Math.PI * r;
+                  let offset = 0;
+                  return slices.map((s, i) => {
+                    const len = (s.pct / 100) * circ;
+                    const el = <circle key={i} cx={cx} cy={cy} r={r} fill="none" stroke={s.color} strokeWidth={18}
+                      strokeDasharray={`${len} ${circ - len}`} strokeDashoffset={-offset}
+                      style={{ transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }} />;
+                    offset += len;
+                    return el;
+                  });
+                })()}
+              </svg>
+              <div style={{ position: 'absolute', textAlign: 'center' }}>
+                <p style={{ fontFamily: MONO, fontSize: 22, fontWeight: 200, color: T.textPri, margin: 0 }}>35</p>
+                <p style={{ fontFamily: MONO, fontSize: 9, color: T.textDim, margin: 0 }}>livraisons</p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 8 }}>
+              {[
+                { label: 'Résidences Atlas', pct: '35%', color: '#D4A843' },
+                { label: 'Groupe A', pct: '25%', color: '#E8C96A' },
+                { label: 'Saham Im', pct: '20%', color: '#A07C2E' },
+                { label: 'Autres', pct: '20%', color: '#6B7280' },
+              ].map(l => (
+                <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: 2, background: l.color, flexShrink: 0 }} />
+                  <span style={{ fontSize: 11, color: T.textSec, flex: 1 }}>{l.label}</span>
+                  <span style={{ fontFamily: MONO, fontSize: 11, color: T.textPri }}>{l.pct}</span>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          {/* Card 3: Ponctualité Heatmap */}
+          <Card style={{ borderTop: `2px solid ${T.gold}` }}>
+            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: '1.5px', marginBottom: 16, textTransform: 'uppercase' as const }}>PONCTUALITÉ PAR JOUR</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {/* Day headers */}
+              <div style={{ display: 'grid', gridTemplateColumns: '30px repeat(7, 1fr)', gap: 3 }}>
+                <span />
+                {HEATMAP_DATA.days.map(d => (
+                  <span key={d} style={{ fontFamily: MONO, fontSize: 9, color: T.textDim, textAlign: 'center' }}>{d}</span>
+                ))}
+              </div>
+              {HEATMAP_DATA.weeks.map((week, wi) => (
+                <div key={wi} style={{ display: 'grid', gridTemplateColumns: '30px repeat(7, 1fr)', gap: 3 }}>
+                  <span style={{ fontFamily: MONO, fontSize: 9, color: T.textDim, display: 'flex', alignItems: 'center' }}>S{wi + 1}</span>
+                  {week.map((cell, ci) => {
+                    let bg = 'rgba(255,255,255,0.04)'; // grey — no deliveries
+                    if (cell.pct > 0) {
+                      if (cell.pct >= 90) bg = 'rgba(34,197,94,0.3)';
+                      else if (cell.pct >= 75) bg = 'rgba(245,158,11,0.3)';
+                      else bg = 'rgba(239,68,68,0.3)';
+                    }
+                    return (
+                      <div key={ci} style={{
+                        aspectRatio: '1', borderRadius: 3, background: bg,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: 8, fontFamily: MONO, color: cell.pct > 0 ? T.textPri : 'transparent',
+                      }}>
+                        {cell.pct > 0 ? `${cell.pct}` : ''}
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
+              {[{ label: '>90%', bg: 'rgba(34,197,94,0.3)' }, { label: '75-90%', bg: 'rgba(245,158,11,0.3)' }, { label: '<75%', bg: 'rgba(239,68,68,0.3)' }, { label: 'N/A', bg: 'rgba(255,255,255,0.04)' }].map(l => (
+                <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <div style={{ width: 10, height: 10, borderRadius: 2, background: l.bg }} />
+                  <span style={{ fontSize: 9, color: T.textDim }}>{l.label}</span>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      {/* ROW 3 — EFFICIENCY */}
+      <section>
+        <SectionHeader icon={Activity} label="Efficacité Opérationnelle" />
+        <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
+
+          {/* Coût par Livraison */}
+          <Card style={{ borderTop: `2px solid ${T.gold}` }}>
+            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: '1.5px', marginBottom: 16, textTransform: 'uppercase' as const }}>COÛT PAR LIVRAISON</p>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 16 }}>
+              <span style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color: T.gold }}>1,420 DH</span>
+              <span style={{ fontSize: 12, color: T.textDim }}>coût moyen/livraison</span>
+              <Bdg label="−8% vs mois dernier" color={T.success} bg="rgba(34,197,94,0.12)" />
+            </div>
+            {/* Breakdown bars */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+              {[
+                { label: 'Carburant', pct: 42, color: T.danger },
+                { label: 'Chauffeur', pct: 35, color: T.info },
+                { label: 'Maintenance', pct: 15, color: T.warning },
+                { label: 'Autre', pct: 8, color: '#6B7280' },
+              ].map(b => (
+                <div key={b.label}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
+                    <span style={{ fontSize: 11, color: T.textSec }}>{b.label}</span>
+                    <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>{b.pct}%</span>
+                  </div>
+                  <div style={{ height: 8, borderRadius: 4, background: 'rgba(255,255,255,0.04)', overflow: 'hidden' }}>
+                    <div style={{ width: `${b.pct}%`, height: '100%', background: b.color, borderRadius: 4, transition: 'width 0.8s ease' }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{ borderTop: `1px dashed ${T.gold}40`, paddingTop: 10 }}>
+              <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>Objectif: <span style={{ color: T.gold }}>1,300 DH/livraison</span></span>
+            </div>
+          </Card>
+
+          {/* Utilisation Flotte */}
+          <Card style={{ borderTop: `2px solid ${T.warning}` }}>
+            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: '1.5px', marginBottom: 16, textTransform: 'uppercase' as const }}>UTILISATION FLOTTE</p>
+            <div style={{ marginBottom: 16 }}>
+              <span style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color: T.warning }}>72%</span>
+              <p style={{ fontSize: 12, color: T.textDim, marginTop: 4 }}>taux d'utilisation moyen</p>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: 16 }}>
+              <MiniGauge pct={88} label="T-04" />
+              <MiniGauge pct={79} label="T-07" />
+              <MiniGauge pct={71} label="T-12" />
+              <MiniGauge pct={42} label="T-09" />
+            </div>
+            <p style={{ fontFamily: MONO, fontSize: 11, color: T.danger, marginBottom: 8 }}>Temps mort total flotte: 4.2h/jour</p>
+            <div style={{ borderTop: `1px dashed ${T.gold}40`, paddingTop: 10 }}>
+              <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>Objectif: <span style={{ color: T.gold }}>&gt;85%</span></span>
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      {/* ROW 4 — ACTION */}
+      <section>
+        <SectionHeader icon={Brain} label="✦ Insight IA — Analyse Flotte" right={<IABadge />} />
+        <div style={{ borderTop: `2px solid ${T.gold}`, background: 'rgba(212,168,67,0.03)', border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: 20 }}>
+          <p style={{ fontFamily: MONO, fontSize: 13, color: T.textDim, lineHeight: 2, margin: 0 }}>
+            Analyse 30 jours : La flotte a généré <strong style={{ color: T.gold }}>714,000 DH</strong> de revenu avec un coût moyen de <strong style={{ color: T.gold }}>1,420 DH/livraison</strong> (−8% vs février). Points d'attention : (1) Le taux d'utilisation de <strong style={{ color: T.warning }}>72%</strong> est sous l'objectif de 85% — cause principale : T-09 en maintenance 12 jours sur 30. (2) Les vendredis concentrent <strong style={{ color: T.danger }}>60% des retards</strong> — lié au trafic Casablanca fin de semaine. Recommandation : planifier les livraisons vendredi avant 9h ou après 15h. (3) T-04 et T-07 sont en surcapacité les mardis/mercredis — opportunité de prospecter 2 livraisons supplémentaires ces jours. Impact estimé : <strong style={{ color: T.success }}>+28,000 DH/mois</strong>.
+          </p>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function IntelligenceIATab() {
   const tblHdr: React.CSSProperties = { fontFamily: MONO, fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.15em', padding: '10px 12px', borderBottom: `1px solid ${T.cardBorder}`, textAlign: 'left' };
   const tblCell: React.CSSProperties = { padding: '10px 12px', fontSize: 12, borderBottom: `1px solid rgba(30,45,74,0.5)` };
