@@ -405,16 +405,23 @@ export function DevisTable({
                 className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
               />
             </TableHead>
-            <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>N° Devis</TableHead>
-            <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Client</TableHead>
-            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Formule</TableHead>
-            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Vol (m³)</TableHead>
-            <TableHead className="text-right" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Total HT (DH)</TableHead>
-            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Statut</TableHead>
-            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Score IA</TableHead>
-            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Conversion</TableHead>
-            <TableHead className="text-center" style={{ padding: '10px 4px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Prté</TableHead>
-            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Actions</TableHead>
+            {(['N° Devis', 'Client', 'Formule', 'Vol (m³)', 'Total HT (DH)', 'Statut', 'Score IA', 'Conversion', 'Prté', 'Actions'] as const).map((label, i) => (
+              <TableHead
+                key={label}
+                style={{
+                  padding: '10px 8px',
+                  fontSize: 10,
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '1.5px',
+                  color: '#9CA3AF',
+                  fontFamily: 'ui-monospace, monospace',
+                  textAlign: i >= 3 && i !== 5 ? (i === 4 ? 'right' : 'center') : 'left',
+                }}
+              >
+                {label}
+              </TableHead>
+            ))}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -428,16 +435,17 @@ export function DevisTable({
               <TableRow 
                 key={devis.id}
                 className={cn(
-                  "transition-all duration-200 cursor-pointer border-b border-white/5",
-                  getExpirationInfo && getExpirationInfo(devis).isExpired && "opacity-60 bg-muted/30",
+                  "cursor-pointer",
+                  getExpirationInfo && getExpirationInfo(devis).isExpired && "opacity-60",
                   isSelected && "bg-primary/5"
                 )}
                 style={{
-                  borderLeft: devis.niveau_score === 'Élevé' ? '2px solid #D4A843' : '2px solid transparent',
-                  boxShadow: devis.niveau_score === 'Élevé' ? 'inset 2px 0 12px rgba(212,168,67,0.12)' : undefined,
+                  borderBottom: '1px solid rgba(255,255,255,0.04)',
+                  borderLeft: '2px solid transparent',
+                  transition: 'all 200ms',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.03)')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.03)'; e.currentTarget.style.borderLeft = '2px solid #D4A843'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderLeft = '2px solid transparent'; }}
                 onClick={() => onRowClick?.(devis)}
               >
                 <TableCell onClick={(e) => e.stopPropagation()} style={{ padding: '10px 8px' }}>
@@ -447,7 +455,11 @@ export function DevisTable({
                     aria-label={`Sélectionner ${devis.devis_id}`}
                   />
                 </TableCell>
-                <TableCell style={{ padding: '10px 8px', color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontWeight: 500, fontSize: 13 }}>{devis.devis_id}</TableCell>
+                <TableCell
+                  style={{ padding: '10px 8px', color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontWeight: 500, fontSize: 13, cursor: 'pointer' }}
+                  onMouseEnter={e => { (e.currentTarget.firstChild as HTMLElement)?.style && ((e.currentTarget as HTMLElement).style.textDecoration = 'underline'); }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}
+                >{devis.devis_id}</TableCell>
                 <TableCell style={{ padding: '10px 8px', color: 'rgba(255,255,255,0.9)', fontSize: 13 }}>
                   {devis.client ? (
                     <ClientHoverPreview clientId={devis.client_id || ''} clientName={devis.client.nom_client} />
@@ -456,9 +468,9 @@ export function DevisTable({
                   )}
                 </TableCell>
                 <TableCell className="text-center" style={{ padding: '10px 8px', color: 'rgba(255,255,255,0.9)' }}>
-                  <span className="text-xs font-mono">{devis.formule_id}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 400, fontSize: 12 }}>{devis.formule_id}</span>
                 </TableCell>
-                <TableCell className="text-center font-mono" style={{ padding: '10px 8px', color: 'rgba(255,255,255,0.9)', fontSize: 13 }}>{devis.volume_m3}</TableCell>
+                <TableCell className="text-center" style={{ padding: '10px 8px', color: 'rgba(255,255,255,0.9)', fontFamily: 'ui-monospace, monospace', fontWeight: 300, fontSize: 13 }}>{devis.volume_m3}</TableCell>
                 <TableCell className="text-right" style={{ padding: '10px 8px', color: 'rgba(255,255,255,0.9)', fontFamily: 'ui-monospace, monospace', fontWeight: 300, fontSize: 13 }}>
                   {Number(devis.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </TableCell>
@@ -554,12 +566,13 @@ export function DevisTable({
                     }
                     const numVal = parseInt(prob);
                     const color = numVal >= 70 ? '#22C55E' : numVal >= 40 ? '#F59E0B' : '#EF4444';
+                    const fontWt = 600;
                     const bg = numVal >= 70 ? 'rgba(34,197,94,0.12)' : numVal >= 40 ? 'rgba(245,158,11,0.12)' : 'rgba(239,68,68,0.12)';
                     const border = numVal >= 70 ? 'rgba(34,197,94,0.25)' : numVal >= 40 ? 'rgba(245,158,11,0.25)' : 'rgba(239,68,68,0.25)';
                     return (
                       <span style={{
                         display: 'inline-flex', alignItems: 'center', gap: 4,
-                        padding: '3px 10px', borderRadius: 6, fontSize: 11, fontWeight: 700,
+                        padding: '3px 10px', borderRadius: 6, fontSize: 11, fontWeight: fontWt,
                         background: bg, border: `1px solid ${border}`, color,
                         fontFamily: 'ui-monospace, monospace',
                       }}>

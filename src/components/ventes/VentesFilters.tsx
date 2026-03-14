@@ -99,13 +99,29 @@ export function VentesFilters({
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: '#D4A843' }} />
+          <input
             ref={searchInputRef}
             placeholder={vf.searchPlaceholder}
             value={filters.search}
             onChange={(e) => updateFilter('search', e.target.value)}
-            className="pl-10 pr-8"
+            style={{
+              width: '100%',
+              paddingLeft: 40,
+              paddingRight: 32,
+              paddingTop: 8,
+              paddingBottom: 8,
+              fontSize: 13,
+              fontFamily: 'ui-monospace, monospace',
+              borderRadius: 8,
+              border: '1px solid rgba(212,168,67,0.2)',
+              background: 'rgba(15,22,41,0.5)',
+              color: 'rgba(255,255,255,0.9)',
+              outline: 'none',
+              transition: 'border-color 200ms',
+            }}
+            onFocus={(e) => { e.currentTarget.style.borderColor = '#D4A843'; }}
+            onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.2)'; }}
           />
           {filters.search && (
             <button
@@ -142,24 +158,25 @@ export function VentesFilters({
           style={{
             border: '1px solid #D4A843',
             color: '#D4A843',
-            background: showAdvanced ? 'rgba(212,168,67,0.1)' : 'transparent',
+            background: showAdvanced ? 'rgba(212,168,67,0.08)' : 'transparent',
             borderRadius: 8,
             padding: '8px 20px',
             cursor: 'pointer',
-            fontSize: 14,
+            fontSize: 13,
+            fontFamily: 'ui-monospace',
             display: 'inline-flex',
             alignItems: 'center',
             gap: 8,
           }}
-          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.1)')}
-          onMouseLeave={e => (e.currentTarget.style.background = showAdvanced ? 'rgba(212,168,67,0.1)' : 'transparent')}
+          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.08)')}
+          onMouseLeave={e => (e.currentTarget.style.background = showAdvanced ? 'rgba(212,168,67,0.08)' : 'transparent')}
         >
           <Filter className="h-4 w-4" />
           {c.filters}
           {activeFilterCount > 0 && (
-            <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center">
+            <span style={{ marginLeft: 4, background: 'rgba(212,168,67,0.15)', color: '#D4A843', borderRadius: 10, padding: '2px 8px', fontSize: 11, fontFamily: 'ui-monospace', fontWeight: 600 }}>
               {activeFilterCount}
-            </Badge>
+            </span>
           )}
         </button>
 
@@ -176,11 +193,12 @@ export function VentesFilters({
             style={{
               border: autoRefreshEnabled ? '1px solid #22C55E' : '1px solid rgba(255,255,255,0.1)',
               color: autoRefreshEnabled ? '#22C55E' : '#9CA3AF',
-              background: autoRefreshEnabled ? 'rgba(34,197,94,0.06)' : 'transparent',
+              background: autoRefreshEnabled ? 'rgba(34,197,94,0.08)' : 'transparent',
               borderRadius: 8,
               padding: '6px 14px',
               cursor: 'pointer',
-              fontSize: 12,
+              fontSize: 11,
+              fontFamily: 'ui-monospace',
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
