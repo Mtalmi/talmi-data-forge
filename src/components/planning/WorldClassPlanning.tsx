@@ -809,7 +809,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
         {/* ═══════════════════════════════════════════════════
             ZONE 2: PLANNING & CAPACITÉ
             ═══════════════════════════════════════════════════ */}
-        <section ref={semaineRef}>
+        <div ref={semaineRef}>
           <ZoneHeader
             icon="📅"
             label="PLANNING & CAPACITÉ"
