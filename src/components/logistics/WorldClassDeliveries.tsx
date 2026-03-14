@@ -957,7 +957,7 @@ function AnalytiqueTab() {
       </section>
 
       {/* Freshness Indicator — 30 days */}
-      <Card style={{ borderTop: `2px solid ${T.warning}` }}>
+      <Card style={{ borderTop: `2px solid ${T.success}` }}>
         <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: '1.5px', marginBottom: 16, textTransform: 'uppercase' as const }}>✦ INDICATEUR FRAÎCHEUR — 30 JOURS</p>
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 16 }}>
           {[
