@@ -557,10 +557,19 @@ export function BcTable({
                 {/* STATUS */}
                 <TableCell className="text-center">
                   <div className="flex flex-col gap-1 items-center">
-                    <span className={cn("inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium whitespace-nowrap", statusConfig.color)}>
-                      {statusConfig.icon}
-                      {statusConfig.label}
-                    </span>
+                    {bc.statut === 'pret_production' ? (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, border: '1px solid #22C55E', color: '#22C55E', background: 'rgba(34,197,94,0.08)', fontFamily: 'ui-monospace, monospace', fontSize: 11, borderRadius: 6, padding: '2px 8px', whiteSpace: 'nowrap' }}>
+                        {statusConfig.icon} {statusConfig.label}
+                      </span>
+                    ) : (bc.statut === 'termine' || bc.statut === 'livre') && !bc.facture_consolidee_id ? (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, border: '1px solid #D4A843', color: '#D4A843', background: 'rgba(212,168,67,0.08)', fontFamily: 'ui-monospace, monospace', fontSize: 11, borderRadius: 6, padding: '2px 8px', whiteSpace: 'nowrap' }}>
+                        {statusConfig.icon} {statusConfig.label}
+                      </span>
+                    ) : (
+                      <span className={cn("inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium whitespace-nowrap", statusConfig.color)} style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11 }}>
+                        {statusConfig.icon} {statusConfig.label}
+                      </span>
+                    )}
                     {mostAdvancedBl && bc.statut === 'en_production' && (
                       <Tooltip>
                         <TooltipTrigger>
