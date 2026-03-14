@@ -413,6 +413,7 @@ function DeliveryCard({ d, delay = 0, routeData, weatherIndex = 0 }: { d: typeof
         transition: 'all 400ms ease-out',
         background: T.cardBg,
         border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`,
+        borderTop: '2px solid #D4A843',
         borderLeft: `4px solid ${d.statusColor}`,
         borderRadius: 10, padding: '12px 16px',
         boxShadow: hov ? `0 4px 16px rgba(0,0,0,0.2)` : 'none',
