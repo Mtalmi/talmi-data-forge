@@ -870,8 +870,8 @@ export default function WorldClassProduction() {
                     3 batches B20 consécutifs ont réduit la marge. Recommandation: prioriser commande BC-2024-003 (B30, marge estimée 41%) pour rééquilibrer.
                   </p>
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
-                    <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 4, border: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.6)', boxShadow: '0 0 0 1px rgba(212,168,67,0.3)' }}>Confiance: 88%</span>
-                    <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 4, background: 'rgba(212,168,67,0.15)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)' }}>Généré par IA · Claude Opus</span>
+                    <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 4, border: '1px solid #D4A843', color: '#D4A843' }}>Confiance: 88%</span>
+                    <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 4, border: '1px solid #D4A843', color: '#D4A843', background: 'rgba(212,168,67,0.06)' }}>Généré par IA · Claude Opus</span>
                   </div>
                 </div>
               </div>
