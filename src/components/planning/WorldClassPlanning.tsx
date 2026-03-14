@@ -810,6 +810,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                   </div>
                 </div>
               </Card>
+                </div>
+              </div>
+              {fleetPanel}
             </div>
           </div>
         </div>
