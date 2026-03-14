@@ -304,6 +304,7 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
           </div>
         );
       })}
-    </div>
+      </>
+      )}
   );
 }
