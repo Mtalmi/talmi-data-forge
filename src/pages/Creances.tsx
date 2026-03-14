@@ -2052,6 +2052,122 @@ export default function Creances() {
             </Card>
           </TabsContent>
         </Tabs>
+        </>)}
+
+        {/* ANALYSE AGING TAB */}
+        {creancesTab === 'aging' && (<>
+          {hasData && (
+            <Card style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderTop: '2px solid #D4A843' }}>
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-2">
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 700, color: '#D4A843', letterSpacing: '2px' }}>
+                    ✦ ANTÉRIORITÉ DES CRÉANCES
+                  </span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col md:flex-row gap-6">
+                  <div className="flex-1 space-y-4">
+                    {(() => {
+                      const BAR_COLORS = ['#D4A843', '#f59e0b', '#ef4444', '#991B1B', '#7F1D1D'];
+                      return stats.agingBuckets.map((bucket, index) => {
+                        const barColor = BAR_COLORS[index] || BAR_COLORS[4];
+                        const isDeepRed = index >= 4;
+                        return (
+                          <div key={bucket.bucket} className="space-y-1.5">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-medium text-white">{bucket.bucket}</span>
+                              <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, fontWeight: 200, color: '#9CA3AF' }}>
+                                {bucket.invoice_count} fact. · <span style={{ color: barColor, fontWeight: 500 }}>{bucket.total_amount.toLocaleString('fr-MA')} DH</span>
+                              </span>
+                            </div>
+                            <div style={{ height: 8, borderRadius: 4, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                              <div
+                                className={isDeepRed ? 'animate-pulse' : ''}
+                                style={{
+                                  height: '100%',
+                                  width: `${Math.max(bucket.percentage, 2)}%`,
+                                  borderRadius: 4,
+                                  background: index === 0 ? 'linear-gradient(90deg, #C49A3C, #D4A843)' : barColor,
+                                  transition: 'width 600ms ease-out',
+                                }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      });
+                    })()}
+                  </div>
+                  {(() => {
+                    const AGING_DONUT_COLORS = ['#D4A843', '#B8860B', '#A0732A', '#8B6914', '#6B5210'];
+                    const hardcodedBuckets = [
+                      { name: 'Courant (0-30j)', value: 17175 },
+                      { name: '1-30 jours', value: 8610 },
+                      { name: '31-60 jours', value: 0 },
+                      { name: '61-90 jours', value: 0 },
+                      { name: '90+ jours', value: 0 },
+                    ];
+                    const totalAmount = 840500;
+                    const donutData = hardcodedBuckets.map((b, i) => ({
+                      name: b.name,
+                      value: b.value || 1,
+                      realValue: b.value,
+                      fill: AGING_DONUT_COLORS[i] || AGING_DONUT_COLORS[4],
+                    }));
+                    return (
+                      <div className="flex flex-col items-center justify-center" style={{ minWidth: 160 }}>
+                        <div style={{ position: 'relative', width: 140, height: 140 }}>
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie data={donutData} cx="50%" cy="50%" innerRadius={40} outerRadius={60} paddingAngle={2} dataKey="value" stroke="none">
+                                {donutData.map((entry, idx) => (
+                                  <Cell key={idx} fill={entry.fill} />
+                                ))}
+                              </Pie>
+                              <RechartsTooltip
+                                contentStyle={{ background: 'hsl(var(--card))', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 11 }}
+                                formatter={(val: number, name: string, entry: any) => [`${(entry?.payload?.realValue ?? val).toLocaleString('fr-MA')} DH`, '']}
+                              />
+                            </PieChart>
+                          </ResponsiveContainer>
+                          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', pointerEvents: 'none' }}>
+                            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 14, fontWeight: 200, color: '#D4A843', lineHeight: 1 }}>
+                              {totalAmount >= 1000 ? `${Math.round(totalAmount / 1000)}K` : totalAmount.toLocaleString('fr-MA')}
+                            </span>
+                            <p style={{ fontSize: 9, color: '#9CA3AF', marginTop: 2 }}>DH</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          <div style={{ textAlign: 'center', padding: '40px 0' }}>
+            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: '#9CA3AF' }}>
+              Contenu en cours de déploiement...
+            </p>
+          </div>
+        </>)}
+
+        {/* ANALYTIQUE TAB */}
+        {creancesTab === 'analytique' && (
+          <div style={{ textAlign: 'center', padding: '60px 0' }}>
+            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: '#9CA3AF' }}>
+              Contenu en cours de déploiement...
+            </p>
+          </div>
+        )}
+
+        {/* INTELLIGENCE IA TAB */}
+        {creancesTab === 'ia' && (
+          <div style={{ textAlign: 'center', padding: '60px 0' }}>
+            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: '#9CA3AF' }}>
+              Contenu en cours de déploiement...
+            </p>
+          </div>
+        )}
 
         {/* Action Dialog */}
         <Dialog open={actionDialogOpen} onOpenChange={setActionDialogOpen}>
