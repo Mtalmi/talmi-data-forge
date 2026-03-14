@@ -580,6 +580,8 @@ export default function WorldClassProduction() {
         @keyframes wfActifPulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
         @keyframes margePulseDot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:0.5} }
         @keyframes livePulseGreen { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.3);opacity:0.5} }
+        @keyframes prodLiveDot { 0%,100%{transform:scale(1);opacity:1;box-shadow:0 0 12px #D4A843} 50%{transform:scale(1.6);opacity:0.4;box-shadow:0 0 20px transparent} }
+        @keyframes qualBarGrow { from{transform:scaleY(0);transform-origin:bottom} to{transform:scaleY(1);transform-origin:bottom} }
       `}</style>
 
       {/* ── STICKY HEADER ── */}
