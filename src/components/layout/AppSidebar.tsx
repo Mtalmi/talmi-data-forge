@@ -9,7 +9,7 @@ import {
   Wallet, CreditCard, Landmark, Building2, ArrowLeftRight,
   Handshake, Wrench, PackageSearch, Clock,
   Bot, BarChart3, Bell, Shield, BookOpen, CheckSquare,
-  Search, User, Settings, LogOut, TrendingUp, ChevronDown,
+  Search, User, Settings, LogOut, TrendingUp, ChevronRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
@@ -190,7 +190,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
         open ? 'translate-x-0' : '-translate-x-full'
       )}
       style={{
-        width: '16rem',
+        width: 200,
         background: '#0B1120',
         borderRight: '1px solid rgba(212, 168, 67, 0.08)',
       }}
@@ -199,16 +199,16 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       <div className="absolute top-0 left-0 bottom-0 w-px" style={{ background: 'linear-gradient(180deg, rgba(212,168,67,0.4) 0%, rgba(212,168,67,0.08) 50%, transparent 100%)' }} />
 
       {/* ── BRAND HEADER ── */}
-      <div className="px-5 pt-6 pb-5 shrink-0">
-        <div className="flex items-center gap-3">
+      <div className="px-4 pt-5 pb-4 shrink-0">
+        <div className="flex items-center gap-2.5">
           <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center tbos-sidebar-logo"
+            className="w-9 h-9 rounded-xl flex items-center justify-center tbos-sidebar-logo"
             style={{
               background: 'linear-gradient(135deg, #D4A843 0%, #B8860B 100%)',
               boxShadow: '0 4px 16px rgba(212, 168, 67, 0.3), 0 0 24px rgba(212, 168, 67, 0.15)',
             }}
           >
-            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 16, fontWeight: 700, color: '#0B1120' }}>T</span>
+            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 14, fontWeight: 700, color: '#0B1120' }}>T</span>
           </div>
           <div>
             <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 18, fontWeight: 700, color: '#D4A843', letterSpacing: '0.05em' }}>TBOS</div>
@@ -218,34 +218,39 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       </div>
 
       {/* ── SEARCH SHORTCUT ── */}
-      <div className="flex items-center gap-2 mx-4 my-2 px-3 py-2 rounded-lg cursor-default select-none shrink-0" style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(212, 168, 67, 0.15)', borderRadius: 8 }}>
-        <Search className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#9CA3AF' }} strokeWidth={1.5} />
-        <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: '#9CA3AF' }}>Recherche...</span>
-        <span className="ml-auto" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, background: 'rgba(255,255,255,0.1)', borderRadius: 4, padding: '1px 5px', color: '#9CA3AF' }}>⌘K</span>
+      <div className="flex items-center gap-2 mx-3 my-1.5 px-2.5 py-1.5 cursor-default select-none shrink-0" style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(212, 168, 67, 0.15)', borderRadius: 6 }}>
+        <Search className="flex-shrink-0" style={{ color: '#9CA3AF' }} size={14} strokeWidth={1.5} />
+        <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#9CA3AF' }}>Recherche...</span>
+        <span className="ml-auto" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 9, background: 'rgba(255,255,255,0.1)', borderRadius: 3, padding: '1px 4px', color: '#9CA3AF' }}>⌘K</span>
       </div>
 
       {/* ── NAVIGATION ── */}
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 py-2 tbos-sidebar-scroll" style={{ scrollbarWidth: 'thin' }}>
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 pt-1 pb-2 tbos-sidebar-scroll" style={{ scrollbarWidth: 'thin' }}>
         {filteredSections.map((section, si) => {
           const isOpen = openSections[section.key] ?? false;
           const sectionHasActive = section.items.some(item => isActive(item.url));
 
           return (
             <div key={section.key}>
-              {/* Divider above section */}
+              {/* Divider between sections */}
               {si > 0 && (
-                <div className="mx-5 mt-2" style={{ height: '1px', background: 'rgba(212,168,67,0.08)' }} />
+                <div style={{ borderBottom: '1px solid rgba(212, 168, 67, 0.06)', marginTop: 8, marginBottom: 8, marginLeft: 16, marginRight: 16 }} />
               )}
 
               {/* Section header */}
               <button
                 onClick={() => toggleSection(section.key)}
-                className="flex items-center gap-2 w-full px-5 group cursor-pointer"
-                style={{ paddingTop: si === 0 ? '4px' : '20px', paddingBottom: '10px' }}
+                className="flex items-center gap-1.5 w-full px-4 group cursor-pointer"
+                style={{ paddingTop: 4, paddingBottom: 6 }}
               >
-                <ChevronDown
-                  className="w-3 h-3 transition-transform duration-200 flex-shrink-0"
-                  style={{ transform: isOpen ? 'rotate(0deg)' : 'rotate(-90deg)', color: 'rgba(212,168,67,0.3)' }}
+                <ChevronRight
+                  size={10}
+                  className="flex-shrink-0 group-hover:text-[#D4A843]"
+                  style={{
+                    color: '#9CA3AF',
+                    transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)',
+                    transition: 'transform 200ms ease, color 200ms ease',
+                  }}
                   strokeWidth={2.5}
                 />
                 <span
@@ -271,23 +276,28 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
               <div
                 className="overflow-hidden transition-all duration-250 ease-in-out"
                 style={{
-                  maxHeight: isOpen ? `${section.items.length * 40 + 8}px` : '0px',
+                  maxHeight: isOpen ? `${section.items.length * 38 + 8}px` : '0px',
                   opacity: isOpen ? 1 : 0,
                 }}
               >
-                <div className="py-0.5">
+                <div>
                   {section.items.map((item) => {
                     const active = isActive(item.url);
                     return (
                       <button
                         key={item.url}
                         onClick={() => handleNav(item.url)}
-                        className="relative w-full flex items-center gap-3 px-4 py-2 mx-3 rounded-lg text-left transition-all duration-200 group cursor-pointer"
+                        className="relative w-full flex items-center text-left transition-all duration-200 group cursor-pointer"
                         style={{
-                          width: 'calc(100% - 24px)',
+                          padding: '8px 12px 8px 20px',
+                          marginBottom: 2,
+                          lineHeight: 1.4,
+                          borderRadius: 0,
                           ...(active ? {
                             background: 'rgba(212, 168, 67, 0.1)',
                             borderLeft: '3px solid #D4A843',
+                            boxShadow: 'inset 3px 0 8px rgba(212, 168, 67, 0.15)',
+                            paddingLeft: 17,
                           } : {}),
                         }}
                         onMouseEnter={e => {
@@ -300,9 +310,10 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
                         }}
                       >
                         <item.icon
-                          className="w-[18px] h-[18px] flex-shrink-0 transition-colors duration-200"
+                          className="flex-shrink-0 transition-colors duration-200"
+                          size={16}
                           strokeWidth={1.5}
-                          style={{ color: active ? '#D4A843' : '#9CA3AF' }}
+                          style={{ color: active ? '#D4A843' : '#9CA3AF', marginRight: 10 }}
                         />
                         <span
                           className="flex-1 truncate transition-colors duration-200"
@@ -329,15 +340,16 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              padding: '0 4px',
+                              marginRight: 0,
+                              flexShrink: 0,
                             }}
                           >
                             {item.badge}
                           </span>
                         )}
                         {item.badge === '●' && (
-                          <span className="flex items-center justify-center w-5 h-5">
-                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" style={{ boxShadow: '0 0 6px rgba(52,211,153,0.5)' }} />
+                          <span className="flex items-center justify-center" style={{ width: 20, height: 20, flexShrink: 0 }}>
+                            <span className="rounded-full animate-pulse" style={{ width: 8, height: 8, background: '#22C55E', boxShadow: '0 0 6px rgba(34,197,94,0.5)' }} />
                           </span>
                         )}
                       </button>
@@ -351,31 +363,32 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       </nav>
 
       {/* ── USER PROFILE CARD ── */}
-      <div className="shrink-0" style={{ borderTop: '1px solid rgba(212, 168, 67, 0.06)' }}>
+      <div className="shrink-0" style={{ borderTop: '1px solid rgba(212, 168, 67, 0.08)', background: 'rgba(0, 0, 0, 0.15)' }}>
         <div
-          className="mx-4 my-3 p-3 rounded-xl cursor-pointer transition-all duration-200"
+          className="mx-3 my-2.5 p-2.5 rounded-lg cursor-pointer transition-all duration-200"
           style={{
-            background: 'rgba(212, 168, 67, 0.02)',
-            border: '1px solid rgba(212, 168, 67, 0.06)',
+            background: 'transparent',
           }}
         >
-          <div className="flex items-center gap-3">
-            <div className="relative">
+          <div className="flex items-center gap-2.5">
+            <div className="relative flex-shrink-0">
               <div
-                className="w-9 h-9 rounded-full flex items-center justify-center"
+                className="rounded-full flex items-center justify-center"
                 style={{
+                  width: 32,
+                  height: 32,
                   background: '#D4A843',
                   color: '#0F1629',
                   fontFamily: 'ui-monospace, SFMono-Regular, monospace',
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: 700,
                 }}
               >
                 {userInitials}
               </div>
                <div
-                 className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full"
-                 style={{ border: '2px solid #0B1120' }}
+                 className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full"
+                 style={{ background: '#22C55E', border: '2px solid #0B1120' }}
                />
             </div>
             <div className="flex-1 min-w-0">
@@ -384,13 +397,13 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
             </div>
             <button
               onClick={(e) => { e.stopPropagation(); signOut(); }}
-              className="p-1.5 rounded-md transition-colors duration-200"
-              style={{ color: 'rgba(255,255,255,0.3)' }}
+              className="p-1 rounded-md transition-colors duration-200 flex-shrink-0"
+              style={{ color: '#9CA3AF' }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.3)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#9CA3AF'; }}
               title="Déconnexion"
             >
-              <LogOut className="w-4 h-4" strokeWidth={1.5} />
+              <LogOut size={14} strokeWidth={1.5} />
             </button>
           </div>
         </div>
