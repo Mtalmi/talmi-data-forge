@@ -39,7 +39,7 @@ const DEFAULT_OPEN: Record<string, boolean> = {
   'operations': true,
   'finance': false,
   'ressources': false,
-  'intelligence': false,
+  'intelligence': true,
   'administration': false,
 };
 
