@@ -222,9 +222,25 @@ export function ExportReportsDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <button
+          data-export-reports
+          style={{
+            border: '1px solid #D4A843',
+            color: '#D4A843',
+            background: 'transparent',
+            borderRadius: 8,
+            padding: '8px 20px',
+            cursor: 'pointer',
+            fontSize: 14,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.1)')}
+          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+        >
           <Download className="h-4 w-4" />{s.export}
-        </Button>
+        </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
