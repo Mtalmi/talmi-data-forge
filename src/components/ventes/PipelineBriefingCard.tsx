@@ -29,9 +29,7 @@ export function PipelineBriefingCard() {
 
   const hasBriefing = briefing && briefing.briefing_text;
 
-  // Highlight key numbers in briefing text
   const highlightNumbers = (text: string) => {
-    // Match patterns like "847 000 DH", "62%", "+5pts", "30 jours", numbers with DH/MAD
     const parts = text.split(/(\d[\d\s]*(?:\.\d+)?(?:\s*(?:DH|MAD|%|pts|jours|mois|semaines)))/gi);
     return parts.map((part, i) => {
       if (/\d/.test(part) && /(?:DH|MAD|%|pts|jours|mois|semaines)/i.test(part)) {
@@ -43,10 +41,11 @@ export function PipelineBriefingCard() {
 
   return (
     <div style={{
-      background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
+      background: 'rgba(212,168,67,0.02)',
       border: '1px solid #1E2D4A',
       borderRadius: 12,
       borderTop: '2px solid #D4A843',
+      borderLeft: '3px solid #D4A843',
       padding: 20,
       position: 'relative',
       overflow: 'hidden',
@@ -60,26 +59,15 @@ export function PipelineBriefingCard() {
         }
       `}</style>
 
-      {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-        <div style={{
-          width: 28, height: 28, borderRadius: 8,
-          background: 'rgba(245,158,11,0.15)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
+        <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(245,158,11,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Zap size={14} color="#D4A843" />
         </div>
         <span style={{ fontFamily: 'ui-monospace, monospace', color: '#D4A843', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px' }}>
           Briefing Pipeline
         </span>
         <div style={{ flex: 1 }} />
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 5,
-          padding: '3px 10px', borderRadius: 20,
-          background: 'rgba(212,168,67,0.06)',
-          border: '1px solid #D4A843',
-          backdropFilter: 'blur(8px)',
-        }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px', borderRadius: 20, background: 'rgba(212,168,67,0.06)', border: '1px solid #D4A843', backdropFilter: 'blur(8px)' }}>
           <span style={{ fontSize: 9, fontWeight: 600, color: '#D4A843', letterSpacing: '0.05em' }}>Généré par IA · Claude Opus</span>
         </div>
       </div>
