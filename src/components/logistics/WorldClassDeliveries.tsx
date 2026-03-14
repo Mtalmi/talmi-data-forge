@@ -1107,10 +1107,10 @@ function IntelligenceIATab() {
             <p style={{ fontSize: 12, color: T.textSec, marginBottom: 8, lineHeight: 1.5 }}>T-04: Atlas Concrete → Résidences Atlas → Groupe A (Rabat Center) → Retour</p>
             <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>Distance: <span style={{ color: T.textPri }}>52 km</span> · Temps: <span style={{ color: T.textPri }}>1h20</span> · Carburant: <span style={{ color: T.textPri }}>22L</span></p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
-              {[T.gold, T.success, T.info, T.textDim].map((c, i) => (
+              {[T.gold, T.gold, T.gold, T.gold].map((c, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
                   <div style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />
-                  {i < 3 && <div style={{ width: 30, height: 2, background: `linear-gradient(90deg, ${c}, ${[T.success, T.info, T.textDim][i]})` }} />}
+                  {i < 3 && <div style={{ width: 30, height: 2, background: T.gold }} />}
                 </div>
               ))}
             </div>
