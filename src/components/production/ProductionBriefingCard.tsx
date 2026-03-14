@@ -51,12 +51,11 @@ export function ProductionBriefingCard() {
 
       {/* Card body */}
       <div style={{
-        background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
-        border: '1px solid #1E2D4A',
+        background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
+        border: '1px solid rgba(255,255,255,0.05)',
+        borderLeft: '3px solid #D4A843',
+        borderTop: '2px solid #D4A843',
         borderRadius: 12,
-        borderTop: '2px solid transparent',
-        borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
-        borderImageSlice: '1 1 0 1',
         padding: 20,
         position: 'relative',
         overflow: 'hidden',

@@ -121,7 +121,6 @@ function MiniSparkline({ data, color = T.gold }: { data: number[]; color?: strin
   const rawMax = Math.max(...data, 1);
   const rawMin = Math.min(...data, 0);
   const rawRange = rawMax - rawMin || 1;
-  // Ensure minimum visual range so tight data (e.g. 93-100) renders as a wave, not a block
   const padding = rawRange < 20 ? 20 : 0;
   const min = rawMin - padding * 0.3;
   const max = rawMax + padding * 0.7;
@@ -384,7 +383,6 @@ export default function WorldClassProduction() {
     if (hasData) {
       return { produced, inProgress, planned, totalVolume, completedBatches, conformity, totalBatches };
     }
-    // No data — show zeros
     return {
       produced: 0, inProgress: 0, planned: 0,
       totalVolume: 0, completedBatches: 0, conformity: 100, totalBatches: 0,
@@ -550,8 +548,8 @@ export default function WorldClassProduction() {
                 padding: '6px 16px',
                 borderRadius: 8,
                 background: 'transparent',
-                border: '1px solid rgba(255,255,255,0.12)',
-                color: 'rgba(255,255,255,0.7)',
+                border: '1px solid #D4A843',
+                color: '#D4A843',
                 fontFamily: 'DM Sans, sans-serif',
                 fontWeight: 600,
                 fontSize: 13,
@@ -602,6 +600,7 @@ export default function WorldClassProduction() {
           <SectionHeader icon={Activity} label="Workflow de Production" />
           <div style={{
             background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+            borderTop: '2px solid #D4A843',
             borderRadius: 12, padding: '20px 16px',
           }}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-0">
@@ -622,6 +621,7 @@ export default function WorldClassProduction() {
             {/* Hourly Production */}
             <div style={{
               background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+              borderTop: '2px solid #D4A843',
               borderRadius: 12, padding: 20,
             }}>
               <div className="flex justify-between items-center mb-4">
@@ -672,6 +672,7 @@ export default function WorldClassProduction() {
             {/* Production par Formule */}
             <div style={{
               background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+              borderTop: '2px solid #D4A843',
               borderRadius: 12, padding: 20,
             }}>
               <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 16 }}>Production par Formule</p>
@@ -729,6 +730,7 @@ export default function WorldClassProduction() {
             {/* Weekly quality chart */}
             <div style={{
               background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+              borderTop: '2px solid #D4A843',
               borderRadius: 12, padding: 20,
             }}>
               <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 16 }}>Qualité Hebdomadaire</p>
@@ -765,6 +767,7 @@ export default function WorldClassProduction() {
             <div className="flex flex-col gap-4" style={{ minHeight: '100%' }}>
               <div style={{
                 background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+                borderTop: '2px solid #D4A843',
                 borderRadius: 12, padding: 20, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
               }}>
                 <div className="flex justify-between items-center mb-2">
@@ -780,6 +783,7 @@ export default function WorldClassProduction() {
 
               <div style={{
                 background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+                borderTop: '2px solid #D4A843',
                 borderRadius: 12, padding: 20,
               }}>
                 <div className="flex items-center gap-2 mb-3">
@@ -799,6 +803,7 @@ export default function WorldClassProduction() {
               {qualityVariances.length > 0 && (
                 <div style={{
                   background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+                  borderTop: '2px solid #D4A843',
                   borderRadius: 12, padding: 20,
                 }}>
                   <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 12 }}>Détail des variances</p>

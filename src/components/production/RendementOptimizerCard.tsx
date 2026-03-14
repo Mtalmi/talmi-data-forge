@@ -23,28 +23,24 @@ function useProdRendement() {
       const yesterdayStart = startOfDay(subDays(today, 1)).toISOString();
       const yesterdayEnd = endOfDay(subDays(today, 1)).toISOString();
 
-      // Today's BLs for volume produced
       const { data: bls } = await supabase
         .from('bons_livraison_reels')
         .select('volume_m3, date_livraison, heure_depart_centrale, heure_retour_centrale, production_batch_time')
         .gte('date_livraison', todayStart.split('T')[0])
         .lte('date_livraison', todayEnd.split('T')[0]);
 
-      // Planned volume from bons_commande
       const { data: bcs } = await supabase
         .from('bons_commande')
         .select('volume_m3, date_livraison_souhaitee')
         .gte('date_livraison_souhaitee', todayStart.split('T')[0])
         .lte('date_livraison_souhaitee', todayEnd.split('T')[0]);
 
-      // Today's batches for timing
       const { data: todayBatches } = await supabase
         .from('production_batches')
         .select('created_at, entered_at')
         .gte('created_at', todayStart)
         .lte('created_at', todayEnd);
 
-      // Yesterday's batches for comparison
       const { data: yesterdayBatches } = await supabase
         .from('production_batches')
         .select('created_at, entered_at')
@@ -54,7 +50,6 @@ function useProdRendement() {
       const producedVolume = (bls || []).reduce((s, b) => s + (b.volume_m3 || 0), 0);
       const plannedVolume = (bcs || []).reduce((s, b) => s + (b.volume_m3 || 0), 0);
 
-      // Average batch time (created_at to entered_at as proxy)
       const calcAvg = (batches: any[] | null) => {
         if (!batches || batches.length === 0) return null;
         const diffs = batches
@@ -64,7 +59,6 @@ function useProdRendement() {
         return Math.round(diffs.reduce((a: number, b: number) => a + b, 0) / diffs.length);
       };
 
-      // Active hours: distinct hours with BLs
       const activeHoursSet = new Set<number>();
       (bls || []).forEach((bl: any) => {
         if (bl.heure_depart_centrale) {
@@ -76,7 +70,6 @@ function useProdRendement() {
           activeHoursSet.add(h);
         }
       });
-      // Also count batch creation hours
       (todayBatches || []).forEach((b: any) => {
         if (b.created_at) activeHoursSet.add(new Date(b.created_at).getHours());
       });
@@ -116,6 +109,7 @@ function MetricCard({ title, children }: { title: string; children: React.ReactN
     <div style={{
       background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
       border: '1px solid rgba(255,255,255,0.05)',
+      borderTop: '2px solid #D4A843',
       borderRadius: 12,
       padding: 20,
       flex: 1,

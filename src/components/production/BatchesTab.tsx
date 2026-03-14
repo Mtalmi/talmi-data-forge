@@ -360,7 +360,9 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
         <div style={{ width: 320, flexShrink: 0 }}>
           <div style={{
             background: 'rgba(255,255,255,0.02)', border: `1px solid ${T.cardBorder}`,
+            borderTop: '2px solid #D4A843',
             borderRadius: 12, height: '100%', display: 'flex', flexDirection: 'column',
+          }}>
           }}>
             {/* Header */}
             <div style={{ padding: 16, borderBottom: `1px solid ${T.cardBorder}` }}>
