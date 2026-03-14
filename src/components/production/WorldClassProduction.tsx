@@ -423,7 +423,11 @@ export default function WorldClassProduction() {
       '6h': 8, '7h': 22, '8h': 48, '9h': 65, '10h': 82, '11h': 90,
       '12h': 55, '13h': 98, '14h': 88, '15h': 78, '16h': 72, '17h': 60, '18h': 5,
     };
-    return Object.entries(demoVolumes).map(([hour, volume]) => ({ hour, volume, objectif: 90 }));
+    const lastWeekVolumes: Record<string, number> = {
+      '6h': 5, '7h': 18, '8h': 40, '9h': 55, '10h': 72, '11h': 80,
+      '12h': 48, '13h': 85, '14h': 78, '15h': 68, '16h': 62, '17h': 50, '18h': 3,
+    };
+    return Object.entries(demoVolumes).map(([hour, volume]) => ({ hour, volume, objectif: 90, lastWeek: lastWeekVolumes[hour] || 0 }));
   }, [bons]);
 
   const hasHourlyData = hourlyData.some(d => d.volume > 0);
