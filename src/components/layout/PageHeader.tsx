@@ -2,7 +2,7 @@ import { ReactNode, useState, useEffect } from 'react';
 import { Bell } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
-/* ── Live clock (JetBrains Mono, gray) ── */
+/* ── Live clock (monospace, gray) ── */
 function LiveClock() {
   const [time, setTime] = useState('');
   useEffect(() => {
@@ -22,38 +22,18 @@ export interface PageTab {
 
 /* ── Props ── */
 export interface PageHeaderProps {
-  /** Lucide icon component for the branded circle */
   icon: LucideIcon;
-  /** Module name displayed after "TBOS " */
   title: string;
-  /** Small subtitle below the title */
   subtitle: string;
-  /** Optional tab pills — centered between branding and utilities */
   tabs?: PageTab[];
-  /** Currently active tab id */
   activeTab?: string;
-  /** Tab change callback */
   onTabChange?: (id: string) => void;
-  /** Action buttons / controls rendered on the right (before clock & bell) */
   actions?: ReactNode;
-  /** Whether to show a loading spinner */
   loading?: boolean;
 }
 
-const T = {
-  gold: '#FFD700',
-  goldBorder: 'rgba(245, 158, 11, 0.25)',
-  navy: '#0B1120',
-  textSec: '#94A3B8',
-  textDim: '#64748B',
-  danger: '#EF4444',
-};
+const MONO = 'ui-monospace, SFMono-Regular, monospace';
 
-/**
- * Standardized TBOS page header — matches the Production / Planning gold standard.
- *
- * Row 1 (sticky): [Icon + TBOS Title] — [Tabs (centered)] — [Clock + Bell + Spinner]
- */
 export function PageHeader({
   icon: Icon,
   title,
@@ -95,40 +75,40 @@ export function PageHeader({
               width: 36,
               height: 36,
               borderRadius: 10,
-              background: `linear-gradient(135deg, ${T.gold}, #B8860B)`,
+              background: 'linear-gradient(135deg, #D4A843, #B8860B)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
             }}
           >
-            <Icon size={18} color={T.navy} />
+            <Icon size={18} color="#0B1120" />
           </div>
           <div>
-            <span style={{ color: T.textSec, fontWeight: 700, fontSize: 13 }}>TBOS </span>
-            <span style={{ color: T.gold, fontWeight: 800, fontSize: 13 }}>{title}</span>
-            <p className="hidden sm:block" style={{ color: T.textDim, fontSize: 10, lineHeight: 1 }}>{subtitle}</p>
+            <span style={{ fontFamily: MONO, color: '#94A3B8', fontWeight: 700, fontSize: 13 }}>TBOS </span>
+            <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600, fontSize: 18 }}>{title}</span>
+            <p className="hidden sm:block" style={{ fontFamily: MONO, color: '#9CA3AF', fontSize: 13 }}>{subtitle}</p>
           </div>
         </div>
 
         {/* ── Tabs (centered) ── */}
         {tabs && tabs.length > 0 ? (
-          <div className="flex gap-1 flex-1 justify-center overflow-x-auto scrollbar-hide" style={{ minWidth: 0 }}>
+          <div className="flex gap-8 flex-1 justify-center overflow-x-auto scrollbar-hide" style={{ minWidth: 0 }}>
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => onTabChange?.(tab.id)}
                 style={{
-                  padding: '6px 12px',
-                  borderRadius: 0,
+                  padding: '6px 0',
                   cursor: 'pointer',
                   background: 'transparent',
                   border: 'none',
                   borderBottom: activeTab === tab.id ? '2px solid #D4A843' : '2px solid transparent',
-                  color: activeTab === tab.id ? '#fff' : '#94A3B8',
-                  fontFamily: 'DM Sans, sans-serif',
-                  fontWeight: activeTab === tab.id ? 600 : 500,
-                  fontSize: 13,
+                  color: activeTab === tab.id ? '#D4A843' : '#9CA3AF',
+                  fontFamily: MONO,
+                  fontWeight: 400,
+                  fontSize: 12,
+                  letterSpacing: '1.5px',
                   transition: 'all 200ms',
                   whiteSpace: 'nowrap',
                   flexShrink: 0,
@@ -140,7 +120,6 @@ export function PageHeader({
             ))}
           </div>
         ) : (
-          /* spacer when no tabs */
           <div className="flex-1" />
         )}
 
@@ -155,16 +134,16 @@ export function PageHeader({
         <div className="hidden sm:flex items-center gap-16 flex-shrink-0">
           <span
             style={{
-              fontFamily: 'JetBrains Mono, monospace',
+              fontFamily: MONO,
               fontSize: 11,
-              color: '#6B7280',
+              color: '#9CA3AF',
               letterSpacing: '0.02em',
             }}
           >
             <LiveClock />
           </span>
           <div style={{ position: 'relative', cursor: 'pointer' }}>
-            <Bell size={18} color={T.textSec} />
+            <Bell size={18} color="#9CA3AF" />
             <div
               style={{
                 position: 'absolute',
@@ -173,7 +152,7 @@ export function PageHeader({
                 width: 8,
                 height: 8,
                 borderRadius: '50%',
-                background: T.danger,
+                background: '#EF4444',
               }}
             />
           </div>
@@ -182,7 +161,7 @@ export function PageHeader({
               style={{
                 width: 14,
                 height: 14,
-                border: `2px solid ${T.gold}`,
+                border: '2px solid #D4A843',
                 borderTopColor: 'transparent',
                 borderRadius: '50%',
                 animation: 'spin 0.6s linear infinite',

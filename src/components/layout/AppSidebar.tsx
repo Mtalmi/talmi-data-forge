@@ -49,12 +49,10 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
   const { t } = useI18n();
   const nav = t.nav as Record<string, string>;
   
-  // Effective role checks (real role OR preview mode)
   const effCentraliste = isCentraliste || previewRole === 'centraliste';
   const effRespTech = isResponsableTechnique || previewRole === 'responsable_technique';
   const effAuditeur = isAuditeur || previewRole === 'auditeur';
   
-  // Routes blocked per role
   const blockedRoutes = useMemo(() => {
     const blocked = new Set<string>();
     if (effCentraliste) {
@@ -72,7 +70,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
   const sections: NavSection[] = useMemo(() => [
     {
       key: 'command-center',
-      label: 'Command Center',
+      label: 'COMMAND CENTER',
       items: [
         { title: nav.dashboard || 'Tableau de Bord', url: '/', icon: LayoutDashboard },
         { title: nav.production || 'Production', url: '/production', icon: Factory },
@@ -81,7 +79,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
     },
     {
       key: 'operations',
-      label: nav.sectionOperations || 'Opérations',
+      label: nav.sectionOperations || 'OPÉRATIONS',
       items: [
         { title: nav.sales || 'Ventes', url: '/ventes', icon: ShoppingCart, badge: 6 },
         { title: nav.clients || 'Clients', url: '/clients', icon: Users },
@@ -94,7 +92,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
     },
     {
       key: 'finance',
-      label: nav.sectionFinance || 'Finance',
+      label: nav.sectionFinance || 'FINANCE',
       items: [
         { title: nav.expenses || 'Dépenses', url: '/depenses', icon: Wallet },
         { title: nav.payments || 'Paiements', url: '/paiements', icon: CreditCard },
@@ -105,7 +103,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
     },
     {
       key: 'ressources',
-      label: nav.sectionResources || 'Ressources',
+      label: nav.sectionResources || 'RESSOURCES',
       items: [
         { title: nav.contractors || 'Prestataires', url: '/prestataires', icon: Handshake },
         { title: nav.maintenance || 'Maintenance', url: '/maintenance', icon: Wrench },
@@ -115,7 +113,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
     },
     {
       key: 'intelligence',
-      label: nav.sectionIntelligence || 'Intelligence',
+      label: nav.sectionIntelligence || 'INTELLIGENCE',
       items: [
         { title: nav.aiAgent || 'Agent IA', url: '/operations-agent', icon: Bot, badge: '●' },
         { title: nav.analytics || 'Analytics', url: '/analytics', icon: TrendingUp },
@@ -126,7 +124,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
     },
     {
       key: 'administration',
-      label: nav.sectionAdmin || 'Administration',
+      label: nav.sectionAdmin || 'ADMINISTRATION',
       items: [
         { title: nav.profile || 'Profil', url: '/user_profile', icon: User },
         { title: nav.security || 'Sécurité', url: '/securite', icon: Shield },
@@ -138,7 +136,6 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
     },
   ], [nav]);
 
-  // Filter out blocked routes from sidebar
   const filteredSections = useMemo(() => {
     if (blockedRoutes.size === 0) return sections;
     return sections.map(section => ({
@@ -147,7 +144,6 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
     })).filter(section => section.items.length > 0);
   }, [sections, blockedRoutes]);
 
-  // Auto-open section containing the active route
   const activeSectionKeys = useMemo(() => {
     const keys: string[] = [];
     for (const s of filteredSections) {
@@ -195,12 +191,12 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       )}
       style={{
         width: '16rem',
-        background: 'linear-gradient(180deg, #0a0f1a 0%, #0d1526 50%, #111827 100%)',
-        borderRight: '1px solid rgba(255, 215, 0, 0.08)',
+        background: '#0B1120',
+        borderRight: '1px solid rgba(212, 168, 67, 0.08)',
       }}
     >
       {/* Gold edge highlight */}
-      <div className="absolute top-0 left-0 bottom-0 w-px" style={{ background: 'linear-gradient(180deg, rgba(255,215,0,0.4) 0%, rgba(255,215,0,0.08) 50%, transparent 100%)' }} />
+      <div className="absolute top-0 left-0 bottom-0 w-px" style={{ background: 'linear-gradient(180deg, rgba(212,168,67,0.4) 0%, rgba(212,168,67,0.08) 50%, transparent 100%)' }} />
 
       {/* ── BRAND HEADER ── */}
       <div className="px-5 pt-6 pb-5 shrink-0">
@@ -208,27 +204,28 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
           <div
             className="w-10 h-10 rounded-xl flex items-center justify-center tbos-sidebar-logo"
             style={{
-              background: 'linear-gradient(135deg, #FFD700 0%, #B8860B 100%)',
-              boxShadow: '0 4px 16px rgba(255, 215, 0, 0.3), 0 0 24px rgba(255, 215, 0, 0.15)',
+              background: 'linear-gradient(135deg, #D4A843 0%, #B8860B 100%)',
+              boxShadow: '0 4px 16px rgba(212, 168, 67, 0.3), 0 0 24px rgba(212, 168, 67, 0.15)',
             }}
           >
-            <span className="text-base font-black text-black/85 tracking-tight">T</span>
+            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 16, fontWeight: 700, color: '#0B1120' }}>T</span>
           </div>
           <div>
-            <div className="text-base font-bold text-white tracking-wider">TBOS</div>
-            <div className="text-[9px] uppercase tracking-[0.25em]" style={{ color: 'rgba(255,215,0,0.5)' }}>Suite</div>
+            <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 18, fontWeight: 700, color: '#D4A843', letterSpacing: '0.05em' }}>TBOS</div>
+            <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 10, fontWeight: 300, letterSpacing: '3px', color: '#9CA3AF', textTransform: 'uppercase' as const }}>SUITE</div>
           </div>
         </div>
       </div>
 
       {/* ── SEARCH SHORTCUT ── */}
-      <div className="flex items-center gap-2 mx-4 my-2 px-3 py-2 rounded-lg cursor-default select-none shrink-0" style={{ background: 'rgba(255, 215, 0, 0.04)', border: '1px solid rgba(255, 215, 0, 0.08)' }}>
-        <Search className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'rgba(255,215,0,0.4)' }} strokeWidth={1.5} />
-        <span className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>Recherche...</span>
+      <div className="flex items-center gap-2 mx-4 my-2 px-3 py-2 rounded-lg cursor-default select-none shrink-0" style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(212, 168, 67, 0.15)', borderRadius: 8 }}>
+        <Search className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#9CA3AF' }} strokeWidth={1.5} />
+        <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: '#9CA3AF' }}>Recherche...</span>
+        <span className="ml-auto" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, background: 'rgba(255,255,255,0.1)', borderRadius: 4, padding: '1px 5px', color: '#9CA3AF' }}>⌘K</span>
       </div>
 
       {/* ── NAVIGATION ── */}
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 py-2 scrollbar-thin scrollbar-thumb-white/5 scrollbar-track-transparent" style={{ scrollbarWidth: 'thin' }}>
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 py-2 tbos-sidebar-scroll" style={{ scrollbarWidth: 'thin' }}>
         {filteredSections.map((section, si) => {
           const isOpen = openSections[section.key] ?? false;
           const sectionHasActive = section.items.some(item => isActive(item.url));
@@ -237,7 +234,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
             <div key={section.key}>
               {/* Divider above section */}
               {si > 0 && (
-                <div className="mx-5 mt-2" style={{ height: '1px', background: 'linear-gradient(90deg, rgba(255,215,0,0.12) 0%, rgba(255,215,0,0.04) 100%)' }} />
+                <div className="mx-5 mt-2" style={{ height: '1px', background: 'rgba(212,168,67,0.08)' }} />
               )}
 
               {/* Section header */}
@@ -247,21 +244,26 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
                 style={{ paddingTop: si === 0 ? '4px' : '20px', paddingBottom: '10px' }}
               >
                 <ChevronDown
-                  className="w-3 h-3 group-hover:text-gray-400 transition-transform duration-200 flex-shrink-0"
-                  style={{ transform: isOpen ? 'rotate(0deg)' : 'rotate(-90deg)', color: 'rgba(255,215,0,0.3)' }}
+                  className="w-3 h-3 transition-transform duration-200 flex-shrink-0"
+                  style={{ transform: isOpen ? 'rotate(0deg)' : 'rotate(-90deg)', color: 'rgba(212,168,67,0.3)' }}
                   strokeWidth={2.5}
                 />
-                <span className={cn(
-                  'text-[10px] uppercase tracking-[0.18em] font-bold whitespace-nowrap transition-colors',
-                  sectionHasActive ? 'text-amber-400/70' : 'text-gray-500 group-hover:text-gray-400'
-                )}
-                  style={{ fontFamily: "'Inter', 'Helvetica Neue', sans-serif", letterSpacing: '0.18em' }}
+                <span
+                  style={{
+                    fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                    fontSize: 10,
+                    letterSpacing: '2px',
+                    fontWeight: 600,
+                    color: sectionHasActive ? '#D4A843' : '#9CA3AF',
+                    textTransform: 'uppercase' as const,
+                    whiteSpace: 'nowrap',
+                  }}
                 >
                   {section.label}
                 </span>
                 <div className="flex-1" />
                 {!isOpen && (
-                  <span className="text-[8px] font-mono tabular-nums" style={{ color: 'rgba(255,215,0,0.2)' }}>{section.items.length}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 8, color: 'rgba(212,168,67,0.2)' }}>{section.items.length}</span>
                 )}
               </button>
 
@@ -280,20 +282,17 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
                       <button
                         key={item.url}
                         onClick={() => handleNav(item.url)}
-                        className={cn(
-                          'tbos-nav-item relative w-full flex items-center gap-3 px-4 py-2 mx-3 rounded-lg text-left transition-all duration-200 group cursor-pointer',
-                          active ? 'tbos-nav-active' : ''
-                        )}
+                        className="relative w-full flex items-center gap-3 px-4 py-2 mx-3 rounded-lg text-left transition-all duration-200 group cursor-pointer"
                         style={{
                           width: 'calc(100% - 24px)',
                           ...(active ? {
-                            background: 'linear-gradient(90deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.03) 100%)',
-                            borderLeft: '2px solid #FFD700',
+                            background: 'rgba(212, 168, 67, 0.1)',
+                            borderLeft: '3px solid #D4A843',
                           } : {}),
                         }}
                         onMouseEnter={e => {
                           if (!active) {
-                            (e.currentTarget as HTMLElement).style.background = 'linear-gradient(90deg, rgba(255,215,0,0.06) 0%, rgba(255,255,255,0.02) 100%)';
+                            (e.currentTarget as HTMLElement).style.background = 'rgba(212, 168, 67, 0.08)';
                           }
                         }}
                         onMouseLeave={e => {
@@ -301,27 +300,36 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
                         }}
                       >
                         <item.icon
-                          className={cn(
-                            'w-[18px] h-[18px] flex-shrink-0 transition-colors duration-200',
-                            active ? '' : 'text-gray-500 group-hover:text-gray-300'
-                          )}
+                          className="w-[18px] h-[18px] flex-shrink-0 transition-colors duration-200"
                           strokeWidth={1.5}
-                          style={active ? { color: '#FFD700' } : undefined}
+                          style={{ color: active ? '#D4A843' : '#9CA3AF' }}
                         />
                         <span
-                          className={cn('text-sm flex-1 truncate transition-colors duration-200', active ? 'font-semibold' : 'font-medium text-gray-400 group-hover:text-gray-200')}
-                          style={active ? { color: '#FFD700' } : undefined}
+                          className="flex-1 truncate transition-colors duration-200"
+                          style={{
+                            fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                            fontSize: 13,
+                            fontWeight: active ? 600 : 400,
+                            color: active ? '#D4A843' : '#9CA3AF',
+                          }}
                         >
                           {item.title}
                         </span>
                         {item.badge && item.badge !== '●' && (
                           <span
-                            className="tbos-badge-pop flex items-center justify-center rounded-full text-[10px] font-bold min-w-[20px] h-[20px] px-1.5"
                             style={{
-                              background: 'rgba(255, 65, 54, 0.9)',
-                              color: '#fff',
-                              boxShadow: '0 0 8px rgba(255, 65, 54, 0.4)',
-                              border: '1.5px solid rgba(255, 65, 54, 0.6)',
+                              fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                              fontSize: 10,
+                              fontWeight: 600,
+                              background: '#EF4444',
+                              color: '#FFFFFF',
+                              borderRadius: '50%',
+                              minWidth: 20,
+                              height: 20,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              padding: '0 4px',
                             }}
                           >
                             {item.badge}
@@ -343,40 +351,42 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       </nav>
 
       {/* ── USER PROFILE CARD ── */}
-      <div className="shrink-0" style={{ borderTop: '1px solid rgba(255, 215, 0, 0.06)' }}>
+      <div className="shrink-0" style={{ borderTop: '1px solid rgba(212, 168, 67, 0.06)' }}>
         <div
-          className="mx-4 my-3 p-3 rounded-xl cursor-pointer transition-all duration-200 hover:border-amber-500/20"
+          className="mx-4 my-3 p-3 rounded-xl cursor-pointer transition-all duration-200"
           style={{
-            background: 'rgba(255, 215, 0, 0.02)',
-            border: '1px solid rgba(255, 215, 0, 0.06)',
+            background: 'rgba(212, 168, 67, 0.02)',
+            border: '1px solid rgba(212, 168, 67, 0.06)',
           }}
         >
           <div className="flex items-center gap-3">
             <div className="relative">
               <div
-                className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold"
+                className="w-9 h-9 rounded-full flex items-center justify-center"
                 style={{
-                  background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0.08) 100%)',
-                  color: '#FFD700',
-                  border: '1.5px solid rgba(255, 215, 0, 0.3)',
+                  background: '#D4A843',
+                  color: '#0F1629',
+                  fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                  fontSize: 12,
+                  fontWeight: 700,
                 }}
               >
                 {userInitials}
               </div>
                <div
                  className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full"
-                 style={{ border: '2px solid #0a0f1a' }}
+                 style={{ border: '2px solid #0B1120' }}
                />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-xs text-white font-semibold truncate">{userName} Talmi</div>
-              <div className="text-[9px] truncate" style={{ color: 'rgba(255,215,0,0.35)' }}>Directeur Général</div>
+              <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 12, color: '#FFFFFF', fontWeight: 600 }} className="truncate">{userName} Talmi</div>
+              <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: '#9CA3AF' }} className="truncate">Directeur Général</div>
             </div>
             <button
               onClick={(e) => { e.stopPropagation(); signOut(); }}
               className="p-1.5 rounded-md transition-colors duration-200"
               style={{ color: 'rgba(255,255,255,0.3)' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#FFD700'; }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.3)'; }}
               title="Déconnexion"
             >
