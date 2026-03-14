@@ -948,6 +948,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
           </div>
         </div>
 
+        {/* Zone separator */}
+        <div style={{ height: 1, background: 'rgba(212, 168, 67, 0.2)', margin: '32px 0' }} />
+
         {/* ═══════════════════════════════════════════════════
             ZONE 3: INTELLIGENCE IA
             ═══════════════════════════════════════════════════ */}
@@ -967,145 +970,170 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
             }
           />
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
-            {/* 1. AGENT IA: ORCHESTRATION LIVRAISONS */}
-            <section>
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <span style={{ color: '#D4A843', fontSize: 14, animation: 'tbos-pulse 3s ease-in-out infinite' }}>✦</span>
-                  <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>AGENT IA: ORCHESTRATION LIVRAISONS</span>
-                </div>
-                <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>Généré par IA · Claude Opus</span>
-              </div>
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
-                border: `1px solid ${T.cardBorder}`,
-                borderTop: '2px solid #D4A843',
-                borderLeft: '3px solid #D4A843',
-                borderRadius: 12, padding: 20,
-              }}>
-                <div className="flex flex-col gap-4">
-                  <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
-                    <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                      Routes optimisées: <span style={{ color: '#fff', fontWeight: 600 }}>3 livraisons regroupées secteur Casa Nord</span> ce matin. Économie carburant estimée: <span style={{ color: '#34d399', fontWeight: 600 }}>180 DH</span>. Temps gagné: <span style={{ color: '#34d399', fontWeight: 600 }}>45 min</span>.
-                    </p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
-                    <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                      Toupie <span style={{ color: '#fff', fontWeight: 600 }}>TOU-03</span> en surcharge cette semaine (<span style={{ color: '#F59E0B', fontWeight: 600 }}>6 rotations/jour vs recommandé 5</span>). Recommandation: basculer 2 livraisons sur TOU-01 demain.
-                    </p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444' }} />
-                    <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                      Livraison <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-014 Saudi Readymix (50m³)</span>: volume élevé nécessite 2 rotations. Prévoir TOU-03 en backup si retard TOU-01.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-2 mt-4">
-                  <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(16,185,129,0.12)', color: '#34d399' }}>Économie: 180 DH</span>
-                  <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>3 optimisations</span>
-                </div>
-              </div>
-            </section>
+          {/* Compact AI Agent Card Grid */}
+          {(() => {
+            const [expandedAgent, setExpandedAgent] = React.useState<string | null>(null);
 
-            {/* 2. AGENT IA MÉTÉO */}
-            <section>
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <span style={{ color: '#D4A843', fontSize: 14, animation: 'tbos-pulse 3s ease-in-out infinite' }}>✦</span>
-                  <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>AGENT IA MÉTÉO</span>
-                </div>
-                <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>Généré par IA · Claude Opus</span>
-              </div>
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
-                border: `1px solid ${T.cardBorder}`,
-                borderTop: '2px solid #D4A843',
-                borderLeft: '3px solid #D4A843',
-                borderRadius: 12, padding: 20,
-              }}>
-                <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.8 }}>
-                  Prévisions 48h: <span style={{ color: '#fff', fontWeight: 600 }}>Samedi 14 mars</span> — température <span style={{ color: '#EF4444', fontWeight: 600 }}>38°C</span> prévue à 14h. Impact béton: temps de prise réduit de <span style={{ color: '#F59E0B', fontWeight: 600 }}>20%</span>, risque fissuration élevé. Recommandations: (1) Ajouter retardateur de prise aux formules B25/B30, (2) Planifier livraisons avant 11h, (3) Alerter 3 chantiers identifiés à risque. <span style={{ color: '#fff', fontWeight: 600 }}>Dimanche 15</span>: conditions normales, aucun ajustement nécessaire.
-                </p>
-                <div className="flex gap-2 mt-4">
-                  <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(239,68,68,0.12)', color: '#EF4444' }}>Risque: Élevé samedi</span>
-                  <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 92%</span>
-                </div>
-              </div>
-            </section>
+            const agents = [
+              {
+                id: 'orchestration',
+                name: 'Orchestration Livraisons',
+                metric: 'Économie: 180 DH',
+                metricBg: 'rgba(16,185,129,0.12)',
+                metricColor: '#34d399',
+                content: (
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-start gap-3">
+                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
+                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                        Routes optimisées: <span style={{ color: '#fff', fontWeight: 600 }}>3 livraisons regroupées secteur Casa Nord</span> ce matin. Économie carburant estimée: <span style={{ color: '#34d399', fontWeight: 600 }}>180 DH</span>. Temps gagné: <span style={{ color: '#34d399', fontWeight: 600 }}>45 min</span>.
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
+                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                        Toupie <span style={{ color: '#fff', fontWeight: 600 }}>TOU-03</span> en surcharge cette semaine (<span style={{ color: '#F59E0B', fontWeight: 600 }}>6 rotations/jour vs recommandé 5</span>). Recommandation: basculer 2 livraisons sur TOU-01 demain.
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444' }} />
+                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                        Livraison <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-014 Saudi Readymix (50m³)</span>: volume élevé nécessite 2 rotations. Prévoir TOU-03 en backup si retard TOU-01.
+                      </p>
+                    </div>
+                    <div className="flex gap-2 mt-2">
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(16,185,129,0.12)', color: '#34d399' }}>Économie: 180 DH</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>3 optimisations</span>
+                    </div>
+                  </div>
+                ),
+              },
+              {
+                id: 'meteo',
+                name: 'Météo',
+                metric: 'Risque: Élevé samedi',
+                metricBg: 'rgba(239,68,68,0.12)',
+                metricColor: '#EF4444',
+                content: (
+                  <div>
+                    <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.8 }}>
+                      Prévisions 48h: <span style={{ color: '#fff', fontWeight: 600 }}>Samedi 14 mars</span> — température <span style={{ color: '#EF4444', fontWeight: 600 }}>38°C</span> prévue à 14h. Impact béton: temps de prise réduit de <span style={{ color: '#F59E0B', fontWeight: 600 }}>20%</span>, risque fissuration élevé. Recommandations: (1) Ajouter retardateur de prise aux formules B25/B30, (2) Planifier livraisons avant 11h, (3) Alerter 3 chantiers identifiés à risque. <span style={{ color: '#fff', fontWeight: 600 }}>Dimanche 15</span>: conditions normales, aucun ajustement nécessaire.
+                    </p>
+                    <div className="flex gap-2 mt-4">
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(239,68,68,0.12)', color: '#EF4444' }}>Risque: Élevé samedi</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 92%</span>
+                    </div>
+                  </div>
+                ),
+              },
+              {
+                id: 'retards',
+                name: 'Prédiction Retards',
+                metric: '1 action requise',
+                metricBg: 'rgba(245,158,11,0.12)',
+                metricColor: '#F59E0B',
+                content: (
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-start gap-3">
+                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
+                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-014 Saudi Readymix</span>: probabilité retard <span style={{ color: '#F59E0B', fontWeight: 600 }}>35%</span> — distance 20km, trafic historique créneau 13h élevé, temps chargement F-B25. Recommandation: <span style={{ color: '#F59E0B', fontWeight: 600 }}>avancer départ de 15 min</span>.
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
+                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-015 BTP Maroc</span>: probabilité retard <span style={{ color: '#34d399', fontWeight: 600 }}>8%</span> — client proche (4km), créneau 15h fluide. Aucune action requise.
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444' }} />
+                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-013 Constructions Modernes (80m³)</span>: 2 rotations nécessaires. Rotation 2 risque retard si Rotation 1 dépasse <span style={{ color: '#EF4444', fontWeight: 600 }}>45 min sur site</span>. Pré-alerter le chantier.
+                      </p>
+                    </div>
+                    <div className="flex gap-2 mt-2">
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>1 action requise</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 89%</span>
+                    </div>
+                  </div>
+                ),
+              },
+              {
+                id: 'flotte',
+                name: 'Optimisation Flotte',
+                metric: 'Économie: 340 DH/sem',
+                metricBg: 'rgba(16,185,129,0.12)',
+                metricColor: '#34d399',
+                content: (
+                  <div>
+                    <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.8 }}>
+                      Analyse hebdomadaire flotte: <span style={{ color: '#fff', fontWeight: 600 }}>TOU-02 sous-utilisée</span> (3 rotations/jour vs capacité 5). <span style={{ color: '#F59E0B', fontWeight: 600 }}>TOU-01 en surutilisation</span> (5.2 rotations/jour moyenne). Recommandation: réaffecter livraison Alliances (Lundi 13h) de TOU-01 à TOU-02. Gain: <span style={{ color: '#34d399', fontWeight: 600 }}>2h disponibilité TOU-01</span> pour maintenance préventive courroie (alerte maintenance active). Coût carburant flotte cette semaine: <span style={{ color: '#fff', fontWeight: 600 }}>4,200 DH</span> (<span style={{ color: '#34d399', fontWeight: 600 }}>↘ -8% vs sem. dern.</span>).
+                    </p>
+                    <div className="flex gap-2 mt-4">
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(16,185,129,0.12)', color: '#34d399' }}>Économie flotte: 340 DH/sem</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>Maintenance: 1 alerte</span>
+                    </div>
+                  </div>
+                ),
+              },
+            ];
 
-            {/* 3. AGENT IA: PRÉDICTION RETARDS */}
-            <section>
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <span style={{ color: '#D4A843', fontSize: 14, animation: 'tbos-pulse 3s ease-in-out infinite' }}>✦</span>
-                  <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>AGENT IA: PRÉDICTION RETARDS</span>
-                </div>
-                <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>Généré par IA · Claude Opus</span>
-              </div>
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
-                border: `1px solid ${T.cardBorder}`,
-                borderTop: '2px solid #D4A843',
-                borderLeft: '3px solid #D4A843',
-                borderRadius: 12, padding: 20,
-              }}>
-                <div className="flex flex-col gap-4">
-                  <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
-                    <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                      <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-014 Saudi Readymix</span>: probabilité retard <span style={{ color: '#F59E0B', fontWeight: 600 }}>35%</span> — distance 20km, trafic historique créneau 13h élevé, temps chargement F-B25. Recommandation: <span style={{ color: '#F59E0B', fontWeight: 600 }}>avancer départ de 15 min</span>.
-                    </p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
-                    <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                      <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-015 BTP Maroc</span>: probabilité retard <span style={{ color: '#34d399', fontWeight: 600 }}>8%</span> — client proche (4km), créneau 15h fluide. Aucune action requise.
-                    </p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444' }} />
-                    <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                      <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-013 Constructions Modernes (80m³)</span>: 2 rotations nécessaires. Rotation 2 risque retard si Rotation 1 dépasse <span style={{ color: '#EF4444', fontWeight: 600 }}>45 min sur site</span>. Pré-alerter le chantier.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-2 mt-4">
-                  <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>1 action requise</span>
-                  <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 89%</span>
-                </div>
-              </div>
-            </section>
-
-            {/* 4. AGENT IA: OPTIMISATION FLOTTE */}
-            <section>
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <span style={{ color: '#D4A843', fontSize: 14, animation: 'tbos-pulse 3s ease-in-out infinite' }}>✦</span>
-                  <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>AGENT IA: OPTIMISATION FLOTTE</span>
-                </div>
-                <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>Généré par IA · Claude Opus</span>
-              </div>
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
-                border: `1px solid ${T.cardBorder}`,
-                borderTop: '2px solid #D4A843',
-                borderLeft: '3px solid #D4A843',
-                borderRadius: 12, padding: 20,
-              }}>
-                <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.8 }}>
-                  Analyse hebdomadaire flotte: <span style={{ color: '#fff', fontWeight: 600 }}>TOU-02 sous-utilisée</span> (3 rotations/jour vs capacité 5). <span style={{ color: '#F59E0B', fontWeight: 600 }}>TOU-01 en surutilisation</span> (5.2 rotations/jour moyenne). Recommandation: réaffecter livraison Alliances (Lundi 13h) de TOU-01 à TOU-02. Gain: <span style={{ color: '#34d399', fontWeight: 600 }}>2h disponibilité TOU-01</span> pour maintenance préventive courroie (alerte maintenance active). Coût carburant flotte cette semaine: <span style={{ color: '#fff', fontWeight: 600 }}>4,200 DH</span> (<span style={{ color: '#34d399', fontWeight: 600 }}>↘ -8% vs sem. dern.</span>).
-                </p>
-                <div className="flex gap-2 mt-4">
-                  <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(16,185,129,0.12)', color: '#34d399' }}>Économie flotte: 340 DH/sem</span>
-                  <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>Maintenance: 1 alerte</span>
+            return (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {agents.map(agent => {
+                  const isExpanded = expandedAgent === agent.id;
+                  return (
+                    <div key={agent.id} style={{
+                      background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
+                      border: `1px solid ${T.cardBorder}`,
+                      borderTop: '2px solid #D4A843',
+                      borderRadius: 12,
+                      overflow: 'hidden',
+                      gridColumn: isExpanded ? '1 / -1' : undefined,
+                      transition: 'all 300ms ease',
+                    }}>
+                      <button
+                        onClick={() => setExpandedAgent(isExpanded ? null : agent.id)}
+                        style={{
+                          width: '100%', display: 'flex', flexDirection: 'column', gap: 8,
+                          padding: '16px 18px', background: 'transparent', border: 'none',
+                          cursor: 'pointer', textAlign: 'left',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span style={{ color: '#D4A843', fontSize: 12, animation: 'tbos-pulse 3s ease-in-out infinite' }}>✦</span>
+                            <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em' }}>{agent.name}</span>
+                          </div>
+                          {isExpanded ? <ChevronUp size={14} color={T.textSec} /> : <ChevronDown size={14} color={T.textSec} />}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: agent.metricBg, color: agent.metricColor }}>{agent.metric}</span>
+                        </div>
+                        <span style={{ fontSize: 9, color: T.textDim, fontWeight: 500, letterSpacing: '0.05em' }}>Généré par IA · Claude Opus</span>
+                      </button>
+                      {isExpanded && (
+                        <div style={{ padding: '0 18px 18px 18px', borderTop: `1px solid ${T.cardBorder}` }}>
+                          <div style={{ paddingTop: 16 }}>
+                            {agent.content}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+                {/* Future agent placeholder */}
+                <div style={{
+                  border: `1px dashed rgba(212,168,67,0.2)`,
+                  borderRadius: 12, padding: '24px 18px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <span style={{ color: T.textDim, fontSize: 11, fontWeight: 500 }}>+ Agent futur</span>
                 </div>
               </div>
-            </section>
-          </div>
+            );
+          })()}
         </div>
 
         {/* ── FOOTER ── */}
