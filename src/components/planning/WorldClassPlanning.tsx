@@ -15,6 +15,7 @@ import { WeatherAlertBanner } from './WeatherAlertBanner';
 import { WeatherForecastCard } from './WeatherForecastCard';
 import { DeliveryOrchestrationPanel } from './DeliveryOrchestrationPanel';
 import { RouteOptimizationPanel } from './RouteOptimizationPanel';
+import { ScheduleDetailDrawer, ScheduleSlotInfo } from './ScheduleDetailDrawer';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS (shared with Dashboard)
