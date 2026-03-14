@@ -893,12 +893,12 @@ export default function WorldClassProduction() {
               <div className="flex justify-between items-center mb-4">
                 <div>
                   <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 4 }}>Production Horaire</p>
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 22, fontWeight: 400, color: T.gold }}>
+                  <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 32, fontWeight: 200, color: '#D4A843' }}>
                     {Math.round(kpis.totalVolume)} m³
                   </p>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <div className="animate-pulse" style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399' }} />
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399', animation: 'livePulseGreen 2s infinite' }} />
                   <span style={{ color: '#34d399', fontSize: 11, fontWeight: 500 }}>Live</span>
                 </div>
               </div>
