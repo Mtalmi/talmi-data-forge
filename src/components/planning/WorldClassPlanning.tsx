@@ -4,7 +4,7 @@ import {
   RadialBarChart, RadialBar, ResponsiveContainer,
 } from 'recharts';
 import {
-  FileText, BarChart3, Truck, Bell, CalendarDays, Clock, Plus, Cloud, ChevronDown, ChevronUp,
+  FileText, BarChart3, Truck, Bell, CalendarDays, Clock, Plus, Cloud, ChevronDown, ChevronUp, TrendingUp,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/layout/PageHeader';
@@ -351,12 +351,18 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick }: { slot: { pro
 
    if (!slot) {
     return (
-      <div style={{
-        opacity: visible ? 1 : 0, transition: 'opacity 500ms ease-out',
-        border: '1px dashed rgba(212, 168, 67, 0.2)', borderRadius: 8, padding: '10px 12px',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 58,
-      }}>
-        <span style={{ color: 'rgba(212, 168, 67, 0.4)', fontSize: 10 }}>Disponible</span>
+      <div
+        style={{
+          opacity: visible ? 1 : 0, transition: 'all 500ms ease-out',
+          border: '1px dashed rgba(212, 168, 67, 0.2)', borderRadius: 8, padding: '10px 12px',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 58,
+          cursor: 'pointer', background: hov ? 'rgba(212,168,67,0.05)' : 'transparent',
+        }}
+        onMouseEnter={() => setHov(true)}
+        onMouseLeave={() => setHov(false)}
+      >
+        <span style={{ color: 'rgba(212, 168, 67, 0.5)', fontSize: 20, lineHeight: 1, opacity: hov ? 1 : 0, transition: 'opacity 200ms' }}>+</span>
+        <span style={{ color: 'rgba(212, 168, 67, 0.4)', fontSize: 10, marginTop: hov ? 2 : 0 }}>Disponible</span>
       </div>
     );
   }
@@ -949,11 +955,12 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
               {/* 1. Planning KPIs */}
               <div ref={kpisRef}>
                 <SectionHeader icon={BarChart3} label="Planning KPIs" />
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" style={{ alignItems: 'stretch' }}>
+                <div className="grid grid-cols-2 lg:grid-cols-5 gap-4" style={{ alignItems: 'stretch' }}>
                   <KPICard label="Commandes Semaine" value={pKpis.commandes} suffix="" color={T.gold} icon={FileText} trend="+3 vs sem. dern." trendPositive delay={0} />
                   <KPICard label="Volume Planifié" value={pKpis.volumePlanifie} suffix="m³" color={T.gold} icon={BarChart3} trend="+8% vs sem. dern." trendPositive delay={80} />
                   <KPICard label="Capacité Utilisée" value={pKpis.capaciteUsed} suffix="%" color={T.gold} icon={BarChart3} trend="+5% vs sem. dern." trendPositive delay={160} />
                   <KPICard label="Livraisons Prévues" value={pKpis.livraisons} suffix="" color={T.gold} icon={Truck} trend="stable" trendPositive delay={240} />
+                  <KPICard label="Revenu Planifié" value={892} suffix="K DH" color={T.gold} icon={TrendingUp} trend="↗ +6% vs sem. dern." trendPositive delay={320} />
                 </div>
               </div>
 
