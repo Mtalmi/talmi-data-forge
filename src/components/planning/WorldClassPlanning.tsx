@@ -1038,8 +1038,8 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                     {/* Header row */}
                     <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 24 }}>
                       <div>
-                        <p style={{ color: '#D4A843', fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 2 }}>CAPACITÉ</p>
-                        <p style={{ color: '#9CA3AF', fontSize: 11, fontStyle: 'italic', letterSpacing: '0.3px' }}>Production hebdomadaire · Semaine 11</p>
+                        <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontSize: 13, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 2 }}>CAPACITÉ</p>
+                        <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#9CA3AF', fontSize: 11, letterSpacing: '0.3px' }}>Production hebdomadaire · Semaine 11</p>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E', animation: 'tbos-pulse 2.5s infinite' }} />
