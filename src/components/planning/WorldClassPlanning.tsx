@@ -880,7 +880,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                   <circle cx={40} cy={40} r={32} fill="none" stroke={T.warning} strokeWidth={6}
                     strokeDasharray={`${0.72 * 2 * Math.PI * 32} ${2 * Math.PI * 32}`}
                     strokeLinecap="round" transform="rotate(-90 40 40)"
-                    style={{ filter: `drop-shadow(0 0 4px ${T.warning}60)` }}
+                    style={{ filter: 'drop-shadow(0 0 8px rgba(212,168,67,0.2))' }}
                   />
                   <text x={40} y={38} textAnchor="middle" style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 16, fontWeight: 200, fill: T.warning }}>72%</text>
                   <text x={40} y={52} textAnchor="middle" style={{ fontSize: 7, fill: T.textDim, textTransform: 'uppercase', letterSpacing: '0.1em' }}>CAPACITÉ</text>
