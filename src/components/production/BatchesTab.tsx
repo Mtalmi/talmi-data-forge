@@ -27,6 +27,8 @@ interface BatchRow {
   formule: string;
   volume: number;
   heure: string;
+  cout: string;
+  marge: number;
   status: 'valide' | 'production' | 'planifie' | 'ecart';
   progress: number;
 }
@@ -68,14 +70,14 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
 
   // Demo fallback data
   const DEMO_ROWS: BatchRow[] = [
-    { bl_id: '#403-068', client: 'BTP Maroc SARL', formule: 'F-B25', volume: 8, heure: '10:42', status: 'valide', progress: 100 },
-    { bl_id: '#403-067', client: 'Constructions Modernes SA', formule: 'F-B30', volume: 12, heure: '11:28', status: 'valide', progress: 100 },
-    { bl_id: '#403-066', client: 'Ciments & Béton du Sud', formule: 'F-B25', volume: 8, heure: '11:55', status: 'production', progress: 72 },
-    { bl_id: '#403-065', client: 'BTP Maroc SARL', formule: 'F-B35', volume: 10, heure: '12:35', status: 'valide', progress: 100 },
-    { bl_id: '#403-064', client: 'Saudi Readymix', formule: 'F-B25', volume: 8, heure: '13:21', status: 'valide', progress: 100 },
-    { bl_id: '#403-063', client: 'ATLAS CONSTRUCT', formule: 'F-B30', volume: 15, heure: '14:10', status: 'production', progress: 45 },
-    { bl_id: '#403-062', client: 'Ciments & Béton du Sud', formule: 'F-B20', volume: 6, heure: '14:55', status: 'planifie', progress: 0 },
-    { bl_id: '#403-061', client: 'Constructions Modernes SA', formule: 'F-B25', volume: 10, heure: '15:20', status: 'planifie', progress: 0 },
+    { bl_id: '#403-068', client: 'BTP Maroc SARL', formule: 'F-B25', volume: 8, heure: '10:42', cout: '550 DH/m³', marge: 38, status: 'valide', progress: 100 },
+    { bl_id: '#403-067', client: 'Constructions Modernes SA', formule: 'F-B30', volume: 12, heure: '11:28', cout: '650 DH/m³', marge: 35, status: 'valide', progress: 100 },
+    { bl_id: '#403-066', client: 'Ciments & Béton du Sud', formule: 'F-B25', volume: 8, heure: '11:55', cout: '550 DH/m³', marge: 38, status: 'production', progress: 72 },
+    { bl_id: '#403-065', client: 'BTP Maroc SARL', formule: 'F-B35', volume: 10, heure: '12:35', cout: '720 DH/m³', marge: 31, status: 'valide', progress: 100 },
+    { bl_id: '#403-064', client: 'Saudi Readymix', formule: 'F-B25', volume: 8, heure: '13:21', cout: '550 DH/m³', marge: 38, status: 'valide', progress: 100 },
+    { bl_id: '#403-063', client: 'ATLAS CONSTRUCT', formule: 'F-B30', volume: 15, heure: '14:10', cout: '650 DH/m³', marge: 35, status: 'production', progress: 45 },
+    { bl_id: '#403-062', client: 'Ciments & Béton du Sud', formule: 'F-B20', volume: 6, heure: '14:55', cout: '480 DH/m³', marge: 42, status: 'planifie', progress: 0 },
+    { bl_id: '#403-061', client: 'Constructions Modernes SA', formule: 'F-B25', volume: 10, heure: '15:20', cout: '550 DH/m³', marge: 38, status: 'planifie', progress: 0 },
   ];
 
   // Live data with demo fallback
@@ -86,6 +88,8 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
       formule: b.formule_id || '—',
       volume: b.volume_m3 || 0,
       heure: (b.heure_prevue || b.production_batch_time || '—').slice(0, 5),
+      cout: '—',
+      marge: 0,
       status: (b.variance_ciment_pct || 0) > 5 ? 'ecart' as const :
         b.workflow_status === 'planification' ? 'planifie' as const :
         b.workflow_status === 'production' ? 'production' as const :
@@ -252,12 +256,12 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
           <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: '12px 12px 0 0', overflow: 'hidden' }}>
             {/* Headers */}
             <div className="grid items-center" style={{
-              gridTemplateColumns: '120px 1fr 100px 80px 70px 130px 110px 90px',
+              gridTemplateColumns: '110px 1fr 90px 70px 65px 90px 70px 120px 100px 80px',
               padding: '12px 16px', borderBottom: `1px solid ${T.cardBorder}`,
             }}>
-              {['N° BL', 'CLIENT', 'FORMULE', 'VOL (M³)', 'HEURE', 'STATUT', 'PROGRESSION', 'ACTIONS'].map(h => {
+              {['N° BL', 'CLIENT', 'FORMULE', 'VOL (M³)', 'HEURE', 'COÛT', 'MARGE', 'STATUT', 'PROGRESSION', 'ACTIONS'].map(h => {
                 const align: 'left' | 'center' | 'right' =
-                  ['FORMULE', 'VOL (M³)', 'HEURE', 'STATUT', 'PROGRESSION', 'ACTIONS'].includes(h) ? 'center' : 'left';
+                  ['FORMULE', 'VOL (M³)', 'HEURE', 'COÛT', 'MARGE', 'STATUT', 'PROGRESSION', 'ACTIONS'].includes(h) ? 'center' : 'left';
                 return (
                   <span key={h} style={{
                     fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.12em',
@@ -278,7 +282,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
               const isInProd = row.status === 'production';
               return (
                 <div key={row.bl_id} className="grid items-center" style={{
-                  gridTemplateColumns: '120px 1fr 100px 80px 70px 130px 110px 90px',
+                  gridTemplateColumns: '110px 1fr 90px 70px 65px 90px 70px 120px 100px 80px',
                   padding: '16px 16px',
                   borderBottom: '1px solid rgba(255,255,255,0.04)',
                   borderLeft: isInProd ? '2px solid rgba(96,165,250,0.50)' : '2px solid transparent',
@@ -292,6 +296,8 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                   <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.60)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.formule}</span>
                   <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 400, color: '#fff', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.volume}</span>
                   <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.45)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.heure}</span>
+                  <span style={{ fontFamily: mono, fontSize: 12, color: 'rgba(255,255,255,0.60)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.cout}</span>
+                  <span style={{ fontFamily: mono, fontSize: 12, fontWeight: 500, display: 'flex', width: '100%', justifyContent: 'center', color: row.marge >= 35 ? '#34d399' : row.marge >= 30 ? '#F59E0B' : '#EF4444' }}>{row.marge}%</span>
                   {/* Status badge */}
                   <span style={{
                     display: 'inline-flex', alignItems: 'center', gap: 6, width: 'fit-content',
