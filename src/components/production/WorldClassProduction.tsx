@@ -865,9 +865,20 @@ export default function WorldClassProduction() {
                     <YAxis tick={{ fill: 'rgba(255,255,255,0.25)', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} width={35} domain={[0, 'auto']} />
                     <Tooltip content={<GoldTooltip unit=" m³" />} />
                     <ReferenceLine y={90} stroke="rgba(255,255,255,0.20)" strokeDasharray="6 4" label={{ value: 'Objectif', position: 'right', fill: 'rgba(255,255,255,0.25)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} />
-                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2} fill="url(#prodGold)" dot={false} activeDot={{ r: 5, fill: T.gold }} animationDuration={1200} />
+                    <Area type="monotone" dataKey="lastWeek" stroke="rgba(212,168,67,0.25)" strokeWidth={1.5} strokeDasharray="6 4" fill="none" dot={false} activeDot={false} animationDuration={1200} name="Sem. dernière" />
+                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2} fill="url(#prodGold)" dot={false} activeDot={{ r: 5, fill: T.gold }} animationDuration={1200} name="Aujourd'hui" />
                   </AreaChart>
                 </ResponsiveContainer>
+                <div className="flex items-center gap-4 mt-2" style={{ paddingLeft: 36 }}>
+                  <div className="flex items-center gap-1.5">
+                    <div style={{ width: 16, height: 0, borderTop: '2px solid #D4A843' }} />
+                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>Aujourd'hui</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div style={{ width: 16, height: 0, borderTop: '1.5px dashed rgba(212,168,67,0.25)' }} />
+                    <span style={{ fontSize: 11, color: 'rgba(212,168,67,0.45)' }}>Semaine dernière</span>
+                  </div>
+                </div>
               ) : (
                 <div style={{ height: 220, position: 'relative' }}>
                   <ResponsiveContainer width="100%" height={220}>
