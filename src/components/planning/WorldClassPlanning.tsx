@@ -516,7 +516,7 @@ function DeliveryCard({ d, delay = 0, routeData, weatherIndex = 0 }: { d: typeof
               'Alliances': '95,000 DH YTD · 6 livraisons',
             };
             const ytd = ytdData[d.client];
-            return ytd ? <p style={{ color: '#9CA3AF', fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', marginTop: 4 }}>{ytd}</p> : null;
+            return ytd ? <p style={{ color: '#D4A843', fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', marginTop: 4 }}>{ytd}</p> : null;
           })()}
         </div>
         <Badge label={d.status} color={d.statusColor} bg={`${d.statusColor}18`} pulse={isEnRoute} />
