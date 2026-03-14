@@ -247,13 +247,34 @@ function getStatusDisplay(ws: string | null) {
   return { label: ws || 'N/A', color: T.textDim, style: 'outline' as const };
 }
 
+function FreshnessRing({ min, max, done, planned }: { min: number; max: number; done?: boolean; planned?: boolean }) {
+  const pct = Math.min(min / max, 1);
+  const remaining = max - min;
+  const ringColor = done ? T.success : planned ? T.textDim : remaining > 45 ? T.success : remaining > 20 ? T.warning : T.danger;
+  const pulseAnim = !done && !planned && remaining < 10 ? 'tbos-pulse 1s ease-in-out infinite' : 'none';
+  const r = 16, circ = 2 * Math.PI * r;
+  return (
+    <div style={{ position: 'relative', width: 40, height: 40, flexShrink: 0, animation: pulseAnim }}>
+      <svg width={40} height={40} viewBox="0 0 40 40">
+        <circle cx={20} cy={20} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={3} />
+        <circle cx={20} cy={20} r={r} fill="none" stroke={ringColor} strokeWidth={3}
+          strokeDasharray={circ} strokeDashoffset={circ * (1 - pct)} strokeLinecap="round"
+          transform="rotate(-90 20 20)" style={{ transition: 'stroke-dashoffset 0.8s ease' }} />
+      </svg>
+      {done && <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.success, fontSize: 14 }}>✓</span>}
+    </div>
+  );
+}
+
 function DeliveryCard({ d, index }: { d: any; index: number }) {
   const [hov, setHov] = useState(false);
   const status = getStatusDisplay(d.workflow_status);
   const isOdd = index % 2 !== 0;
-
   const formulaColor: Record<string, string> = { B25: T.gold, B30: '#3B82F6', B35: T.success, B40: '#8B5CF6' };
   const fColor = formulaColor[d.formule_id] || T.gold;
+  const fr = d._freshness;
+  const wx = d._weather;
+  const fb = d._feedback;
 
   return (
     <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
@@ -275,8 +296,32 @@ function DeliveryCard({ d, index }: { d: any; index: number }) {
         {d.camion_assigne && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, fontFamily: MONO, fontWeight: 700, background: 'transparent', border: `1px solid ${T.gold}40`, color: T.gold }}>{d.camion_assigne}</span>}
         {d.chauffeur_nom && <span style={{ color: T.textDim, fontSize: 11 }}>{d.chauffeur_nom}</span>}
         {d.heure_prevue && <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} color={T.textDim} /><span style={{ color: T.textDim, fontSize: 11 }}>{d.heure_prevue}</span></div>}
+        {/* Weather */}
+        {wx && (
+          <span style={{ fontFamily: MONO, fontSize: 11, color: wx.color }} title={wx.tooltip || ''}>
+            {wx.text}
+          </span>
+        )}
         {d._delay && <span style={{ fontFamily: MONO, fontSize: 10, padding: '2px 6px', borderRadius: 4, background: 'rgba(239,68,68,0.15)', color: T.danger, border: `1px solid ${T.danger}40` }}>{d._delay}</span>}
-        <div style={{ marginLeft: 'auto' }}>
+
+        {/* Freshness countdown */}
+        {fr && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto', marginRight: 12 }}>
+            <FreshnessRing min={fr.min} max={fr.max} done={fr.done} planned={fr.planned} />
+            <div>
+              <p style={{ fontFamily: MONO, fontWeight: 200, fontSize: 14, color: fr.done ? T.success : fr.planned ? T.textDim : (fr.max - fr.min) > 45 ? T.success : (fr.max - fr.min) > 20 ? T.warning : T.danger, margin: 0 }}>{fr.label}</p>
+              <p style={{ fontFamily: MONO, fontSize: 10, color: T.textDim, margin: 0 }}>
+                {fr.done ? 'Dans les temps' : fr.mixTime ? `Mélangé à ${fr.mixTime}` : ''}
+                {fr.planned && fr.mixTime ? `Mélange prévu ${fr.mixTime}` : ''}
+              </p>
+              {/* Freshness + weather alert */}
+              {d._freshAlert && <p style={{ fontFamily: MONO, fontSize: 10, color: T.danger, margin: '2px 0 0' }}>{d._freshAlert}</p>}
+            </div>
+          </div>
+        )}
+
+        {!fr && <div style={{ marginLeft: 'auto' }} />}
+        <div>
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 4,
             background: status.style === 'pulse' ? `${status.color}18` : 'transparent',
@@ -288,6 +333,16 @@ function DeliveryCard({ d, index }: { d: any; index: number }) {
           </span>
         </div>
       </div>
+      {/* Client feedback row for delivered */}
+      {fb && (
+        <div style={{ marginTop: 10, paddingTop: 8, borderTop: `1px solid ${T.cardBorder}`, display: 'flex', alignItems: 'center', gap: 12, fontFamily: MONO, fontSize: 11, color: T.textDim }}>
+          <span>Réception chantier: {Array.from({ length: 5 }, (_, i) => <span key={i} style={{ color: i < fb.stars ? T.gold : T.textDim }}>★</span>)}</span>
+          <span>·</span>
+          <span>Temps d'attente: {fb.attente}</span>
+          <span>·</span>
+          <span>Conformité béton: {fb.conforme ? <span style={{ color: T.success }}>✓</span> : <span style={{ color: T.danger }}>✗</span>}</span>
+        </div>
+      )}
     </div>
   );
 }
