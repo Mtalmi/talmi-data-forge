@@ -11,6 +11,7 @@ interface KPICardProps {
   trend?: 'up' | 'down' | 'neutral';
   trendValue?: string;
   variant?: 'default' | 'positive' | 'negative' | 'warning';
+  target?: number;
 }
 
 export default function KPICard({
@@ -21,11 +22,16 @@ export default function KPICard({
   trend,
   trendValue,
   variant = 'default',
+  target,
 }: KPICardProps) {
   const { t } = useI18n();
   const numericValue = typeof value === 'number' ? value : parseInt(String(value), 10);
   const isNumeric = !isNaN(numericValue) && typeof value === 'number';
   const animated = useCountUp(isNumeric ? numericValue : 0, 1600);
+
+  const hasTarget = target !== undefined;
+  const aboveTarget = hasTarget && isNumeric && numericValue >= target;
+  const belowTarget = hasTarget && isNumeric && numericValue < target;
 
   const TrendIcon = trend ? { up: TrendingUp, down: TrendingDown, neutral: Minus }[trend] : null;
 
@@ -48,6 +54,12 @@ export default function KPICard({
     down: 'text-destructive',
     neutral: 'text-muted-foreground',
   };
+
+  const targetGlow = aboveTarget
+    ? '0 0 8px rgba(34, 197, 94, 0.3)'
+    : belowTarget
+      ? '0 0 8px rgba(239, 68, 68, 0.3)'
+      : undefined;
 
   return (
     <div
@@ -90,9 +102,14 @@ export default function KPICard({
               'text-2xl sm:text-3xl font-black tracking-tight tabular-nums transition-all duration-700',
               variant === 'negative' ? 'text-destructive' : variant === 'warning' ? 'text-warning' : 'text-primary',
             )}
-            style={{ fontFamily: 'JetBrains Mono, monospace' }}
+            style={{
+              fontFamily: 'JetBrains Mono, monospace',
+              textShadow: targetGlow,
+            }}
           >
             {isNumeric ? animated.toLocaleString('fr-FR') : value}
+            {aboveTarget && <span style={{ color: '#22C55E', fontSize: 14, marginLeft: 4, fontWeight: 600 }}>✓</span>}
+            {belowTarget && <span style={{ color: '#EF4444', fontSize: 14, marginLeft: 4, fontWeight: 600 }}>↓</span>}
           </p>
           {subtitle && (
             <p className="text-xs text-muted-foreground truncate">{subtitle}</p>
