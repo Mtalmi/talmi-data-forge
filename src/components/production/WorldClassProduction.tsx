@@ -853,6 +853,7 @@ export default function WorldClassProduction() {
                 </div>
               </div>
               {hasHourlyData ? (
+                <>
                 <ResponsiveContainer width="100%" height={220}>
                   <AreaChart data={hourlyData}>
                     <defs>
@@ -879,6 +880,7 @@ export default function WorldClassProduction() {
                     <span style={{ fontSize: 11, color: 'rgba(212,168,67,0.45)' }}>Semaine dernière</span>
                   </div>
                 </div>
+                </>
               ) : (
                 <div style={{ height: 220, position: 'relative' }}>
                   <ResponsiveContainer width="100%" height={220}>
