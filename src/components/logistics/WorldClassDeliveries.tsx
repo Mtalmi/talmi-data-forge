@@ -851,7 +851,7 @@ export default function WorldClassDeliveries() {
         {/* ANALYTIQUE & INTELLIGENCE IA PLACEHOLDERS    */}
         {/* ════════════════════════════════════════════ */}
         {activeTab === 'analytique' && <EmptyTabPlaceholder title="Analytique" icon={TrendingUp} />}
-        {activeTab === 'ia' && <EmptyTabPlaceholder title="Intelligence IA" icon={Brain} />}
+        {activeTab === 'ia' && <IntelligenceIATab />}
 
       </div>
     </div>
