@@ -286,7 +286,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
               const isInProd = row.status === 'production';
               return (
                 <div key={row.bl_id} className="grid items-center" style={{
-                  gridTemplateColumns: '110px 1fr 90px 70px 65px 90px 70px 120px 100px 80px',
+                  gridTemplateColumns: '110px 1fr 90px 70px 65px 90px 70px 60px 120px 100px 80px',
                   padding: '16px 16px',
                   borderBottom: '1px solid rgba(255,255,255,0.04)',
                   borderLeft: isInProd ? '2px solid rgba(96,165,250,0.50)' : '2px solid transparent',
