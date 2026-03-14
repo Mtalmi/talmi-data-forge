@@ -591,8 +591,8 @@ function PipelineFunnel() {
                   ...(st.wash && !isEmpty ? { backgroundColor: st.wash } : {}),
                 }}
               >
-                <span className="text-center block" style={isEmpty ? { fontFamily:'ui-monospace,monospace', fontSize:'28px', fontWeight:'300', color:'rgba(255,255,255,0.25)', display:'block', textAlign:'center', lineHeight: 1 } : { fontFamily: 'ui-monospace,monospace', fontSize: '30px', color: st.color, fontWeight: '300', lineHeight: 1 }}>
-                  {isEmpty ? '0' : s.value}
+                <span className="text-center block" style={isEmpty ? { fontFamily:'ui-monospace,monospace', fontSize:'28px', fontWeight:'300', color:'#4A5568', display:'block', textAlign:'center', lineHeight: 1 } : { fontFamily: 'ui-monospace,monospace', fontSize: '30px', color: st.color, fontWeight: '300', lineHeight: 1 }}>
+                  {isEmpty ? '—' : s.value}
                 </span>
                 <span className="text-[10px] uppercase tracking-wider text-white/40 mt-1 block text-center">{s.label}</span>
               </div>
@@ -929,7 +929,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             <span className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground/40 font-medium">Score Opérationnel du Jour</span>
             <span className="text-4xl font-bold font-mono text-[#D4A843]" style={{ textShadow: '0 0 25px rgba(212, 168, 67, 0.2)', lineHeight: 1.1 }}>8.7/10</span>
             <span className="inline-flex items-center text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded px-2 py-0.5 gap-1 mt-1">↗ +0.4 pts vs hier</span>
-            <div style={{ display:'flex', gap:'6px', marginTop:'6px' }}><span style={{ fontSize:'9px', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'4px', padding:'2px 6px', color:'rgba(255,255,255,0.4)' }}>LIVRAISONS 60%</span><span style={{ fontSize:'9px', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'4px', padding:'2px 6px', color:'rgba(255,255,255,0.4)' }}>QUALITÉ 96%</span><span style={{ fontSize:'9px', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'4px', padding:'2px 6px', color:'rgba(255,255,255,0.4)' }}>MARGE +12%</span></div>
+            <div style={{ display:'flex', gap:'6px', marginTop:'6px' }}><span style={{ fontSize:'9px', background:'transparent', border:'1px solid #D4A843', borderRadius:'4px', padding:'2px 6px', color:'#D4A843' }}>LIVRAISONS 60%</span><span style={{ fontSize:'9px', background:'transparent', border:'1px solid #D4A843', borderRadius:'4px', padding:'2px 6px', color:'#D4A843' }}>QUALITÉ 96%</span><span style={{ fontSize:'9px', background:'transparent', border:'1px solid #D4A843', borderRadius:'4px', padding:'2px 6px', color:'#D4A843' }}>MARGE +12%</span></div>
           </div>
 
           {/* Middle: Micro-metrics */}
