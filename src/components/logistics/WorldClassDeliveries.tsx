@@ -766,7 +766,7 @@ function AnalytiqueTab() {
               { label: 'VOLUME TOTAL', value: '1,480 m³', color: T.gold },
               { label: 'REVENU TOTAL', value: '714,000 DH', color: T.gold },
               { label: 'PONCTUALITÉ', value: '91%', color: T.success },
-              { label: 'VS MOIS DERN.', value: '+12%', color: T.success },
+              { label: 'VS MOIS DERN.', value: '+12%', color: T.gold },
             ].map(s => (
               <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ fontFamily: MONO, fontSize: 12, color: T.textDim, letterSpacing: '0.05em' }}>{s.label}</span>
