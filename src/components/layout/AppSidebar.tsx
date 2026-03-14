@@ -434,6 +434,9 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
           </div>
         </div>
       </div>
+
+      {/* ── SYSTEM HEALTH BAR ── */}
+      <SystemHealthBar />
     </aside>
   );
 }

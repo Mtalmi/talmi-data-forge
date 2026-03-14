@@ -114,6 +114,7 @@ export function PageHeader({
             >
               <LiveClock />
             </span>
+            <DataFreshnessDot />
             {loading && (
               <div
                 style={{
