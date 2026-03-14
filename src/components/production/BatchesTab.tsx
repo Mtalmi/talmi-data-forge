@@ -136,7 +136,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
 
   return (
     <>
-    <style>{`@keyframes batch-pulse { 0%, 100% { box-shadow: 0 0 0px rgba(212,168,67,0); } 50% { box-shadow: 0 0 8px rgba(212,168,67,0.3); } }`}</style>
+    <style>{`@keyframes batch-pulse { 0%, 100% { box-shadow: 0 0 0px rgba(212,168,67,0); } 50% { box-shadow: 0 0 8px rgba(212,168,67,0.3); } } @keyframes live-dot-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.5; } }`}</style>
     <div className="flex flex-col gap-6">
 
       {/* ═══ 1. ACTION BUTTONS ═══ */}
@@ -162,18 +162,18 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
             document.body.appendChild(toast);
             setTimeout(() => { toast.style.opacity = '0'; }, 2700);
             setTimeout(() => { document.body.removeChild(toast); }, 3000);
-          }} className="flex items-center gap-2 cursor-pointer" style={{
-            padding: '10px 20px', borderRadius: 8, background: 'linear-gradient(135deg, #D4A843, #B8922E)', color: '#0F1629',
-            fontWeight: 600, fontSize: 13, border: 'none', fontFamily: 'DM Sans, sans-serif',
-            boxShadow: '0 2px 8px rgba(212,168,67,0.3)',
+          }} style={{
+            background: '#D4A843', color: '#0F1629', border: 'none', borderRadius: '8px',
+            padding: '8px 20px', cursor: 'pointer', fontSize: '14px', fontWeight: 600,
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
           }}>
             <Play size={16} strokeWidth={1.5} /> Lancer Production
           </button>
           {[{ icon: Download, label: 'Exporter' }, { icon: RefreshCw, label: 'Actualiser' }].map(b => (
-            <button key={b.label} className="flex items-center gap-2 cursor-pointer" style={{
-              padding: '10px 14px', borderRadius: 8, background: 'transparent',
-              color: '#D4A843', fontWeight: 500, fontSize: 13,
-              border: '1px solid #D4A843', fontFamily: 'DM Sans, sans-serif',
+            <button key={b.label} style={{
+              border: '1px solid #D4A843', color: '#D4A843', background: 'transparent',
+              borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', fontSize: '14px',
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
             }}>
               <b.icon size={16} strokeWidth={1.5} /> {b.label}
             </button>
@@ -197,10 +197,10 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
             }}
           />
         </div>
-        <button className="flex items-center gap-2 cursor-pointer" style={{
-          padding: '12px 16px', borderRadius: 8, background: 'transparent',
-          border: `1px solid ${T.cardBorder}`, color: 'rgba(255,255,255,0.6)',
-          fontSize: 13, fontWeight: 500, fontFamily: 'DM Sans, sans-serif',
+        <button style={{
+          border: '1px solid #D4A843', color: '#D4A843', background: 'transparent',
+          borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', fontSize: '14px',
+          display: 'inline-flex', alignItems: 'center', gap: '8px',
         }}>
           <SlidersHorizontal size={14} strokeWidth={1.5} /> Filtres
         </button>
@@ -217,10 +217,12 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
           { label: 'ALERTES', icon: AlertTriangle, value: '1', suffix: '1 écart' },
         ].map(k => (
           <div key={k.label} style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, padding: 16 }}>
-            <k.icon size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.20)', marginBottom: 8 }} />
-            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 24, fontWeight: 200, color: '#fff', lineHeight: 1 }}>
+            <k.icon size={16} strokeWidth={1.5} style={{ color: '#D4A843', marginBottom: 8 }} />
+            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 32, fontWeight: 200, color: '#D4A843', lineHeight: 1 }}>
               {k.value}
-              <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.50)', marginLeft: 4 }}>{k.suffix}</span>
+              <span style={{ fontSize: 13, color: k.label === 'ALERTES' ? undefined : 'rgba(255,255,255,0.50)', marginLeft: 4 }}>
+                {k.label === 'ALERTES' ? <>{' '}<span style={{ color: '#EF4444' }}>1 écart</span></> : k.suffix}
+              </span>
             </p>
             <p style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.40)', fontWeight: 500, marginTop: 6 }}>{k.label}</p>
           </div>
@@ -236,8 +238,8 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
             <button key={tab.id} onClick={() => setActiveFilter(tab.id)}
               className="flex items-center gap-2 cursor-pointer" style={{
                 padding: '10px 16px', background: 'transparent', border: 'none',
-                borderBottom: active ? `2px solid ${T.gold}` : '2px solid transparent',
-                color: active ? '#fff' : 'rgba(255,255,255,0.45)',
+                borderBottom: active ? '2px solid #D4A843' : '2px solid transparent',
+                color: active ? '#D4A843' : '#9CA3AF',
                 fontWeight: active ? 500 : 400, fontSize: 13,
                 fontFamily: 'DM Sans, sans-serif', transition: 'all 150ms',
               }}>
@@ -287,24 +289,24 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
               const delivered = Math.round(row.volume * row.progress / 100);
               const isInProd = row.status === 'production';
               return (
-                <div key={row.bl_id} className="grid items-center batch-row-hover" style={{
+                <div key={row.bl_id} className="grid items-center" style={{
                   gridTemplateColumns: '110px 1fr 90px 70px 65px 90px 70px 60px 120px 100px 80px',
                   padding: '16px 16px',
                   borderBottom: '1px solid rgba(255,255,255,0.04)',
                   borderLeft: '3px solid transparent',
                   cursor: 'pointer', transition: 'all 200ms ease',
                 }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.04)'; e.currentTarget.style.borderLeft = '3px solid #D4A843'; }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.03)'; e.currentTarget.style.borderLeft = '3px solid #D4A843'; }}
                   onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderLeft = '3px solid transparent'; }}
                   onClick={() => setDrawerOpen(true)}
                 >
                   <span style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 500 }}>{row.bl_id}</span>
                   <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.client}</span>
-                  <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.60)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.formule}</span>
-                  <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 400, color: '#fff', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.volume}</span>
-                  <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.45)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.heure}</span>
-                  <span style={{ fontFamily: mono, fontSize: 12, color: 'rgba(255,255,255,0.60)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.cout}</span>
-                  <span style={{ fontFamily: mono, fontSize: 12, fontWeight: 500, display: 'flex', width: '100%', justifyContent: 'center', color: row.marge >= 35 ? '#34d399' : row.marge >= 30 ? '#F59E0B' : '#EF4444' }}>{row.marge}%</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: 'rgba(255,255,255,0.60)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.formule}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 400, color: '#fff', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.volume}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: 'rgba(255,255,255,0.45)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.heure}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: 'rgba(255,255,255,0.60)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.cout}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, fontWeight: 500, display: 'flex', width: '100%', justifyContent: 'center', color: row.marge >= 36 ? '#22C55E' : row.marge >= 30 ? '#F59E0B' : '#EF4444' }}>{row.marge}%</span>
                   {/* Client satisfaction */}
                   {(() => {
                     const satisfMap: Record<string, { color: string; label: string }> = {
@@ -340,11 +342,11 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                     <div style={{ height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.06)', width: 80 }}>
                       <div style={{
                         width: `${row.progress}%`, height: '100%', borderRadius: 3,
-                        background: row.progress === 100 ? T.success : row.progress > 0 ? T.info : 'transparent',
+                        background: row.progress === 100 ? 'linear-gradient(90deg, #D4A843, #E8C96A)' : row.progress > 0 ? 'linear-gradient(90deg, #D4A843, #E8C96A)' : 'transparent',
                         transition: 'width 300ms ease',
                       }} />
                     </div>
-                    <span style={{ fontFamily: mono, fontSize: 10, color: 'rgba(255,255,255,0.25)' }}>
+                    <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: 'rgba(255,255,255,0.25)' }}>
                       {delivered}/{row.volume}m³
                     </span>
                   </div>
@@ -384,18 +386,18 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
 
           {/* ═══ BOTTOM STATUS BAR ═══ */}
           <div style={{
-            background: 'rgba(255,255,255,0.02)', borderTop: `1px solid ${T.cardBorder}`,
+            background: 'rgba(255,255,255,0.02)', borderTop: '1px solid rgba(212,168,67,0.15)',
             padding: '12px 24px', borderRadius: '0 0 12px 12px',
           }}>
-            <div className="flex items-center justify-between" style={{ fontFamily: mono, fontSize: 12 }}>
+            <div className="flex items-center justify-between" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12 }}>
               <div className="flex items-center gap-3">
-                <span><span style={{ color: 'rgba(255,255,255,0.55)' }}>671</span><span style={{ color: 'rgba(255,255,255,0.35)' }}> m³</span></span>
+                <span><span style={{ color: '#D4A843' }}>671</span><span style={{ color: 'rgba(255,255,255,0.35)' }}> m³</span></span>
                 <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
-                <span><span style={{ color: 'rgba(255,255,255,0.55)' }}>14</span><span style={{ color: 'rgba(255,255,255,0.35)' }}> batches</span></span>
+                <span><span style={{ color: '#D4A843' }}>14</span><span style={{ color: 'rgba(255,255,255,0.35)' }}> batches</span></span>
                 <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
-                <span style={{ color: 'rgba(255,255,255,0.35)' }}>Cadence: <span style={{ color: 'rgba(255,255,255,0.55)' }}>47 m³/h</span></span>
+                <span style={{ color: 'rgba(255,255,255,0.35)' }}>Cadence: <span style={{ color: '#D4A843' }}>47</span> m³/h</span>
                 <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
-                <span style={{ color: '#34d399' }}>▲ +12% vs hier</span>
+                <span style={{ color: '#22C55E', fontWeight: 600 }}>▲ +12% vs hier</span>
               </div>
               <InlineClock />
             </div>
@@ -418,7 +420,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1.5">
-                    <div className="animate-pulse" style={{ width: 7, height: 7, borderRadius: '50%', background: '#34d399' }} />
+                    <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#34d399', animation: 'live-dot-pulse 2s ease-in-out infinite' }} />
                     <span style={{ color: '#34d399', fontSize: 11, fontWeight: 500 }}>Temps réel</span>
                   </div>
                   <button className="cursor-pointer" style={{ background: 'transparent', border: 'none', padding: 4 }}>
@@ -453,17 +455,17 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                           onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                         >
                           <div className="flex items-center justify-between mb-1">
-                            <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 500, color: '#fff' }}>{item.bl_id}</span>
+                            <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 500, color: '#D4A843' }}>{item.bl_id}</span>
                             <div className="flex items-center gap-2">
                               {pct ? (
-                                <span style={{ fontFamily: mono, fontSize: 11, color: '#60a5fa' }}>{pct}</span>
+                                <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#60a5fa' }}>{pct}</span>
                               ) : (
                                 <span style={{ color: '#34d399', fontSize: 11 }}>✓</span>
                               )}
-                              <span style={{ fontFamily: mono, fontSize: 10, color: 'rgba(255,255,255,0.20)' }}>{item.heure}</span>
+                              <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#D4A843' }}>{item.heure}</span>
                             </div>
                           </div>
-                          <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.40)' }}>{item.formule} · {item.volume} m³ · {item.client}</p>
+                          <p style={{ fontSize: 11, color: '#9CA3AF' }}><span style={{ color: '#D4A843' }}>{item.formule}</span> · {item.volume} m³ · {item.client}</p>
                         </div>
                       );
                     })
@@ -478,13 +480,12 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                       >
                         <div className="flex items-center justify-between mb-1">
-                          <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 500, color: '#fff' }}>{f.id}</span>
+                          <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 500, color: '#D4A843' }}>{f.id}</span>
                           <div className="flex items-center gap-2">
-                            <span style={{ fontSize: 11, color: f.color }}>{f.status}</span>
-                            <span style={{ fontFamily: mono, fontSize: 10, color: 'rgba(255,255,255,0.20)' }}>{f.time}</span>
+                            <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#D4A843' }}>{f.status} {f.time}</span>
                           </div>
                         </div>
-                        <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.40)' }}>{f.formule}, {f.vol}. {f.note}</p>
+                        <p style={{ fontSize: 11, color: '#9CA3AF' }}><span style={{ color: '#D4A843' }}>{f.formule}</span>, {f.vol}. {f.note}</p>
                       </div>
                     ));
                 return feedItems;
