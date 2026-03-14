@@ -566,6 +566,7 @@ export function DevisTable({
                     }
                     const numVal = parseInt(prob);
                     const color = numVal >= 70 ? '#22C55E' : numVal >= 40 ? '#F59E0B' : '#EF4444';
+                    const fontWt = 600;
                     const bg = numVal >= 70 ? 'rgba(34,197,94,0.12)' : numVal >= 40 ? 'rgba(245,158,11,0.12)' : 'rgba(239,68,68,0.12)';
                     const border = numVal >= 70 ? 'rgba(34,197,94,0.25)' : numVal >= 40 ? 'rgba(245,158,11,0.25)' : 'rgba(239,68,68,0.25)';
                     return (
