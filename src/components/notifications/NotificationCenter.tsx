@@ -49,9 +49,7 @@ function NotificationItem({ alert, onRead, onDismiss, onNavigate, getTypeLabel }
   const timeAgo = formatDistanceToNow(new Date(alert.created_at), { addSuffix: true, locale: dateLocale || undefined });
 
   const handleClick = () => {
-    if (!alert.lu) {
-      onRead(alert.id);
-    }
+    if (!alert.lu) onRead(alert.id);
     onNavigate(alert);
   };
 
@@ -87,35 +85,15 @@ function NotificationItem({ alert, onRead, onDismiss, onNavigate, getTypeLabel }
             )}
           </div>
           <p className="font-medium text-sm mt-1 line-clamp-1">{alert.titre}</p>
-          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-            {alert.message}
-          </p>
+          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{alert.message}</p>
           <p className="text-xs text-muted-foreground/70 mt-1">{timeAgo}</p>
         </div>
-        
-        {/* Actions */}
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6"
-            onClick={(e) => {
-              e.stopPropagation();
-              onNavigate(alert);
-            }}
-          >
+          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={(e) => { e.stopPropagation(); onNavigate(alert); }}>
             <ExternalLink className="h-3 w-3" />
           </Button>
           {alert.dismissible && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDismiss(alert.id);
-              }}
-            >
+            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={(e) => { e.stopPropagation(); onDismiss(alert.id); }}>
               <X className="h-3 w-3" />
             </Button>
           )}
@@ -131,14 +109,9 @@ export default function NotificationCenter() {
   const n = t.notifications;
   const [open, setOpen] = useState(false);
   const {
-    alerts,
-    stats,
-    loading,
-    markAsRead,
-    markAllAsRead,
-    dismissAlert,
-    getAlertRoute,
-    getAlertTypeLabel,
+    alerts, stats, loading,
+    markAsRead, markAllAsRead, dismissAlert,
+    getAlertRoute, getAlertTypeLabel,
   } = useNotifications();
 
   const handleNavigate = (alert: SystemAlert) => {
@@ -153,34 +126,64 @@ export default function NotificationCenter() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
+        <button
+          className="relative flex items-center justify-center cursor-pointer transition-colors duration-200"
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: 6,
+            background: 'transparent',
+            color: '#9CA3AF',
+            border: 'none',
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#9CA3AF'; }}
+        >
+          <Bell size={16} strokeWidth={1.5} />
           {stats.unread > 0 && (
-            <span className="absolute -top-1 -right-1 h-5 min-w-[20px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-xs font-bold px-1">
+            <span
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                transform: 'translate(2px, -2px)',
+                minWidth: 16,
+                height: 16,
+                borderRadius: '50%',
+                background: '#EF4444',
+                color: '#FFFFFF',
+                fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                fontSize: 9,
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0 3px',
+              }}
+            >
               {stats.unread > 99 ? '99+' : stats.unread}
             </span>
           )}
           {stats.critical > 0 && (
             <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
           )}
-        </Button>
+        </button>
       </PopoverTrigger>
 
       <PopoverContent className="w-96 p-0" align="end" style={{
-        background: 'rgba(13,18,32,0.95)',
-        backdropFilter: 'blur(20px)',
-        border: '1.5px solid rgba(255,215,0,0.12)',
+        background: '#0F1629',
+        border: '1px solid rgba(212, 168, 67, 0.15)',
         borderRadius: 12,
-        boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(255,215,0,0.04)',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
       }}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4" style={{ borderBottom: '1px solid rgba(255,215,0,0.08)' }}>
+        <div className="flex items-center justify-between p-4" style={{ borderBottom: '1px solid rgba(212, 168, 67, 0.08)' }}>
           <div>
-            <h3 className="font-semibold">{n.title}</h3>
-            <p className="text-xs text-muted-foreground">
+            <h3 className="font-semibold" style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, color: '#FFFFFF' }}>{n.title}</h3>
+            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#9CA3AF' }}>
               {stats.unread} {stats.unread !== 1 ? n.unreadPlural : n.unread}
               {stats.critical > 0 && (
-                <span className="text-red-600 ml-2">
+                <span style={{ color: '#EF4444', marginLeft: 8 }}>
                   • {stats.critical} {stats.critical !== 1 ? n.criticalPlural : n.critical}
                 </span>
               )}
@@ -209,49 +212,28 @@ export default function NotificationCenter() {
                 <div key={i} className="flex items-start gap-3 px-3 py-2.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
                   <span className="mt-1.5 w-2 h-2 rounded-full shrink-0" style={{ background: notif.dot, boxShadow: `0 0 6px ${notif.dot}60` }} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm" style={{ color: 'rgba(241,245,249,0.9)' }}>{notif.title}</p>
-                    <p className="text-xs mt-0.5" style={{ color: 'rgba(148,163,184,0.5)', fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace" }}>{notif.time}</p>
+                    <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: 'rgba(241,245,249,0.9)' }}>{notif.title}</p>
+                    <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>{notif.time}</p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
             <div className="p-2 space-y-1">
-              {/* Unread section */}
               {unreadAlerts.length > 0 && (
                 <>
-                  <p className="text-xs font-medium text-muted-foreground px-2 py-1">
-                    {n.new}
-                  </p>
+                  <p className="text-xs font-medium text-muted-foreground px-2 py-1">{n.new}</p>
                   {unreadAlerts.map(alert => (
-                    <NotificationItem
-                      key={alert.id}
-                      alert={alert}
-                      onRead={markAsRead}
-                      onDismiss={dismissAlert}
-                      onNavigate={handleNavigate}
-                      getTypeLabel={getAlertTypeLabel}
-                    />
+                    <NotificationItem key={alert.id} alert={alert} onRead={markAsRead} onDismiss={dismissAlert} onNavigate={handleNavigate} getTypeLabel={getAlertTypeLabel} />
                   ))}
                 </>
               )}
-
-              {/* Read section */}
               {readAlerts.length > 0 && (
                 <>
                   {unreadAlerts.length > 0 && <Separator className="my-2" />}
-                  <p className="text-xs font-medium text-muted-foreground px-2 py-1">
-                    {n.previous}
-                  </p>
+                  <p className="text-xs font-medium text-muted-foreground px-2 py-1">{n.previous}</p>
                   {readAlerts.map(alert => (
-                    <NotificationItem
-                      key={alert.id}
-                      alert={alert}
-                      onRead={markAsRead}
-                      onDismiss={dismissAlert}
-                      onNavigate={handleNavigate}
-                      getTypeLabel={getAlertTypeLabel}
-                    />
+                    <NotificationItem key={alert.id} alert={alert} onRead={markAsRead} onDismiss={dismissAlert} onNavigate={handleNavigate} getTypeLabel={getAlertTypeLabel} />
                   ))}
                 </>
               )}
@@ -260,15 +242,8 @@ export default function NotificationCenter() {
         </ScrollArea>
 
         {/* Footer */}
-        <div className="p-2 border-t">
-          <Button 
-            variant="ghost" 
-            className="w-full text-sm" 
-            onClick={() => {
-              setOpen(false);
-              navigate('/alertes');
-            }}
-          >
+        <div className="p-2" style={{ borderTop: '1px solid rgba(212, 168, 67, 0.08)' }}>
+          <Button variant="ghost" className="w-full text-sm" onClick={() => { setOpen(false); navigate('/alertes'); }}>
             {n.viewAllAlerts}
           </Button>
         </div>
