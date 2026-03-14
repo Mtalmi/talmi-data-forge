@@ -386,18 +386,18 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
 
           {/* ═══ BOTTOM STATUS BAR ═══ */}
           <div style={{
-            background: 'rgba(255,255,255,0.02)', borderTop: `1px solid ${T.cardBorder}`,
+            background: 'rgba(255,255,255,0.02)', borderTop: '1px solid rgba(212,168,67,0.15)',
             padding: '12px 24px', borderRadius: '0 0 12px 12px',
           }}>
-            <div className="flex items-center justify-between" style={{ fontFamily: mono, fontSize: 12 }}>
+            <div className="flex items-center justify-between" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12 }}>
               <div className="flex items-center gap-3">
-                <span><span style={{ color: 'rgba(255,255,255,0.55)' }}>671</span><span style={{ color: 'rgba(255,255,255,0.35)' }}> m³</span></span>
+                <span><span style={{ color: '#D4A843' }}>671</span><span style={{ color: 'rgba(255,255,255,0.35)' }}> m³</span></span>
                 <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
-                <span><span style={{ color: 'rgba(255,255,255,0.55)' }}>14</span><span style={{ color: 'rgba(255,255,255,0.35)' }}> batches</span></span>
+                <span><span style={{ color: '#D4A843' }}>14</span><span style={{ color: 'rgba(255,255,255,0.35)' }}> batches</span></span>
                 <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
-                <span style={{ color: 'rgba(255,255,255,0.35)' }}>Cadence: <span style={{ color: 'rgba(255,255,255,0.55)' }}>47 m³/h</span></span>
+                <span style={{ color: 'rgba(255,255,255,0.35)' }}>Cadence: <span style={{ color: '#D4A843' }}>47</span> m³/h</span>
                 <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
-                <span style={{ color: '#34d399' }}>▲ +12% vs hier</span>
+                <span style={{ color: '#22C55E', fontWeight: 600 }}>▲ +12% vs hier</span>
               </div>
               <InlineClock />
             </div>
