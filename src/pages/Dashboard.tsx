@@ -1994,6 +1994,89 @@ export default function Dashboard() {
             <WorldClassDashboard hideProductionWidgets showOnlyIntel />
           </Suspense>
         </div>
+
+        {/* ── CALENDRIER RÉGLEMENTAIRE & CONFORMITÉ ── */}
+        {(() => {
+          const MN = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
+          const markers = [
+            { date: '01 Avr', month: 1, status: 'red' as const, title: 'NM 10.1.271 Expiration', sub: 'Essais affaissement — 0/2 tests effectués', detail: '⚠ PERTE DE CERTIFICATION = Interdiction de livrer aux marchés publics', action: 'Planifier Test' },
+            { date: '15 Avr', month: 1.5, status: 'green' as const, title: 'NM 10.1.008 Valide', sub: 'Béton spécification — 2/3 tests complétés', detail: 'Prochain test planifié 20 mars', action: null },
+            { date: '20 Jun', month: 3.5, status: 'green' as const, title: 'NM 10.1.005 Valide', sub: 'Ciment — 1/1 complété', detail: '118j restants ✓', action: null },
+            { date: '10 Sep', month: 6, status: 'green' as const, title: 'ISO 9001:2015 Valide', sub: 'Audit prévu septembre', detail: '192j restants ✓', action: null },
+          ];
+          const months = ['Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep'];
+          const totalSpan = 7; // months shown
+
+          return (
+            <div className="mt-6 rounded-lg overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderTop: '2px solid #D4A843' }}>
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 pt-4 pb-3">
+                <div className="flex items-center gap-2">
+                  <span style={{ color: '#D4A843', fontSize: 14, animation: 'pulse 3s ease-in-out infinite' }}>✦</span>
+                  <span style={{ fontFamily: MN, fontSize: 12, fontWeight: 600, color: '#FFFFFF', letterSpacing: '0.5px' }}>CALENDRIER RÉGLEMENTAIRE & CONFORMITÉ</span>
+                </div>
+                <span style={{ fontFamily: MN, fontSize: 9, color: '#D4A843', background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: 20, padding: '3px 10px' }}>
+                  ✨ Généré par IA · Claude Opus
+                </span>
+              </div>
+
+              {/* Timeline */}
+              <div className="px-5 pb-3 overflow-x-auto">
+                <div style={{ position: 'relative', minWidth: 700, height: 180 }}>
+                  {/* Month labels */}
+                  <div className="flex" style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
+                    {months.map((m, i) => (
+                      <div key={m} style={{ flex: 1, fontFamily: MN, fontSize: 10, color: i === 0 ? '#D4A843' : '#9CA3AF', fontWeight: 600, letterSpacing: '1px' }}>{m}</div>
+                    ))}
+                  </div>
+
+                  {/* Timeline bar */}
+                  <div style={{ position: 'absolute', top: 22, left: 0, right: 0, height: 3, background: 'rgba(212,168,67,0.15)', borderRadius: 2 }} />
+
+                  {/* Markers */}
+                  {markers.map((mk, idx) => {
+                    const leftPct = (mk.month / totalSpan) * 100;
+                    const isRed = mk.status === 'red';
+                    return (
+                      <div key={idx} style={{ position: 'absolute', top: 14, left: `${leftPct}%`, transform: 'translateX(-50%)', width: 160, zIndex: isRed ? 2 : 1 }}>
+                        {/* Pin */}
+                        <div style={{ width: 12, height: 12, borderRadius: '50%', background: isRed ? '#EF4444' : '#22C55E', border: '2px solid #0F1629', margin: '0 auto 6px', boxShadow: isRed ? '0 0 8px rgba(239,68,68,0.5)' : '0 0 6px rgba(34,197,94,0.3)' }} />
+                        {/* Date */}
+                        <div style={{ fontFamily: MN, fontSize: 9, color: isRed ? '#EF4444' : '#9CA3AF', textAlign: 'center', fontWeight: 600, marginBottom: 4 }}>{mk.date}</div>
+                        {/* Card */}
+                        <div style={{
+                          background: isRed ? 'rgba(239,68,68,0.06)' : 'rgba(255,255,255,0.03)',
+                          border: `1px solid ${isRed ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.06)'}`,
+                          borderRadius: 6, padding: '8px 10px',
+                          ...(isRed ? { animation: 'riskPulse 2s ease-in-out infinite' } : {}),
+                        }}>
+                          <div style={{ fontFamily: MN, fontSize: 10, color: '#FFFFFF', fontWeight: 600, marginBottom: 2, lineHeight: 1.3 }}>{mk.title}</div>
+                          <div style={{ fontFamily: MN, fontSize: 9, color: '#9CA3AF', marginBottom: 3, lineHeight: 1.4 }}>{mk.sub}</div>
+                          <div style={{ fontFamily: MN, fontSize: 9, color: isRed ? '#EF4444' : '#22C55E', lineHeight: 1.4 }}>{mk.detail}</div>
+                          {mk.action && (
+                            <button
+                              className="mt-2 px-3 py-1 rounded text-[10px] font-semibold uppercase tracking-wider transition-all hover:-translate-y-px"
+                              style={{ background: '#D4A843', color: '#0F1629', border: 'none', cursor: 'pointer', fontFamily: MN }}
+                            >
+                              {mk.action}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Summary strip */}
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.04)', padding: '10px 20px', background: 'rgba(0,0,0,0.1)' }}>
+                <span style={{ fontFamily: MN, fontSize: 11, color: '#9CA3AF' }}>
+                  CERTIFICATIONS: <span style={{ color: '#FFFFFF', fontWeight: 600 }}>3/4 valides</span> · <span style={{ color: '#EF4444', fontWeight: 600, animation: 'pulse-alert 2s ease-in-out infinite' }}>1 ACTION URGENTE</span> <span style={{ color: '#EF4444' }}>(NM 10.1.271 — 26 jours)</span> · Prochaine échéance critique: <span style={{ color: '#FFFFFF' }}>01 avril 2026</span>
+                </span>
+              </div>
+            </div>
+          );
+        })()}
         </div>
         )}
 
