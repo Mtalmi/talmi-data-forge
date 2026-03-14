@@ -1250,7 +1250,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
 
         {/* ─── Agent IA Intelligence Bar ─── */}
         {!hideOpsWidgets && (
-          <div style={{ background: 'linear-gradient(90deg, rgba(212,168,67,0.1), rgba(212,168,67,0.03), transparent)', border: '1px solid rgba(212,168,67,0.25)', borderRadius: '8px', padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }} className="mb-4 relative z-[1] w-full">
+          <div style={{ background: 'linear-gradient(135deg, rgba(212,168,67,0.08) 0%, rgba(212,168,67,0.02) 100%)', border: '1px solid rgba(212,168,67,0.25)', borderLeft: '3px solid #D4A843', borderRadius: '8px', padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }} className="mb-4 relative z-[1] w-full">
             <div className="flex items-center min-w-0">
               <span className="text-[#D4A843] animate-pulse mr-2 flex-shrink-0">✦</span>
               <span className="text-sm text-white/80">AGENT IA : 2 livraisons en retard potentiel — <span style={{ fontWeight:'500', color:'white' }}>Constructions Modernes SA</span> (14:30) arrive à 85% de la fenêtre de livraison. BTP Maroc (16:00) non confirmé.</span>

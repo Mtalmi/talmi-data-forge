@@ -45,7 +45,7 @@ export const ResumeIABar = () => {
   return (
     <div
       className="relative z-[1] mb-5 px-4 py-3"
-      style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.06), transparent)', border: '1px solid rgba(212,168,67,0.12)', borderRadius: '8px' }}
+      style={{ background: 'linear-gradient(135deg, rgba(212,168,67,0.08) 0%, rgba(212,168,67,0.02) 100%)', border: '1px solid rgba(212,168,67,0.12)', borderLeft: '3px solid #D4A843', borderRadius: '8px' }}
     >
       <div className="flex items-center gap-3 min-w-0">
         <span className="flex-shrink-0 animate-pulse text-[#D4A843]" style={{ fontSize: '14px', animationDuration: '3s' }}>✦</span>
