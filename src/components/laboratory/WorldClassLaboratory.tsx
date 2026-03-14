@@ -1844,10 +1844,13 @@ function IntelligenceIATab() {
             <p style={{ fontSize: 10, color: T.textDim, margin: '0 0 8px' }}>F-B25 Théorique</p>
             <p style={{ fontFamily: MONO, fontSize: 24, fontWeight: 200, color: T.gold, margin: 0 }}>E/C: 0.500</p>
           </div>
-          {/* Arrow */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 6px' }}>
-            <span style={{ fontFamily: MONO, fontSize: 10, color: T.warning }}>+4%</span>
-            <span style={{ color: T.textDim, fontSize: 16 }}>→</span>
+          {/* Arrow 1 */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 10px', position: 'relative' }}>
+            <svg width={60} height={24} viewBox="0 0 60 24">
+              <line x1={0} y1={12} x2={48} y2={12} stroke={T.warning} strokeWidth={2} strokeDasharray="6 4" />
+              <polygon points="48,6 60,12 48,18" fill={T.warning} />
+            </svg>
+            <span style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, padding: '2px 10px', borderRadius: 4, background: 'rgba(245,158,11,0.15)', color: T.warning, border: `1px solid ${T.warning}40`, marginTop: 4 }}>+4.0%</span>
           </div>
           {/* Card: Production */}
           <div style={{ flex: 1, padding: '16px 18px', background: 'linear-gradient(145deg, #111B2E, #162036)', border: `1px solid ${T.cardBorder}`, borderRadius: 10, borderTop: `2px solid ${T.warning}` }}>
@@ -1856,10 +1859,13 @@ function IntelligenceIATab() {
             <p style={{ fontFamily: MONO, fontSize: 24, fontWeight: 200, color: T.warning, margin: 0 }}>E/C: 0.520</p>
             <span style={{ fontFamily: MONO, fontSize: 10, padding: '2px 6px', borderRadius: 3, background: 'rgba(245,158,11,0.12)', color: T.warning, border: `1px solid ${T.warning}40` }}>+4.0%</span>
           </div>
-          {/* Arrow */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 6px' }}>
-            <span style={{ fontFamily: MONO, fontSize: 10, color: T.danger }}>+4%</span>
-            <span style={{ color: T.textDim, fontSize: 16 }}>→</span>
+          {/* Arrow 2 */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 10px', position: 'relative' }}>
+            <svg width={60} height={24} viewBox="0 0 60 24">
+              <line x1={0} y1={12} x2={48} y2={12} stroke={T.danger} strokeWidth={2} strokeDasharray="6 4" />
+              <polygon points="48,6 60,12 48,18" fill={T.danger} />
+            </svg>
+            <span style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, padding: '2px 10px', borderRadius: 4, background: 'rgba(239,68,68,0.15)', color: T.danger, border: `1px solid ${T.danger}40`, marginTop: 4 }}>+4.0%</span>
           </div>
           {/* Card: Laboratoire */}
           <div style={{ flex: 1, padding: '16px 18px', background: 'linear-gradient(145deg, #111B2E, #162036)', border: `1px solid ${T.cardBorder}`, borderRadius: 10, borderTop: `2px solid ${T.danger}` }}>
