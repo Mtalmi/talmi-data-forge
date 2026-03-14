@@ -1126,6 +1126,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                     <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em' }}>INTELLIGENCE IA</span>
                   </div>
                   <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843' }}>Généré par IA · Claude Opus</span>
+
                 </div>
                 {[
                   { dot: '#F59E0B', text: <><span style={{ color: '#D4A843', fontWeight: 700 }}>Mercredi 11</span> — 4 livraisons, 202 m³ (capacité 96%). Risque saturation.</> },
