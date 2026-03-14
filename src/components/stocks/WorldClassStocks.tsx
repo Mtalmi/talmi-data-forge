@@ -16,8 +16,6 @@ import { SmartReorderQueue } from '@/components/stocks/SmartReorderQueue';
 import { SurveillanceIATab } from '@/components/stocks/SurveillanceIATab';
 import { MouvementsTab } from '@/components/stocks/MouvementsTab';
 import { OverviewTab } from '@/components/stocks/OverviewTab';
-import { SurveillanceIATab } from '@/components/stocks/SurveillanceIATab';
-import { MouvementsTab } from '@/components/stocks/MouvementsTab';
 import { format, subDays, startOfDay } from 'date-fns';
 
 // ─────────────────────────────────────────────────────
