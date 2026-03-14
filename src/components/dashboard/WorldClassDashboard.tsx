@@ -914,42 +914,46 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
         ) : (
         <>
         {/* ─── Hero Score Bar ─── */}
-        <div className="mb-6 flex items-center justify-between backdrop-blur-sm relative z-[1] w-full" style={{ background:'linear-gradient(to right,rgba(212,168,67,0.04),transparent)', border:'1px solid rgba(212,168,67,0.12)', borderRadius:'8px', padding:'16px 20px', position:'relative', overflow:'hidden' }}>
-          <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent 0%,rgba(212,168,67,0.7) 50%,transparent 100%)', zIndex:99, pointerEvents:'none' }} />
+        <div className="mb-6 flex items-center justify-between backdrop-blur-sm relative z-[1] w-full" style={{ background:'linear-gradient(to right,rgba(212,168,67,0.04),transparent)', border:'1px solid rgba(212,168,67,0.12)', borderTop: '2px solid #D4A843', borderRadius:'8px', padding:'16px 20px', position:'relative', overflow:'hidden' }}>
+          <div style={{ position:'absolute', top:2, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent 0%,rgba(212,168,67,0.7) 50%,transparent 100%)', zIndex:99, pointerEvents:'none' }} />
           {/* Left: Score */}
           <div className="flex flex-col">
             <span className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground/40 font-medium">Score Opérationnel du Jour</span>
-            <span className="text-4xl font-bold font-mono text-[#D4A843]" style={{ textShadow: '0 0 25px rgba(212, 168, 67, 0.2)', lineHeight: 1.1 }}>8.7/10</span>
-            <span className="inline-flex items-center text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded px-2 py-0.5 gap-1 mt-1">↗ +0.4 pts vs hier</span>
-            <div style={{ display:'flex', gap:'6px', marginTop:'6px' }}><span style={{ fontSize:'9px', background:'transparent', border:'1px solid #D4A843', borderRadius:'4px', padding:'2px 6px', color:'#D4A843' }}>LIVRAISONS 60%</span><span style={{ fontSize:'9px', background:'transparent', border:'1px solid #D4A843', borderRadius:'4px', padding:'2px 6px', color:'#D4A843' }}>QUALITÉ 96%</span><span style={{ fontSize:'9px', background:'transparent', border:'1px solid #D4A843', borderRadius:'4px', padding:'2px 6px', color:'#D4A843' }}>MARGE +12%</span></div>
+            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontWeight: 100, fontSize: '56px', color: '#D4A843', textShadow: '0 0 20px rgba(212,168,67,0.2)', lineHeight: 1.1 }}>8.7/10</span>
+            <span className="inline-flex items-center text-xs rounded px-2 py-0.5 gap-1 mt-1" style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid #22C55E', color: '#22C55E' }}>↗ +0.4 pts vs hier</span>
+            <div style={{ display:'flex', gap:'6px', marginTop:'6px' }}>
+              <span style={{ fontSize:'12px', background:'rgba(212,168,67,0.06)', border:'1px solid #D4A843', borderRadius:'4px', padding:'2px 10px', color:'#D4A843', fontFamily:'ui-monospace, monospace' }}>LIVRAISONS 60%</span>
+              <span style={{ fontSize:'12px', background:'rgba(212,168,67,0.06)', border:'1px solid #D4A843', borderRadius:'4px', padding:'2px 10px', color:'#D4A843', fontFamily:'ui-monospace, monospace' }}>QUALITÉ 96%</span>
+              <span style={{ fontSize:'12px', background:'rgba(212,168,67,0.06)', border:'1px solid #D4A843', borderRadius:'4px', padding:'2px 10px', color:'#D4A843', fontFamily:'ui-monospace, monospace' }}>MARGE +12%</span>
+            </div>
           </div>
 
           {/* Middle: Micro-metrics */}
           <div className="flex items-center gap-0">
             <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
               <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Livraisons</span>
-              <span className="text-lg font-semibold font-mono" style={{ color: 'rgb(251,191,36)', fontWeight: '500' }}>3/5</span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '22px', color: 'rgb(251,191,36)' }}>3/5</span>
               <div className="flex items-center gap-1"><span className="text-[10px] uppercase tracking-wider text-green-400/70">3 LIVRÉES</span><span className="text-[10px] uppercase tracking-wider text-amber-400/70">· 2 EN COURS</span></div>
             </div>
             <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
               <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Qualité</span>
-              <span className="text-lg font-semibold font-mono" style={{ color: 'rgb(74,222,128)', fontWeight: '500', textShadow: '0 0 8px rgba(34,197,94,0.2)' }}>96.2%</span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '22px', color: 'rgb(74,222,128)', textShadow: '0 0 8px rgba(34,197,94,0.2)' }}>96.2%</span>
               <div className="flex items-center gap-1 mt-0.5"><span className="text-xs px-1.5 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20">2 OK</span><span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 animate-pulse">1 VAR <span style={{ fontSize:'9px' }}>↗</span></span></div>
             </div>
             <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
               <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Trésorerie</span>
-              <span className="text-lg font-semibold font-mono" style={{ color: '#D4A843', fontWeight: '500' }}>+18.4K</span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '22px', color: '#D4A843' }}>+18.4K</span>
               <span className="text-[10px] text-muted-foreground/40">vs +16.2K hier</span>
             </div>
             <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
               <span className="text-[10px] uppercase tracking-wider text-white/40 mb-1">Batches</span>
-              <span className="text-2xl font-light text-white">23</span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '22px', color: 'white' }}>23</span>
               <span className="text-[10px] text-white/30">Aujourd'hui</span>
             </div>
           </div>
 
           {/* Right: Progress Ring */}
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center" style={{ filter: 'drop-shadow(0 0 8px rgba(212,168,67,0.2))' }}>
             <svg width="80" height="80" viewBox="0 0 80 80">
               <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
               <circle cx="40" cy="40" r="34" fill="none" stroke="#D4A843" strokeWidth="3" strokeLinecap="round"
