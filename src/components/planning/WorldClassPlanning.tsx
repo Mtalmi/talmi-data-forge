@@ -1201,9 +1201,15 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                 name="OPTIMISATION FLOTTE"
                 content={
                   <div>
-                    <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.8 }}>
-                      Analyse hebdomadaire flotte: <span style={{ color: '#fff', fontWeight: 600 }}>TOU-02 sous-utilisée</span> (3 rotations/jour vs capacité 5). <span style={{ color: '#F59E0B', fontWeight: 600 }}>TOU-01 en surutilisation</span> (5.2 rotations/jour moyenne). Recommandation: réaffecter livraison Alliances (Lundi 13h) de TOU-01 à TOU-02. Gain: <span style={{ color: '#34d399', fontWeight: 600 }}>2h disponibilité TOU-01</span> pour maintenance préventive courroie (alerte maintenance active). Coût carburant flotte cette semaine: <span style={{ color: '#fff', fontWeight: 600 }}>4,200 DH</span> (<span style={{ color: '#34d399', fontWeight: 600 }}>↘ -8% vs sem. dern.</span>).
+                    <p style={{ color: '#fff', fontSize: 15, fontWeight: 700, lineHeight: 1.4, marginBottom: 12 }}>TOU-02 sous-utilisée, TOU-01 en surutilisation — rééquilibrage possible</p>
+                    <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.8 }}>
+                      Analyse hebdomadaire flotte: <span style={{ color: '#fff', fontWeight: 600 }}>TOU-02</span> à 3 rotations/jour vs capacité 5. <span style={{ color: '#F59E0B', fontWeight: 600 }}>TOU-01</span> à 5.2 rotations/jour moyenne. Coût carburant flotte cette semaine: <span style={{ color: '#fff', fontWeight: 600 }}>4,200 DH</span> (<span style={{ color: '#34d399', fontWeight: 600 }}>↘ -8% vs sem. dern.</span>).
                     </p>
+                    <div style={{ background: 'rgba(212,168,67,0.05)', borderLeft: '3px solid #D4A843', padding: 12, borderRadius: '0 8px 8px 0', marginTop: 8 }}>
+                      <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.6 }}>
+                        <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation:</span> Réaffecter livraison Alliances (Lundi 13h) de TOU-01 à TOU-02. Gain: <span style={{ color: '#34d399', fontWeight: 600 }}>2h disponibilité TOU-01</span> pour maintenance préventive courroie.
+                      </p>
+                    </div>
                     <div className="flex gap-2 mt-4">
                       <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(16,185,129,0.12)', color: '#34d399' }}>Économie flotte: 340 DH/sem</span>
                       <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>Maintenance: 1 alerte</span>
