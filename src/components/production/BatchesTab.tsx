@@ -303,6 +303,25 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                   <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.45)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.heure}</span>
                   <span style={{ fontFamily: mono, fontSize: 12, color: 'rgba(255,255,255,0.60)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.cout}</span>
                   <span style={{ fontFamily: mono, fontSize: 12, fontWeight: 500, display: 'flex', width: '100%', justifyContent: 'center', color: row.marge >= 35 ? '#34d399' : row.marge >= 30 ? '#F59E0B' : '#EF4444' }}>{row.marge}%</span>
+                  {/* Client satisfaction */}
+                  {(() => {
+                    const satisfMap: Record<string, { color: string; label: string }> = {
+                      '#403-068': { color: '#10B981', label: 'Satisfait' },
+                      '#403-067': { color: '#F59E0B', label: 'En attente retour' },
+                      '#403-066': { color: '#6B7280', label: 'En cours' },
+                      '#403-065': { color: '#10B981', label: 'Satisfait' },
+                      '#403-064': { color: '#10B981', label: 'Satisfait' },
+                      '#403-063': { color: '#6B7280', label: 'En cours' },
+                      '#403-062': { color: '#F59E0B', label: 'Réclamation: slump hors tolérance' },
+                      '#403-061': { color: '#10B981', label: 'Satisfait' },
+                    };
+                    const s = satisfMap[row.bl_id] || { color: '#6B7280', label: '—' };
+                    return (
+                      <span style={{ display: 'flex', justifyContent: 'center', position: 'relative' }} title={s.label}>
+                        <span style={{ width: 10, height: 10, borderRadius: '50%', background: s.color, cursor: 'default' }} />
+                      </span>
+                    );
+                  })()}
                   {/* Status badge */}
                   <span style={{
                     display: 'inline-flex', alignItems: 'center', gap: 6, width: 'fit-content',
