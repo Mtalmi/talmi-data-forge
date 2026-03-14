@@ -609,55 +609,54 @@ export default function Creances() {
             borderTop: '2px solid #D4A843',
           }}
         >
-          <div className="flex items-center gap-2 mb-4">
-            <Target className="h-4 w-4 text-[#D4A843]" />
-            <span className="text-xs font-semibold uppercase tracking-widest text-[#D4A843]">
-              RÉSUMÉ EXÉCUTIF IA
-            </span>
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+            <div className="flex items-center gap-2">
+              <Target className="h-4 w-4 text-[#D4A843]" />
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 700, color: '#D4A843', letterSpacing: '2px', textTransform: 'uppercase' as const }}>
+                ✦ RÉSUMÉ EXÉCUTIF IA
+              </span>
+            </div>
+            <IABadgeCreances />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Left: Portfolio Health Score */}
             <div className="flex flex-col items-center justify-center">
-              <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-2">Score Santé Portefeuille</p>
-              {(() => {
-                const healthScore = 84;
-                const scoreColor = '#22c55e';
-                
-                return (
-                  <span 
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
-                      fontSize: '64px',
-                      fontWeight: 200,
-                      lineHeight: 1,
-                      color: scoreColor,
-                      letterSpacing: '-0.02em',
-                    }}
-                  >
-                    {healthScore}
-                  </span>
-                );
-              })()}
-              <p className="text-[10px] text-gray-500 mt-1">/ 100</p>
+              <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' as const, marginBottom: 8 }}>Score Santé Portefeuille</p>
+              <div className="flex items-baseline">
+                <span 
+                  style={{ 
+                    fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                    fontSize: 56,
+                    fontWeight: 100,
+                    lineHeight: 1,
+                    color: '#D4A843',
+                    letterSpacing: '-0.02em',
+                    textShadow: '0 0 20px rgba(212,168,67,0.2)',
+                  }}
+                >
+                  84
+                </span>
+                <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 20, color: '#9CA3AF', marginLeft: 4 }}>/100</span>
+              </div>
             </div>
 
             {/* Center: AI Insights */}
             <div className="flex flex-col justify-center space-y-2 border-l border-r border-white/10 px-6">
               <div className="flex items-start gap-2">
-                <TrendingUp className="h-3.5 w-3.5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#22c55e', marginTop: 5, flexShrink: 0 }} />
                 <p className="text-xs text-gray-300">
                   <span className="text-emerald-400 font-medium">Tendance forte:</span> Taux de recouvrement en hausse de {Math.round(stats.collectionRate)}% ce mois
                 </p>
               </div>
               <div className="flex items-start gap-2">
-                <AlertTriangle className="h-3.5 w-3.5 text-amber-400 mt-0.5 flex-shrink-0" />
+                <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#F59E0B', marginTop: 5, flexShrink: 0 }} />
                 <p className="text-xs text-gray-300">
                   <span className="text-amber-400 font-medium">Risque majeur:</span> {stats.clientsWithOverdue} client{stats.clientsWithOverdue > 1 ? 's' : ''} avec créances +30 jours ({formatCurrency(stats.atRiskAmount)})
                 </p>
               </div>
               <div className="flex items-start gap-2">
-                <CheckCircle className="h-3.5 w-3.5 text-[#D4A843] mt-0.5 flex-shrink-0" />
+                <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#D4A843', marginTop: 5, flexShrink: 0 }} />
                 <p className="text-xs text-gray-300">
                   <span className="text-[#D4A843] font-medium">Action recommandée:</span> Prioriser relance des {Math.min(3, stats.clientsWithOverdue)} plus gros encours
                 </p>
@@ -666,12 +665,12 @@ export default function Creances() {
 
             {/* Right: 30-day Forecast */}
             <div className="flex flex-col items-center justify-center">
-              <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-2">Prévision Encaissement 30j</p>
+              <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' as const, marginBottom: 8 }}>Prévision Encaissement 30j</p>
               <div className="flex items-baseline gap-2">
                 <span 
                   style={{ 
                     fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
-                    fontSize: '28px',
+                    fontSize: 28,
                     fontWeight: 200,
                     color: '#D4A843',
                     letterSpacing: '-0.02em',
