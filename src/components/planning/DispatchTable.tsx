@@ -311,7 +311,7 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
                       <span style={{ fontSize: 10, color: '#4A5568' }}>—</span>
                     ) : (
                       <span style={{
-                        fontSize: 10, fontWeight: 600, padding: '1px 6px', borderRadius: 999,
+                        fontSize: 10, fontWeight: 600, fontFamily: 'ui-monospace, monospace', padding: '1px 6px', borderRadius: 999,
                         background: p.type === 'green' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
                         color: p.type === 'green' ? '#22C55E' : '#EF4444',
                       }}>{p.badge}</span>

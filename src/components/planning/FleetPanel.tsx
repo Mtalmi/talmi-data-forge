@@ -341,7 +341,7 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
             <div key={truck.id_camion} className="p-2 rounded-lg transition-all" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', borderRadius: 12 }}>
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="font-mono font-semibold text-sm text-white/80 truncate">{truck.id_camion}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 500, fontSize: 14, color: '#D4A843' }}>{truck.id_camion}</span>
                   <span style={{ padding: '1px 6px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>{truck.capacite_m3}m³</span>
                 </div>
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: truck.statusBg, color: truck.statusColor, border: `1px solid ${truck.statusColor}30` }}>
