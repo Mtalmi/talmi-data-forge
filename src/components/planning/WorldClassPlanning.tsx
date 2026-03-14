@@ -638,7 +638,7 @@ function CollapsibleChronologique() {
               borderTop: i > 0 ? `1px solid ${T.cardBorder}60` : 'none',
               transition: 'background 150ms',
             }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255, 215, 0, 0.04)')}
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.03)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
             >
               <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: T.gold }}>{row.bl}</div>
