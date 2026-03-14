@@ -1150,7 +1150,7 @@ export default function WorldClassDeliveries() {
         {/* ════════════════════════════════════════════ */}
         {/* ANALYTIQUE & INTELLIGENCE IA PLACEHOLDERS    */}
         {/* ════════════════════════════════════════════ */}
-        {activeTab === 'analytique' && <EmptyTabPlaceholder title="Analytique" icon={TrendingUp} />}
+        {activeTab === 'analytique' && <AnalytiqueTab />}
         {activeTab === 'ia' && <IntelligenceIATab />}
 
       </div>
