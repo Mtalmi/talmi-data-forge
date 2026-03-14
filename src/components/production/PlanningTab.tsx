@@ -663,7 +663,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
                           : isT
                             ? 'linear-gradient(180deg, rgba(212,168,67,0.05) 0%, transparent 100%)'
                             : 'transparent',
-                      opacity: isPast && !isT ? 0.45 : 1,
+                      opacity: isPast && !isT ? 0.85 : 1,
                       minHeight: 320,
                       display: 'flex', flexDirection: 'column',
                       position: 'relative',
