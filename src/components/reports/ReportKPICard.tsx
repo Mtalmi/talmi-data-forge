@@ -1,6 +1,9 @@
-import { LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { TrendIndicator } from '@/components/ui/formatted-value';
+
+const MONO = 'ui-monospace, SFMono-Regular, monospace';
 
 interface ReportKPICardProps {
   title: string;
@@ -10,6 +13,15 @@ interface ReportKPICardProps {
   trendLabel?: string;
   variant?: 'primary' | 'success' | 'warning' | 'accent';
   className?: string;
+}
+
+/** Split trailing unit from value string */
+function splitUnit(value: string): { num: string; unit: string } {
+  const match = value.match(/^(.+?)\s*(DH|m³|%|kg|L|j|K DH|M DH)$/);
+  if (match) return { num: match[1].trim(), unit: match[2] };
+  // Check for trailing %
+  if (value.endsWith('%')) return { num: value.slice(0, -1), unit: '%' };
+  return { num: value, unit: '' };
 }
 
 export function ReportKPICard({
@@ -35,22 +47,7 @@ export function ReportKPICard({
     accent: 'text-accent/50',
   };
 
-  const getTrendColor = () => {
-    if (trend === undefined || trend === 0) return 'text-muted-foreground';
-    return trend > 0 ? 'text-success' : 'text-destructive';
-  };
-
-  const getTrendIcon = () => {
-    if (trend === undefined || Math.abs(trend) < 0.5) return Minus;
-    return trend > 0 ? TrendingUp : TrendingDown;
-  };
-
-  const formatTrend = (val: number) => {
-    const sign = val >= 0 ? '+' : '';
-    return `${sign}${val.toFixed(1)}%`;
-  };
-
-  const TrendIcon = getTrendIcon();
+  const { num, unit } = splitUnit(value);
 
   return (
     <Card className={cn(
@@ -62,18 +59,18 @@ export function ReportKPICard({
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
             <p className="text-xs sm:text-sm text-muted-foreground truncate">{title}</p>
-            <p className="text-lg sm:text-2xl font-bold mt-0.5 truncate">{value}</p>
+            <p className="text-lg sm:text-2xl font-bold mt-0.5 truncate" style={{ fontFamily: MONO, fontWeight: 200 }}>
+              {num}
+              {unit && (
+                <span style={{ fontWeight: 300, fontSize: '60%', color: '#9CA3AF', marginLeft: 4 }}>
+                  {unit}
+                </span>
+              )}
+            </p>
             
             {trend !== undefined && (
-              <div className={cn(
-                'flex items-center gap-1 mt-1.5 text-xs sm:text-sm',
-                getTrendColor()
-              )}>
-                <TrendIcon className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="font-medium">{formatTrend(trend)}</span>
-                {trendLabel && (
-                  <span className="text-muted-foreground hidden sm:inline">vs {trendLabel}</span>
-                )}
+              <div className="mt-1.5">
+                <TrendIndicator value={trend} label={trendLabel} />
               </div>
             )}
           </div>
@@ -83,3 +80,4 @@ export function ReportKPICard({
     </Card>
   );
 }
+

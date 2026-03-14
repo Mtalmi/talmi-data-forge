@@ -9,16 +9,35 @@ import QualityTrendChart from '@/components/design-guardian/QualityTrendChart';
 import FixPromptGenerator from '@/components/design-guardian/FixPromptGenerator';
 import AuditConfiguration from '@/components/design-guardian/AuditConfiguration';
 
-const gold = 'rgba(255,215,0,0.5)';
-const goldGrad = 'linear-gradient(90deg, rgba(255,215,0,0.3), transparent)';
-const goldGradR = 'linear-gradient(90deg, transparent, rgba(255,215,0,0.3))';
+const MONO = 'ui-monospace, SFMono-Regular, monospace';
 
 function SectionHeader({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-3 mb-4 mt-2">
-      <div className="h-px flex-1" style={{ background: goldGrad }} />
-      <span className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: gold }}>{label}</span>
-      <div className="h-px flex-1" style={{ background: goldGradR }} />
+    <div className="flex items-center gap-0 mb-4 mt-2">
+      <span style={{ color: '#D4A843', fontSize: 14, marginRight: 8, flexShrink: 0 }}>✦</span>
+      <span
+        style={{
+          fontFamily: MONO,
+          fontSize: 11,
+          fontWeight: 700,
+          letterSpacing: '0.15em',
+          color: '#D4A843',
+          textTransform: 'uppercase',
+          whiteSpace: 'nowrap',
+          flexShrink: 0,
+        }}
+      >
+        {label}
+      </span>
+      <span
+        style={{
+          borderBottom: '1px dashed rgba(212, 168, 67, 0.2)',
+          flexGrow: 1,
+          marginLeft: 12,
+          alignSelf: 'center',
+          height: 0,
+        }}
+      />
     </div>
   );
 }

@@ -117,13 +117,17 @@ export function RealTimeProfitTicker() {
   }, [fetchProfitData]);
 
   const formatCurrency = (value: number) => {
-    if (Math.abs(value) >= 1000000) {
-      return `${(value / 1000000).toFixed(2)}M DH`;
+    const abs = Math.abs(value);
+    const sign = value < 0 ? '−' : '';
+    if (abs >= 1_000_000) {
+      const m = abs / 1_000_000;
+      return `${sign}${m % 1 === 0 ? m.toFixed(0) : m.toFixed(1).replace('.', ',')} M DH`;
     }
-    if (Math.abs(value) >= 1000) {
-      return `${(value / 1000).toFixed(1)}K DH`;
+    if (abs >= 1_000) {
+      const k = Math.round(abs / 1_000);
+      return `${sign}${k.toLocaleString('fr-FR').replace(/\u202F/g, ' ').replace(/\u00A0/g, ' ')}K DH`;
     }
-    return `${value.toFixed(0)} DH`;
+    return `${sign}${Math.round(abs).toLocaleString('fr-FR').replace(/\u202F/g, ' ').replace(/\u00A0/g, ' ')} DH`;
   };
 
   const getProfitTrend = () => {
