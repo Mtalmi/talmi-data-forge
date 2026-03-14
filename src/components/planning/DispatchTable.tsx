@@ -87,7 +87,7 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
     { key: 'toupie', label: 'TOUPIE', width: '10%', align: 'center' as const },
     { key: 'depart', label: 'DÉPART', width: '10%', align: 'center' as const },
     { key: 'eta', label: 'ETA', width: '10%', align: 'center' as const },
-    { key: 'statut', label: 'STATUT', width: '19%', align: 'center' as const },
+    { key: 'statut', label: 'STATUT', width: '19%', align: 'right' as const },
   ];
 
   return (
