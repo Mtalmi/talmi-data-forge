@@ -297,7 +297,7 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
                   </div>
                   {v.chauffeur && <p className="text-[11px] text-white/30 truncate">{v.chauffeur}</p>}
                   {v.chauffeur && (
-                    <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', fontFamily: 'JetBrains Mono, monospace', marginBottom: 6 }}>
+                    <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', fontFamily: 'JetBrains Mono, monospace', marginBottom: 2 }}>
                       {v.id_camion === 'TOU-01' ? '4/5 rotations · 127 km · ⛽ 45L' : v.id_camion === 'TOU-02' ? '3/5 rotations · 89 km · ⛽ 32L' : v.id_camion === 'TOU-03' ? '2/5 rotations · 54 km · ⛽ 19L' : '—'}
                     </p>
                   )}
