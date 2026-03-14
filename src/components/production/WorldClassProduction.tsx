@@ -239,6 +239,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
       <div className="group" style={{
         background: T.cardBg,
         border: `1px solid ${T.cardBorder}`,
+        borderTop: '2px solid #D4A843',
         borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden', height: '100%',
         transition: 'all 200ms ease',
       }}>
