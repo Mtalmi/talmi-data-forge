@@ -427,31 +427,30 @@ export function FacturesTable({
                   </TableCell>
                   <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center gap-1 justify-center">
-                      <FacturePdfProGenerator facture={pdfFacture} compact />
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-8 w-8 p-0"
-                            onClick={() => {
-                              setPaymentFacture(facture);
-                              setPaymentDialogOpen(true);
-                            }}
-                          >
-                            <DollarSign className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>Paiement</TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
-                            <ExternalLink className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>{ft.viewDetails}</TooltipContent>
-                      </Tooltip>
+                      <button
+                        style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: 4, padding: '4px 10px', cursor: 'pointer', fontSize: 11, fontFamily: 'ui-monospace, monospace' }}
+                        onClick={() => {/* PDF gen handled by existing generator */}}
+                      >
+                        PDF
+                      </button>
+                      <button
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF', padding: 4, display: 'flex', transition: 'color 200ms' }}
+                        onMouseEnter={e => (e.currentTarget.style.color = '#D4A843')}
+                        onMouseLeave={e => (e.currentTarget.style.color = '#9CA3AF')}
+                        onClick={() => {
+                          setPaymentFacture(facture);
+                          setPaymentDialogOpen(true);
+                        }}
+                      >
+                        <DollarSign className="h-4 w-4" />
+                      </button>
+                      <button
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF', padding: 4, display: 'flex', transition: 'color 200ms' }}
+                        onMouseEnter={e => (e.currentTarget.style.color = '#D4A843')}
+                        onMouseLeave={e => (e.currentTarget.style.color = '#9CA3AF')}
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </button>
                     </div>
                   </TableCell>
                 </TableRow>

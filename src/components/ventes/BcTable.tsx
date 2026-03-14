@@ -611,6 +611,10 @@ export function BcTable({
           })}
         </TableBody>
       </Table>
+      {/* Summary row */}
+      <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(255,255,255,0.06)', fontFamily: 'ui-monospace, monospace', fontSize: 12, color: '#9CA3AF' }}>
+        <span style={{ color: '#D4A843' }}>{bcList.length}</span> bons de commande · Volume total: <span style={{ color: '#D4A843' }}>{bcList.reduce((s, b) => s + b.volume_m3, 0)} m³</span> · Valeur: <span style={{ color: '#D4A843' }}>{bcList.reduce((s, b) => s + b.total_ht, 0).toLocaleString('fr-FR')} DH</span>
+      </div>
     </div>
   );
 }
