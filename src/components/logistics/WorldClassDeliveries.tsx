@@ -1693,7 +1693,7 @@ export default function WorldClassDeliveries() {
                     <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} />
                     <RechartsTooltip content={<CustomTooltip />} />
                     <Bar yAxisId="left" dataKey="livraisons" name="Livraisons" fill="url(#barGradLog)" radius={[4, 4, 0, 0]} />
-                    <Area yAxisId="right" type="monotone" dataKey="revenue" name="Revenu (DH)" stroke="#D4A843" fill="url(#revenueAreaLog)" strokeWidth={2} dot={LinePulseDot('#D4A843', perfData.length)} />
+                    <Area yAxisId="right" type="monotone" dataKey="revenue" name="Revenu (DH)" stroke="#D4A843" fill="url(#revenueAreaLog)" strokeWidth={3} dot={LinePulseDot('#D4A843', perfData.length)} />
                   </ComposedChart>
                 </ResponsiveContainer>
                 {/* Summary strip */}
