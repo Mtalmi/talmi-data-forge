@@ -1753,7 +1753,7 @@ function IntelligenceIATab() {
             </tr></thead>
             <tbody>
               {nmRows.map((r, i) => (
-                <tr key={i} style={{ ...altRow(i), borderLeft: r.check === 'bloqué' ? '3px solid #EF4444' : 'none' }}>
+                <tr key={i} style={{ ...altRow(i), borderLeft: r.check === 'bloqué' ? '3px solid #EF4444' : 'none' }} onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }} onMouseLeave={e => { e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)'; }}>
                   <td style={{ ...monoCell, color: T.gold }}>{r.batch}</td>
                   <td style={tblCell}><span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, fontFamily: MONO, fontWeight: 700, background: r.formule.includes('B25') ? 'rgba(212,168,67,0.15)' : r.formule.includes('B30') ? 'rgba(196,154,60,0.15)' : 'rgba(232,201,106,0.15)', color: r.formule.includes('B25') ? '#D4A843' : r.formule.includes('B30') ? '#C49A3C' : '#E8C96A' }}>{r.formule}</span></td>
                   <td style={monoCell}>{r.aff}</td>
