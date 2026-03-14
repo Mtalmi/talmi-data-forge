@@ -347,6 +347,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
 function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = false }: { slot: { product: string; volume: number; client: string } | null; delay?: number; riskyClients?: Set<string>; onClick?: () => void; rentabilite?: boolean }) {
   const [visible, setVisible] = useState(false);
   const [hov, setHov] = useState(false);
+  const [dotHov, setDotHov] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
 
    if (!slot) {
@@ -354,14 +355,14 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = f
       <div
         style={{
           opacity: visible ? 1 : 0, transition: 'all 500ms ease-out',
-          border: '1px dashed rgba(212, 168, 67, 0.2)', borderRadius: 8, padding: '10px 12px',
+          border: hov ? '1px dashed rgba(212,168,67,0.3)' : '1px dashed rgba(212, 168, 67, 0.2)', borderRadius: 8, padding: '10px 12px',
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 58,
-          cursor: 'pointer', background: hov ? 'rgba(212,168,67,0.05)' : 'transparent',
+          cursor: 'pointer', background: hov ? 'rgba(212,168,67,0.04)' : 'transparent',
         }}
         onMouseEnter={() => setHov(true)}
         onMouseLeave={() => setHov(false)}
       >
-        <span style={{ color: hov ? 'rgba(212, 168, 67, 0.6)' : 'rgba(212, 168, 67, 0.3)', fontSize: 20, lineHeight: 1, transition: 'color 200ms' }}>+</span>
+        <span style={{ color: hov ? '#D4A843' : 'rgba(212, 168, 67, 0.4)', fontSize: 20, lineHeight: 1, transition: 'color 200ms' }}>+</span>
         <span style={{ color: 'rgba(212, 168, 67, 0.4)', fontSize: 10, marginTop: 2 }}>Disponible</span>
       </div>
     );
@@ -389,6 +390,9 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = f
     }
   }
 
+  // Determine status for tooltip
+  const statusLabel = isRisky ? 'Paiement en attente' : 'Confirmé';
+
   return (
     <div
       onMouseEnter={() => setHov(true)}
@@ -396,27 +400,44 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = f
       onClick={onClick}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? (hov ? 'translateY(-1px)' : 'translateY(0)') : 'translateY(12px)',
+        transform: visible ? (hov ? 'translateY(-2px)' : 'translateY(0)') : 'translateY(12px)',
         transition: 'opacity 500ms ease-out, transform 200ms ease-out, box-shadow 200ms, border-color 200ms',
         background: rentabilite ? rentaBg : 'rgba(245, 158, 11, 0.08)',
-        border: `1px solid ${hov ? 'rgba(245, 158, 11, 0.3)' : 'rgba(245, 158, 11, 0.15)'}`,
+        border: `1px solid ${hov ? 'rgba(212,168,67,0.4)' : 'rgba(245, 158, 11, 0.15)'}`,
         borderLeft: `3px solid ${rentabilite ? rentaBorder : color}`,
         borderRadius: 8, padding: '8px 10px',
         cursor: 'pointer', minHeight: 58,
         position: 'relative',
-        boxShadow: hov ? '0 0 12px rgba(212,168,67,0.1)' : 'none',
+        boxShadow: hov ? '0 0 15px rgba(212,168,67,0.1)' : 'none',
       }}
     >
-      {/* Payment status dot */}
-      <div style={{
-        position: 'absolute', top: 5, right: 5,
-        width: 7, height: 7, borderRadius: '50%',
-        background: dotColor,
-        boxShadow: `0 0 4px ${dotColor}60`,
-      }} />
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: slot.product === 'Spécial' ? 10 : 11, fontWeight: 800, color: slot.product === 'Spécial' ? '#F59E0B' : '#D4A843', marginBottom: 2, display: 'inline-block', padding: '1px 6px', borderRadius: 4, background: slot.product === 'Spécial' ? 'rgba(245,158,11,0.15)' : 'rgba(212,168,67,0.2)', border: slot.product === 'Spécial' ? '1px solid #F59E0B' : '1px solid rgba(212,168,67,0.5)' }}>{slot.product}</p>
-      <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 13, fontWeight: 500, color: T.textPri }}>{slot.volume} m³</p>
-      <p style={{ fontSize: 10, color: T.textDim, marginTop: 2 }}>{slot.client}</p>
+      {/* Payment status dot with tooltip */}
+      <div
+        onMouseEnter={() => setDotHov(true)}
+        onMouseLeave={() => setDotHov(false)}
+        style={{
+          position: 'absolute', top: 5, right: 5,
+          width: 7, height: 7, borderRadius: '50%',
+          background: dotColor,
+          boxShadow: `0 0 4px ${dotColor}60`,
+          cursor: 'default',
+        }}
+      >
+        {dotHov && (
+          <div style={{
+            position: 'absolute', top: -28, right: -4,
+            background: 'rgba(15,22,41,0.95)', border: '1px solid rgba(212,168,67,0.3)',
+            borderRadius: 4, padding: '3px 8px', whiteSpace: 'nowrap',
+            fontSize: 9, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+            color: isRisky ? '#EF4444' : '#22C55E', fontWeight: 600, zIndex: 20,
+          }}>
+            {statusLabel}
+          </div>
+        )}
+      </div>
+      <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: slot.product === 'Spécial' ? 9 : 11, fontWeight: 800, color: slot.product === 'Spécial' ? '#F59E0B' : '#D4A843', marginBottom: 2, display: 'inline-block', padding: '1px 6px', borderRadius: 4, background: slot.product === 'Spécial' ? 'rgba(245,158,11,0.06)' : 'rgba(212,168,67,0.2)', border: slot.product === 'Spécial' ? '1px solid #F59E0B' : '1px solid rgba(212,168,67,0.5)' }}>{slot.product}</p>
+      <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 13, fontWeight: 500, color: '#fff' }}>{slot.volume} m³</p>
+      <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>{slot.client}</p>
     </div>
   );
 }
