@@ -116,15 +116,15 @@ function SectionHeader({ icon: Icon, label, right }: { icon: any; label: string;
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
       <Icon size={16} color={T.gold} />
       <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>{label}</span>
-      <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
+      <div style={{ flex: 1, height: 0, borderTop: `1px dotted ${T.gold}40` }} />
       {right}
     </div>
   );
 }
 
-function IABadge() {
+function IABadge({ small }: { small?: boolean } = {}) {
   return (
-    <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', padding: '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4, background: 'rgba(212,168,67,0.06)' }}>
+    <span style={{ fontFamily: MONO, fontSize: small ? 10 : 11, color: '#D4A843', padding: small ? '3px 6px' : '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4, background: 'rgba(212,168,67,0.06)' }}>
       Généré par IA · Claude Opus
     </span>
   );
@@ -189,7 +189,7 @@ function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; del
   const [visible, setVisible] = useState(false);
   const [hov, setHov] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
-  const borderColor = v.score >= 80 ? T.success : v.score >= 60 ? T.warning : T.danger;
+  const borderColor = v.score >= 80 ? T.gold : v.score >= 60 ? T.warning : T.danger;
   const isLow = v.score < 60;
 
   return (
@@ -219,7 +219,7 @@ function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; del
         <div style={{ maxHeight: hov ? 60 : 0, opacity: hov ? 1 : 0, overflow: 'hidden', transition: 'max-height 0.3s ease, opacity 0.2s ease' }}>
           <div style={{ fontSize: 10, color: T.textDim, textAlign: 'center', lineHeight: 1.6, paddingTop: 6, borderTop: `1px solid ${T.cardBorder}` }}>{v.fullDiag}</div>
         </div>
-        <IABadge />
+        <IABadge small />
         <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textAlign: 'center', margin: 0 }}>Revenu/jour: {v.revenue}</p>
         {/* Driver info */}
         <div style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 8, marginTop: 4 }}>
@@ -255,7 +255,7 @@ function FreshnessRing({ min, max, done, planned }: { min: number; max: number; 
   const pct = Math.min(min / max, 1);
   const remaining = max - min;
   const ringColor = done ? T.success : planned ? T.textDim : remaining > 45 ? T.success : remaining > 20 ? T.warning : T.danger;
-  const pulseAnim = !done && !planned && remaining < 10 ? 'tbos-pulse 1s ease-in-out infinite' : 'none';
+  const pulseAnim = !done && !planned && (remaining < 10 || (remaining <= 45 && remaining > 20)) ? 'tbos-pulse 1.5s ease-in-out infinite' : 'none';
   const r = 16, circ = 2 * Math.PI * r;
   return (
     <div style={{ position: 'relative', width: 40, height: 40, flexShrink: 0, animation: pulseAnim }}>
@@ -371,7 +371,7 @@ function PipelineCard({ label, count, color, aiRisk, delay = 0 }: { label: strin
         <p style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color, lineHeight: 1 }}>{Math.round(animated)}</p>
         <p style={{ fontFamily: MONO, fontSize: 11, color: T.textSec, fontWeight: 600, marginTop: 8, letterSpacing: '1.5px', textTransform: 'uppercase' as const }}>{label}</p>
         <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-          <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: 'transparent', color: riskColor, border: `1px solid ${riskColor}40` }}>
+          <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: 'transparent', color: riskColor, border: `1px solid ${riskColor}` }}>
             {aiRisk.label} {aiRisk.pct}%
           </span>
           <IABadge />
@@ -766,7 +766,7 @@ function AnalytiqueTab() {
               { label: 'VOLUME TOTAL', value: '1,480 m³', color: T.gold },
               { label: 'REVENU TOTAL', value: '714,000 DH', color: T.gold },
               { label: 'PONCTUALITÉ', value: '91%', color: T.success },
-              { label: 'VS MOIS DERN.', value: '+12%', color: T.success },
+              { label: 'VS MOIS DERN.', value: '+12%', color: T.gold },
             ].map(s => (
               <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ fontFamily: MONO, fontSize: 12, color: T.textDim, letterSpacing: '0.05em' }}>{s.label}</span>
@@ -779,7 +779,7 @@ function AnalytiqueTab() {
 
       {/* ROW 2 — BREAKDOWN */}
       <section>
-        <SectionHeader icon={TrendingUp} label="Décomposition" />
+        <SectionHeader icon={TrendingUp} label="✦ Décomposition" />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
 
           {/* Card 1: Revenu par Toupie */}
@@ -882,7 +882,7 @@ function AnalytiqueTab() {
                       <td style={{ padding: '10px 8px', textAlign: 'center', fontSize: 12, fontWeight: 200, color: T.textPri }}>{d.dhkm}</td>
                       <td style={{ padding: '10px 8px', textAlign: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-                          <span style={{ fontFamily: MONO, fontWeight: 200, fontSize: 24, color: d.score >= 95 ? T.gold : d.score >= 90 ? T.success : T.warning }}>{d.score}</span>
+                          <span style={{ fontFamily: MONO, fontWeight: 200, fontSize: 24, color: T.success }}>{d.score}</span>
                           <span style={{ fontSize: 14, color: d.badgeColor }}>{d.badge}</span>
                         </div>
                       </td>
@@ -900,7 +900,7 @@ function AnalytiqueTab() {
 
       {/* ROW 3 — EFFICIENCY */}
       <section>
-        <SectionHeader icon={Activity} label="Efficacité Opérationnelle" />
+        <SectionHeader icon={Activity} label="✦ Efficacité Opérationnelle" />
         <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
 
           {/* Coût par Livraison */}
@@ -909,15 +909,15 @@ function AnalytiqueTab() {
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 16 }}>
               <span style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color: T.gold }}>1,420 DH</span>
               <span style={{ fontSize: 12, color: T.textDim }}>coût moyen/livraison</span>
-              <Bdg label="−8% vs mois dernier" color={T.success} bg="rgba(34,197,94,0.12)" />
+              <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: 'rgba(34,197,94,0.15)', color: T.success, border: `1px solid rgba(34,197,94,0.3)` }}>−8% vs mois dernier</span>
             </div>
             {/* Breakdown bars */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
               {[
                 { label: 'Carburant', pct: 42, color: T.danger },
-                { label: 'Chauffeur', pct: 35, color: T.info },
+                { label: 'Chauffeur', pct: 35, color: T.gold },
                 { label: 'Maintenance', pct: 15, color: T.warning },
-                { label: 'Autre', pct: 8, color: '#6B7280' },
+                { label: 'Autre', pct: 8, color: '#9CA3AF' },
               ].map(b => (
                 <div key={b.label}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
@@ -957,7 +957,7 @@ function AnalytiqueTab() {
       </section>
 
       {/* Freshness Indicator — 30 days */}
-      <Card style={{ borderTop: `2px solid ${T.warning}` }}>
+      <Card style={{ borderTop: `2px solid ${T.success}` }}>
         <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: '1.5px', marginBottom: 16, textTransform: 'uppercase' as const }}>✦ INDICATEUR FRAÎCHEUR — 30 JOURS</p>
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 16 }}>
           {[
@@ -971,7 +971,7 @@ function AnalytiqueTab() {
             </div>
           ))}
         </div>
-        <p style={{ fontFamily: MONO, fontSize: 13, color: T.gold, margin: '0 0 8px' }}>Temps moyen mélange→livraison: <strong>54 min</strong></p>
+        <p style={{ fontFamily: MONO, fontSize: 13, color: T.textDim, margin: '0 0 8px' }}>Temps moyen mélange→livraison: <span style={{ fontFamily: MONO, fontWeight: 200, fontSize: 24, color: T.gold }}>54 min</span></p>
         <p style={{ fontFamily: MONO, fontSize: 12, color: T.success, margin: '0 0 12px' }}>0 livraisons hors délai 90 min ce mois ✓</p>
         {/* Mini sparkline */}
         <svg width="100%" height={40} viewBox="0 0 300 40" preserveAspectRatio="none" style={{ display: 'block' }}>
@@ -1018,9 +1018,9 @@ function IntelligenceIATab() {
 
       {/* TOP SUMMARY STRIP */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
-        <IAKPICard label="ÉCONOMIES ROUTES" value="+52,000 MAD/an" color={T.success} />
+        <IAKPICard label="ÉCONOMIES ROUTES" value="+52,000 MAD/an" color={T.success} borderColor={T.success} />
         <IAKPICard label="ANOMALIES CARBURANT" value="1" color={T.danger} borderColor={T.danger} />
-        <IAKPICard label="PROFIT FLOTTE/JOUR" value="30,760 DH" color={T.gold} />
+        <IAKPICard label="PROFIT FLOTTE/JOUR" value="30,760 DH" color={T.gold} borderColor={T.gold} />
       </div>
 
       {/* ─── AGENT 1: PROFIT-PER-TRUCK ─── */}
@@ -1053,7 +1053,7 @@ function IntelligenceIATab() {
                   {b.maintenance > 0 && <div style={{ width: w(b.maintenance), background: b.name === 'T-09' ? T.danger : T.warning, transition: 'width 0.8s ease' }} />}
                   {b.tempsMort > 0 && <div style={{ width: w(b.tempsMort), background: '#6B7280', transition: 'width 0.8s ease' }} />}
                 </div>
-                <span style={{ fontFamily: MONO, fontSize: 11, color: b.revenu > 0 ? T.success : T.danger, width: 80, textAlign: 'right' }}>
+                <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 200, color: b.revenu > 0 ? T.success : T.danger, width: 80, textAlign: 'right' }}>
                   {b.revenu > 0 ? `${(b.revenu).toLocaleString('fr-MA')} DH` : `−${b.maintenance.toLocaleString('fr-MA')} DH`}
                 </span>
               </div>
@@ -1107,10 +1107,10 @@ function IntelligenceIATab() {
             <p style={{ fontSize: 12, color: T.textSec, marginBottom: 8, lineHeight: 1.5 }}>T-04: Atlas Concrete → Résidences Atlas → Groupe A (Rabat Center) → Retour</p>
             <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>Distance: <span style={{ color: T.textPri }}>52 km</span> · Temps: <span style={{ color: T.textPri }}>1h20</span> · Carburant: <span style={{ color: T.textPri }}>22L</span></p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
-              {[T.gold, T.success, T.info, T.textDim].map((c, i) => (
+              {[T.gold, T.gold, T.gold, T.gold].map((c, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
                   <div style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />
-                  {i < 3 && <div style={{ width: 30, height: 2, background: `linear-gradient(90deg, ${c}, ${[T.success, T.info, T.textDim][i]})` }} />}
+                  {i < 3 && <div style={{ width: 30, height: 2, background: T.gold }} />}
                 </div>
               ))}
             </div>
@@ -1155,7 +1155,7 @@ function IntelligenceIATab() {
                   <td style={{ ...monoCell, color: T.gold, fontWeight: 700 }}>{r.toupie}</td>
                   <td style={monoCell}>{r.theo} L/100km</td>
                   <td style={{ ...monoCell, color: r.alerte === 'anomalie' ? T.danger : T.textPri }}>{r.reel} L/100km</td>
-                  <td style={{ ...monoCell, color: r.alerte === 'anomalie' ? T.danger : T.textDim }}>{r.ecart}</td>
+                  <td style={{ ...monoCell, color: r.alerte === 'anomalie' ? T.danger : T.textDim, fontWeight: r.alerte === 'anomalie' ? 700 : 200 }}>{r.ecart}</td>
                   <td style={tblCell}><MiniSparkline trend={r.trend} color={r.alerte === 'anomalie' ? T.danger : T.textDim} /></td>
                   <td style={tblCell}>
                     {r.alerte === 'ok'
@@ -1182,9 +1182,9 @@ function IntelligenceIATab() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
-          <IAKPICard label="DEMANDE PRÉVUE J+7" value="42 livraisons" color={T.gold} />
-          <IAKPICard label="CAPACITÉ DISPONIBLE" value="89%" color={T.success} borderColor={T.success} />
-          <IAKPICard label="RISQUE SATURATION" value="Mardi 18/03" color={T.warning} subtitle="pic 12 livraisons" borderColor={T.warning} />
+          <IAKPICard label="DEMANDE PRÉVUE J+7" value="42 livraisons" color={T.gold} borderColor={T.gold} />
+          <IAKPICard label="CAPACITÉ DISPONIBLE" value="89%" color={T.success} borderColor={T.gold} />
+          <IAKPICard label="RISQUE SATURATION" value="Mardi 18/03" color={T.warning} subtitle="pic 12 livraisons" borderColor={T.gold} />
         </div>
 
         <ResponsiveContainer width="100%" height={280}>
@@ -1377,13 +1377,20 @@ export default function WorldClassDeliveries() {
 
             {/* 3b. KPI CARDS */}
             <section>
-              <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
+              <SectionHeader icon={TrendingUp} label="✦ Indicateurs Clés" />
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 14 }}>
                 <KPICard label="Livraisons Aujourd'hui" value={String(totalDeliveries)} color="#FFFFFF" subtitle={`↑ ${delivered} livrée`} delay={0} />
                 <KPICard label="Volume Livré" value={`${totalVolume}.0 m³`} color={T.gold} subtitle={`${enRoute} en route`} delay={80} />
                 <KPICard label="Revenu Journée" value={`${Math.round(revenuTotal).toLocaleString('fr-MA')} DH`} color={T.gold} subtitle="marge moy: 36%" delay={160} />
                 <KPICard label="Taux Ponctualité" value="94%" color={T.success} subtitle="+2% vs sem." delay={240} />
-                <KPICard label="Flotte Active" value={`3/4`} color="#FFFFFF" subtitle="1 maintenance" delay={320} />
+                {/* Custom split-color card for Flotte Active */}
+                <div style={{ opacity: 1, transform: 'translateY(0)', transition: 'all 500ms ease-out' }}>
+                  <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '18px 16px', borderTop: `2px solid ${T.gold}` }}>
+                    <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 8 }}>FLOTTE ACTIVE</p>
+                    <p style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, margin: 0, lineHeight: 1, letterSpacing: '-0.02em' }}><span style={{ color: '#FFFFFF' }}>3</span><span style={{ color: '#9CA3AF' }}>/4</span></p>
+                    <p style={{ fontSize: 11, color: T.warning, marginTop: 6 }}>1 maintenance</p>
+                  </div>
+                </div>
               </div>
             </section>
 
@@ -1411,7 +1418,7 @@ export default function WorldClassDeliveries() {
 
             {/* 3c. SANTÉ FLOTTE */}
             <section>
-              <SectionHeader icon={Truck} label="Santé Flotte IA" />
+              <SectionHeader icon={Truck} label="✦ Santé Flotte IA" />
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
                 {FLEET_HEALTH_DATA.map((v, i) => <FleetHealthCard key={v.name} v={v} delay={i * 100} />)}
               </div>
@@ -1422,7 +1429,7 @@ export default function WorldClassDeliveries() {
 
             {/* 3e. PIPELINE */}
             <section>
-              <SectionHeader icon={Truck} label="Pipeline de Livraison" />
+              <SectionHeader icon={Truck} label="✦ Pipeline de Livraison" />
               <div style={{ display: 'flex', gap: 16, alignItems: 'stretch' }}>
                 {pipeline.map((stage, i) => (
                   <div key={stage.label} style={{ display: 'flex', alignItems: 'center', flex: 1, gap: 12 }}>
@@ -1435,7 +1442,7 @@ export default function WorldClassDeliveries() {
 
             {/* 3f. LIVRAISONS AUJOURD'HUI */}
             <section>
-              <SectionHeader icon={Package} label="Livraisons Aujourd'hui" right={
+              <SectionHeader icon={Package} label="✦ Livraisons Aujourd'hui" right={
                 <Bdg label="● LIVE" color={T.success} bg="rgba(34,197,94,0.12)" pulse />
               } />
               {/* Fraîcheur béton label */}
@@ -1466,7 +1473,7 @@ export default function WorldClassDeliveries() {
                           <td style={{ ...tblCell, color: T.textSec }}>{r.chauffeur}</td>
                           <td style={monoCell}>{r.livraisons}</td>
                           <td style={monoCell}>{r.km} km</td>
-                          <td style={{ ...monoCell, color: r.revenu > 0 ? T.textPri : T.textDim }}>{r.revenu.toLocaleString('fr-MA')} DH</td>
+                          <td style={{ ...monoCell, color: r.revenu > 0 ? T.gold : T.textDim }}>{r.revenu.toLocaleString('fr-MA')} DH</td>
                           <td style={{ ...monoCell, color: T.danger }}>{r.carburant.toLocaleString('fr-MA')} DH</td>
                           <td style={{ ...monoCell, color: T.danger }}>{r.maintenance.toLocaleString('fr-MA')} DH</td>
                           <td style={{ ...monoCell, color: r.tempsMort === 'MAINTENANCE' ? T.danger : T.textDim }}>{r.tempsMort}</td>
@@ -1479,12 +1486,12 @@ export default function WorldClassDeliveries() {
                         </tr>
                       ))}
                       {/* Totals row */}
-                      <tr style={{ background: 'rgba(212,168,67,0.05)' }}>
+                      <tr style={{ background: 'rgba(212,168,67,0.05)', borderTop: `2px solid ${T.gold}` }}>
                         <td style={{ ...monoCell, color: T.gold, fontWeight: 700 }}>{PROFIT_TOTALS.toupie}</td>
                         <td style={tblCell}>—</td>
                         <td style={{ ...monoCell, fontWeight: 700 }}>{PROFIT_TOTALS.livraisons}</td>
                         <td style={{ ...monoCell, fontWeight: 700 }}>{PROFIT_TOTALS.km} km</td>
-                        <td style={{ ...monoCell, fontWeight: 700 }}>{PROFIT_TOTALS.revenu.toLocaleString('fr-MA')} DH</td>
+                        <td style={{ ...monoCell, fontWeight: 700, color: T.gold }}>{PROFIT_TOTALS.revenu.toLocaleString('fr-MA')} DH</td>
                         <td style={{ ...monoCell, color: T.danger, fontWeight: 700 }}>{PROFIT_TOTALS.carburant.toLocaleString('fr-MA')} DH</td>
                         <td style={{ ...monoCell, color: T.danger, fontWeight: 700 }}>{PROFIT_TOTALS.maintenance.toLocaleString('fr-MA')} DH</td>
                         <td style={monoCell}>—</td>
@@ -1666,7 +1673,7 @@ export default function WorldClassDeliveries() {
 
             {/* 3h. PERFORMANCE HEBDOMADAIRE */}
             <section>
-              <SectionHeader icon={TrendingUp} label="Performance Hebdomadaire" />
+              <SectionHeader icon={TrendingUp} label="✦ Performance Hebdomadaire" />
               <Card style={{ borderTop: `2px solid ${T.gold}` }}>
                 <ResponsiveContainer width="100%" height={300}>
                   <ComposedChart data={perfData} margin={{ top: 10, right: 50, left: -10, bottom: 0 }}>
@@ -1686,7 +1693,7 @@ export default function WorldClassDeliveries() {
                     <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} />
                     <RechartsTooltip content={<CustomTooltip />} />
                     <Bar yAxisId="left" dataKey="livraisons" name="Livraisons" fill="url(#barGradLog)" radius={[4, 4, 0, 0]} />
-                    <Area yAxisId="right" type="monotone" dataKey="revenue" name="Revenu (DH)" stroke="#D4A843" fill="url(#revenueAreaLog)" strokeWidth={2} dot={LinePulseDot('#D4A843', perfData.length)} />
+                    <Area yAxisId="right" type="monotone" dataKey="revenue" name="Revenu (DH)" stroke="#D4A843" fill="url(#revenueAreaLog)" strokeWidth={3} dot={LinePulseDot('#D4A843', perfData.length)} />
                   </ComposedChart>
                 </ResponsiveContainer>
                 {/* Summary strip */}
@@ -1757,7 +1764,7 @@ export default function WorldClassDeliveries() {
             </section>
             {/* 3i. PRÉVISION DEMANDE IA */}
             <section>
-              <SectionHeader icon={TrendingUp} label="Prévision Demande IA — 14 Jours" right={
+              <SectionHeader icon={TrendingUp} label="✦ Prévision Demande IA — 14 Jours" right={
                 <span style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, color: T.gold, background: 'transparent', border: `1px solid ${T.gold}40`, borderRadius: 4, padding: '2px 8px' }}>Prévision IA</span>
               } />
               <Card style={{ borderTop: `2px solid ${T.gold}` }}>
