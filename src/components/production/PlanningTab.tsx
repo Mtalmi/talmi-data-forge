@@ -754,7 +754,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
               <div className="flex items-center gap-2 mb-1">
                 <Calendar size={14} strokeWidth={1.5} style={{ color: T.gold + '80' }} />
                 <span style={{
-                  fontSize: 14, fontWeight: 600, color: '#fff', textTransform: 'capitalize',
+                  fontFamily: 'ui-monospace, monospace', fontSize: 14, fontWeight: 600, color: '#D4A843', textTransform: 'capitalize',
                 }}>
                   {selectedDate ? format(selectedDate, 'EEEE dd MMMM yyyy', { locale: fr }) : 'Détail du jour'}
                 </span>
