@@ -656,6 +656,35 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
         {/* ── WEATHER ALERT BANNER ── */}
         <WeatherAlertBanner />
 
+        {/* ── 5-DAY WEATHER STRIP ── */}
+        <div style={{
+          display: 'flex', gap: 0, borderRadius: 12, overflow: 'hidden',
+          border: '1px solid rgba(245, 158, 11, 0.15)',
+          borderTop: '2px solid #D4A843',
+          background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+        }}>
+          {[
+            { day: 'Jeu 12', icon: '☀', temp: '28°C', label: 'Normal', color: '#10B981' },
+            { day: 'Ven 13', icon: '☀', temp: '30°C', label: 'Normal', color: '#10B981' },
+            { day: 'Sam 14', icon: '🔥', temp: '38°C', label: 'Risque', color: '#EF4444' },
+            { day: 'Dim 15', icon: '☀', temp: '26°C', label: 'Normal', color: '#10B981' },
+            { day: 'Lun 16', icon: '🌧', temp: '22°C', label: 'Pluie', color: '#F59E0B' },
+          ].map((w, i) => (
+            <div key={i} style={{
+              flex: 1, padding: '10px 12px', textAlign: 'center',
+              borderLeft: i > 0 ? `1px solid ${T.cardBorder}` : 'none',
+              background: w.color === '#EF4444' ? 'rgba(239,68,68,0.06)' : 'transparent',
+            }}>
+              <p style={{ fontSize: 10, fontWeight: 700, color: T.textDim, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{w.day}</p>
+              <p style={{ fontSize: 16, marginBottom: 2 }}>{w.icon} <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: w.color === '#EF4444' ? '#EF4444' : T.textPri }}>{w.temp}</span></p>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, color: w.color }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: w.color }} />
+                {w.label === 'Risque' ? '⚠ ' : '● '}{w.label}
+              </div>
+            </div>
+          ))}
+        </div>
+
         {/* ── SECTION 1: KPIs ── */}
         <section ref={kpisRef}>
           <SectionHeader icon={BarChart3} label="Planning KPIs" />
