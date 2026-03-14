@@ -456,7 +456,7 @@ export function DevisTable({
                   <span className="text-xs font-mono">{devis.formule_id}</span>
                 </TableCell>
                 <TableCell className="text-right font-mono" style={{ color: 'rgba(255,255,255,0.9)' }}>{devis.volume_m3}</TableCell>
-                <TableCell className="text-right font-mono font-semibold" style={{ color: 'rgba(255,255,255,0.9)' }}>
+                <TableCell className="text-right" style={{ color: 'rgba(255,255,255,0.9)', fontFamily: 'ui-monospace, monospace', fontWeight: 300 }}>
                   {Number(devis.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </TableCell>
                 <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
