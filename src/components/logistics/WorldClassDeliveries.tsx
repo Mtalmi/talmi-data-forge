@@ -509,8 +509,13 @@ function CarteGPSTab() {
                   <p style={{ fontFamily: MONO, fontSize: 11, color: T.textSec, margin: '0 0 2px' }}>{f.driver}</p>
                   <p style={{ fontSize: 10, color: T.textDim, margin: '0 0 2px' }}><MapPin size={9} style={{ display: 'inline', marginRight: 4 }} />{f.location}</p>
                   <div style={{ display: 'flex', gap: 12, marginTop: 4 }}>
-                    <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>ETA: <span style={{ color: T.textPri }}>{f.eta}</span></span>
                     <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>Vit: <span style={{ color: T.textPri }}>{f.speed}</span></span>
+                    <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>ETA: <span style={{ color: f.etaColor }}>{f.eta}</span></span>
+                    <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>Dist: <span style={{ color: T.textPri }}>{f.distLeft}</span></span>
+                  </div>
+                  {/* Trip progress bar */}
+                  <div style={{ marginTop: 6, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                    <div style={{ width: `${f.tripPct}%`, height: '100%', background: f.color, borderRadius: 2, transition: 'width 0.8s ease' }} />
                   </div>
                 </div>
               ))}
