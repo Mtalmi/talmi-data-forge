@@ -894,7 +894,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                     background: w.color === '#EF4444' ? 'rgba(239,68,68,0.06)' : 'transparent',
                   }}>
                     <p style={{ fontSize: 10, fontWeight: 700, color: T.textDim, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{w.day}</p>
-                    <p style={{ fontSize: 16, marginBottom: 2 }}>{w.icon} <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: w.color === '#EF4444' ? '#EF4444' : T.textPri }}>{w.temp}</span></p>
+                    <p style={{ fontSize: 16, marginBottom: 2 }}>{w.icon} <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 20, fontWeight: 200, color: w.color === '#EF4444' ? '#EF4444' : T.textPri }}>{w.temp}</span></p>
                     <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, color: w.color }}>
                       <span style={{ width: 6, height: 6, borderRadius: '50%', background: w.color }} />
                       {w.label === 'Risque' ? '⚠ ' : '● '}{w.label}
