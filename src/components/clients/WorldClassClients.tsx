@@ -847,7 +847,10 @@ export default function WorldClassClients() {
 
             {/* Health */}
             <section>
-              <SectionHeader icon={Heart} label="Santé du Portefeuille" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, borderTop: '2px solid #D4A843', paddingTop: 16 }}>
+                <span style={{ color: '#D4A843', fontFamily: MONO, fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '1.5px' }}>✦ SANTÉ DU PORTEFEUILLE</span>
+                <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(212,168,67,0.3), transparent 80%)' }} />
+              </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
                 <HealthCard label="Clients Fidèles" value={loyal} color="#22c55e" desc="Commande dans les 30 derniers jours" icon={Heart} delay={0} />
                 <HealthCard label="À Risque" value={atRisk - lost} color="#f59e0b" desc="Pas de commande depuis >30j" icon={AlertTriangle} delay={100} />
