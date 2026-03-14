@@ -1402,6 +1402,11 @@ export default function WorldClassDeliveries() {
               <SectionHeader icon={Package} label="Livraisons Aujourd'hui" right={
                 <Bdg label="● LIVE" color={T.success} bg="rgba(34,197,94,0.12)" pulse />
               } />
+              {/* Fraîcheur béton label */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '1.5px', color: T.textDim, textTransform: 'uppercase' as const }}>FRAÎCHEUR BÉTON</span>
+                <span title="Le béton doit être livré dans les 90 minutes suivant le mélange pour garantir la conformité NM." style={{ cursor: 'help', fontFamily: MONO, fontSize: 10, color: T.textDim, border: `1px solid ${T.textDim}40`, borderRadius: '50%', width: 14, height: 14, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>?</span>
+              </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {(todayBons.length > 0 ? todayBons : SEEDED_DELIVERIES).map((d: any, i: number) => (
                   <DeliveryCard key={d.bl_id} d={d} index={i} />
