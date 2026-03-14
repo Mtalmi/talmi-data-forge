@@ -939,9 +939,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                   <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843' }}>Généré par IA · Claude Opus</span>
                 </div>
                 {[
-                  { dot: '#EF4444', text: 'Météo: Samedi 14 — 38°C risque fissuration. Retardateur requis B25/B30' },
-                  { dot: '#F59E0B', text: 'Retards: BL-2602-014 Saudi Readymix probabilité retard 35%' },
-                  { dot: '#34d399', text: 'Routes: 3 livraisons regroupées Casa Nord — Économie 180 DH' },
+                  { dot: '#EF4444', text: <><span style={{ color: '#D4A843', fontWeight: 700 }}>Météo:</span> Samedi 14 — 38°C risque fissuration. Retardateur requis B25/B30</> },
+                  { dot: '#F59E0B', text: <><span style={{ color: '#D4A843', fontWeight: 700 }}>Retards:</span> BL-2602-014 Saudi Readymix probabilité retard 35%</> },
+                  { dot: '#34d399', text: <><span style={{ color: '#D4A843', fontWeight: 700 }}>Routes:</span> 3 livraisons regroupées Casa Nord — Économie 180 DH</> },
                 ].map((ins, i) => (
                   <div key={i} style={{
                     display: 'flex', alignItems: 'center', gap: 12,
