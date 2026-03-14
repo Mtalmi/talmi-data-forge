@@ -1120,16 +1120,16 @@ export default function WorldClassProduction() {
           <div style={{
             background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
             border: `1px solid ${T.cardBorder}`,
-            borderTop: '2px solid #D4A843',
+            borderTop: '2px solid #F59E0B',
             borderLeft: '3px solid #D4A843',
             borderRadius: 12, padding: 20,
           }}>
             <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-              Malaxeur principal: prochain entretien dans <span style={{ color: '#fff', fontWeight: 600 }}>48h</span>. Usure courroie détectée à <span style={{ color: '#F59E0B', fontWeight: 600 }}>73%</span>. Tapis convoyeur #2: vibrations anormales (<span style={{ color: '#EF4444', fontWeight: 600 }}>+15% vs baseline</span>). Recommandation: planifier remplacement courroie avant lundi. Risque de panne non planifiée: <span style={{ color: '#fff', fontWeight: 600 }}>12%</span>.
+              Malaxeur principal: prochain entretien dans <span style={{ color: '#fff', fontWeight: 600 }}>48h</span>. Usure courroie détectée à <span style={{ color: '#F59E0B', fontWeight: 700 }}>73%</span>. Tapis convoyeur #2: vibrations anormales (<span style={{ color: '#F59E0B', fontWeight: 700 }}>+15% vs baseline</span>). Recommandation: planifier remplacement courroie avant lundi. Risque de panne non planifiée: <span style={{ color: '#F59E0B', fontWeight: 700 }}>12%</span>.
             </p>
             <div className="flex gap-2 mt-3">
-              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 88%</span>
-              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>Risque: Modéré</span>
+              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, border: '1px solid #D4A843', color: '#D4A843' }}>Confiance: 88%</span>
+              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.06)', color: '#F59E0B', border: '1px solid #F59E0B' }}>Risque Modéré</span>
             </div>
           </div>
         </section>
