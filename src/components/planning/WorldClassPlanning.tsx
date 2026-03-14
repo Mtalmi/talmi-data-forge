@@ -1143,9 +1143,11 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                 <div style={{ padding: '8px 18px', borderTop: `1px solid ${T.cardBorder}`, background: `${T.cardBorder}20` }}>
                   <button
                     onClick={() => setActiveTab('ia')}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#D4A843', fontSize: 11, fontWeight: 600, padding: 0 }}
+                    onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
+                    onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#D4A843', fontSize: 12, fontWeight: 600, padding: 0, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace' }}
                   >
-                    Voir toute l'intelligence →
+                    Voir toute l'Intelligence →
                   </button>
                 </div>
               </div>
