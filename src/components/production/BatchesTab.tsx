@@ -217,10 +217,12 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
           { label: 'ALERTES', icon: AlertTriangle, value: '1', suffix: '1 écart' },
         ].map(k => (
           <div key={k.label} style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, padding: 16 }}>
-            <k.icon size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.20)', marginBottom: 8 }} />
-            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 24, fontWeight: 200, color: '#fff', lineHeight: 1 }}>
+            <k.icon size={16} strokeWidth={1.5} style={{ color: '#D4A843', marginBottom: 8 }} />
+            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 32, fontWeight: 200, color: '#D4A843', lineHeight: 1 }}>
               {k.value}
-              <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.50)', marginLeft: 4 }}>{k.suffix}</span>
+              <span style={{ fontSize: 13, color: k.label === 'ALERTES' ? undefined : 'rgba(255,255,255,0.50)', marginLeft: 4 }}>
+                {k.label === 'ALERTES' ? <>{' '}<span style={{ color: '#EF4444' }}>1 écart</span></> : k.suffix}
+              </span>
             </p>
             <p style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.40)', fontWeight: 500, marginTop: 6 }}>{k.label}</p>
           </div>
