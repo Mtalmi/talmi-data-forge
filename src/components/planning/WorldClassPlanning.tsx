@@ -1108,7 +1108,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
 
                         {/* Weather impact — editorial callout */}
                         <div style={{ borderTop: '1px solid rgba(212,168,67,0.12)', marginTop: 14, paddingTop: 14 }}>
-                          <p style={{ color: '#64748B', fontSize: 9, fontWeight: 600, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 8 }}>MÉTÉO IMPACT</p>
+                          <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontSize: 10, fontWeight: 600, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 8 }}>MÉTÉO IMPACT</p>
                           <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 8 }}>
                             <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 38, fontWeight: 100, color: '#F59E0B', lineHeight: 1 }}>58%</span>
                             <span style={{ fontSize: 13, color: '#EF4444', fontWeight: 500, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace' }}>↓ 14%</span>
