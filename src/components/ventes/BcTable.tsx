@@ -286,7 +286,6 @@ export function BcTable({
     const volumeTotal = bc.volume_m3;
     const progressPct = volumeTotal > 0 ? Math.min(100, (volumeLivre / volumeTotal) * 100) : 0;
     
-    // Invoice status
     let invoiceBadge: React.ReactNode = null;
     if (bc.facture_consolidee_id) {
       invoiceBadge = (
@@ -297,8 +296,7 @@ export function BcTable({
       );
     } else if (bc.statut === 'livre' || bc.statut === 'termine') {
       invoiceBadge = (
-        <span className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground">
-          <Clock className="h-2.5 w-2.5" />
+        <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#F59E0B' }}>
           {bt.toInvoice}
         </span>
       );
@@ -307,14 +305,14 @@ export function BcTable({
     return (
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-1.5">
-          <Progress 
-            value={progressPct} 
-            className="h-1.5 flex-1 bg-white/[0.06]"
-            indicatorClassName={cn(
-              progressPct >= 100 ? "bg-emerald-500" : progressPct > 0 ? "bg-amber-500" : "bg-white/10"
-            )}
-          />
-          <span className="text-[10px] font-mono text-muted-foreground whitespace-nowrap">
+          <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.05)', overflow: 'hidden' }}>
+            <div style={{
+              width: `${progressPct}%`, height: '100%', borderRadius: 3,
+              background: progressPct >= 100 ? '#22C55E' : 'linear-gradient(90deg, #C49A3C, #D4A843)',
+              transition: 'width 0.5s ease',
+            }} />
+          </div>
+          <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#9CA3AF', whiteSpace: 'nowrap' }}>
             {volumeLivre}/{volumeTotal}
           </span>
         </div>
