@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 // PageHeader removed — using custom sticky tab bar
 import { supabase } from '@/integrations/supabase/client';
+import { MaterialPriceTracker } from '@/components/stocks/MaterialPriceTracker';
+import { CostImpactSimulator } from '@/components/stocks/CostImpactSimulator';
 import { format, subDays, startOfDay } from 'date-fns';
 
 // ─────────────────────────────────────────────────────
