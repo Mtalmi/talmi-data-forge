@@ -197,10 +197,10 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
             }}
           />
         </div>
-        <button className="flex items-center gap-2 cursor-pointer" style={{
-          padding: '12px 16px', borderRadius: 8, background: 'transparent',
-          border: `1px solid ${T.cardBorder}`, color: 'rgba(255,255,255,0.6)',
-          fontSize: 13, fontWeight: 500, fontFamily: 'DM Sans, sans-serif',
+        <button style={{
+          border: '1px solid #D4A843', color: '#D4A843', background: 'transparent',
+          borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', fontSize: '14px',
+          display: 'inline-flex', alignItems: 'center', gap: '8px',
         }}>
           <SlidersHorizontal size={14} strokeWidth={1.5} /> Filtres
         </button>
