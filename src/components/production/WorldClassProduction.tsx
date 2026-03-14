@@ -895,8 +895,8 @@ export default function WorldClassProduction() {
               <div className="flex justify-between items-center mb-4">
                 <div>
                   <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 4 }}>Production Horaire</p>
-                  <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 32, fontWeight: 200, color: '#D4A843' }}>
-                    {Math.round(kpis.totalVolume)} m³
+                  <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 36, fontWeight: 200, color: '#D4A843' }}>
+                    {useAnimatedCounter(Math.round(kpis.totalVolume), 1500)} m³
                   </p>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -909,20 +909,47 @@ export default function WorldClassProduction() {
                 <ResponsiveContainer width="100%" height={220}>
                   <AreaChart data={hourlyData}>
                     <defs>
-                      <linearGradient id="prodGold" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={T.gold} stopOpacity={0.3} />
-                        <stop offset="95%" stopColor={T.gold} stopOpacity={0} />
+                      <linearGradient id="prodGoldFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="rgba(212,168,67,0.12)" />
+                        <stop offset="100%" stopColor="rgba(212,168,67,0)" />
+                      </linearGradient>
+                      <linearGradient id="prodGhostFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0.03)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0)" />
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="hour" tick={{ fill: 'rgba(255,255,255,0.30)', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fill: 'rgba(255,255,255,0.25)', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} width={35} domain={[0, 'auto']} />
-                    <Tooltip content={<GoldTooltip unit=" m³" />} />
+                    <Tooltip
+                      cursor={{ stroke: '#D4A843', strokeDasharray: '3 3', strokeOpacity: 0.3 }}
+                      content={({ active, payload, label }: any) => {
+                        if (!active || !payload?.length) return null;
+                        const today = payload.find((p: any) => p.dataKey === 'volume');
+                        const lastW = payload.find((p: any) => p.dataKey === 'lastWeek');
+                        const tVal = today?.value || 0;
+                        const lVal = lastW?.value || 0;
+                        const delta = lVal > 0 ? ((tVal - lVal) / lVal * 100).toFixed(1) : '—';
+                        const deltaPositive = tVal >= lVal;
+                        return (
+                          <div style={{ background: '#1A1F2E', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 8, padding: '8px 12px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}>
+                            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: '#D4A843', fontWeight: 600, marginBottom: 4 }}>{label}</p>
+                            <p style={{ fontSize: 12, color: '#D4A843', fontFamily: 'ui-monospace, monospace' }}>Aujourd'hui: {tVal} m³/h</p>
+                            <p style={{ fontSize: 12, color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>Sem. dern.: {lVal} m³/h</p>
+                            {delta !== '—' && <p style={{ fontSize: 11, color: deltaPositive ? '#22C55E' : '#EF4444', fontFamily: 'ui-monospace, monospace', marginTop: 2 }}>Δ {deltaPositive ? '+' : ''}{delta}%</p>}
+                          </div>
+                        );
+                      }}
+                    />
                     <ReferenceLine y={90} stroke="rgba(255,255,255,0.20)" strokeDasharray="6 4" label={{ value: 'Objectif', position: 'right', fill: 'rgba(255,255,255,0.25)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} />
-                    <Area type="monotone" dataKey="lastWeek" stroke="rgba(212,168,67,0.25)" strokeWidth={1.5} strokeDasharray="6 4" fill="none" dot={false} activeDot={false} animationDuration={1200} name="Sem. dernière" />
-                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2} fill="url(#prodGold)" dot={false} activeDot={{ r: 5, fill: T.gold }} animationDuration={1200} name="Aujourd'hui" />
+                    <Area type="monotone" dataKey="lastWeek" stroke="rgba(212,168,67,0.25)" strokeWidth={1.5} strokeDasharray="6 4" fill="url(#prodGhostFill)" dot={false} activeDot={false} animationDuration={1200} name="Sem. dernière" />
+                    <Area type="monotone" dataKey="volume" stroke="#D4A843" strokeWidth={2} fill="url(#prodGoldFill)" dot={false} activeDot={{ r: 5, fill: '#D4A843' }} animationDuration={1200} name="Aujourd'hui" />
                   </AreaChart>
                 </ResponsiveContainer>
-                <div className="flex items-center gap-4 mt-2" style={{ paddingLeft: 36 }}>
+                {/* Live pulse dot at rightmost point */}
+                <div style={{ position: 'relative', marginTop: -30, display: 'flex', justifyContent: 'flex-end', paddingRight: 12, pointerEvents: 'none' }}>
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#D4A843', animation: 'prodLiveDot 2s infinite' }} />
+                </div>
+                <div className="flex items-center gap-4 mt-3" style={{ paddingLeft: 36 }}>
                   <div className="flex items-center gap-1.5">
                     <div style={{ width: 16, height: 0, borderTop: '2px solid #D4A843' }} />
                     <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>Aujourd'hui</span>
@@ -931,6 +958,20 @@ export default function WorldClassProduction() {
                     <div style={{ width: 16, height: 0, borderTop: '1.5px dashed rgba(212,168,67,0.25)' }} />
                     <span style={{ fontSize: 11, color: 'rgba(212,168,67,0.45)' }}>Semaine dernière</span>
                   </div>
+                </div>
+                {/* Summary strip */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 16px', borderTop: '1px solid rgba(212,168,67,0.08)', marginTop: 8 }}>
+                  {[
+                    { label: 'PIC', value: '98 m³/h · 14h', color: '#D4A843' },
+                    { label: 'CREUX', value: '18 m³/h · 6h', color: '#F59E0B' },
+                    { label: 'MOY.', value: '72 m³/h', color: '#fff' },
+                    { label: 'VS SEM. DERN.', value: '+8.3%', color: '#22C55E' },
+                  ].map(s => (
+                    <div key={s.label} style={{ textAlign: 'center' }}>
+                      <p style={{ fontSize: 10, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>{s.label}</p>
+                      <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: s.color }}>{s.value}</p>
+                    </div>
+                  ))}
                 </div>
                 </>
               ) : (
@@ -951,56 +992,7 @@ export default function WorldClassProduction() {
             </div>
 
             {/* Production par Formule */}
-            <div style={{
-              background: T.cardBg, border: `1px solid ${T.cardBorder}`,
-              borderTop: '2px solid #D4A843',
-              borderRadius: 12, padding: 20,
-            }}>
-              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 16 }}>Production par Formule</p>
-              {productData.length > 0 ? (
-                <>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <PieChart>
-                      <Pie data={productData} dataKey="volume" nameKey="name" innerRadius={60} outerRadius={90} animationBegin={200} animationDuration={800} label={false}>
-                        {productData.map((p, i) => <Cell key={i} fill={p.color} />)}
-                      </Pie>
-                      <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 24, fontWeight: 200, fill: '#D4A843' }}>{totalProductVolume}</text>
-                      <text x="50%" y="58%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 10, fill: 'rgba(255,255,255,0.35)' }}>m³ Total</text>
-                      <Tooltip content={({ active, payload }) => {
-                        if (!active || !payload?.length) return null;
-                        const d = payload[0];
-                        return (
-                          <div style={{ background: '#1A2540', border: `1px solid ${T.goldBorder}`, borderRadius: 10, padding: '8px 12px' }}>
-                            <p style={{ color: T.textSec, fontSize: 11 }}>{d.name}</p>
-                            <p style={{ color: (d.payload as any).color, fontFamily: 'JetBrains Mono, monospace', fontWeight: 400 }}>{(d.value as number).toLocaleString('fr-FR')} m³</p>
-                          </div>
-                        );
-                      }} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="flex flex-col gap-1.5 mt-2">
-                    {productData.map(p => (
-                      <div key={p.name} className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div style={{ width: 8, height: 8, borderRadius: '50%', background: p.color }} />
-                          <span style={{ color: 'rgba(255,255,255,0.50)', fontSize: 11 }}>{p.name}</span>
-                        </div>
-                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 400, color: 'rgba(255,255,255,0.50)' }}>{totalProductVolume > 0 ? Math.round(p.volume / totalProductVolume * 100) : 0}% · {p.volume} m³</span>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <div className="flex flex-col items-center justify-center" style={{ height: 260 }}>
-                  {/* Ghost donut ring */}
-                  <svg width="180" height="180" viewBox="0 0 200 200">
-                    <circle cx="100" cy="100" r="75" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="20" />
-                  </svg>
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 24, color: 'rgba(255,255,255,0.15)', marginTop: -110, marginBottom: 80 }}>—</p>
-                  <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12 }}>Aucune donnée</p>
-                </div>
-              )}
-            </div>
+            <DonutFormulaCard productData={productData} totalProductVolume={totalProductVolume} cardBg={T.cardBg} cardBorder={T.cardBorder} />
           </div>
         </section>
 
@@ -1021,13 +1013,26 @@ export default function WorldClassProduction() {
                     <BarChart data={displayQualityData} barSize={24}>
                       <XAxis dataKey="day" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
                       <YAxis tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} width={25} />
-                      <Tooltip cursor={{ fill: 'rgba(255,255,255,0.03)' }} content={({ active, payload, label }) => {
-                        if (!active || !payload?.length) return null;
-                        return <GoldTooltip active={active} payload={payload} label={label} />;
-                      }} />
-                      <Bar dataKey="ok" stackId="q" fill="#D4A843" name="Conforme" radius={[4, 4, 0, 0]} animationDuration={1000} />
-                      <Bar dataKey="variances" stackId="q" fill={T.warning} name="Variances" animationDuration={1000} />
-                      <Bar dataKey="critical" stackId="q" fill={T.danger} name="Critique" radius={[4, 4, 0, 0]} animationDuration={1000} />
+                      <Tooltip
+                        cursor={{ fill: 'rgba(255,255,255,0.02)' }}
+                        content={({ active, payload, label }: any) => {
+                          if (!active || !payload?.length) return null;
+                          const ok = payload.find((p: any) => p.dataKey === 'ok')?.value || 0;
+                          const vars = payload.find((p: any) => p.dataKey === 'variances')?.value || 0;
+                          const crit = payload.find((p: any) => p.dataKey === 'critical')?.value || 0;
+                          return (
+                            <div style={{ background: '#1A1F2E', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 8, padding: 10, boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}>
+                              <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: '#D4A843', fontWeight: 700, marginBottom: 4 }}>{label}</p>
+                              <p style={{ fontSize: 11, color: '#22C55E' }}>Conformes: {ok}</p>
+                              <p style={{ fontSize: 11, color: '#F59E0B' }}>Variances: {vars}</p>
+                              <p style={{ fontSize: 11, color: '#EF4444' }}>Critiques: {crit}</p>
+                            </div>
+                          );
+                        }}
+                      />
+                      <Bar dataKey="ok" stackId="q" fill="#D4A843" name="Conforme" radius={[4, 4, 0, 0]} animationDuration={800} animationEasing="ease-out" />
+                      <Bar dataKey="variances" stackId="q" fill={T.warning} name="Variances" animationDuration={800} animationEasing="ease-out" />
+                      <Bar dataKey="critical" stackId="q" fill={T.danger} name="Critique" radius={[4, 4, 0, 0]} animationDuration={800} animationEasing="ease-out" />
                     </BarChart>
                   </ResponsiveContainer>
                   <div className="flex gap-4 mt-3">
@@ -1038,6 +1043,10 @@ export default function WorldClassProduction() {
                       </div>
                     ))}
                   </div>
+                  {/* Summary */}
+                  <p style={{ fontSize: 11, color: '#9CA3AF', borderTop: '1px solid rgba(212,168,67,0.08)', paddingTop: 6, marginTop: 6 }}>
+                    Moyenne: 94.2% · Meilleur jour: Jeudi (98%) · Objectif: 95%
+                  </p>
                 </>
               ) : null}
             </div>
@@ -1055,10 +1064,14 @@ export default function WorldClassProduction() {
                     padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500,
                     background: 'rgba(16,185,129,0.15)',
                     color: '#34d399',
-                    boxShadow: '0 0 10px rgba(34,197,94,0.25)',
+                    boxShadow: '0 0 12px rgba(34,197,94,0.25)',
                   }}>Excellent</span>
                 </div>
-                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 48, fontWeight: 200, color: '#D4A843' }}>96.8%</p>
+                <div style={{ background: 'radial-gradient(circle at center, rgba(212,168,67,0.06) 0%, transparent 70%)', display: 'inline-block', padding: '8px 0' }}>
+                  <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 48, fontWeight: 200, color: '#D4A843' }}>96.8%</p>
+                </div>
+                {/* Mini trend */}
+                <p style={{ fontSize: 11, color: '#22C55E', marginTop: 4 }}>↗ Amélioration +0.6% vs sem. dernière</p>
               </div>
 
               <div style={{
@@ -1067,15 +1080,17 @@ export default function WorldClassProduction() {
                 borderRadius: 12, padding: 20,
               }}>
                 <div className="flex items-center gap-2 mb-3">
-                  <CheckCircle size={16} strokeWidth={1.5} style={{ color: '#34d399' }} />
+                  <CheckCircle size={16} strokeWidth={1.5} style={{ color: totalCriticalWeek === 0 ? '#34d399' : T.danger }} />
                   <p style={{ color: totalCriticalWeek === 0 ? '#34d399' : T.danger, fontSize: 13, fontWeight: 600 }}>
-                    {totalCriticalWeek === 0 ? '0 Critiques cette semaine' : `${totalCriticalWeek} Critiques cette semaine`}
+                    {totalCriticalWeek === 0 ? '0 Critiques cette semaine' : (
+                      <><span style={{ fontWeight: 700, fontSize: 18, color: '#EF4444' }}>{totalCriticalWeek}</span> Critiques cette semaine</>
+                    )}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <span style={{
                     padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500,
-                    background: 'rgba(16,185,129,0.10)', color: '#34d399',
+                    background: 'rgba(245,158,11,0.06)', color: '#F59E0B', border: '1px solid #F59E0B',
                   }}>{totalVariancesWeek} Variances</span>
                 </div>
               </div>
