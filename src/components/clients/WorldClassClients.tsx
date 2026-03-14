@@ -484,16 +484,78 @@ function PulseDot(props: any) {
 }
 
 // ─────────────────────────────────────────────────────
+// PAGE TABS
+// ─────────────────────────────────────────────────────
+const PAGE_TABS = [
+  { id: 'portefeuille', label: 'PORTEFEUILLE' },
+  { id: 'intelligence', label: 'INTELLIGENCE IA', badge: '3' },
+  { id: 'analytique', label: 'ANALYTIQUE', goldBadge: true },
+];
+
+function PageTabBar({ active, onChange }: { active: string; onChange: (id: string) => void }) {
+  return (
+    <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid rgba(212,168,67,0.1)', marginBottom: 32 }}>
+      {PAGE_TABS.map(tab => {
+        const isActive = active === tab.id;
+        return (
+          <button
+            key={tab.id}
+            onClick={() => onChange(tab.id)}
+            style={{
+              background: 'none',
+              border: 'none',
+              borderBottom: isActive ? '2px solid #D4A843' : '2px solid transparent',
+              padding: '12px 24px',
+              cursor: 'pointer',
+              fontFamily: MONO,
+              fontSize: 12,
+              letterSpacing: '1.5px',
+              color: isActive ? '#D4A843' : '#9CA3AF',
+              fontWeight: isActive ? 600 : 400,
+              transition: 'all 200ms',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+            }}
+          >
+            {tab.label}
+            {tab.badge && (
+              <span style={{
+                background: isActive ? 'rgba(212,168,67,0.15)' : 'rgba(156,163,175,0.1)',
+                color: isActive ? '#D4A843' : '#9CA3AF',
+                fontSize: 10,
+                fontWeight: 700,
+                padding: '1px 6px',
+                borderRadius: 999,
+                fontFamily: MONO,
+              }}>{tab.badge}</span>
+            )}
+            {tab.goldBadge && (
+              <span style={{
+                width: 6, height: 6, borderRadius: '50%',
+                background: isActive ? '#D4A843' : '#9CA3AF',
+                flexShrink: 0,
+              }} />
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // MAIN
 // ─────────────────────────────────────────────────────
 export default function WorldClassClients() {
+  const [pageTab, setPageTab] = useState('portefeuille');
   const [activeTab, setActiveTab] = useState('tous');
   const [search, setSearch] = useState('');
   const [selectedClient, setSelectedClient] = useState<ClientDisplay | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [newClient, setNewClient] = useState({ nom_client: '', segment: 'Mid-Market', email: '', telephone: '', ville: '' });
   const [creatingClient, setCreatingClient] = useState(false);
-  const tabs = [{ id: 'tous', label: 'Tous' }, { id: 'actifs', label: 'Actifs' }, { id: 'inactifs', label: 'Inactifs' }];
+  const subTabs = [{ id: 'tous', label: 'Tous' }, { id: 'actifs', label: 'Actifs' }, { id: 'inactifs', label: 'Inactifs' }];
   const liveClock = useLiveClock();
 
   const { clients, factures, loading } = useClientsLiveData();
@@ -644,6 +706,7 @@ export default function WorldClassClients() {
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700;800&display=swap');
         @keyframes tbos-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.1);opacity:0.8} }
         @keyframes gold-pulse-dot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:0.6} }
+        @keyframes tab-fade-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
         input::placeholder { color: #64748B; }
         input { outline: none; }
       `}</style>
@@ -653,13 +716,9 @@ export default function WorldClassClients() {
         icon={Users}
         title="Clients"
         subtitle="Données en temps réel"
-        tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
         loading={loading}
         actions={
           <>
-            <span style={{ fontFamily: MONO, fontSize: 13, color: '#9CA3AF', letterSpacing: '0.5px' }}>{liveClock}</span>
             <button
               onClick={() => setIsCreateModalOpen(true)}
               style={{
@@ -681,199 +740,279 @@ export default function WorldClassClients() {
               <Plus size={13} />
               Add new client
             </button>
-            <div style={{ position: 'relative' }}>
-              <Search size={14} color="#6B7280" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />
-              <input
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder="Rechercher..."
-                style={{
-                  padding: '6px 12px 6px 30px',
-                  borderRadius: 8,
-                  background: 'rgba(15,22,41,0.5)',
-                  border: '1px solid rgba(212,168,67,0.2)',
-                  color: T.textPri,
-                  fontSize: 13,
-                  fontFamily: MONO,
-                  width: 180,
-                  transition: 'border-color 200ms',
-                }}
-                onFocus={e => e.currentTarget.style.borderColor = '#D4A843'}
-                onBlur={e => e.currentTarget.style.borderColor = 'rgba(212,168,67,0.2)'}
-              />
-            </div>
+            <span style={{ fontFamily: MONO, fontSize: 13, color: '#9CA3AF', letterSpacing: '0.5px' }}>{liveClock}</span>
           </>
         }
       />
 
       {/* ── CONTENT ── */}
-      <div style={{ width: '100%', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 40 }}>
+      <div style={{ width: '100%', padding: '0 24px 32px', display: 'flex', flexDirection: 'column' }}>
 
-        {/* AI Churn Predictor */}
-        <section>
-          <ClientChurnPredictorCard />
-        </section>
-        {/* KPIs */}
-        <section>
-          <SectionHeader icon={Users} label="Indicateurs CRM" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
-            <KPICard label="Total Clients" value={totalClients} suffix="" color="#F59E0B" icon={Users} trend={`${activeClients} actifs`} trendPositive delay={0} />
-            <KPICard label="Clients Actifs" value={activeClients} suffix="" color="#F59E0B" icon={UserCheck} trend={`${totalClients - activeClients} inactifs`} trendPositive delay={80} />
-            <KPICard label="CA Moyen / Client" value={avgCA} suffix="K DH" color="#F59E0B" icon={Banknote} trend={`Total: ${Math.round(totalCA / 1000)}K`} trendPositive delay={160} />
-            <KPICard label="Taux de Rétention" value={totalClients > 0 ? Math.round((loyal / totalClients) * 100) : 0} suffix="%" color="#F59E0B" icon={Heart} trend={`${atRisk} à risque`} trendPositive={atRisk < 5} delay={240} />
-          </div>
-        </section>
+        {/* ── PAGE TABS ── */}
+        <PageTabBar active={pageTab} onChange={setPageTab} />
 
-        {/* Top clients + Segments */}
-        <section>
-          <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 24 }}>
-            <Card goldBorder>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, fontFamily: MONO }}>Top Clients par CA</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontFamily: MONO, fontWeight: 600, color: '#D4A843', fontSize: 14 }}>{Math.round(totalCA / 1000)}K DH</span>
-                  <span style={{ border: '1px solid #D4A843', color: '#D4A843', fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 999 }}>Top {topClients.length}</span>
+        {/* ═══════════════════════════════════════════════ */}
+        {/* PORTEFEUILLE TAB */}
+        {/* ═══════════════════════════════════════════════ */}
+        {pageTab === 'portefeuille' && (
+          <div key="portefeuille" style={{ display: 'flex', flexDirection: 'column', gap: 40, animation: 'tab-fade-in 200ms ease forwards' }}>
+            {/* KPIs */}
+            <section>
+              <SectionHeader icon={Users} label="Indicateurs CRM" />
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
+                <KPICard label="Total Clients" value={totalClients} suffix="" color="#F59E0B" icon={Users} trend={`${activeClients} actifs`} trendPositive delay={0} />
+                <KPICard label="Clients Actifs" value={activeClients} suffix="" color="#F59E0B" icon={UserCheck} trend={`${totalClients - activeClients} inactifs`} trendPositive delay={80} />
+                <KPICard label="CA Moyen / Client" value={avgCA} suffix="K DH" color="#F59E0B" icon={Banknote} trend={`Total: ${Math.round(totalCA / 1000)}K`} trendPositive delay={160} />
+                <KPICard label="Taux de Rétention" value={totalClients > 0 ? Math.round((loyal / totalClients) * 100) : 0} suffix="%" color="#F59E0B" icon={Heart} trend={`${atRisk} à risque`} trendPositive={atRisk < 5} delay={240} />
+              </div>
+            </section>
+
+            {/* Sub-filter tabs + Search */}
+            <section>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                <div style={{ display: 'flex', gap: 0 }}>
+                  {subTabs.map(tab => {
+                    const isActive = activeTab === tab.id;
+                    return (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          borderBottom: isActive ? '2px solid #D4A843' : '2px solid transparent',
+                          padding: '8px 16px',
+                          cursor: 'pointer',
+                          fontFamily: MONO,
+                          fontSize: 12,
+                          color: isActive ? '#D4A843' : '#9CA3AF',
+                          fontWeight: isActive ? 600 : 400,
+                          transition: 'all 200ms',
+                        }}
+                      >
+                        {tab.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div style={{ position: 'relative' }}>
+                  <Search size={14} color="#6B7280" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />
+                  <input
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    placeholder="Rechercher..."
+                    style={{
+                      padding: '6px 12px 6px 30px',
+                      borderRadius: 8,
+                      background: 'rgba(15,22,41,0.5)',
+                      border: '1px solid rgba(212,168,67,0.2)',
+                      color: T.textPri,
+                      fontSize: 13,
+                      fontFamily: MONO,
+                      width: 200,
+                      transition: 'border-color 200ms',
+                    }}
+                    onFocus={e => e.currentTarget.style.borderColor = '#D4A843'}
+                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(212,168,67,0.2)'}
+                  />
                 </div>
               </div>
-              {topClients.length > 0 ? (
-                <ResponsiveContainer width="100%" height={220}>
-                  <BarChart data={topClients} layout="vertical" margin={{ top: 0, right: 50, left: 10, bottom: 0 }}>
+
+              {/* Client List */}
+              <SectionHeader icon={Users} label="Liste des Clients" right={<span style={{ color: '#6B7280', fontSize: 11, fontFamily: MONO }}>{filteredClients.length} résultats</span>} />
+              <Card goldBorder>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  {filteredClients.slice(0, 20).map((c, i) => <ClientRow key={c.name + i} client={c} delay={i * 40} onOpenDetail={handleOpenClientDetail} />)}
+                  {filteredClients.length === 0 && <div style={{ textAlign: 'center', padding: 20, color: '#6B7280', fontSize: 14, minHeight: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Aucun client trouvé</div>}
+                </div>
+              </Card>
+            </section>
+
+            {/* Health */}
+            <section>
+              <SectionHeader icon={Heart} label="Santé du Portefeuille" />
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+                <HealthCard label="Clients Fidèles" value={loyal} color="#22c55e" desc="Commande dans les 30 derniers jours" icon={Heart} delay={0} />
+                <HealthCard label="À Risque" value={atRisk - lost} color="#f59e0b" desc="Pas de commande depuis >30j" icon={AlertTriangle} delay={100} />
+                <HealthCard label="Clients Perdus" value={lost} color="#ef4444" desc="Pas de commande depuis >90j" icon={UserX} delay={200} />
+              </div>
+            </section>
+          </div>
+        )}
+
+        {/* ═══════════════════════════════════════════════ */}
+        {/* INTELLIGENCE IA TAB */}
+        {/* ═══════════════════════════════════════════════ */}
+        {pageTab === 'intelligence' && (
+          <div key="intelligence" style={{ display: 'flex', flexDirection: 'column', gap: 40, animation: 'tab-fade-in 200ms ease forwards' }}>
+            {/* Agent 1: Churn Predictor */}
+            <section>
+              <ClientChurnPredictorCard />
+            </section>
+
+            {/* Agent 2 & 3 placeholders — will be populated in next prompt */}
+            <section style={{ opacity: 0.5 }}>
+              <Card goldBorder>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 0' }}>
+                  <span style={{ fontSize: 16 }}>🔮</span>
+                  <div>
+                    <p style={{ fontFamily: MONO, fontSize: 12, color: '#D4A843', fontWeight: 600, letterSpacing: '1px' }}>AGENT IA: SCORING CRÉDIT PRÉDICTIF</p>
+                    <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 4 }}>Prochainement — Évaluation automatique du risque crédit</p>
+                  </div>
+                </div>
+              </Card>
+            </section>
+
+            <section style={{ opacity: 0.5 }}>
+              <Card goldBorder>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 0' }}>
+                  <span style={{ fontSize: 16 }}>📊</span>
+                  <div>
+                    <p style={{ fontFamily: MONO, fontSize: 12, color: '#D4A843', fontWeight: 600, letterSpacing: '1px' }}>AGENT IA: OPTIMISATION PORTEFEUILLE</p>
+                    <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 4 }}>Prochainement — Recommandations stratégiques de segmentation</p>
+                  </div>
+                </div>
+              </Card>
+            </section>
+          </div>
+        )}
+
+        {/* ═══════════════════════════════════════════════ */}
+        {/* ANALYTIQUE TAB */}
+        {/* ═══════════════════════════════════════════════ */}
+        {pageTab === 'analytique' && (
+          <div key="analytique" style={{ display: 'flex', flexDirection: 'column', gap: 40, animation: 'tab-fade-in 200ms ease forwards' }}>
+            {/* Revenue Trend — full width at top */}
+            <section>
+              <SectionHeader icon={Banknote} label="Évolution CA Clients" right={
+                <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: '#D4A843' }}>{totalNewCA}K DH</span>
+              } />
+              <Card goldBorder>
+                <ResponsiveContainer width="100%" height={240}>
+                  <AreaChart data={trendData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
                     <defs>
-                      <linearGradient id="barGoldGrad" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#C49A3C" />
-                        <stop offset="100%" stopColor="#D4A843" />
+                      <linearGradient id="caGradGod" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#D4A843" stopOpacity={0.12} />
+                        <stop offset="100%" stopColor="#D4A843" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} horizontal={false} />
-                    <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#9CA3AF', fontSize: 10, fontFamily: MONO }} tickFormatter={v => `${v}K`} />
-                    <YAxis dataKey="client" type="category" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 13, fontFamily: MONO }} width={120} />
-                    <RechartsTooltip content={<DarkTooltip suffix=" K DH" />} cursor={{ fill: `${T.gold}08` }} />
-                    <Bar dataKey="ca" name="CA" radius={[0, 6, 6, 0]} animationDuration={1000} fill="url(#barGoldGrad)" />
-                  </BarChart>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,168,67,0.08)" vertical={false} />
+                    <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 11, fontFamily: MONO }} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 10, fontFamily: MONO }} tickFormatter={v => `${v}K`} />
+                    <RechartsTooltip content={<DarkTooltip suffix="K DH" />} cursor={{ stroke: `${T.gold}40` }} />
+                    <Area
+                      dataKey="ca"
+                      name="CA"
+                      type="monotone"
+                      stroke="#D4A843"
+                      strokeWidth={2.5}
+                      fill="url(#caGradGod)"
+                      animationDuration={1200}
+                      dot={(props: any) => {
+                        const { cx, cy, index } = props;
+                        const isLast = index === trendData.length - 1;
+                        if (isLast) {
+                          return (
+                            <g key={`pulse-${index}`}>
+                              <circle cx={cx} cy={cy} r={5} fill="#D4A843" />
+                              <circle cx={cx} cy={cy} r={5} fill="#D4A843" opacity={0.5}>
+                                <animate attributeName="r" from="5" to="12" dur="2s" repeatCount="indefinite" />
+                                <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite" />
+                              </circle>
+                            </g>
+                          );
+                        }
+                        return <circle key={`dot-${index}`} cx={cx} cy={cy} r={4} fill="#D4A843" />;
+                      }}
+                      activeDot={{ r: 6, fill: '#D4A843', stroke: '#0F1629', strokeWidth: 2 }}
+                    />
+                    <Bar dataKey="nouveaux" name="Nouveaux clients" fill={T.info} radius={[3, 3, 0, 0]} animationDuration={1000} />
+                  </AreaChart>
                 </ResponsiveContainer>
-              ) : (
-                <div style={{ minHeight: 180, maxHeight: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
-              )}
-            </Card>
-
-            <Card goldBorder>
-              <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginBottom: 16, fontFamily: MONO }}>Segmentation</p>
-              {segments.length > 0 ? (
-                <>
-                  <ResponsiveContainer width="100%" height={160}>
-                    <PieChart>
-                      <Pie data={segments} cx="50%" cy="50%" innerRadius={52} outerRadius={72} dataKey="value" animationDuration={600} label={false}>
-                        {segments.map((seg, i) => <Cell key={i} fill={seg.color} />)}
-                      </Pie>
-                      <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: MONO, fontSize: 28, fontWeight: 100, fill: '#D4A843' }}>{totalClients}</text>
-                      <text x="50%" y="60%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 10, fill: T.textSec, fontFamily: MONO }}>clients</text>
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 8 }}>
-                    {segments.map(seg => (
-                      <div key={seg.name} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <div style={{ width: 8, height: 8, borderRadius: 2, background: seg.color, flexShrink: 0 }} />
-                        <span style={{ color: T.textSec, fontSize: 12, fontFamily: MONO }}>{seg.name}</span>
-                        <span style={{ fontFamily: MONO, fontSize: 10, color: seg.color, marginLeft: 'auto' }}>{seg.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <div style={{ minHeight: 180, maxHeight: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
-              )}
-            </Card>
-          </div>
-        </section>
-
-        {/* Revenue Trend */}
-        <section>
-          <SectionHeader icon={Banknote} label="Évolution CA Clients" right={
-            <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: '#D4A843' }}>{totalNewCA}K DH</span>
-          } />
-          <Card goldBorder>
-            <ResponsiveContainer width="100%" height={240}>
-              <AreaChart data={trendData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="caGradGod" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#D4A843" stopOpacity={0.12} />
-                    <stop offset="100%" stopColor="#D4A843" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,168,67,0.08)" vertical={false} />
-                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 11, fontFamily: MONO }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 10, fontFamily: MONO }} tickFormatter={v => `${v}K`} />
-                <RechartsTooltip content={<DarkTooltip suffix="K DH" />} cursor={{ stroke: `${T.gold}40` }} />
-                <Area
-                  dataKey="ca"
-                  name="CA"
-                  type="monotone"
-                  stroke="#D4A843"
-                  strokeWidth={2.5}
-                  fill="url(#caGradGod)"
-                  animationDuration={1200}
-                  dot={(props: any) => {
-                    const { cx, cy, index } = props;
-                    const isLast = index === trendData.length - 1;
-                    if (isLast) {
-                      return (
-                        <g key={`pulse-${index}`}>
-                          <circle cx={cx} cy={cy} r={5} fill="#D4A843" />
-                          <circle cx={cx} cy={cy} r={5} fill="#D4A843" opacity={0.5}>
-                            <animate attributeName="r" from="5" to="12" dur="2s" repeatCount="indefinite" />
-                            <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite" />
-                          </circle>
-                        </g>
-                      );
-                    }
-                    return <circle key={`dot-${index}`} cx={cx} cy={cy} r={4} fill="#D4A843" />;
-                  }}
-                  activeDot={{ r: 6, fill: '#D4A843', stroke: '#0F1629', strokeWidth: 2 }}
-                />
-                <Bar dataKey="nouveaux" name="Nouveaux clients" fill={T.info} radius={[3, 3, 0, 0]} animationDuration={1000} />
-              </AreaChart>
-            </ResponsiveContainer>
-            {/* Summary strip */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16, paddingTop: 12, borderTop: '1px solid rgba(212,168,67,0.08)' }}>
-              {[
-                { label: 'PIC', value: `${trendMax?.ca || 0}K`, sub: trendMax?.month || '' },
-                { label: 'CREUX', value: `${trendMin?.ca || 0}K`, sub: trendMin?.month || '' },
-                { label: 'MOY.', value: `${trendAvg}K/mois`, sub: '' },
-                { label: 'CROISSANCE', value: `${trendGrowth >= 0 ? '+' : ''}${trendGrowth}%`, sub: '' },
-              ].map((s, i) => (
-                <div key={i} style={{ textAlign: 'center' }}>
-                  <p style={{ fontFamily: MONO, fontSize: 9, color: '#9CA3AF', letterSpacing: '1px', marginBottom: 4 }}>{s.label}</p>
-                  <p style={{ fontFamily: MONO, fontSize: 14, fontWeight: 600, color: '#D4A843' }}>
-                    {s.value}{s.sub && <span style={{ fontSize: 10, color: '#9CA3AF', marginLeft: 4 }}>· {s.sub}</span>}
-                  </p>
+                {/* Summary strip */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16, paddingTop: 12, borderTop: '1px solid rgba(212,168,67,0.08)' }}>
+                  {[
+                    { label: 'PIC', value: `${trendMax?.ca || 0}K`, sub: trendMax?.month || '' },
+                    { label: 'CREUX', value: `${trendMin?.ca || 0}K`, sub: trendMin?.month || '' },
+                    { label: 'MOY.', value: `${trendAvg}K/mois`, sub: '' },
+                    { label: 'CROISSANCE', value: `${trendGrowth >= 0 ? '+' : ''}${trendGrowth}%`, sub: '' },
+                  ].map((s, i) => (
+                    <div key={i} style={{ textAlign: 'center' }}>
+                      <p style={{ fontFamily: MONO, fontSize: 9, color: '#9CA3AF', letterSpacing: '1px', marginBottom: 4 }}>{s.label}</p>
+                      <p style={{ fontFamily: MONO, fontSize: 14, fontWeight: 600, color: '#D4A843' }}>
+                        {s.value}{s.sub && <span style={{ fontSize: 10, color: '#9CA3AF', marginLeft: 4 }}>· {s.sub}</span>}
+                      </p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </Card>
-        </section>
+              </Card>
+            </section>
 
-        {/* Client List */}
-        <section>
-          <SectionHeader icon={Users} label="Liste des Clients" right={<span style={{ color: '#6B7280', fontSize: 11, fontFamily: MONO }}>{filteredClients.length} résultats</span>} />
-          <Card goldBorder>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {filteredClients.slice(0, 20).map((c, i) => <ClientRow key={c.name + i} client={c} delay={i * 40} onOpenDetail={handleOpenClientDetail} />)}
-              {filteredClients.length === 0 && <div style={{ textAlign: 'center', padding: 20, color: '#6B7280', fontSize: 14, minHeight: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Aucun client trouvé</div>}
-            </div>
-          </Card>
-        </section>
+            {/* Top clients + Segments side by side */}
+            <section>
+              <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 24 }}>
+                <Card goldBorder>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                    <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, fontFamily: MONO }}>Top Clients par CA</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <span style={{ fontFamily: MONO, fontWeight: 600, color: '#D4A843', fontSize: 14 }}>{Math.round(totalCA / 1000)}K DH</span>
+                      <span style={{ border: '1px solid #D4A843', color: '#D4A843', fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 999 }}>Top {topClients.length}</span>
+                    </div>
+                  </div>
+                  {topClients.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={220}>
+                      <BarChart data={topClients} layout="vertical" margin={{ top: 0, right: 50, left: 10, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="barGoldGrad" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor="#C49A3C" />
+                            <stop offset="100%" stopColor="#D4A843" />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} horizontal={false} />
+                        <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#9CA3AF', fontSize: 10, fontFamily: MONO }} tickFormatter={v => `${v}K`} />
+                        <YAxis dataKey="client" type="category" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 13, fontFamily: MONO }} width={120} />
+                        <RechartsTooltip content={<DarkTooltip suffix=" K DH" />} cursor={{ fill: `${T.gold}08` }} />
+                        <Bar dataKey="ca" name="CA" radius={[0, 6, 6, 0]} animationDuration={1000} fill="url(#barGoldGrad)" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div style={{ minHeight: 180, maxHeight: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
+                  )}
+                </Card>
 
-        {/* Health */}
-        <section>
-          <SectionHeader icon={Heart} label="Santé du Portefeuille" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-            <HealthCard label="Clients Fidèles" value={loyal} color="#22c55e" desc="Commande dans les 30 derniers jours" icon={Heart} delay={0} />
-            <HealthCard label="À Risque" value={atRisk - lost} color="#f59e0b" desc="Pas de commande depuis >30j" icon={AlertTriangle} delay={100} />
-            <HealthCard label="Clients Perdus" value={lost} color="#ef4444" desc="Pas de commande depuis >90j" icon={UserX} delay={200} />
+                <Card goldBorder>
+                  <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginBottom: 16, fontFamily: MONO }}>Segmentation</p>
+                  {segments.length > 0 ? (
+                    <>
+                      <ResponsiveContainer width="100%" height={160}>
+                        <PieChart>
+                          <Pie data={segments} cx="50%" cy="50%" innerRadius={52} outerRadius={72} dataKey="value" animationDuration={600} label={false}>
+                            {segments.map((seg, i) => <Cell key={i} fill={seg.color} />)}
+                          </Pie>
+                          <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: MONO, fontSize: 28, fontWeight: 100, fill: '#D4A843' }}>{totalClients}</text>
+                          <text x="50%" y="60%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 10, fill: T.textSec, fontFamily: MONO }}>clients</text>
+                        </PieChart>
+                      </ResponsiveContainer>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 8 }}>
+                        {segments.map(seg => (
+                          <div key={seg.name} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <div style={{ width: 8, height: 8, borderRadius: 2, background: seg.color, flexShrink: 0 }} />
+                            <span style={{ color: T.textSec, fontSize: 12, fontFamily: MONO }}>{seg.name}</span>
+                            <span style={{ fontFamily: MONO, fontSize: 10, color: seg.color, marginLeft: 'auto' }}>{seg.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{ minHeight: 180, maxHeight: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
+                  )}
+                </Card>
+              </div>
+            </section>
           </div>
-        </section>
+        )}
 
-
+        {/* ── MODALS (always rendered) ── */}
         {selectedClient && (
           <div onClick={() => setSelectedClient(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
             <div onClick={(e) => e.stopPropagation()} style={{ width: 'min(560px, 100%)', background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 20 }}>
@@ -935,7 +1074,7 @@ export default function WorldClassClients() {
         )}
 
         {/* Footer */}
-        <footer style={{ borderTop: '1px solid rgba(245, 158, 11, 0.08)', paddingTop: 24, paddingBottom: 24, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <footer style={{ borderTop: '1px solid rgba(245, 158, 11, 0.08)', paddingTop: 24, paddingBottom: 24, display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 40 }}>
           <span style={{ color: '#4B5563', fontSize: 12, fontFamily: MONO }}>TBOS Clients v2.0 — Données live • {format(new Date(), 'dd/MM/yyyy')}</span>
         </footer>
       </div>
