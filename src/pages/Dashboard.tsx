@@ -1001,6 +1001,62 @@ export default function Dashboard() {
             <LeakageAlertBanner />
           </div>
 
+          {/* (2b) PRÉDICTION ARRÊT USINE */}
+          <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" style={{ animation: 'ccSectionIn 300ms ease-out 150ms both' }}>
+            <div style={{
+              background: 'rgba(245, 158, 11, 0.05)',
+              borderLeft: '4px solid #F59E0B',
+              borderRadius: 8,
+              padding: '16px 20px',
+              position: 'relative',
+            }}>
+              {/* Line 1: Alert headline */}
+              <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 14, fontWeight: 600, color: '#F59E0B', marginBottom: 8 }}>
+                ⚠ RISQUE ARRÊT DANS 4 JOURS
+              </div>
+              {/* Line 2: Detail */}
+              <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, color: '#9CA3AF', marginBottom: 6, lineHeight: 1.6 }}>
+                Adjuvant insuffisant pour production prévue. Stock actuel: 200 L (6,7j). Commandes confirmées J+4 à J+7: 380 L nécessaires. Déficit: <span style={{ color: '#F59E0B', fontWeight: 600 }}>180 L</span>.
+              </div>
+              {/* Line 3: Cost */}
+              <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, color: '#EFormat444', marginBottom: 6 }}>
+                <span style={{ color: '#EF4444' }}>Coût arrêt estimé: 85,000 MAD/jour</span> <span style={{ color: '#9CA3AF' }}>(perte production + pénalités livraison + personnel inactif)</span>
+              </div>
+              {/* Line 4: Solution */}
+              <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, color: '#FFFFFF', marginBottom: 12 }}>
+                Commande urgente Sika Maroc: 500 L · Délai: 2-3 jours · Coût: 42,500 DH
+              </div>
+              {/* Buttons */}
+              <div className="flex items-center gap-3 flex-wrap">
+                <button
+                  className="flex items-center gap-2 px-5 py-2 rounded-lg text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg"
+                  style={{ background: '#D4A843', color: '#0F1629', border: 'none', cursor: 'pointer' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#FDB913'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#D4A843'; }}
+                >
+                  Commander Adjuvant Maintenant
+                </button>
+                <button
+                  className="flex items-center gap-2 px-5 py-2 rounded-lg text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px"
+                  style={{ background: 'transparent', border: '1px solid #D4A843', color: '#D4A843', cursor: 'pointer' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.1)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                >
+                  Voir Analyse Complète
+                </button>
+                {/* AI badge */}
+                <span className="ml-auto" style={{
+                  fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
+                  fontSize: 9, letterSpacing: '0.5px', color: '#D4A843',
+                  background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.2)',
+                  borderRadius: 20, padding: '3px 10px', whiteSpace: 'nowrap',
+                }}>
+                  ✨ Généré par IA · Claude Opus
+                </span>
+              </div>
+            </div>
+          </div>
+
           {/* (3) 4 KPI Cards Row */}
           <div className="tbos-kpi-grid grid grid-cols-4 gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch', animation: 'ccSectionIn 300ms ease-out 200ms both' }}>
           {[
