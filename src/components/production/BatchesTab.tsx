@@ -265,7 +265,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
             }}>
               {['N° BL', 'CLIENT', 'FORMULE', 'VOL (M³)', 'HEURE', 'COÛT', 'MARGE', 'SATISF.', 'STATUT', 'PROGRESSION', 'ACTIONS'].map(h => {
                 const align: 'left' | 'center' | 'right' =
-                  ['FORMULE', 'VOL (M³)', 'HEURE', 'COÛT', 'MARGE', 'STATUT', 'PROGRESSION', 'ACTIONS'].includes(h) ? 'center' : 'left';
+                  ['FORMULE', 'VOL (M³)', 'HEURE', 'COÛT', 'MARGE', 'SATISF.', 'STATUT', 'PROGRESSION', 'ACTIONS'].includes(h) ? 'center' : 'left';
                 return (
                   <span key={h} style={{
                     fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.12em',
