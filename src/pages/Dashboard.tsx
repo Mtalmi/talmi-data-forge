@@ -16,6 +16,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio, Sparkles, PhoneCall, FileText, PlusCircle, BarChart3, CheckCircle2, Bell, ChevronRight, AlertTriangle, Camera, Settings } from 'lucide-react';
 import { IntelligenceBriefingCard } from '@/components/dashboard/IntelligenceBriefingCard';
 import { ResumeIABar } from '@/components/dashboard/ResumeIABar';
+import { DailyScoreGauge } from '@/components/dashboard/DailyScoreGauge';
 
 // Lazy-loaded heavy widgets
 const WorldClassDashboard = lazy(() => import('@/components/dashboard/WorldClassDashboard').then(m => ({ default: m.WorldClassDashboard })));
@@ -840,7 +841,7 @@ export default function Dashboard() {
                 padding: '24px 32px',
               }}
             >
-              {/* ── ROW 1: GREETING (compact, understated) ── */}
+              {/* ── ROW 1: GREETING + DAILY SCORE ── */}
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h1 className="text-lg font-semibold text-white tracking-tight" style={{ lineHeight: 1.2 }}>
@@ -864,6 +865,10 @@ export default function Dashboard() {
                       <span className="text-sm">☀️</span> 22°C Ensoleillé · 45% · <span className="text-emerald-400/80 font-semibold">● Optimal</span>
                     </span>
                   </div>
+                </div>
+                {/* DAILY SCORE GAUGE */}
+                <div className="hidden md:block">
+                  <DailyScoreGauge score={87} deltaVsYesterday={3} streak={12} weeklyRecord={{ score: 94, day: 'jeudi' }} />
                 </div>
               </div>
 
@@ -1011,6 +1016,8 @@ export default function Dashboard() {
               sparkline: '0,28 20,24 40,20 60,26 80,18 100,14 120,10',
               secondaryLabel: 'Obj. mensuel',
               secondaryValue: '671 / 3 200 m³',
+              target: 280,
+              targetLabel: 'OBJ',
             },
             {
               label: 'REVENUE',
@@ -1039,6 +1046,8 @@ export default function Dashboard() {
               secondaryLabel: 'P&L',
               secondaryValue: 'Net: 24.2K DH',
               plBreakdown: true,
+              target: 32,
+              targetLabel: 'OBJ',
             },
             {
               label: 'TRÉSORERIE',
@@ -1054,7 +1063,12 @@ export default function Dashboard() {
               secondaryLabel: 'Net',
               secondaryValue: '+49K DH',
             },
-          ].map((kpi, i) => (
+          ].map((kpi, i) => {
+            const numVal = typeof kpi.value === 'number' ? kpi.value : parseFloat(String(kpi.value));
+            const hasTarget = 'target' in kpi && kpi.target !== undefined;
+            const aboveTarget = hasTarget ? numVal >= (kpi.target as number) : false;
+            const belowTarget = hasTarget ? numVal < (kpi.target as number) : false;
+            return (
             <TiltCard
               key={i}
               className="tbos-hero-card group cursor-pointer shimmer-effect h-full flex flex-col min-w-0 relative overflow-hidden hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 ease-out"
@@ -1083,11 +1097,17 @@ export default function Dashboard() {
                      <span className="tbos-hero-stat-number text-3xl font-mono tracking-tight text-white" style={{
                        fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
                        fontWeight: 200, lineHeight: 1,
-                       textShadow: '0 0 20px rgba(255, 255, 255, 0.06), 0 0 35px rgba(255,215,0,0.2), 0 0 70px rgba(255,215,0,0.07)',
+                       textShadow: aboveTarget
+                         ? '0 0 8px rgba(34, 197, 94, 0.3), 0 0 20px rgba(34, 197, 94, 0.15)'
+                         : belowTarget
+                           ? '0 0 8px rgba(239, 68, 68, 0.3), 0 0 20px rgba(239, 68, 68, 0.15)'
+                           : '0 0 20px rgba(255, 255, 255, 0.06), 0 0 35px rgba(255,215,0,0.2), 0 0 70px rgba(255,215,0,0.07)',
                      }}>
                       {typeof kpi.value === 'number' && kpi.value % 1 !== 0 ? kpi.value.toFixed(1) : kpi.value}
                     </span>
                     <span className="text-lg font-mono text-muted-foreground ml-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{kpi.unit}</span>
+                    {aboveTarget && <span style={{ color: '#22C55E', fontSize: 14, fontWeight: 600, marginLeft: 2 }}>✓</span>}
+                    {belowTarget && <span style={{ color: '#EF4444', fontSize: 14, fontWeight: 600, marginLeft: 2 }}>↓</span>}
                   </div>
                   <div className="text-[11px] text-slate-500 mt-3 tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontSize: '11px', fontWeight: 400 }}>{kpi.sub}</div>
                   {kpi.trend && (
@@ -1130,8 +1150,20 @@ export default function Dashboard() {
                         }));
                         const polyStr = scaled.map(p => `${p.x},${p.y}`).join(' ');
                         const last = scaled[scaled.length - 1];
+                        // Target line position
+                        const targetY = hasTarget ? (() => {
+                          const tgt = kpi.target as number;
+                          const tgtNorm = Math.max(0, Math.min(1, (tgt - minY) / ((maxY - minY) || 1)));
+                          return pad + tgtNorm * (44 - pad * 2);
+                        })() : null;
                         return (
                           <>
+                            {targetY !== null && (
+                              <>
+                                <line x1={pad} y1={targetY} x2={130 - pad} y2={targetY} stroke="rgba(255,255,255,0.25)" strokeWidth="1" strokeDasharray="3 3" />
+                                <text x={130 - pad} y={targetY - 3} textAnchor="end" fill="rgba(255,255,255,0.35)" fontSize="9" fontFamily="ui-monospace, monospace">{(kpi as any).targetLabel || 'OBJ'}</text>
+                              </>
+                            )}
                             <polyline fill="none" stroke="#D4A843" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={polyStr} style={{ opacity: 0.7 }} />
                             {last && <circle cx={last.x} cy={last.y} r="2.5" fill="#D4A843" style={{ opacity: 0.9 }} />}
                           </>
@@ -1146,7 +1178,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </TiltCard>
-          ))}
+          ); })}
           </div>
 
           {/* (4) Intelligence IA section */}
