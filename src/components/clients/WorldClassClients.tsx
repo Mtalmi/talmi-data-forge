@@ -762,6 +762,238 @@ function FinanceRow({ client, factures, montant, retard, retardColor, score, sco
 }
 
 // ─────────────────────────────────────────────────────
+// CLIENT DETAIL DRAWER
+// ─────────────────────────────────────────────────────
+const TGCC_ORDERS = [
+  { bl: 'BL-WC-045', date: '01/03/26', vol: '350 m³', amount: '420,000 DH', status: 'Payée' },
+  { bl: 'BL-WC-042', date: '01/12/25', vol: '350 m³', amount: '420,000 DH', status: 'Payée' },
+  { bl: 'BL-WC-041', date: '02/11/25', vol: '350 m³', amount: '420,000 DH', status: 'Payée' },
+  { bl: 'BL-WC-040', date: '05/10/25', vol: '350 m³', amount: '420,000 DH', status: 'Payée' },
+];
+const TGCC_SPARKLINE = [350, 420, 420, 350, 420, 350];
+
+function DrawerHealthGauge({ score, size = 56 }: { score: number; size?: number }) {
+  const r = (size - 6) / 2;
+  const circ = 2 * Math.PI * r;
+  const progress = (score / 100) * circ;
+  const color = score >= 80 ? '#22C55E' : score >= 50 ? '#F59E0B' : '#EF4444';
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+      <svg width={size} height={size}>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={3} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={3}
+          strokeDasharray={`${progress} ${circ - progress}`}
+          strokeLinecap="round"
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+          style={{ transition: 'stroke-dasharray 800ms ease' }}
+        />
+        <text x="50%" y="50%" textAnchor="middle" dominantBaseline="central"
+          style={{ fontFamily: MONO, fontSize: 16, fontWeight: 600, fill: color }}
+        >{score}</text>
+      </svg>
+      <span style={{ fontFamily: MONO, fontSize: 10, color: '#9CA3AF', letterSpacing: '1px' }}>SCORE SANTÉ</span>
+    </div>
+  );
+}
+
+function MiniSparkline({ data }: { data: number[] }) {
+  const w = 400, h = 80, pad = 8;
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  const range = max - min || 1;
+  const points = data.map((v, i) => ({
+    x: pad + (i / (data.length - 1)) * (w - pad * 2),
+    y: pad + (1 - (v - min) / range) * (h - pad * 2),
+  }));
+  const line = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
+  const area = `${line} L${points[points.length - 1].x},${h} L${points[0].x},${h} Z`;
+  const last = points[points.length - 1];
+  return (
+    <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" style={{ display: 'block' }}>
+      <defs>
+        <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#D4A843" stopOpacity={0.1} />
+          <stop offset="100%" stopColor="#D4A843" stopOpacity={0} />
+        </linearGradient>
+      </defs>
+      <path d={area} fill="url(#sparkGrad)" />
+      <path d={line} fill="none" stroke="#D4A843" strokeWidth={2} />
+      {points.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r={3} fill="#D4A843" />)}
+      <circle cx={last.x} cy={last.y} r={5} fill="#D4A843" />
+      <circle cx={last.x} cy={last.y} r={5} fill="#D4A843" opacity={0.5}>
+        <animate attributeName="r" from="5" to="12" dur="2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite" />
+      </circle>
+    </svg>
+  );
+}
+
+function ClientDetailDrawer({ client, onClose }: { client: ClientDisplay | null; onClose: () => void }) {
+  const [closing, setClosing] = useState(false);
+
+  useEffect(() => {
+    if (!client) return;
+    const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') handleClose(); };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [client]);
+
+  const handleClose = () => {
+    setClosing(true);
+    setTimeout(() => { setClosing(false); onClose(); }, 280);
+  };
+
+  if (!client) return null;
+
+  const initial = client.name.charAt(0).toUpperCase();
+
+  return (
+    <>
+      <style>{`
+        @keyframes drawer-overlay-in { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes drawer-overlay-out { from { opacity: 1 } to { opacity: 0 } }
+        @keyframes drawer-slide-in { from { transform: translateX(680px) } to { transform: translateX(0) } }
+        @keyframes drawer-slide-out { from { transform: translateX(0) } to { transform: translateX(680px) } }
+      `}</style>
+      {/* Overlay */}
+      <div
+        onClick={handleClose}
+        style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 1200,
+          animation: closing ? 'drawer-overlay-out 200ms ease forwards' : 'drawer-overlay-in 200ms ease forwards',
+        }}
+      />
+      {/* Drawer */}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          position: 'fixed', top: 0, right: 0, bottom: 0, width: 680, zIndex: 1201,
+          background: '#0F1629', borderLeft: '1px solid rgba(212,168,67,0.3)',
+          overflowY: 'auto',
+          animation: closing ? 'drawer-slide-out 280ms ease-in forwards' : 'drawer-slide-in 300ms ease-out forwards',
+        }}
+      >
+        <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 24 }}>
+          {/* HEADER */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+              <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: 20, color: '#D4A843', flexShrink: 0 }}>{initial}</div>
+              <div>
+                <p style={{ fontFamily: MONO, fontSize: 22, fontWeight: 500, color: '#FFFFFF' }}>{client.name}</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4, flexWrap: 'wrap' }}>
+                  <Badge label={client.segment} color={SEGMENT_COLORS[client.segment] || '#D4A843'} bg={`${SEGMENT_COLORS[client.segment] || '#D4A843'}18`} />
+                  <Badge label="Actif" color="#22C55E" bg="rgba(34,197,94,0.12)" />
+                  <span style={{ color: '#9CA3AF', fontSize: 12, fontFamily: MONO }}>Membre depuis 2023</span>
+                </div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+              <DrawerHealthGauge score={92} />
+              <button onClick={handleClose} style={{ border: 'none', background: 'none', color: '#9CA3AF', fontSize: 20, cursor: 'pointer', lineHeight: 1, padding: 4 }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#D4A843')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#9CA3AF')}
+              >✕</button>
+            </div>
+          </div>
+
+          {/* KEY METRICS */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+            {[
+              { label: 'CA YTD', value: '2,520K', unit: ' DH', sub: '' },
+              { label: 'COMMANDES', value: '12', unit: '', sub: 'cette année' },
+              { label: 'DÉLAI PAIEMENT', value: '22', unit: ' jours', sub: 'moyenne', color: '#22C55E' },
+              { label: 'SATISFACTION', value: '4.8', unit: '/5', sub: '★★★★★', subColor: '#D4A843' },
+            ].map((m, i) => (
+              <div key={i} style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 8, border: '1px solid #1E2D4A', borderTop: '2px solid #D4A843', padding: '10px 12px' }}>
+                <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', marginBottom: 6 }}>{m.label}</p>
+                <p style={{ fontFamily: MONO, fontSize: 18, fontWeight: 300, color: m.color || '#D4A843', lineHeight: 1 }}>
+                  {m.value}<span style={{ fontSize: 13, color: '#9CA3AF' }}>{m.unit}</span>
+                </p>
+                {m.sub && <p style={{ fontFamily: MONO, fontSize: 10, color: m.subColor || '#9CA3AF', marginTop: 4 }}>{m.sub}</p>}
+              </div>
+            ))}
+          </div>
+
+          {/* SPARKLINE */}
+          <div>
+            <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', marginBottom: 8 }}>ÉVOLUTION CA · 6 MOIS</p>
+            <MiniSparkline data={TGCC_SPARKLINE} />
+          </div>
+
+          {/* COMMANDES RÉCENTES */}
+          <div style={{ borderTop: '1px solid rgba(212,168,67,0.15)', paddingTop: 16 }}>
+            <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', marginBottom: 10 }}>COMMANDES RÉCENTES</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {TGCC_ORDERS.map((o, i) => (
+                <OrderRow key={i} {...o} />
+              ))}
+            </div>
+            <p style={{ fontFamily: MONO, fontSize: 12, color: '#D4A843', marginTop: 10, cursor: 'pointer' }}>Voir tout →</p>
+          </div>
+
+          {/* COMPORTEMENT PAIEMENT */}
+          <div style={{ borderTop: '1px solid rgba(212,168,67,0.15)', paddingTop: 16 }}>
+            <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', marginBottom: 10 }}>COMPORTEMENT PAIEMENT</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
+              <span style={{ fontFamily: MONO, fontSize: 13, color: '#9CA3AF' }}>Score Paiement:</span>
+              <span style={{ fontFamily: MONO, fontSize: 24, color: '#D4A843', fontWeight: 600 }}>98<span style={{ fontSize: 14, color: '#9CA3AF' }}>/100</span></span>
+              <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700, background: 'rgba(34,197,94,0.12)', color: '#22C55E', border: '1px solid rgba(34,197,94,0.3)' }}>Excellent payeur</span>
+            </div>
+            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+              <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>Délai moyen: <span style={{ color: '#F1F5F9' }}>22 jours</span></span>
+              <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>Retard: <span style={{ color: '#22C55E' }}>0 factures</span></span>
+              <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>Historique: <span style={{ color: '#22C55E' }}>12/12</span> à temps</span>
+            </div>
+          </div>
+
+          {/* CONTACT */}
+          <div style={{ borderTop: '1px solid rgba(212,168,67,0.15)', paddingTop: 16 }}>
+            <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', marginBottom: 10 }}>CONTACT PRINCIPAL</p>
+            <p style={{ color: '#F1F5F9', fontWeight: 500, fontSize: 14 }}>Mohammed Alami</p>
+            <p style={{ color: '#9CA3AF', fontSize: 13, marginTop: 2 }}>Directeur des Achats</p>
+            <p style={{ color: '#D4A843', fontSize: 13, marginTop: 4, cursor: 'pointer' }}>m.alami@tgcc.ma</p>
+            <p style={{ fontFamily: MONO, color: '#9CA3AF', fontSize: 13, marginTop: 2 }}>+212 6XX XXX XXX</p>
+            <p style={{ color: '#9CA3AF', fontSize: 12, marginTop: 6 }}>Dernier contact : 28 Feb 2026</p>
+          </div>
+
+          {/* AI INSIGHT */}
+          <div style={{ borderTop: '1px solid rgba(212,168,67,0.15)', paddingTop: 16 }}>
+            <div style={{ background: 'rgba(212,168,67,0.03)', borderLeft: '3px solid #D4A843', borderRadius: '0 8px 8px 0', padding: 12 }}>
+              <p style={{ fontSize: 13, lineHeight: 1.7, color: '#94A3B8' }}>
+                Client fidèle depuis 2023 avec un historique de paiement parfait. Volume stable à <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>350-420 m³</span>/trimestre. <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation :</span> proposer tarif préférentiel pour volumes &gt;<span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>500 m³</span>/mois afin de verrouiller la relation long terme et anticiper l'offre concurrente.
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
+                <span style={{ background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', fontSize: 11, borderRadius: 9999, padding: '2px 10px', fontWeight: 600, fontFamily: MONO }}>✨ Généré par IA · Claude Opus · Live</span>
+              </div>
+            </div>
+          </div>
+
+          {/* FOOTER BUTTONS */}
+          <div style={{ display: 'flex', gap: 12, paddingTop: 8 }}>
+            <button style={{ flex: 1, background: '#D4A843', color: '#0F1629', border: 'none', borderRadius: 8, padding: '10px 24px', cursor: 'pointer', fontSize: 14, fontWeight: 600, fontFamily: MONO }}>Nouveau Devis</button>
+            <button style={{ flex: 1, background: 'transparent', color: '#D4A843', border: '1px solid #D4A843', borderRadius: 8, padding: '10px 24px', cursor: 'pointer', fontSize: 14, fontWeight: 600, fontFamily: MONO }}>Historique Complet</button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function OrderRow({ bl, date, vol, amount, status }: typeof TGCC_ORDERS[0]) {
+  const [hov, setHov] = useState(false);
+  return (
+    <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 10px', borderRadius: 6, background: hov ? 'rgba(212,168,67,0.03)' : 'transparent', transition: 'background 150ms' }}>
+      <span style={{ fontFamily: MONO, fontSize: 12, color: '#D4A843', fontWeight: 600, flex: '0 0 90px' }}>{bl}</span>
+      <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF', flex: '0 0 80px' }}>{date}</span>
+      <span style={{ fontFamily: MONO, fontSize: 12, color: '#F1F5F9', flex: '0 0 70px' }}>{vol}</span>
+      <span style={{ fontFamily: MONO, fontSize: 12, color: '#F1F5F9', flex: '1 1 auto' }}>{amount}</span>
+      <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700, background: 'rgba(34,197,94,0.12)', color: '#22C55E', border: '1px solid rgba(34,197,94,0.3)' }}>{status}</span>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // REVENUE HEATMAP
 // ─────────────────────────────────────────────────────
 const HEATMAP_MONTHS = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
@@ -1359,43 +1591,8 @@ export default function WorldClassClients() {
           </div>
         )}
 
-        {/* ── MODALS (always rendered) ── */}
-        {selectedClient && (
-          <div onClick={() => setSelectedClient(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-            <div onClick={(e) => e.stopPropagation()} style={{ width: 'min(560px, 100%)', background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 20 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                <p style={{ color: T.gold, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Détail Client</p>
-                <button onClick={() => setSelectedClient(null)} style={{ border: 'none', background: 'transparent', color: T.textSec, cursor: 'pointer', fontSize: 18, lineHeight: 1 }}>×</button>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                <div>
-                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Nom</p>
-                  <p style={{ color: T.textPri, fontSize: 14, fontWeight: 600 }}>{selectedClient.name}</p>
-                </div>
-                <div>
-                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>ID Client</p>
-                  <p style={{ color: T.textPri, fontSize: 14, fontFamily: MONO }}>{selectedClient.clientId || '—'}</p>
-                </div>
-                <div>
-                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Email</p>
-                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.email || '—'}</p>
-                </div>
-                <div>
-                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Téléphone</p>
-                  <p style={{ color: T.textPri, fontSize: 14, fontFamily: MONO }}>{selectedClient.telephone || '—'}</p>
-                </div>
-                <div>
-                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Ville</p>
-                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.ville || '—'}</p>
-                </div>
-                <div>
-                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Segment</p>
-                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.segment}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* ── CLIENT DETAIL DRAWER ── */}
+        <ClientDetailDrawer client={selectedClient} onClose={() => setSelectedClient(null)} />
 
         {isCreateModalOpen && (
           <div onClick={() => setIsCreateModalOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
