@@ -1204,6 +1204,26 @@ export default function Dashboard() {
                     onMouseLeave={handleChartMouseLeave}
                     style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.3))' }}
                   >
+                    <defs>
+                      <linearGradient id="prodAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="rgba(212,168,67,0.12)" />
+                        <stop offset="100%" stopColor="rgba(212,168,67,0)" />
+                      </linearGradient>
+                    </defs>
+                    {/* Subtle horizontal grid lines (item 4) */}
+                    {[20, 40, 60, 80, 100].map(val => {
+                      const gy = svgH - (val / allMax) * svgH * 0.85 - 5;
+                      return <line key={val} x1="0" y1={gy} x2={svgW} y2={gy} stroke="rgba(212,168,67,0.04)" strokeWidth="0.5" />;
+                    })}
+                    {/* Area fill under production line (item 3) */}
+                    <polygon
+                      fill="url(#prodAreaGrad)"
+                      points={SPARKLINE_DATA.map((d, i) => {
+                        const x = (i / (SPARKLINE_DATA.length - 1)) * svgW;
+                        const y = svgH - (d.v / allMax) * svgH * 0.85 - 5;
+                        return `${x},${y}`;
+                      }).join(' ') + ` ${svgW},${svgH} 0,${svgH}`}
+                    />
                     {/* Target line */}
                     <polyline
                       fill="none"
@@ -1229,18 +1249,30 @@ export default function Dashboard() {
                         return `${x},${y}`;
                       }).join(' ')}
                     />
-                    {/* Now line */}
-                    <line x1={(NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW} y1="0" x2={(NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW} y2={svgH} stroke="rgba(52,211,153,0.3)" strokeWidth="1" strokeDasharray="3,3" />
+                    {/* Live pulse dot at rightmost data point (item 1) */}
+                    {(() => {
+                      const li = SPARKLINE_DATA.length - 1;
+                      const lx = (li / (SPARKLINE_DATA.length - 1)) * svgW;
+                      const ly = svgH - (SPARKLINE_DATA[li].v / allMax) * svgH * 0.85 - 5;
+                      return (
+                        <foreignObject x={lx - 5} y={ly - 5} width="10" height="10">
+                          <div className="live-pulse-dot" />
+                        </foreignObject>
+                      );
+                    })()}
+                    {/* Now line — gold dashed (item 6) */}
+                    <line x1={(NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW} y1="0" x2={(NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW} y2={svgH} stroke="#D4A843" strokeWidth="1" strokeDasharray="4,4" opacity="0.3" />
                     {/* MAINTENANT label at top of now line */}
                     <text
                       x={(NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW}
                       y="4"
                       textAnchor="middle"
-                      fill="rgba(52,211,153,0.6)"
+                      fill="#D4A843"
                       fontSize="3"
                       fontFamily="ui-monospace, 'JetBrains Mono', monospace"
                       fontWeight="500"
                       letterSpacing="0.3"
+                      opacity="0.6"
                     >
                       MAINTENANT
                     </text>
@@ -1277,25 +1309,28 @@ export default function Dashboard() {
                         </text>
                       );
                     })}
-                    {/* Hover — vertical line only, no dot */}
+                    {/* Hover — crosshair vertical dashed line (item 2) */}
                     {hoveredPoint && (
-                      <line x1={hoveredPoint.x} y1="0" x2={hoveredPoint.x} y2={svgH} stroke="rgba(212,168,67,0.25)" strokeWidth="0.5" strokeDasharray="2,2" />
+                      <line x1={hoveredPoint.x} y1="0" x2={hoveredPoint.x} y2={svgH} stroke="#D4A843" strokeWidth="0.5" strokeDasharray="3,3" opacity="0.4" />
                     )}
                     <rect x="0" y="0" width={svgW} height={svgH} fill="transparent" />
                   </svg>
                 </div>
-                  {/* Hover tooltip */}
+                  {/* Hover tooltip (item 2 — enhanced) */}
                   {hoveredPoint && chartMousePos && (
                     <div
-                      className="absolute pointer-events-none z-20 rounded-md px-2 py-1 font-mono text-[11px] text-white shadow-lg"
+                      className="absolute pointer-events-none z-20 font-mono text-[11px] text-white shadow-lg"
                       style={{
                         left: chartMousePos.x + 12,
-                        top: chartMousePos.y - 40,
-                        background: '#0f1729',
-                        border: '1px solid rgba(212,168,67,0.4)',
+                        top: chartMousePos.y - 50,
+                        background: '#1A1F2E',
+                        border: '1px solid rgba(212,168,67,0.3)',
+                        borderRadius: '8px',
+                        padding: '8px 12px',
                       }}
                     >
-                      <div className="font-semibold" style={{ color: '#D4A843' }}>{hoveredPoint.h} — {hoveredPoint.v} m³/h</div>
+                      <div className="font-semibold" style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace' }}>{hoveredPoint.h}</div>
+                      <div className="text-white text-[12px]">{hoveredPoint.v} m³/h</div>
                       <div className="text-[10px]" style={{ color: hoveredPoint.diffPct >= 0 ? 'rgba(52,211,153,0.9)' : 'rgba(248,113,113,0.9)' }}>
                         {hoveredPoint.diffPct >= 0 ? '▲' : '▼'} {hoveredPoint.diffPct >= 0 ? '+' : ''}{hoveredPoint.diffPct}% vs target
                       </div>
