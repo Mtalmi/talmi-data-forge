@@ -543,38 +543,54 @@ export default function Ventes() {
               {/* Sub-Tabs: Devis / BC / Factures / Calendrier */}
               <div id="ventes-tabs-section" className="scroll-mt-36">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-                  <TabsList
-                    className="h-auto gap-0.5 flex flex-nowrap overflow-x-auto scrollbar-hide w-auto"
-                    style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: 12, padding: 4, display: 'inline-flex' }}
-                  >
-                    <TabsTrigger value="devis" className="shrink-0 whitespace-nowrap gap-2 rounded-none px-[18px] py-2 text-xs font-medium transition-all data-[state=inactive]:text-[#9CA3AF] data-[state=inactive]:hover:text-slate-300/80 data-[state=inactive]:hover:bg-white/[0.03] data-[state=active]:bg-transparent data-[state=active]:text-[#D4A843] data-[state=active]:font-semibold data-[state=active]:shadow-none" data-active-border>
-                      <FileText className="h-3.5 w-3.5" />
-                      {t.pages.ventes.devisTab}
-                      <span className="ml-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-semibold" style={{ color: '#D4A843', background: 'rgba(212,168,67,0.1)' }}>{filteredDevis.length}</span>
-                      {expiringDevisCount > 0 && (
-                        <Badge variant="destructive" className="ml-0.5 h-4 w-4 p-0 flex items-center justify-center">
-                          <AlertTriangle className="h-2.5 w-2.5" />
-                        </Badge>
-                      )}
-                    </TabsTrigger>
-                    <TabsTrigger value="bc" className="shrink-0 whitespace-nowrap gap-2 rounded-none px-[18px] py-2 text-xs font-medium transition-all data-[state=inactive]:text-[#9CA3AF] data-[state=inactive]:hover:text-slate-300/80 data-[state=inactive]:hover:bg-white/[0.03] data-[state=active]:bg-transparent data-[state=active]:text-[#D4A843] data-[state=active]:font-semibold data-[state=active]:shadow-none" data-active-border>
-                      <ShoppingCart className="h-3.5 w-3.5" />
-                      {t.pages.ventes.bcTab}
-                      <span className="ml-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-semibold" style={{ color: '#D4A843', background: 'rgba(212,168,67,0.1)' }}>{filteredBc.length}</span>
-                      {filteredBc.some(bc => bc.statut === 'en_attente_validation') && canValidateBcPrice && (
-                        <Badge variant="outline" className="ml-0.5 h-4 px-1 bg-amber-500/10 text-amber-600 border-amber-500/30 animate-pulse text-[9px]">
-                          {filteredBc.filter(bc => bc.statut === 'en_attente_validation').length}
-                        </Badge>
-                      )}
-                    </TabsTrigger>
-                    <TabsTrigger value="factures" className="shrink-0 whitespace-nowrap gap-2 rounded-none px-[18px] py-2 text-xs font-medium transition-all data-[state=inactive]:text-[#9CA3AF] data-[state=inactive]:hover:text-slate-300/80 data-[state=inactive]:hover:bg-white/[0.03] data-[state=active]:bg-transparent data-[state=active]:text-[#D4A843] data-[state=active]:font-semibold data-[state=active]:shadow-none" data-active-border>
-                      <Receipt className="h-3.5 w-3.5" />
-                      {t.pages.ventes.invoicesTab}
-                    </TabsTrigger>
-                    <TabsTrigger value="calendar" className="shrink-0 whitespace-nowrap gap-2 rounded-none px-[18px] py-2 text-xs font-medium transition-all data-[state=inactive]:text-[#9CA3AF] data-[state=inactive]:hover:text-slate-300/80 data-[state=inactive]:hover:bg-white/[0.03] data-[state=active]:bg-transparent data-[state=active]:text-[#D4A843] data-[state=active]:font-semibold data-[state=active]:shadow-none" data-active-border>
-                      <Calendar className="h-3.5 w-3.5" />
-                      {t.pages.ventes.calendarTab}
-                    </TabsTrigger>
+                  <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid rgba(255,255,255,0.06)', marginBottom: 16 }}>
+                    {[
+                      { value: 'devis', icon: <FileText className="h-3.5 w-3.5" />, label: t.pages.ventes.devisTab, count: filteredDevis.length, alert: expiringDevisCount > 0 },
+                      { value: 'bc', icon: <ShoppingCart className="h-3.5 w-3.5" />, label: t.pages.ventes.bcTab, count: filteredBc.length },
+                      { value: 'factures', icon: <Receipt className="h-3.5 w-3.5" />, label: t.pages.ventes.invoicesTab },
+                      { value: 'calendar', icon: <Calendar className="h-3.5 w-3.5" />, label: t.pages.ventes.calendarTab },
+                    ].map(tab => {
+                      const isActive = activeTab === tab.value;
+                      return (
+                        <button
+                          key={tab.value}
+                          onClick={() => setActiveTab(tab.value)}
+                          style={{
+                            background: 'transparent',
+                            border: 'none',
+                            borderBottom: isActive ? '2px solid #D4A843' : '2px solid transparent',
+                            color: isActive ? '#D4A843' : '#9CA3AF',
+                            fontFamily: 'ui-monospace',
+                            fontSize: 12,
+                            fontWeight: isActive ? 600 : 400,
+                            padding: '10px 18px',
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 8,
+                            transition: 'all 200ms',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {tab.icon}
+                          {tab.label}
+                          {tab.count !== undefined && (
+                            <span style={{ background: 'rgba(212,168,67,0.1)', color: '#D4A843', borderRadius: 10, padding: '2px 8px', fontSize: 10, fontFamily: 'ui-monospace', fontWeight: 600 }}>{tab.count}</span>
+                          )}
+                          {tab.alert && (
+                            <span style={{ background: 'rgba(239,68,68,0.15)', color: '#EF4444', borderRadius: '50%', width: 16, height: 16, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <AlertTriangle style={{ width: 10, height: 10 }} />
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <TabsList className="hidden">
+                    <TabsTrigger value="devis" />
+                    <TabsTrigger value="bc" />
+                    <TabsTrigger value="factures" />
+                    <TabsTrigger value="calendar" />
                   </TabsList>
 
                   <TabsContent value="devis" className="space-y-4">

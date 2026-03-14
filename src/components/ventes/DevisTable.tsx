@@ -572,7 +572,7 @@ export function DevisTable({
                     return (
                       <span style={{
                         display: 'inline-flex', alignItems: 'center', gap: 4,
-                        padding: '3px 10px', borderRadius: 6, fontSize: 11, fontWeight: 700,
+                        padding: '3px 10px', borderRadius: 6, fontSize: 11, fontWeight: fontWt,
                         background: bg, border: `1px solid ${border}`, color,
                         fontFamily: 'ui-monospace, monospace',
                       }}>
