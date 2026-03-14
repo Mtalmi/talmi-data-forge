@@ -314,7 +314,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   label: string; value: number; suffix: string; color: string;
   icon: any; trend: string; trendPositive: boolean; delay?: number;
 }) {
-  const animated = useAnimatedCounter(value, 1200);
+  const animated = useAnimatedCounter(value, 1500);
   const [visible, setVisible] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
 
