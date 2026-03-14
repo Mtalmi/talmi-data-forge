@@ -61,16 +61,16 @@ function SectionHeader({ icon: Icon, label, right }: { icon: any; label: string;
 }
 
 // ── KPI Card ──
-function MouvKPI({ label, value, suffix, color }: { label: string; value: number; suffix?: string; color: string }) {
+function MouvKPI({ label, value, suffix, color, borderColor }: { label: string; value: number; suffix?: string; color: string; borderColor?: string }) {
   const animated = useCountUp(value);
   return (
     <div style={{
-      flex: 1, background: 'rgba(255,255,255,0.04)', borderTop: '2px solid #D4A843',
+      flex: 1, background: 'rgba(255,255,255,0.04)',
       borderRadius: 9, border: '1px solid rgba(245,158,11,0.15)',
-      borderTopWidth: 2, borderTopColor: '#D4A843', padding: '20px 16px',
+      borderTop: `2px solid ${borderColor || '#D4A843'}`, padding: '20px 16px',
     }}>
-      <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</p>
-      <p style={{ fontFamily: MONO, fontSize: 32, fontWeight: 200, color, lineHeight: 1 }}>
+      <p style={{ fontFamily: MONO, color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 8 }}>{label}</p>
+      <p style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color, lineHeight: 1 }}>
         {animated.toLocaleString('fr-FR')}
         {suffix && <span style={{ fontSize: 14, fontWeight: 400, color: '#9CA3AF', marginLeft: 4, fontFamily: MONO }}>{suffix}</span>}
       </p>
@@ -78,15 +78,15 @@ function MouvKPI({ label, value, suffix, color }: { label: string; value: number
   );
 }
 
-function MouvKPIText({ label, text, color }: { label: string; text: string; color: string }) {
+function MouvKPIText({ label, text, color, borderColor }: { label: string; text: string; color: string; borderColor?: string }) {
   return (
     <div style={{
-      flex: 1, background: 'rgba(255,255,255,0.04)', borderTop: '2px solid #D4A843',
+      flex: 1, background: 'rgba(255,255,255,0.04)',
       borderRadius: 9, border: '1px solid rgba(245,158,11,0.15)',
-      borderTopWidth: 2, borderTopColor: '#D4A843', padding: '20px 16px',
+      borderTop: `2px solid ${borderColor || '#D4A843'}`, padding: '20px 16px',
     }}>
-      <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</p>
-      <p style={{ fontFamily: MONO, fontSize: 32, fontWeight: 200, color, lineHeight: 1 }}>{text}</p>
+      <p style={{ fontFamily: MONO, color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 8 }}>{label}</p>
+      <p style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color, lineHeight: 1 }}>{text}</p>
     </div>
   );
 }
@@ -159,7 +159,7 @@ function MovementRow({ m, index, isFirst = false }: { m: { date: string; type: s
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(16px)',
         transition: 'all 350ms ease-out',
-        background: hov ? 'rgba(212,168,67,0.05)' : isOdd ? 'rgba(212,168,67,0.03)' : isFirst ? 'rgba(212,168,67,0.04)' : 'transparent',
+        background: hov ? 'rgba(212,168,67,0.06)' : isOdd ? 'rgba(212,168,67,0.03)' : isFirst ? 'rgba(212,168,67,0.04)' : 'transparent',
         border: `1px solid ${hov ? T.cardBorder : 'transparent'}`,
         borderLeft: `2px solid ${leftBorder}`,
         borderRadius: 8, padding: '10px 14px',
@@ -197,7 +197,7 @@ function MovementRow({ m, index, isFirst = false }: { m: { date: string; type: s
         {m.qty}
       </span>
       <span style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF', flexShrink: 0 }}>{m.ref || '—'}</span>
-      <span style={{ color: T.textSec, fontSize: 11, flexShrink: 0, minWidth: 110 }}>{m.resp}</span>
+      <span style={{ color: '#9CA3AF', fontSize: 12, flexShrink: 0, minWidth: 110 }}>{m.resp}</span>
     </div>
   );
 }
@@ -231,10 +231,10 @@ export function MouvementsTab({ MOVEMENT_DATA, MOVEMENTS, VALUE_BREAKDOWN }: Mou
       {/* ── SECTION 1: KPI STRIP ── */}
       <section>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-          <MouvKPI label="MOUVEMENTS AUJOURD'HUI" value={todayMovements} color="#FFFFFF" />
-          <MouvKPI label="ENTRÉES" value={totalEntrees} suffix="kg" color="#22C55E" />
-          <MouvKPI label="SORTIES" value={totalSorties} suffix="kg" color="#EF4444" />
-          <MouvKPIText label="VALEUR STOCK" text="2.4 M DH" color="#D4A843" />
+          <MouvKPI label="MOUVEMENTS AUJOURD'HUI" value={todayMovements} color="#FFFFFF" borderColor="#D4A843" />
+          <MouvKPIText label="ENTRÉES" text="+5,650 kg" color="#22C55E" borderColor="#22C55E" />
+          <MouvKPIText label="SORTIES" text="−24,100 kg" color="#EF4444" borderColor="#EF4444" />
+          <MouvKPIText label="VALEUR STOCK" text="2.4 M DH" color="#D4A843" borderColor="#D4A843" />
         </div>
       </section>
 
@@ -359,23 +359,24 @@ export function MouvementsTab({ MOVEMENT_DATA, MOVEMENTS, VALUE_BREAKDOWN }: Mou
 
       {/* ── SECTION 5: AI INSIGHT ── */}
       <section>
-        <Card style={{ borderTop: '2px solid #D4A843' }}>
+        <Card style={{ borderTop: '2px solid #D4A843', background: 'rgba(212,168,67,0.03)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <span style={{ fontFamily: MONO, letterSpacing: '2px', fontSize: 12, color: '#D4A843', fontWeight: 600 }}>
+            <span style={{ fontFamily: MONO, letterSpacing: '2px', fontSize: 13, color: '#D4A843', fontWeight: 600 }}>
               ✦ INSIGHT IA — FLUX MATIÈRES
             </span>
             <span style={{
-              fontFamily: MONO, fontSize: 10, color: '#D4A843',
+              fontFamily: MONO, fontSize: 11, color: '#D4A843',
               background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)',
-              padding: '4px 10px', borderRadius: 999,
+              padding: '4px 8px', borderRadius: 4,
             }}>
               Généré par IA · Claude Opus
             </span>
           </div>
           <p style={{ fontFamily: MONO, fontSize: 13, color: '#9CA3AF', lineHeight: 1.8 }}>
             Consommation de ciment en hausse de <span style={{ color: '#EF4444', fontWeight: 600 }}>+18%</span> cette semaine vs moyenne mensuelle.
-            Les entrées de sable sont concentrées en début de semaine (lundi-mardi <span style={{ color: '#D4A843', fontWeight: 600 }}>72%</span>).
-            Recommandation : échelonner les livraisons pour optimiser le stockage et réduire les temps d'attente camion.
+            Entrées de sable concentrées lundi-mardi (<span style={{ color: '#D4A843', fontWeight: 600 }}>72%</span> du volume hebdo).
+            Adjuvant en surconsommation <span style={{ color: '#EF4444', fontWeight: 600 }}>+20%</span> — lié aux 3 batches F-B25 supplémentaires.
+            Recommandation : échelonner les livraisons sable sur 3 jours pour optimiser le stockage.
           </p>
         </Card>
       </section>
