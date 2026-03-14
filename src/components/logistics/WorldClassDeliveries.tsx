@@ -1793,9 +1793,9 @@ function IntelligenceIATab() {
 
         {/* Red left-border recommendation */}
         <div style={{ borderLeft: `3px solid ${T.danger}`, background: 'linear-gradient(135deg, rgba(239,68,68,0.08) 0%, rgba(239,68,68,0.02) 100%)', padding: '12px 14px', borderRadius: 6 }}>
-          <p style={{ fontFamily: MONO, fontSize: 11, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
-            <strong style={{ color: T.danger }}>16,600 DH</strong> de revenus identifiés et non-réclamés ce mois. Sigma Bâtiment concentre 100% des pertes (surestaries 2,500 DH + retour béton 4,200 DH non-facturés). Ce client a un historique de non-paiement (score <strong style={{ color: T.danger }}>12/100</strong>). Recommandation urgente : (1) Émettre factures immédiatement avec preuve horodatée (GPS + timestamps). (2) Suspendre toute livraison Sigma Bâtiment tant que le solde <strong style={{ color: T.danger }}>189K DH</strong> (créances) + <strong style={{ color: T.danger }}>6,700 DH</strong> (revenus logistique) n'est pas régularisé. (3) Automatiser la facturation surestaries : chaque dépassement &gt;20 min génère automatiquement une ligne de facturation.
-          </p>
+           <p style={{ fontFamily: MONO, fontSize: 11, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
+             <strong style={{ color: T.danger }}>16,600 DH</strong> de revenus identifiés et non-réclamés ce mois. Sigma Bâtiment concentre 100% des pertes (surestaries 2,500 DH + retour béton 4,200 DH non-facturés). Ce client a un historique de non-paiement (score <strong style={{ color: T.danger }}>12/100</strong> <CrossRef page="Créances" />). Recommandation urgente : (1) Émettre factures immédiatement avec preuve horodatée (GPS + timestamps). (2) Suspendre toute livraison Sigma Bâtiment tant que le solde <strong style={{ color: T.danger }}>189K DH</strong> <CrossRef page="Créances" /> + <strong style={{ color: T.danger }}>6,700 DH</strong> (revenus logistique) n'est pas régularisé. (3) Automatiser la facturation surestaries : chaque dépassement &gt;20 min génère automatiquement une ligne de facturation.
+           </p>
         </div>
       </Card>
 
