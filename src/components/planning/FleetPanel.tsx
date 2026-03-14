@@ -168,11 +168,15 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
   };
 
   // Calculate summary stats
-  const availableCount = vehicles.filter(v => 
-    v.statut === 'Disponible' && !activeDeliveries[v.id_camion]
-  ).length;
-  const onMissionCount = Object.keys(activeDeliveries).length;
-  const maintenanceCount = vehicles.filter(v => v.statut === 'Maintenance' || v.statut === 'Hors Service').length;
+  const availableCount = vehicles.length > 0
+    ? vehicles.filter(v => v.statut === 'Disponible' && !activeDeliveries[v.id_camion]).length
+    : 1;
+  const onMissionCount = vehicles.length > 0
+    ? Object.keys(activeDeliveries).length
+    : 2;
+  const maintenanceCount = vehicles.length > 0
+    ? vehicles.filter(v => v.statut === 'Maintenance' || v.statut === 'Hors Service').length
+    : 0;
 
   // Collapsed state: slim vertical bar
   if (!isOpen) {
@@ -261,146 +265,89 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
           <div className="flex items-center justify-center h-20">
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
           </div>
-        ) : (
-          vehicles.map((v) => {
-            const activeDelivery = activeDeliveries[v.id_camion];
-            const isOnDelivery = !!activeDelivery;
-            const displayStatus = isOnDelivery ? 'En Livraison' : v.statut;
-            const config = getStatusConfig(displayStatus, isOnDelivery);
-            const StatusIcon = config.icon;
+        ) : (() => {
+          const DEMO_TRUCKS = [
+            { id_camion: 'TOU-01', capacite_m3: 8, chauffeur: 'Hassan Amrani', statut: 'En Livraison', type: 'Toupie', rotations: '4/5', km: '127 km', fuel: '⛽ 45L', statusLabel: 'Mission', statusColor: '#34d399', statusBg: 'rgba(52,211,153,0.12)' },
+            { id_camion: 'TOU-02', capacite_m3: 8, chauffeur: 'Youssef Bakkali', statut: 'En Livraison', type: 'Toupie', rotations: '3/5', km: '89 km', fuel: '⛽ 32L', statusLabel: 'Mission', statusColor: '#34d399', statusBg: 'rgba(52,211,153,0.12)' },
+            { id_camion: 'TOU-03', capacite_m3: 8, chauffeur: 'Omar Tahiri', statut: 'Disponible', type: 'Toupie', rotations: '2/5', km: '54 km', fuel: '⛽ 19L', statusLabel: 'Dispo', statusColor: '#60A5FA', statusBg: 'rgba(96,165,250,0.12)' },
+          ];
 
-            return (
-              <div 
-                key={v.id_camion}
-                className={cn(
-                  "p-2 rounded-lg transition-all",
-                  isOnDelivery && "border-blue-400/30"
-                )}
-                style={{
-                  background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
-                  border: isOnDelivery ? '1px solid rgba(96, 165, 250, 0.2)' : '1px solid rgba(245, 158, 11, 0.15)',
-                  borderRadius: 12,
-                }}
-              >
-                {/* Truck Info Row */}
-                <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="font-mono font-semibold text-sm text-white/80 truncate">{v.id_camion}</span>
-                    {v.capacite_m3 && (
-                      <span className="text-[10px] text-white/30">{v.capacite_m3}m³</span>
+          const displayVehicles = vehicles.length > 0 ? vehicles : null;
+
+          if (displayVehicles) {
+            return displayVehicles.map((v) => {
+              const activeDelivery = activeDeliveries[v.id_camion];
+              const isOnDelivery = !!activeDelivery;
+              const displayStatus = isOnDelivery ? 'En Livraison' : v.statut;
+              const config = getStatusConfig(displayStatus, isOnDelivery);
+              const StatusIcon = config.icon;
+              return (
+                <div key={v.id_camion} className={cn("p-2 rounded-lg transition-all", isOnDelivery && "border-blue-400/30")} style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: isOnDelivery ? '1px solid rgba(96, 165, 250, 0.2)' : '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', borderRadius: 12 }}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="font-mono font-semibold text-sm text-white/80 truncate">{v.id_camion}</span>
+                      {v.capacite_m3 && <span className="text-[10px] text-white/30">{v.capacite_m3}m³</span>}
+                    </div>
+                    <Badge variant="outline" className={cn("text-[10px] px-1.5 py-0 h-5 border", config.color)}>
+                      <StatusIcon className="h-2.5 w-2.5 mr-0.5" />{config.label}
+                    </Badge>
+                  </div>
+                  {v.chauffeur && <p className="text-[11px] text-white/30 truncate mb-1.5">{v.chauffeur}</p>}
+                  {isOnDelivery && (
+                    <div className="text-[10px] bg-blue-400/10 rounded px-1.5 py-1 mb-1.5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1 min-w-0">
+                          <Truck className="h-2.5 w-2.5 animate-pulse text-blue-400 flex-shrink-0" />
+                          <span className="font-medium text-blue-400 font-mono">{activeDelivery.bc_id || activeDelivery.bl_id}</span>
+                          <span className="text-white/30">({activeDelivery.volume_m3}m³)</span>
+                        </div>
+                        <div className="flex gap-1">
+                          <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[9px] text-amber-600 hover:bg-amber-500/20 hover:text-amber-600" onClick={(e) => { e.stopPropagation(); navigate('/logistique'); }} title={fp.trackGps}><Crosshair className="h-2.5 w-2.5" /></Button>
+                          <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[9px] text-destructive hover:bg-destructive/20 hover:text-destructive" onClick={(e) => { e.stopPropagation(); setIncidentTruckId(v.id_camion); setIncidentDelivery(activeDelivery); setRescueModalOpen(true); }}><AlertTriangle className="h-2.5 w-2.5 mr-0.5" />{fp.incident}</Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex gap-1">
+                    {updating === v.id_camion ? (
+                      <div className="flex-1 flex items-center justify-center py-1"><Loader2 className="h-3 w-3 animate-spin" /></div>
+                    ) : (
+                      <>
+                        <Button variant="ghost" size="sm" className={cn("flex-1 h-6 text-[10px] px-1", displayStatus === 'Disponible' && "bg-success/20 text-success")} onClick={() => updateVehicleStatus(v.id_camion, 'Disponible')} disabled={displayStatus === 'Disponible' && !isOnDelivery}><CheckCircle className="h-3 w-3 mr-0.5" />{fp.available}</Button>
+                        <Button variant="ghost" size="sm" className={cn("flex-1 h-6 text-[10px] px-1", displayStatus === 'Maintenance' && "bg-warning/20 text-warning")} onClick={() => updateVehicleStatus(v.id_camion, 'Maintenance')}><Wrench className="h-3 w-3 mr-0.5" />{fp.maintenance}</Button>
+                        <Button variant="ghost" size="sm" className={cn("flex-1 h-6 text-[10px] px-1", displayStatus === 'Hors Service' && "bg-destructive/20 text-destructive")} onClick={() => updateVehicleStatus(v.id_camion, 'Hors Service')}><XCircle className="h-3 w-3 mr-0.5" />{fp.outOfService}</Button>
+                      </>
                     )}
                   </div>
-                  <Badge 
-                    variant="outline" 
-                    className={cn("text-[10px] px-1.5 py-0 h-5 border", config.color)}
-                  >
-                    <StatusIcon className="h-2.5 w-2.5 mr-0.5" />
-                    {config.label}
-                  </Badge>
                 </div>
+              );
+            });
+          }
 
-                {/* Driver */}
-                {v.chauffeur && (
-                  <p className="text-[11px] text-white/30 truncate mb-1.5">
-                    {v.chauffeur}
-                  </p>
-                )}
-
-                {/* Active Delivery Info */}
-                {isOnDelivery && (
-                  <div className="text-[10px] bg-blue-400/10 rounded px-1.5 py-1 mb-1.5">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 min-w-0">
-                        <Truck className="h-2.5 w-2.5 animate-pulse text-blue-400 flex-shrink-0" />
-                        <span className="font-medium text-blue-400 font-mono">{activeDelivery.bc_id || activeDelivery.bl_id}</span>
-                        <span className="text-white/30">({activeDelivery.volume_m3}m³)</span>
-                      </div>
-                      <div className="flex gap-1">
-                        {/* GPS Tracking Button */}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-5 px-1.5 text-[9px] text-amber-600 hover:bg-amber-500/20 hover:text-amber-600"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate('/logistique');
-                          }}
-                          title={fp.trackGps}
-                        >
-                          <Crosshair className="h-2.5 w-2.5" />
-                        </Button>
-                        {/* Incident Button for active deliveries */}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-5 px-1.5 text-[9px] text-destructive hover:bg-destructive/20 hover:text-destructive"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIncidentTruckId(v.id_camion);
-                            setIncidentDelivery(activeDelivery);
-                            setRescueModalOpen(true);
-                          }}
-                        >
-                          <AlertTriangle className="h-2.5 w-2.5 mr-0.5" />
-                          {fp.incident}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Quick Action Buttons */}
-                <div className="flex gap-1">
-                  {updating === v.id_camion ? (
-                    <div className="flex-1 flex items-center justify-center py-1">
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                    </div>
-                  ) : (
-                    <>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className={cn(
-                          "flex-1 h-6 text-[10px] px-1",
-                          displayStatus === 'Disponible' && "bg-success/20 text-success"
-                        )}
-                        onClick={() => updateVehicleStatus(v.id_camion, 'Disponible')}
-                        disabled={displayStatus === 'Disponible' && !isOnDelivery}
-                      >
-                        <CheckCircle className="h-3 w-3 mr-0.5" />
-                        {fp.available}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className={cn(
-                          "flex-1 h-6 text-[10px] px-1",
-                          displayStatus === 'Maintenance' && "bg-warning/20 text-warning"
-                        )}
-                        onClick={() => updateVehicleStatus(v.id_camion, 'Maintenance')}
-                      >
-                        <Wrench className="h-3 w-3 mr-0.5" />
-                        {fp.maintenance}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className={cn(
-                          "flex-1 h-6 text-[10px] px-1",
-                          displayStatus === 'Hors Service' && "bg-destructive/20 text-destructive"
-                        )}
-                        onClick={() => updateVehicleStatus(v.id_camion, 'Hors Service')}
-                      >
-                        <XCircle className="h-3 w-3 mr-0.5" />
-                        {fp.outOfService}
-                      </Button>
-                    </>
-                  )}
+          return DEMO_TRUCKS.map((truck) => (
+            <div key={truck.id_camion} className="p-2 rounded-lg transition-all" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', borderRadius: 12 }}>
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="font-mono font-semibold text-sm text-white/80 truncate">{truck.id_camion}</span>
+                  <span style={{ padding: '1px 6px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>{truck.capacite_m3}m³</span>
                 </div>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: truck.statusBg, color: truck.statusColor, border: `1px solid ${truck.statusColor}30` }}>
+                  <span style={{ width: 5, height: 5, borderRadius: '50%', background: truck.statusColor }} />
+                  {truck.statusLabel}
+                </span>
               </div>
-            );
-          })
-        )}
+              <p className="text-[11px] text-white/50 truncate mb-1">{truck.chauffeur}</p>
+              <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.30)', fontFamily: 'JetBrains Mono, monospace' }}>
+                {truck.rotations} rotations · {truck.km} · {truck.fuel}
+              </p>
+              <div className="flex gap-1 mt-1.5">
+                <Button variant="ghost" size="sm" className={cn("flex-1 h-6 text-[10px] px-1", truck.statut === 'Disponible' && "bg-success/20 text-success")} onClick={() => updateVehicleStatus(truck.id_camion, 'Disponible')}><CheckCircle className="h-3 w-3 mr-0.5" />{fp.available}</Button>
+                <Button variant="ghost" size="sm" className="flex-1 h-6 text-[10px] px-1" onClick={() => updateVehicleStatus(truck.id_camion, 'Maintenance')}><Wrench className="h-3 w-3 mr-0.5" />{fp.maintenance}</Button>
+                <Button variant="ghost" size="sm" className="flex-1 h-6 text-[10px] px-1" onClick={() => updateVehicleStatus(truck.id_camion, 'Hors Service')}><XCircle className="h-3 w-3 mr-0.5" />{fp.outOfService}</Button>
+              </div>
+            </div>
+          ));
+        })()}
       </div>
       
       {/* Truck Rescue Modal */}

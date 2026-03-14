@@ -44,8 +44,8 @@ export function WeatherAlertBanner() {
         onClick={() => {/* scroll or navigate to forecast */}}
         style={{
           padding: '5px 14px', borderRadius: 6,
-          background: 'transparent', border: '1px solid rgba(245,158,11,0.3)',
-          color: T.gold, fontSize: 11, fontWeight: 600, cursor: 'pointer',
+          background: 'transparent', border: '1px solid #D4A843',
+          color: '#D4A843', fontSize: 11, fontWeight: 600, cursor: 'pointer',
           whiteSpace: 'nowrap', flexShrink: 0,
         }}
       >
