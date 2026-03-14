@@ -116,7 +116,7 @@ function SectionHeader({ icon: Icon, label, right }: { icon: any; label: string;
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
       <Icon size={16} color={T.gold} />
       <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>{label}</span>
-      <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
+      <div style={{ flex: 1, height: 0, borderTop: `1px dotted ${T.gold}40` }} />
       {right}
     </div>
   );
