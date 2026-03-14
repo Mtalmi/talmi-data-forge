@@ -1163,7 +1163,7 @@ function HistoriqueNormesTab() {
                   <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 200, color: f.color }}>{f.pct}%</span>
                 </div>
                 <div style={{ height: 6, borderRadius: 99, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${f.barW}%`, background: f.color, borderRadius: 99, transition: 'width 900ms cubic-bezier(0.4,0,0.2,1)' }} />
+                  <div style={{ height: '100%', width: `${f.barW}%`, background: 'linear-gradient(90deg, #C49A3C, #D4A843)', borderRadius: 99, transition: 'width 900ms cubic-bezier(0.4,0,0.2,1)' }} />
                 </div>
               </div>
             ))}
