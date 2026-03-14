@@ -1098,9 +1098,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                             padding: '10px 0',
                             borderBottom: i < 2 ? '1px solid rgba(212,168,67,0.08)' : 'none',
                           }}>
-                            <span style={{ color: '#64748B', fontSize: 11, fontStyle: 'italic' }}>{m.label}</span>
+                            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#9CA3AF', fontSize: 11 }}>{m.label}</span>
                             <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-                              <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 200, fontSize: 22, color: m.color, letterSpacing: '-0.5px' }}>{m.value}</span>
+                              <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 200, fontSize: 24, color: m.color, letterSpacing: '-0.5px' }}>{m.value}</span>
                               <span style={{ fontSize: 10, color: '#4A5568' }}>{m.unit}</span>
                             </div>
                           </div>
