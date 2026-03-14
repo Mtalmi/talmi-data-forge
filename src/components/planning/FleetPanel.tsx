@@ -302,7 +302,7 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
                     </p>
                   )}
                   {truckRevenuMap[v.id_camion] && (
-                    <p style={{ fontSize: 12, color: '#D4A843', fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', marginBottom: 6 }}>
+                    <p style={{ fontSize: 12, color: '#D4A843', fontFamily: 'ui-monospace, monospace', marginBottom: 6 }}>
                       {truckRevenuMap[v.id_camion]}
                     </p>
                   )}
