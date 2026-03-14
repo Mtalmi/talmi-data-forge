@@ -218,10 +218,10 @@ function Gauge({ pct }: { pct: number }) {
       <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
         fill="none" stroke={gaugeColor} strokeWidth={16} strokeLinecap="round"
         strokeDasharray={`${pathLength} ${circumference}`}
-        style={{ filter: `drop-shadow(0 0 6px ${gaugeColor}80)`, transition: 'stroke-dasharray 1s ease-out' }}
+        style={{ filter: `drop-shadow(0 0 8px rgba(212,168,67,0.2))`, transition: 'stroke-dasharray 1s ease-out' }}
       />
       <text x={cx} y={cy - 10} textAnchor="middle"
-        style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, fill: gaugeColor }}>
+        style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 36, fontWeight: 200, fill: '#D4A843' }}>
         {pct}%
       </text>
       <text x={cx} y={cy + 14} textAnchor="middle"
