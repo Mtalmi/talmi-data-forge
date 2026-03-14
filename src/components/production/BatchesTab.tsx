@@ -68,6 +68,7 @@ interface BatchesTabProps {
 export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('tous');
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Demo fallback data
   const DEMO_ROWS: BatchRow[] = [
