@@ -201,15 +201,15 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
               {row.eta}
             </div>
             {/* STATUT */}
-            <div style={{ padding: '12px 16px', textAlign: 'center' }}>
+            <div style={{ padding: '12px 16px', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
               <span style={{
                 display: 'inline-flex', alignItems: 'center', gap: 6,
-                padding: '3px 10px', borderRadius: 999,
+                padding: '3px 10px', borderRadius: 999, minWidth: 100, justifyContent: 'center',
                 background: `${s.color}15`,
                 border: `1px solid ${s.color}30`,
               }}>
                 <span style={{ fontSize: 10, color: s.color }}>{s.prefix}</span>
-                <span style={{ fontSize: 10, fontWeight: 600, color: s.color }}>
+                <span style={{ fontSize: 10, fontWeight: 600, color: s.color, whiteSpace: 'nowrap' }}>
                   {s.label}{row.statusExtra ? ` ${row.statusExtra}` : ''}
                 </span>
               </span>
