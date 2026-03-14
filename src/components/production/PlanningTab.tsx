@@ -495,6 +495,49 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
         </div>
       </div>
 
+      {/* ── AGENT IA: COORDINATION LIVRAISONS ── */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <span style={{ color: '#D4A843', fontSize: 14, animation: 'pulse 3s ease-in-out infinite' }}>✦</span>
+            <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>AGENT IA: COORDINATION LIVRAISONS</span>
+          </div>
+          <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>Généré par IA · Claude Opus</span>
+        </div>
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
+          border: `1px solid ${T.cardBorder}`,
+          borderTop: '2px solid #D4A843',
+          borderLeft: '3px solid #D4A843',
+          borderRadius: 12, padding: 20,
+        }}>
+          <div className="flex flex-col gap-4">
+            <div className="flex items-start gap-3">
+              <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
+              <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                Capacité optimale demain (<span style={{ color: '#fff', fontWeight: 600 }}>Samedi 14</span>). 2 livraisons planifiées sur capacité de 200 m³. Aucun conflit détecté.
+              </p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
+              <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                <span style={{ color: '#fff', fontWeight: 600 }}>Lundi 09 Mars</span>: 2 livraisons simultanées à 08:00 (BTP Maroc + Constructions Modernes). Recommandation: décaler Constructions Modernes à <span style={{ color: '#D4A843', fontWeight: 600 }}>09:00</span> pour éviter congestion chargement.
+              </p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444' }} />
+              <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                <span style={{ color: '#fff', fontWeight: 600 }}>Mercredi 11 Mars</span>: Livraison BC-2602-2373 F-B20 · 80m³ pour Constructions Modernes représente <span style={{ color: '#EF4444', fontWeight: 600 }}>40% de la capacité journalière</span>. Pré-positionner stocks gravette et sable la veille.
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2 mt-4">
+            <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>3 recommandations</span>
+            <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 87%</span>
+          </div>
+        </div>
+      </div>
+
       {/* Bottom summary */}
       <div style={{
         background: T.cardBg, border: `1px solid ${T.cardBorder}`,
