@@ -292,6 +292,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                 }}
                   onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,215,0,0.04)')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  onClick={() => setDrawerOpen(true)}
                 >
                   <span style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 500 }}>{row.bl_id}</span>
                   <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.client}</span>
