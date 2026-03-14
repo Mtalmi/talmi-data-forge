@@ -398,40 +398,64 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
 
             {/* Feed — live from rows */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
-              {rows.length === 0 ? (
-                <div style={{ padding: '24px 16px', textAlign: 'center', color: 'rgba(255,255,255,0.30)', fontSize: 12 }}>
-                  Aucun batch en cours
-                </div>
-              ) : (
-                rows.slice(0, 6).map(item => {
-                  const isActive = item.status === 'production';
-                  const pct = item.progress > 0 && item.progress < 100 ? `${item.progress}%` : null;
-                  return (
-                    <div key={item.bl_id} style={{
-                      padding: '10px 16px',
-                      borderLeft: `2px solid ${isActive ? 'rgba(96,165,250,0.70)' : 'rgba(52,211,153,0.50)'}`,
-                      margin: '0 12px 4px 12px', borderRadius: '0 8px 8px 0',
-                      transition: 'background 150ms',
-                    }}
-                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,215,0,0.04)')}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 500, color: '#fff' }}>{item.bl_id}</span>
-                        <div className="flex items-center gap-2">
-                          {pct ? (
-                            <span style={{ fontFamily: mono, fontSize: 11, color: '#60a5fa' }}>{pct}</span>
-                          ) : (
-                            <span style={{ color: '#34d399', fontSize: 11 }}>✓</span>
-                          )}
-                          <span style={{ fontFamily: mono, fontSize: 10, color: 'rgba(255,255,255,0.20)' }}>{item.heure}</span>
+              {(() => {
+                const DEMO_FEED = [
+                  { time: '10:45', id: '#403-068', status: 'validé', formule: 'F-B25', vol: '8 m³', note: 'Conforme.', color: '#34d399' },
+                  { time: '11:30', id: '#403-067', status: 'validé', formule: 'F-B30', vol: '12 m³', note: 'Variance slump +2cm.', color: '#fbbf24' },
+                  { time: '11:58', id: '#403-066', status: 'lancé', formule: 'F-B25', vol: '8 m³', note: 'En production.', color: '#60a5fa' },
+                  { time: '14:12', id: '#403-063', status: 'lancé', formule: 'F-B30', vol: '15 m³', note: 'En production.', color: '#60a5fa' },
+                ];
+                const feedItems = rows.length > 0 && rows !== DEMO_ROWS
+                  ? rows.slice(0, 6).map(item => {
+                      const isActive = item.status === 'production';
+                      const pct = item.progress > 0 && item.progress < 100 ? `${item.progress}%` : null;
+                      return (
+                        <div key={item.bl_id} style={{
+                          padding: '10px 16px',
+                          borderLeft: `2px solid ${isActive ? 'rgba(96,165,250,0.70)' : 'rgba(52,211,153,0.50)'}`,
+                          margin: '0 12px 4px 12px', borderRadius: '0 8px 8px 0',
+                          transition: 'background 150ms',
+                        }}
+                          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,215,0,0.04)')}
+                          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 500, color: '#fff' }}>{item.bl_id}</span>
+                            <div className="flex items-center gap-2">
+                              {pct ? (
+                                <span style={{ fontFamily: mono, fontSize: 11, color: '#60a5fa' }}>{pct}</span>
+                              ) : (
+                                <span style={{ color: '#34d399', fontSize: 11 }}>✓</span>
+                              )}
+                              <span style={{ fontFamily: mono, fontSize: 10, color: 'rgba(255,255,255,0.20)' }}>{item.heure}</span>
+                            </div>
+                          </div>
+                          <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.40)' }}>{item.formule} · {item.volume} m³ · {item.client}</p>
                         </div>
+                      );
+                    })
+                  : DEMO_FEED.map(f => (
+                      <div key={f.id + f.time} style={{
+                        padding: '10px 16px',
+                        borderLeft: `2px solid ${f.color}`,
+                        margin: '0 12px 4px 12px', borderRadius: '0 8px 8px 0',
+                        transition: 'background 150ms',
+                      }}
+                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,215,0,0.04)')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 500, color: '#fff' }}>{f.id}</span>
+                          <div className="flex items-center gap-2">
+                            <span style={{ fontSize: 11, color: f.color }}>{f.status}</span>
+                            <span style={{ fontFamily: mono, fontSize: 10, color: 'rgba(255,255,255,0.20)' }}>{f.time}</span>
+                          </div>
+                        </div>
+                        <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.40)' }}>{f.formule}, {f.vol}. {f.note}</p>
                       </div>
-                      <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.40)' }}>{item.formule} · {item.volume} m³ · {item.client}</p>
-                    </div>
-                  );
-                })
-              )}
+                    ));
+                return feedItems;
+              })()}
             </div>
 
             {/* Footer */}
