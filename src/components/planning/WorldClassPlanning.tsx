@@ -573,7 +573,6 @@ function CollapsibleChronologique() {
         </span>
         {chronoOpen ? <ChevronUp size={14} color={T.textSec} /> : <ChevronDown size={14} color={T.textSec} />}
       </button>
-      </button>
       {chronoOpen && (
         <Card style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{
