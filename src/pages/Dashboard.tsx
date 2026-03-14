@@ -790,8 +790,48 @@ export default function Dashboard() {
           {/* ═══ COMMAND CENTER TAB CONTENT ═══ */}
           {activeTab === 'command' && (
           <div key="tab-command" className="tbos-mobile-card-stack" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
+          {/* (0) BRIEFING MATINAL — Full AI Intelligence Summary */}
+          <div className="relative z-[1] mb-5" style={{ animation: 'ccSectionIn 300ms ease-out 0ms both' }}>
+            <div style={{
+              borderTop: '2px solid #D4A843',
+              background: 'rgba(212, 168, 67, 0.03)',
+              border: '1px solid rgba(212, 168, 67, 0.08)',
+              borderRadius: 10,
+              padding: 20,
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: '#D4A843' }} />
+              {/* Header */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, letterSpacing: 2, color: '#D4A843', fontWeight: 400 }}>
+                  ✦ BRIEFING MATINAL — 14 MARS 2026
+                </span>
+                <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 10, padding: '3px 10px', borderRadius: 4, border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', background: 'rgba(212,168,67,0.08)' }}>
+                  Généré par IA · Claude Opus
+                </span>
+              </div>
+              {/* Body */}
+              <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, color: '#9CA3AF', lineHeight: 1.7, margin: 0 }}>
+                Production nominale prévue à <strong style={{ color: '#D4A843' }}>280 m³</strong>. Stock ciment à <strong style={{ color: '#D4A843' }}>53%</strong> (7,5j autonomie). 1 non-conformité traitée (BN-0140 affaissement). <strong style={{ color: '#D4A843' }}>3 livraisons</strong> planifiées — alerte retard Résidences Atlas (+14 min, béton à 47 min/90). T-09 en maintenance (retour demain 08:00). Pipeline commercial : <strong style={{ color: '#D4A843' }}>155K DH</strong>, 6 devis en attente. Point critique : Sigma Bâtiment — <strong style={{ color: '#EF4444' }}>189K DH impayés</strong>, probabilité défaut <strong style={{ color: '#EF4444' }}>78%</strong>, livraisons suspendues. Certification NM 10.1.271 expire dans 26 jours — 0/2 tests effectués, <strong style={{ color: '#EF4444' }}>action urgente</strong>.
+              </p>
+              {/* Action buttons */}
+              <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+                <button style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: '#D4A843', color: '#0F1629', border: 'none', cursor: 'pointer', letterSpacing: '0.05em' }}>
+                  Voir Rapport Complet
+                </button>
+                <button style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: 'transparent', color: '#EF4444', border: '1px solid rgba(239,68,68,0.4)', cursor: 'pointer', letterSpacing: '0.05em' }}>
+                  Relancer Sigma Bâtiment
+                </button>
+                <button style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: 'transparent', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)', cursor: 'pointer', letterSpacing: '0.05em' }}>
+                  Planifier Test NM
+                </button>
+              </div>
+            </div>
+          </div>
+
           {/* (1) Hero — Command Cockpit Strip */}
-          <div className="relative z-[1]" style={{ marginBottom: 20, animation: 'ccSectionIn 300ms ease-out 0ms both' }}>
+          <div className="relative z-[1]" style={{ marginBottom: 20, animation: 'ccSectionIn 300ms ease-out 50ms both' }}>
             <div
               className="tbos-hero-cockpit rounded-xl backdrop-blur-sm"
               style={{
