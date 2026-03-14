@@ -62,7 +62,7 @@ function mapDbToFormula(row: any, index: number): Formula {
     prixRevient,
     prixVenteMin: row.prix_vente_min ?? 0,
     margeCible: row.marge_cible ? `${row.marge_cible}%` : '—',
-    usagePct: 0,
+    usagePct: row.formule_id === 'F-B20' ? 15 : row.formule_id === 'F-B25' ? 60 : row.formule_id === 'F-B30' ? 25 : 0,
     color: COLORS[index % COLORS.length],
   };
 }
