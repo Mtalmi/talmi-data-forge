@@ -749,6 +749,49 @@ export default function WorldClassProduction() {
           </div>
         </section>
 
+        {/* ── MARGE TEMPS RÉEL ── */}
+        <section>
+          <div className="flex items-center gap-3 mb-3">
+            <span style={{ fontSize: 14 }}>⚡</span>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.1em' }}>MARGE TEMPS RÉEL</span>
+            <div style={{ flex: 1, height: 1, background: 'linear-gradient(to right, rgba(212,168,67,0.4), transparent)' }} />
+          </div>
+          <div className="ops-surface-card" style={{ borderTop: '2px solid #D4A843', borderRight: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)', borderLeft: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 24, background: 'rgba(15,23,41,0.8)', backdropFilter: 'blur(4px)' }}>
+            <div style={{ display: 'flex', gap: 24 }}>
+              {/* LEFT 60% */}
+              <div style={{ flex: '0 0 60%' }}>
+                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 48, fontWeight: 200, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>38.6%</p>
+                <p style={{ color: '#9CA3AF', fontSize: 13, marginTop: 8 }}>Marge brute glissante · Aujourd'hui</p>
+                {/* Sparkline */}
+                <svg width={120} height={32} style={{ marginTop: 12 }}>
+                  <polyline
+                    fill="none"
+                    stroke="#D4A843"
+                    strokeWidth={1.5}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    points="0,4 17,3 34,6 51,5 68,10 85,14 102,18 120,22"
+                  />
+                  <circle cx={120} cy={22} r={2.5} fill="#D4A843" />
+                </svg>
+                <p style={{ color: '#F59E0B', fontSize: 12, marginTop: 6, fontWeight: 500 }}>↘ -3.4% depuis 11h</p>
+              </div>
+              {/* RIGHT 40% */}
+              <div style={{ flex: '0 0 40%', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ borderLeft: '3px solid #D4A843', background: 'rgba(212,168,67,0.05)', borderRadius: 8, padding: '12px 14px' }}>
+                  <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)', lineHeight: 1.6 }}>
+                    3 batches B20 consécutifs ont réduit la marge. Recommandation: prioriser commande BC-2024-003 (B30, marge estimée 41%) pour rééquilibrer.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 4, border: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.6)', boxShadow: '0 0 0 1px rgba(212,168,67,0.3)' }}>Confiance: 88%</span>
+                  <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 4, background: 'rgba(212,168,67,0.15)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)' }}>Généré par IA · Claude Opus</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ── CHARTS: Production du Jour ── */}
         <section>
           <SectionHeader icon={Activity} label="Production du Jour" />
