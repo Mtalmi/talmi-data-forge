@@ -359,23 +359,24 @@ export function MouvementsTab({ MOVEMENT_DATA, MOVEMENTS, VALUE_BREAKDOWN }: Mou
 
       {/* ── SECTION 5: AI INSIGHT ── */}
       <section>
-        <Card style={{ borderTop: '2px solid #D4A843' }}>
+        <Card style={{ borderTop: '2px solid #D4A843', background: 'rgba(212,168,67,0.03)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <span style={{ fontFamily: MONO, letterSpacing: '2px', fontSize: 12, color: '#D4A843', fontWeight: 600 }}>
+            <span style={{ fontFamily: MONO, letterSpacing: '2px', fontSize: 13, color: '#D4A843', fontWeight: 600 }}>
               ✦ INSIGHT IA — FLUX MATIÈRES
             </span>
             <span style={{
-              fontFamily: MONO, fontSize: 10, color: '#D4A843',
+              fontFamily: MONO, fontSize: 11, color: '#D4A843',
               background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)',
-              padding: '4px 10px', borderRadius: 999,
+              padding: '4px 8px', borderRadius: 4,
             }}>
               Généré par IA · Claude Opus
             </span>
           </div>
           <p style={{ fontFamily: MONO, fontSize: 13, color: '#9CA3AF', lineHeight: 1.8 }}>
             Consommation de ciment en hausse de <span style={{ color: '#EF4444', fontWeight: 600 }}>+18%</span> cette semaine vs moyenne mensuelle.
-            Les entrées de sable sont concentrées en début de semaine (lundi-mardi <span style={{ color: '#D4A843', fontWeight: 600 }}>72%</span>).
-            Recommandation : échelonner les livraisons pour optimiser le stockage et réduire les temps d'attente camion.
+            Entrées de sable concentrées lundi-mardi (<span style={{ color: '#D4A843', fontWeight: 600 }}>72%</span> du volume hebdo).
+            Adjuvant en surconsommation <span style={{ color: '#EF4444', fontWeight: 600 }}>+20%</span> — lié aux 3 batches F-B25 supplémentaires.
+            Recommandation : échelonner les livraisons sable sur 3 jours pour optimiser le stockage.
           </p>
         </Card>
       </section>
