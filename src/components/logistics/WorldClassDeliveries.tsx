@@ -1155,7 +1155,7 @@ function IntelligenceIATab() {
                   <td style={{ ...monoCell, color: T.gold, fontWeight: 700 }}>{r.toupie}</td>
                   <td style={monoCell}>{r.theo} L/100km</td>
                   <td style={{ ...monoCell, color: r.alerte === 'anomalie' ? T.danger : T.textPri }}>{r.reel} L/100km</td>
-                  <td style={{ ...monoCell, color: r.alerte === 'anomalie' ? T.danger : T.textDim }}>{r.ecart}</td>
+                  <td style={{ ...monoCell, color: r.alerte === 'anomalie' ? T.danger : T.textDim, fontWeight: r.alerte === 'anomalie' ? 700 : 200 }}>{r.ecart}</td>
                   <td style={tblCell}><MiniSparkline trend={r.trend} color={r.alerte === 'anomalie' ? T.danger : T.textDim} /></td>
                   <td style={tblCell}>
                     {r.alerte === 'ok'
