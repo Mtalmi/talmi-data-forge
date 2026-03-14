@@ -1117,8 +1117,8 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                   <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>Généré par IA · Claude Opus</span>
                 </div>
                 {[
-                  { dot: '#F59E0B', text: 'Capacité: Mercredi 11 — 4 livraisons, 202 m³ (capacité 96%). Risque saturation.' },
-                  { dot: '#34d399', text: 'Tendance: Volume semaine +8% vs sem. dern. Pic prévu jeudi (193 m³).' },
+                  { dot: '#F59E0B', text: <><span style={{ color: '#D4A843', fontWeight: 700 }}>Mercredi 11</span> — 4 livraisons, 202 m³ (capacité 96%). Risque saturation.</> },
+                  { dot: '#34d399', text: <><span style={{ color: '#D4A843', fontWeight: 700 }}>Tendance:</span> Volume semaine +8% vs sem. dern. Pic prévu jeudi (193 m³).</> },
                 ].map((ins, i) => (
                   <div key={i} style={{
                     display: 'flex', alignItems: 'center', gap: 12,
