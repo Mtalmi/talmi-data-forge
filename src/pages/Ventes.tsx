@@ -608,8 +608,7 @@ export default function Ventes() {
                     <div className="flex justify-end">
                       <BulkScorerButton devisList={filteredDevis} onDone={fetchData} />
                     </div>
-                    <Card className="bg-transparent" style={{ borderTop: '2px solid #D4A843' }}>
-                      <CardContent className="pt-6">
+                    <div style={{ borderTop: '1px solid rgba(212,168,67,0.2)', paddingTop: 16 }}>
                         <DevisTableResponsive
                           devisList={filteredDevis} loading={loading}
                           onConvert={openConvertDialog}
@@ -618,8 +617,7 @@ export default function Ventes() {
                           selectedIds={selectedDevisIds} onSelectionChange={setSelectedDevisIds}
                           onRefresh={fetchData}
                         />
-                      </CardContent>
-                    </Card>
+                    </div>
                   </TabsContent>
 
                   <TabsContent value="bc" className="space-y-4">
