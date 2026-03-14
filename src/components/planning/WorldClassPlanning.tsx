@@ -1078,7 +1078,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                               72%
                             </text>
                             <text x={105} y={128} textAnchor="middle"
-                              style={{ fontSize: 9, fill: '#9CA3AF', letterSpacing: '2px', textTransform: 'uppercase' }}>
+                              style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 10, fill: '#9CA3AF', letterSpacing: '2px', textTransform: 'uppercase' }}>
                               UTILISÉE
                             </text>
                           </svg>
