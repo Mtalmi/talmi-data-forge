@@ -278,9 +278,10 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
           borderColor: `${hov ? T.cardBorder : 'transparent'} ${hov ? T.cardBorder : 'transparent'} ${hov ? T.cardBorder : 'transparent'} ${borderColor}`,
           borderRadius: 10,
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr 1fr',
+          gridTemplateColumns: '2fr 1fr 1fr 1.2fr',
           alignItems: 'center',
           cursor: 'pointer',
+          minHeight: 64,
         }}>
         {/* Col 1: Avatar + Name + badges */}
         <div style={{ paddingLeft: 16, paddingTop: 12, paddingBottom: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
