@@ -946,6 +946,32 @@ function AnalytiqueTab() {
         </div>
       </section>
 
+      {/* Freshness Indicator — 30 days */}
+      <Card style={{ borderTop: `2px solid ${T.warning}` }}>
+        <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: '1.5px', marginBottom: 16, textTransform: 'uppercase' as const }}>✦ INDICATEUR FRAÎCHEUR — 30 JOURS</p>
+        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 16 }}>
+          {[
+            { label: 'LIVRAISONS <60min:', value: '82%', color: T.success },
+            { label: 'LIVRAISONS 60-80min:', value: '14%', color: T.warning },
+            { label: 'LIVRAISONS >80min:', value: '4%', color: T.danger },
+          ].map(m => (
+            <div key={m.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontFamily: MONO, fontSize: 12, color: T.textDim }}>{m.label}</span>
+              <span style={{ fontFamily: MONO, fontSize: 16, fontWeight: 700, color: m.color }}>{m.value}</span>
+            </div>
+          ))}
+        </div>
+        <p style={{ fontFamily: MONO, fontSize: 13, color: T.gold, margin: '0 0 8px' }}>Temps moyen mélange→livraison: <strong>54 min</strong></p>
+        <p style={{ fontFamily: MONO, fontSize: 12, color: T.success, margin: '0 0 12px' }}>0 livraisons hors délai 90 min ce mois ✓</p>
+        {/* Mini sparkline */}
+        <svg width="100%" height={40} viewBox="0 0 300 40" preserveAspectRatio="none" style={{ display: 'block' }}>
+          <polyline
+            fill="none" stroke={T.gold} strokeWidth={1.5}
+            points={[58,55,52,56,54,50,53,57,54,51,49,53,56,54,52,55,53,50,54,56,58,55,52,51,53,54,55,52,54,53].map((v, i) => `${i * 10},${40 - ((v - 45) / 15) * 36}`).join(' ')}
+          />
+        </svg>
+      </Card>
+
       {/* ROW 4 — ACTION */}
       <section>
         <SectionHeader icon={Brain} label="✦ Insight IA — Analyse Flotte" right={<IABadge />} />
