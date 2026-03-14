@@ -532,6 +532,306 @@ function EmptyTabPlaceholder({ title, icon: Icon }: { title: string; icon: React
   );
 }
 
+// ─────────────────────────────────────────────────────
+// INTELLIGENCE IA TAB
+// ─────────────────────────────────────────────────────
+const FUEL_DATA = [
+  { toupie: 'T-04', theo: 38, reel: 39, ecart: '+2.6%', trend: '→', alerte: 'ok' },
+  { toupie: 'T-07', theo: 40, reel: 41, ecart: '+2.5%', trend: '→', alerte: 'ok' },
+  { toupie: 'T-09', theo: 38, reel: 48, ecart: '+26.3%', trend: '↗', alerte: 'anomalie' },
+  { toupie: 'T-12', theo: 36, reel: 37, ecart: '+2.8%', trend: '→', alerte: 'ok' },
+];
+
+const DEMAND_FORECAST_DATA = [
+  { jour: 'J1', demande: 6, capacite: 10 },
+  { jour: 'J2', demande: 7, capacite: 10 },
+  { jour: 'J3', demande: 8, capacite: 10 },
+  { jour: 'Mar 18', demande: 12, capacite: 10 },
+  { jour: 'J5', demande: 9, capacite: 10 },
+  { jour: 'J6', demande: 7, capacite: 10 },
+  { jour: 'Ven 21', demande: 5, capacite: 10 },
+  { jour: 'J8', demande: 6, capacite: 10 },
+  { jour: 'J9', demande: 8, capacite: 10 },
+  { jour: 'J10', demande: 7, capacite: 10 },
+  { jour: 'J11', demande: 9, capacite: 10 },
+  { jour: 'J12', demande: 6, capacite: 10 },
+  { jour: 'J13', demande: 5, capacite: 10 },
+  { jour: 'J14', demande: 7, capacite: 10 },
+];
+
+function IAKPICard({ label, value, color, subtitle, borderColor }: { label: string; value: string; color: string; subtitle?: string; borderColor?: string }) {
+  return (
+    <div style={{
+      background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '16px 14px',
+      borderTop: `2px solid ${borderColor || T.gold}`, flex: 1,
+    }}>
+      <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 8 }}>{label}</p>
+      <p style={{ fontFamily: MONO, fontSize: 28, fontWeight: 200, color, margin: 0, lineHeight: 1 }}>{value}</p>
+      {subtitle && <p style={{ fontSize: 11, color: T.textDim, marginTop: 6 }}>{subtitle}</p>}
+    </div>
+  );
+}
+
+function RecommendationBox({ text, borderColor = T.gold }: { text: React.ReactNode; borderColor?: string }) {
+  return (
+    <div style={{ borderLeft: `4px solid ${borderColor}`, background: borderColor === T.danger ? 'rgba(239,68,68,0.05)' : 'rgba(212,168,67,0.03)', padding: '14px 18px', borderRadius: '0 8px 8px 0', marginTop: 16 }}>
+      <p style={{ fontFamily: MONO, fontSize: 12, color: T.textSec, lineHeight: 1.8, margin: 0 }}>{text}</p>
+    </div>
+  );
+}
+
+function MiniSparkline({ trend, color }: { trend: string; color: string }) {
+  if (trend === '↗') return (
+    <svg width={40} height={16} viewBox="0 0 40 16"><path d="M2 14 L10 12 L20 10 L30 6 L38 2" fill="none" stroke={color} strokeWidth={1.5} /></svg>
+  );
+  return (
+    <svg width={40} height={16} viewBox="0 0 40 16"><path d="M2 8 L10 9 L20 7 L30 8 L38 8" fill="none" stroke={color} strokeWidth={1.5} /></svg>
+  );
+}
+
+function IntelligenceIATab() {
+  const tblHdr: React.CSSProperties = { fontFamily: MONO, fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.15em', padding: '10px 12px', borderBottom: `1px solid ${T.cardBorder}`, textAlign: 'left' };
+  const tblCell: React.CSSProperties = { padding: '10px 12px', fontSize: 12, borderBottom: `1px solid rgba(30,45,74,0.5)` };
+  const monoCell: React.CSSProperties = { ...tblCell, fontFamily: MONO, fontWeight: 200 };
+
+  const profitBars = [
+    { name: 'T-04', revenu: 15000, carburant: 2400, maintenance: 800, tempsMort: 500, total: 18200 },
+    { name: 'T-07', revenu: 10010, carburant: 1850, maintenance: 600, tempsMort: 700, total: 12460 },
+    { name: 'T-12', revenu: 6950, carburant: 950, maintenance: 400, tempsMort: 0, total: 8300 },
+    { name: 'T-09', revenu: 0, carburant: 0, maintenance: 1200, tempsMort: 0, total: 0 },
+  ];
+  const maxBar = Math.max(...profitBars.map(b => b.total || b.maintenance));
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+      {/* HEADER */}
+      <div>
+        <p style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: T.gold, letterSpacing: '2px', margin: '0 0 4px' }}>✦ CENTRE D'INTELLIGENCE LOGISTIQUE</p>
+        <p style={{ fontFamily: MONO, fontSize: 12, color: T.gold, margin: 0 }}>4 agents actifs · Surveillance continue · Claude Opus</p>
+      </div>
+
+      {/* TOP SUMMARY STRIP */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+        <IAKPICard label="ÉCONOMIES ROUTES" value="+52,000 MAD/an" color={T.success} />
+        <IAKPICard label="ANOMALIES CARBURANT" value="1" color={T.danger} borderColor={T.danger} />
+        <IAKPICard label="PROFIT FLOTTE/JOUR" value="30,760 DH" color={T.gold} />
+      </div>
+
+      {/* ─── AGENT 1: PROFIT-PER-TRUCK ─── */}
+      <Card style={{ borderTop: `2px solid ${T.gold}` }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: T.gold, letterSpacing: '2px' }}>✦ AGENT IA: RENTABILITÉ PAR TOUPIE</span>
+            <Bdg label="● LIVE" color={T.success} bg="rgba(34,197,94,0.12)" pulse />
+          </div>
+          <IABadge />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
+          <IAKPICard label="PROFIT FLOTTE JOUR" value="30,760 DH" color={T.gold} />
+          <IAKPICard label="MEILLEUR RATIO" value="T-12 · 154 DH/km" color={T.success} borderColor={T.success} />
+          <IAKPICard label="PIRE RATIO" value="T-09 · ARRÊT" color={T.danger} borderColor={T.danger} />
+        </div>
+
+        {/* Horizontal stacked bar chart */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
+          {profitBars.map(b => {
+            const total = b.revenu + b.carburant + b.maintenance + b.tempsMort;
+            const w = (v: number) => total > 0 ? `${(v / maxBar) * 100}%` : '0%';
+            return (
+              <div key={b.name} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: T.gold, width: 40 }}>{b.name}</span>
+                <div style={{ flex: 1, display: 'flex', height: 24, borderRadius: 4, overflow: 'hidden', background: 'rgba(255,255,255,0.03)' }}>
+                  {b.revenu > 0 && <div style={{ width: w(b.revenu), background: T.success, transition: 'width 0.8s ease' }} />}
+                  {b.carburant > 0 && <div style={{ width: w(b.carburant), background: T.danger, transition: 'width 0.8s ease' }} />}
+                  {b.maintenance > 0 && <div style={{ width: w(b.maintenance), background: b.name === 'T-09' ? T.danger : T.warning, transition: 'width 0.8s ease' }} />}
+                  {b.tempsMort > 0 && <div style={{ width: w(b.tempsMort), background: '#6B7280', transition: 'width 0.8s ease' }} />}
+                </div>
+                <span style={{ fontFamily: MONO, fontSize: 11, color: b.revenu > 0 ? T.success : T.danger, width: 80, textAlign: 'right' }}>
+                  {b.revenu > 0 ? `${(b.revenu).toLocaleString('fr-MA')} DH` : `−${b.maintenance.toLocaleString('fr-MA')} DH`}
+                </span>
+              </div>
+            );
+          })}
+          <div style={{ display: 'flex', gap: 16, marginTop: 6 }}>
+            {[{ label: 'Revenu net', color: T.success }, { label: 'Carburant', color: T.danger }, { label: 'Maintenance', color: T.warning }, { label: 'Temps mort', color: '#6B7280' }].map(l => (
+              <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <div style={{ width: 8, height: 8, borderRadius: 2, background: l.color }} />
+                <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>{l.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <RecommendationBox text={
+          <>T-09 en arrêt maintenance génère une perte sèche de <strong style={{ color: T.danger }}>1,200 DH/jour</strong>. Retour en service estimé demain 08:00. Impact : les 3 livraisons prévues demain pour T-09 sont réaffectées à T-04 et T-12. Le ratio profit/km de la flotte peut atteindre <strong style={{ color: T.gold }}>135 DH/km</strong> si T-09 revient en service et que les livraisons longue distance sont affectées à T-12.</>
+        } />
+      </Card>
+
+      {/* ─── AGENT 2: OPTIMISEUR DE ROUTES ─── */}
+      <Card style={{ borderTop: `2px solid ${T.success}` }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
+          <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: T.gold, letterSpacing: '2px' }}>✦ AGENT IA: OPTIMISEUR DE ROUTES</span>
+          <IABadge />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
+          <IAKPICard label="KM ÉCONOMISÉS/JOUR" value="34 km" color={T.success} subtitle="−12% vs non-optimisé" borderColor={T.success} />
+          <IAKPICard label="CARBURANT ÉCONOMISÉ" value="12 L/jour" color={T.success} borderColor={T.success} />
+          <IAKPICard label="GAIN ANNUEL" value="+52,000 MAD" color={T.gold} borderColor={T.success} />
+        </div>
+
+        {/* Route comparison */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+          <div style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: 16, borderTop: `2px solid ${T.textDim}` }}>
+            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.textDim, letterSpacing: '1.5px', marginBottom: 10, textTransform: 'uppercase' as const }}>ROUTE ACTUELLE</p>
+            <p style={{ fontSize: 12, color: T.textSec, marginBottom: 8, lineHeight: 1.5 }}>T-04: Atlas Concrete → Résidences Atlas (Chantier Maarif) → Retour</p>
+            <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>Distance: <span style={{ color: T.textPri }}>67 km</span> · Temps: <span style={{ color: T.textPri }}>1h45</span> · Carburant: <span style={{ color: T.textPri }}>28L</span></p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
+              {[T.gold, T.info, T.textDim].map((c, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />
+                  {i < 2 && <div style={{ width: 40, height: 2, background: `linear-gradient(90deg, ${c}, ${[T.info, T.textDim][i]})` }} />}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div style={{ background: 'rgba(34,197,94,0.03)', border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: 16, borderTop: `2px solid ${T.success}` }}>
+            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.success, letterSpacing: '1.5px', marginBottom: 10, textTransform: 'uppercase' as const }}>ROUTE OPTIMISÉE IA</p>
+            <p style={{ fontSize: 12, color: T.textSec, marginBottom: 8, lineHeight: 1.5 }}>T-04: Atlas Concrete → Résidences Atlas → Groupe A (Rabat Center) → Retour</p>
+            <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>Distance: <span style={{ color: T.textPri }}>52 km</span> · Temps: <span style={{ color: T.textPri }}>1h20</span> · Carburant: <span style={{ color: T.textPri }}>22L</span></p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
+              {[T.gold, T.success, T.info, T.textDim].map((c, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />
+                  {i < 3 && <div style={{ width: 30, height: 2, background: `linear-gradient(90deg, ${c}, ${[T.success, T.info, T.textDim][i]})` }} />}
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 10 }}>
+              <Bdg label="−15 km · −25 min · −6L" color={T.success} bg="rgba(34,197,94,0.12)" />
+            </div>
+          </div>
+        </div>
+
+        <RecommendationBox borderColor={T.success} text={
+          <>En regroupant les livraisons par zone géographique (Casablanca Est le matin, axe Rabat l'après-midi), réduction estimée de <strong style={{ color: T.success }}>22% des km parcourus</strong>. Économie carburant : <strong style={{ color: T.gold }}>52,000 MAD/an</strong>. Bonus : réduction temps d'attente de 35% en évitant les créneaux de trafic 10h-12h sur l'axe A3.</>
+        } />
+      </Card>
+
+      {/* ─── AGENT 3: SURVEILLANCE CARBURANT ─── */}
+      <Card style={{ borderTop: `2px solid ${T.danger}` }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: T.gold, letterSpacing: '2px' }}>✦ AGENT IA: SURVEILLANCE CARBURANT</span>
+            <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: 'transparent', border: `1px solid ${T.danger}40`, color: T.danger }}>FORENSIQUE</span>
+          </div>
+          <IABadge />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
+          <IAKPICard label="CONSO MOY./100KM" value="42 L" color={T.gold} subtitle="flotte complète" />
+          <IAKPICard label="ANOMALIES" value="1" color={T.danger} subtitle="T-09 avant arrêt" borderColor={T.danger} />
+          <IAKPICard label="SURCOÛT ESTIMÉ" value="3,200 MAD/mois" color={T.danger} borderColor={T.danger} />
+        </div>
+
+        <div style={{ overflowX: 'auto', marginBottom: 16 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead><tr>
+              {['TOUPIE', 'CONSO THÉORIQUE', 'CONSO RÉELLE', 'ÉCART', 'TENDANCE 30J', 'ALERTE'].map(h => <th key={h} style={tblHdr}>{h}</th>)}
+            </tr></thead>
+            <tbody>
+              {FUEL_DATA.map((r, i) => (
+                <tr key={r.toupie} style={{
+                  background: i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)',
+                  borderLeft: r.alerte === 'anomalie' ? `3px solid ${T.danger}` : 'none',
+                }}>
+                  <td style={{ ...monoCell, color: T.gold, fontWeight: 700 }}>{r.toupie}</td>
+                  <td style={monoCell}>{r.theo} L/100km</td>
+                  <td style={{ ...monoCell, color: r.alerte === 'anomalie' ? T.danger : T.textPri }}>{r.reel} L/100km</td>
+                  <td style={{ ...monoCell, color: r.alerte === 'anomalie' ? T.danger : T.textDim }}>{r.ecart}</td>
+                  <td style={tblCell}><MiniSparkline trend={r.trend} color={r.alerte === 'anomalie' ? T.danger : T.textDim} /></td>
+                  <td style={tblCell}>
+                    {r.alerte === 'ok'
+                      ? <Bdg label="✓ OK" color={T.success} bg="rgba(34,197,94,0.12)" />
+                      : <Bdg label="⚠ ANOMALIE" color={T.danger} bg="rgba(239,68,68,0.12)" />
+                    }
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <RecommendationBox borderColor={T.danger} text={
+          <>T-09 : consommation <strong style={{ color: T.danger }}>+26% au-dessus de la norme</strong> sur 30 jours. Tendance croissante avant mise en maintenance. Corrélation identifiée : usure pneus détectée le 10/03 augmente la résistance au roulement. Coût supplémentaire estimé : <strong style={{ color: T.danger }}>3,200 MAD/mois</strong> si non-traité. Vérification en cours pendant maintenance actuelle.</>
+        } />
+      </Card>
+
+      {/* ─── AGENT 4: PRÉDICTEUR DE DEMANDE ─── */}
+      <Card style={{ borderTop: `2px solid ${T.gold}` }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
+          <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: T.gold, letterSpacing: '2px' }}>✦ AGENT IA: PRÉDICTEUR DE DEMANDE</span>
+          <IABadge />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
+          <IAKPICard label="DEMANDE PRÉVUE J+7" value="42 livraisons" color={T.gold} />
+          <IAKPICard label="CAPACITÉ DISPONIBLE" value="89%" color={T.success} borderColor={T.success} />
+          <IAKPICard label="RISQUE SATURATION" value="Mardi 18/03" color={T.warning} subtitle="pic 12 livraisons" borderColor={T.warning} />
+        </div>
+
+        <ResponsiveContainer width="100%" height={280}>
+          <ComposedChart data={DEMAND_FORECAST_DATA} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
+            <defs>
+              <linearGradient id="demandOkArea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#22C55E" stopOpacity={0.1} />
+                <stop offset="95%" stopColor="#22C55E" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} vertical={false} />
+            <XAxis dataKey="jour" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10, fontFamily: MONO }} />
+            <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 14]} />
+            <RechartsTooltip content={<CustomTooltip />} />
+            <Area dataKey="capacite" name="Capacité" fill="rgba(212,168,67,0.04)" stroke="none" />
+            <Line dataKey="capacite" name="Capacité max" type="monotone" stroke={T.gold} strokeWidth={1.5} strokeDasharray="6 4" dot={false} />
+            <Line dataKey="demande" name="Demande prévue" type="monotone" stroke={T.gold} strokeWidth={2.5}
+              dot={(props: any) => {
+                const isOver = props.payload.demande > props.payload.capacite;
+                const isToday = props.index === 0;
+                return (
+                  <g key={props.index}>
+                    <circle cx={props.cx} cy={props.cy} r={isOver ? 5 : 4} fill={isOver ? T.danger : T.gold} />
+                    {isToday && <>
+                      <circle cx={props.cx} cy={props.cy} r={8} fill="none" stroke={T.gold} strokeWidth={1.5} opacity={0.5}>
+                        <animate attributeName="r" from="5" to="14" dur="1.5s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" from="0.6" to="0" dur="1.5s" repeatCount="indefinite" />
+                      </circle>
+                    </>}
+                  </g>
+                );
+              }}
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
+
+        <div style={{ display: 'flex', gap: 16, marginTop: 10, flexWrap: 'wrap' }}>
+          <span style={{ fontFamily: MONO, fontSize: 11, padding: '3px 10px', borderRadius: 4, background: 'rgba(245,158,11,0.12)', color: T.warning, border: `1px solid ${T.warning}40` }}>
+            Mar 18: PIC 12 livr.
+          </span>
+          <span style={{ fontFamily: MONO, fontSize: 11, padding: '3px 10px', borderRadius: 4, background: 'rgba(212,168,67,0.08)', color: T.gold, border: `1px solid ${T.gold}40` }}>
+            Ven 21: Ramadan début — ralentissement
+          </span>
+        </div>
+
+        <RecommendationBox text={
+          <>Pic de demande prévu <strong style={{ color: T.warning }}>mardi 18 mars : 12 livraisons</strong>, dépassant la capacité nominale de 10 livraisons/jour (3 toupies actives). Options : (1) Rappeler T-09 de maintenance lundi soir — faisable si pneus remplacés d'ici là. (2) Sous-traiter 2 livraisons à prestataire externe (coût estimé : <strong style={{ color: T.gold }}>2,400 DH</strong>, marge préservée à 28%). (3) Décaler 2 livraisons non-urgentes à mercredi. <strong style={{ color: T.success }}>Recommandation : option 1 + option 3 pour coût zéro.</strong></>
+        } />
+      </Card>
+    </div>
+  );
+}
+
 // ═════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═════════════════════════════════════════════════════
@@ -851,7 +1151,7 @@ export default function WorldClassDeliveries() {
         {/* ANALYTIQUE & INTELLIGENCE IA PLACEHOLDERS    */}
         {/* ════════════════════════════════════════════ */}
         {activeTab === 'analytique' && <EmptyTabPlaceholder title="Analytique" icon={TrendingUp} />}
-        {activeTab === 'ia' && <EmptyTabPlaceholder title="Intelligence IA" icon={Brain} />}
+        {activeTab === 'ia' && <IntelligenceIATab />}
 
       </div>
     </div>
