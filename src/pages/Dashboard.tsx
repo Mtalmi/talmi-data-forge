@@ -1058,7 +1058,7 @@ export default function Dashboard() {
           </div>
 
           {/* (3) 4 KPI Cards Row */}
-          <div className="tbos-kpi-grid grid grid-cols-4 gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch', animation: 'ccSectionIn 300ms ease-out 200ms both' }}>
+          <div className="tbos-kpi-grid grid grid-cols-5 gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch', animation: 'ccSectionIn 300ms ease-out 200ms both' }}>
           {[
             {
               label: 'VOLUME',
