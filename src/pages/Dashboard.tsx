@@ -1176,9 +1176,9 @@ export default function Dashboard() {
             </div>
 
             {/* ── Production Chart ── */}
-            <div className="flex gap-3 px-5 pb-4 pt-3 z-10 relative" style={{ minHeight: 320 }}>
+            <div className="flex gap-3 px-5 pb-4 pt-3 z-10 relative" style={{ minHeight: 320, alignItems: 'stretch' }}>
               {/* Chart panel */}
-              <div className="flex-[4] min-w-0 bg-gradient-to-b from-white/[0.03] to-transparent border border-white/[0.06] rounded-xl p-5 h-full relative overflow-hidden">
+              <div className="flex-[4] min-w-0 bg-gradient-to-b from-white/[0.03] to-transparent border border-white/[0.06] rounded-xl p-5 relative overflow-hidden" style={{ display: 'flex', flexDirection: 'column' }}>
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 50 }} />
                 <div className="flex justify-between items-center mb-1">
                   <div>
@@ -1337,6 +1337,25 @@ export default function Dashboard() {
                     </div>
                   )}
                 <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#0a0f1a]/80 to-transparent pointer-events-none" />
+                {/* Chart summary strip */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', borderTop: '1px solid rgba(212,168,67,0.1)', marginTop: 'auto' }}>
+                  <div>
+                    <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>PIC</div>
+                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: '#D4A843' }}>98 m³/h · 15h</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Moyenne</div>
+                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: 'white' }}>72 m³/h</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Écart moy.</div>
+                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: '#22C55E' }}>+3.2%</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Hier</div>
+                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: '#9CA3AF' }}>645 m³</div>
+                  </div>
+                </div>
               </div>
 
               {/* Performance / Camera panel */}
