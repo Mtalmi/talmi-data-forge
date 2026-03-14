@@ -1442,7 +1442,7 @@ export default function WorldClassDeliveries() {
 
             {/* 3f. LIVRAISONS AUJOURD'HUI */}
             <section>
-              <SectionHeader icon={Package} label="Livraisons Aujourd'hui" right={
+              <SectionHeader icon={Package} label="✦ Livraisons Aujourd'hui" right={
                 <Bdg label="● LIVE" color={T.success} bg="rgba(34,197,94,0.12)" pulse />
               } />
               {/* Fraîcheur béton label */}
