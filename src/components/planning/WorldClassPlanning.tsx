@@ -396,14 +396,15 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = f
       onClick={onClick}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(12px)',
-        transition: 'opacity 500ms ease-out, transform 500ms ease-out, box-shadow 200ms, border-color 200ms',
+        transform: visible ? (hov ? 'translateY(-1px)' : 'translateY(0)') : 'translateY(12px)',
+        transition: 'opacity 500ms ease-out, transform 200ms ease-out, box-shadow 200ms, border-color 200ms',
         background: rentabilite ? rentaBg : 'rgba(245, 158, 11, 0.08)',
         border: `1px solid ${hov ? 'rgba(245, 158, 11, 0.3)' : 'rgba(245, 158, 11, 0.15)'}`,
         borderLeft: `3px solid ${rentabilite ? rentaBorder : color}`,
         borderRadius: 8, padding: '8px 10px',
         cursor: 'pointer', minHeight: 58,
         position: 'relative',
+        boxShadow: hov ? '0 0 12px rgba(212,168,67,0.1)' : 'none',
       }}
     >
       {/* Payment status dot */}
@@ -413,8 +414,8 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = f
         background: dotColor,
         boxShadow: `0 0 4px ${dotColor}60`,
       }} />
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 800, color: '#D4A843', marginBottom: 2, display: 'inline-block', padding: '1px 6px', borderRadius: 4, background: 'rgba(212,168,67,0.2)', border: '1px solid rgba(212,168,67,0.5)' }}>{slot.product}</p>
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: T.textPri }}>{slot.volume} m³</p>
+      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: slot.product === 'Spécial' ? 10 : 11, fontWeight: 800, color: slot.product === 'Spécial' ? '#F59E0B' : '#D4A843', marginBottom: 2, display: 'inline-block', padding: '1px 6px', borderRadius: 4, background: slot.product === 'Spécial' ? 'rgba(245,158,11,0.15)' : 'rgba(212,168,67,0.2)', border: slot.product === 'Spécial' ? '1px solid #F59E0B' : '1px solid rgba(212,168,67,0.5)' }}>{slot.product}</p>
+      <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 13, fontWeight: 500, color: T.textPri }}>{slot.volume} m³</p>
       <p style={{ fontSize: 10, color: T.textDim, marginTop: 2 }}>{slot.client}</p>
     </div>
   );
