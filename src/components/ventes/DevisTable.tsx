@@ -470,7 +470,7 @@ export function DevisTable({
                 <TableCell className="text-center" style={{ padding: '10px 8px', color: 'rgba(255,255,255,0.9)' }}>
                   <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 400, fontSize: 12 }}>{devis.formule_id}</span>
                 </TableCell>
-                <TableCell className="text-center font-mono" style={{ padding: '10px 8px', color: 'rgba(255,255,255,0.9)', fontSize: 13 }}>{devis.volume_m3}</TableCell>
+                <TableCell className="text-center" style={{ padding: '10px 8px', color: 'rgba(255,255,255,0.9)', fontFamily: 'ui-monospace, monospace', fontWeight: 300, fontSize: 13 }}>{devis.volume_m3}</TableCell>
                 <TableCell className="text-right" style={{ padding: '10px 8px', color: 'rgba(255,255,255,0.9)', fontFamily: 'ui-monospace, monospace', fontWeight: 300, fontSize: 13 }}>
                   {Number(devis.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </TableCell>
