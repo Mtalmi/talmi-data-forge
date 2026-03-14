@@ -185,8 +185,8 @@ export default function RecentDeliveries() {
           </div>
         </div>
         <div className="flex items-center gap-2" style={{ overflow: 'visible' }}>
-          <span className="text-xs bg-white/5 border border-white/10 rounded px-2 py-0.5 text-white/50 font-mono">{timeline.length} livraisons</span>
-          <span className="text-xs bg-[#D4A843]/10 border border-[#D4A843]/20 rounded px-2 py-0.5 text-[#D4A843]/70 font-mono">{totalVolume} m³</span>
+          <span className="text-xs bg-white/5 rounded px-2 py-0.5 text-white/50 font-mono" style={{ border: '1px solid rgba(212, 168, 67, 0.4)' }}>{timeline.length} livraisons</span>
+          <span className="text-xs bg-[#D4A843]/10 rounded px-2 py-0.5 text-[#D4A843]/70 font-mono" style={{ border: '1px solid rgba(212, 168, 67, 0.4)' }}>{totalVolume} m³</span>
         </div>
       </div>
       

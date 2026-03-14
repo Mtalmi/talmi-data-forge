@@ -883,9 +883,9 @@ export default function Dashboard() {
                     <button
                       onClick={() => navigate('/rapports')}
                       className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
-                      style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.20)', color: 'rgba(255,255,255,0.8)' }}
-                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; e.currentTarget.style.color = '#fff'; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
+                      style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid #D4A843', color: '#D4A843' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; e.currentTarget.style.color = '#D4A843'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.08)'; e.currentTarget.style.color = '#D4A843'; }}
                     >
                       <FileText size={16} className="opacity-60" />
                       RAPPORT DU JOUR
@@ -1612,7 +1612,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-2 shrink-0">
               <button
                 style={{ background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.5)', color: '#D4A843', fontWeight: 600, borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', transition: 'all 0.2s ease', fontSize: '12px' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.25)'; e.currentTarget.style.borderColor = '#D4A843'; }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.1)'; e.currentTarget.style.borderColor = '#D4A843'; }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; e.currentTarget.style.borderColor = 'rgba(212,168,67,0.5)'; }}
                 onClick={() => {
                   setShowLancerToast(true);
@@ -1626,8 +1626,8 @@ export default function Dashboard() {
               </button>
               <button
                 style={{ background: 'transparent', border: '1px solid #D4A843', color: '#D4A843', fontWeight: 400, borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', transition: 'all 0.2s ease', fontSize: '12px' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.1)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.1)'; e.currentTarget.style.borderColor = '#D4A843'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = '#D4A843'; }}
               >
                 Passer
               </button>
