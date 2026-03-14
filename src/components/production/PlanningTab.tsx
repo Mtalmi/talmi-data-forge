@@ -198,6 +198,7 @@ function CapacityBar({ chips }: { chips: PlanningChip[] }) {
   const pct = Math.min(100, (totalVolume / DAILY_CAPACITY) * 100);
   const isHigh = pct > 70;
   const isCritical = pct > 90;
+  const barGradient = isCritical ? 'linear-gradient(90deg, #EF4444, #DC2626)' : 'linear-gradient(90deg, #D4A843, #E8C96A)';
   const barColor = isCritical ? '#EF4444' : isHigh ? '#F59E0B' : T.gold;
 
   return (
@@ -207,7 +208,7 @@ function CapacityBar({ chips }: { chips: PlanningChip[] }) {
           Capacité
         </span>
         <span style={{
-          fontFamily: 'ui-monospace, monospace', fontSize: 9, fontWeight: 600,
+          fontFamily: 'ui-monospace, monospace', fontSize: 11, fontWeight: 600,
           color: barColor, letterSpacing: '-0.02em',
         }}>
           {totalVolume}/{DAILY_CAPACITY}m³
@@ -220,7 +221,7 @@ function CapacityBar({ chips }: { chips: PlanningChip[] }) {
         <div style={{
           height: '100%', borderRadius: 2,
           width: `${pct}%`,
-          background: `linear-gradient(90deg, ${barColor}90, ${barColor})`,
+          background: barGradient,
           transition: 'width 1s cubic-bezier(0.4,0,0.2,1)',
           boxShadow: isHigh ? `0 0 8px ${barColor}40` : 'none',
         }} />
@@ -377,7 +378,7 @@ function DetailItem({ item, index }: { item: { id: string; formule: string; clie
           </span>
         </div>
         <span style={{
-          fontFamily: 'ui-monospace, monospace', fontSize: 11, color: 'rgba(255,255,255,0.3)',
+          fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#D4A843',
           background: 'rgba(255,255,255,0.03)', padding: '2px 8px', borderRadius: 4,
         }}>
           {item.heure}
@@ -386,10 +387,10 @@ function DetailItem({ item, index }: { item: { id: string; formule: string; clie
 
       <div className="flex items-center justify-between mb-1.5">
         <span style={{
-          fontFamily: 'ui-monospace, monospace', fontSize: 20, fontWeight: 200,
-          color: '#fff', letterSpacing: '-0.03em',
+          fontFamily: 'ui-monospace, monospace', fontSize: 24, fontWeight: 200,
+          color: '#D4A843', letterSpacing: '-0.03em',
         }}>
-          {item.volume} <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>m³</span>
+          {item.volume} <span style={{ fontSize: 12, color: 'rgba(212,168,67,0.6)' }}>m³</span>
         </span>
       </div>
 
@@ -527,9 +528,9 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
             </button>
             <button onClick={() => setWeekOffset(0)} style={{
               padding: '8px 14px', borderRadius: 8, cursor: 'pointer',
-              background: weekOffset === 0 ? `${T.gold}18` : 'transparent',
-              border: `1px solid ${weekOffset === 0 ? T.gold + '50' : T.cardBorder}`,
-              color: weekOffset === 0 ? T.gold : T.textSec, fontWeight: 600, fontSize: 13,
+              background: 'transparent',
+              border: '1px solid #D4A843',
+              color: '#D4A843', fontWeight: 600, fontSize: 13,
               transition: 'all 200ms',
             }}>
               Aujourd'hui
@@ -572,7 +573,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
               <span style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>{k.label}</span>
               <k.icon size={14} strokeWidth={1.5} style={{ color: k.accent + '40' }} />
             </div>
-            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 22, fontWeight: 200, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>
+            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 36, fontWeight: 200, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em' }}>
               {k.value}<span style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', fontWeight: 400 }}>{k.suffix}</span>
             </p>
           </div>
@@ -610,15 +611,15 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
                       {format(day, 'EEE', { locale: fr })}.
                     </p>
                     <p style={{
-                      fontFamily: 'ui-monospace, monospace', fontSize: 22, fontWeight: isT ? 600 : 300,
-                      color: isT ? T.gold : isBefore(day, startOfDay(new Date())) ? 'rgba(255,255,255,0.25)' : '#fff',
+                      fontFamily: 'ui-monospace, monospace', fontSize: isT ? 32 : 24, fontWeight: 200,
+                      color: isT ? '#D4A843' : isBefore(day, startOfDay(new Date())) ? 'rgba(255,255,255,0.25)' : '#fff',
                       marginTop: 2, letterSpacing: '-0.02em',
                     }}>
                       {format(day, 'dd')}
                     </p>
                     {!isSunday && totalVol > 0 && (
                       <p style={{
-                        fontFamily: 'ui-monospace, monospace', fontSize: 9, color: T.gold + '80',
+                        fontFamily: 'ui-monospace, monospace', fontSize: 12, color: '#D4A843',
                         marginTop: 3, fontWeight: 500,
                       }}>
                         {totalVol}m³
@@ -753,7 +754,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
               <div className="flex items-center gap-2 mb-1">
                 <Calendar size={14} strokeWidth={1.5} style={{ color: T.gold + '80' }} />
                 <span style={{
-                  fontSize: 14, fontWeight: 600, color: '#fff', textTransform: 'capitalize',
+                  fontFamily: 'ui-monospace, monospace', fontSize: 14, fontWeight: 600, color: '#D4A843', textTransform: 'capitalize',
                 }}>
                   {selectedDate ? format(selectedDate, 'EEEE dd MMMM yyyy', { locale: fr }) : 'Détail du jour'}
                 </span>
@@ -918,25 +919,25 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
             <div className="flex items-start gap-3">
               <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
               <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                Capacité optimale demain (<span style={{ color: '#fff', fontWeight: 600 }}>Samedi 14</span>). 2 livraisons planifiées sur capacité de 200 m³. Aucun conflit détecté.
+                Capacité optimale demain (<span style={{ color: '#D4A843', fontWeight: 600 }}>Samedi 14</span>). 2 livraisons planifiées sur capacité de 200 m³. Aucun conflit détecté.
               </p>
             </div>
             <div className="flex items-start gap-3">
               <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
               <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                <span style={{ color: '#fff', fontWeight: 600 }}>Lundi 09 Mars</span>: 2 livraisons simultanées à 08:00 (BTP Maroc + Constructions Modernes). Recommandation: décaler Constructions Modernes à <span style={{ color: '#D4A843', fontWeight: 600 }}>09:00</span> pour éviter congestion chargement.
+                <span style={{ color: '#D4A843', fontWeight: 600 }}>Lundi 09 Mars</span>: 2 livraisons simultanées à 08:00 (BTP Maroc + Constructions Modernes). Recommandation: décaler Constructions Modernes à <span style={{ color: '#D4A843', fontWeight: 600 }}>09:00</span> pour éviter congestion chargement.
               </p>
             </div>
             <div className="flex items-start gap-3">
               <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444' }} />
               <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                <span style={{ color: '#fff', fontWeight: 600 }}>Mercredi 11 Mars</span>: Livraison BC-2602-2373 F-B20 · 80m³ pour Constructions Modernes représente <span style={{ color: '#EF4444', fontWeight: 600 }}>40% de la capacité journalière</span>. Pré-positionner stocks gravette et sable la veille.
+                <span style={{ color: '#D4A843', fontWeight: 600 }}>Mercredi 11 Mars</span>: Livraison BC-2602-2373 F-B20 · 80m³ pour Constructions Modernes représente <span style={{ color: '#EF4444', fontWeight: 600 }}>40% de la capacité journalière</span>. Pré-positionner stocks gravette et sable la veille.
               </p>
             </div>
           </div>
           <div className="flex gap-2 mt-4">
-            <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>3 recommandations</span>
-            <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 87%</span>
+            <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843' }}>3 recommandations</span>
+            <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843' }}>Confiance: 87%</span>
           </div>
         </div>
       </div>
