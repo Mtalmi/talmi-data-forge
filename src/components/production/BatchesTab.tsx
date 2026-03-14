@@ -38,7 +38,7 @@ interface BatchRow {
 function statusStyle(s: BatchRow['status']) {
   switch (s) {
     case 'valide': return { label: 'Validé', bg: 'rgba(52,211,153,0.12)', color: '#34d399', dot: '#34d399' };
-    case 'production': return { label: 'En Production', bg: 'rgba(96,165,250,0.12)', color: '#60a5fa', dot: '#60a5fa' };
+    case 'production': return { label: 'En Production', bg: 'rgba(212,168,67,0.15)', color: '#D4A843', dot: '#D4A843' };
     case 'planifie': return { label: 'Planifié', bg: 'rgba(212,168,67,0.12)', color: T.gold, dot: T.gold };
     case 'ecart': return { label: 'Écart', bg: 'rgba(248,113,113,0.12)', color: '#f87171', dot: '#f87171' };
   }
@@ -136,6 +136,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
 
   return (
     <>
+    <style>{`@keyframes batch-pulse { 0%, 100% { box-shadow: 0 0 0px rgba(212,168,67,0); } 50% { box-shadow: 0 0 8px rgba(212,168,67,0.3); } }`}</style>
     <div className="flex flex-col gap-6">
 
       {/* ═══ 1. ACTION BUTTONS ═══ */}
@@ -162,8 +163,9 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
             setTimeout(() => { toast.style.opacity = '0'; }, 2700);
             setTimeout(() => { document.body.removeChild(toast); }, 3000);
           }} className="flex items-center gap-2 cursor-pointer" style={{
-            padding: '10px 20px', borderRadius: 8, background: '#D4A843', color: '#0F1629',
+            padding: '10px 20px', borderRadius: 8, background: 'linear-gradient(135deg, #D4A843, #B8922E)', color: '#0F1629',
             fontWeight: 600, fontSize: 13, border: 'none', fontFamily: 'DM Sans, sans-serif',
+            boxShadow: '0 2px 8px rgba(212,168,67,0.3)',
           }}>
             <Play size={16} strokeWidth={1.5} /> Lancer Production
           </button>
@@ -216,7 +218,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
         ].map(k => (
           <div key={k.label} style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, padding: 16 }}>
             <k.icon size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.20)', marginBottom: 8 }} />
-            <p style={{ fontFamily: mono, fontSize: 24, fontWeight: 400, color: '#fff', lineHeight: 1 }}>
+            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 24, fontWeight: 200, color: '#fff', lineHeight: 1 }}>
               {k.value}
               <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.50)', marginLeft: 4 }}>{k.suffix}</span>
             </p>
@@ -285,15 +287,15 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
               const delivered = Math.round(row.volume * row.progress / 100);
               const isInProd = row.status === 'production';
               return (
-                <div key={row.bl_id} className="grid items-center" style={{
+                <div key={row.bl_id} className="grid items-center batch-row-hover" style={{
                   gridTemplateColumns: '110px 1fr 90px 70px 65px 90px 70px 60px 120px 100px 80px',
                   padding: '16px 16px',
                   borderBottom: '1px solid rgba(255,255,255,0.04)',
-                  borderLeft: isInProd ? '2px solid rgba(96,165,250,0.50)' : '2px solid transparent',
-                  cursor: 'pointer', transition: 'background 150ms',
+                  borderLeft: '3px solid transparent',
+                  cursor: 'pointer', transition: 'all 200ms ease',
                 }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,215,0,0.04)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.04)'; e.currentTarget.style.borderLeft = '3px solid #D4A843'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderLeft = '3px solid transparent'; }}
                   onClick={() => setDrawerOpen(true)}
                 >
                   <span style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 500 }}>{row.bl_id}</span>
@@ -328,6 +330,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                     padding: '4px 10px', borderRadius: 999, background: st.bg,
                     fontSize: 11, fontWeight: 500, color: st.color, whiteSpace: 'nowrap',
                     margin: '0 auto',
+                    ...(row.status === 'production' ? { border: '1px solid #D4A843', animation: 'batch-pulse 2s infinite' } : {}),
                   }}>
                     <span style={{ width: 5, height: 5, borderRadius: '50%', background: st.dot, flexShrink: 0 }} />
                     {st.label}
