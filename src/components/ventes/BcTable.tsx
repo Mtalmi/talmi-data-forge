@@ -549,7 +549,7 @@ export function BcTable({
                 
                 {/* TOTAL HT */}
                 <TableCell className="text-right">
-                  <span className="text-sm font-mono font-medium">
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 300, color: 'white', fontSize: 13 }}>
                     {Number(bc.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                   </span>
                 </TableCell>
