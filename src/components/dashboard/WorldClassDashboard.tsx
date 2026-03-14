@@ -966,7 +966,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
         </div>
 
         {/* ─── Team Status Strip ─── */}
-        <div className="mb-4 relative z-[1] w-full" style={{ background:'linear-gradient(to right,rgba(212,168,67,0.04),transparent)', border:'1px solid rgba(212,168,67,0.12)', borderRadius:'8px', padding:'10px 16px', marginTop:'8px', position:'relative', overflow:'hidden', display: 'flex', alignItems: 'center', gap: '24px' }}>
+        <div className="mb-4 relative z-[1] w-full" style={{ background:'linear-gradient(to right,rgba(212,168,67,0.04),transparent)', border:'1px solid rgba(212,168,67,0.12)', borderTop: '1px solid rgba(212,168,67,0.1)', borderRadius:'8px', padding:'10px 16px', marginTop:'8px', position:'relative', overflow:'hidden', display: 'flex', alignItems: 'center', gap: '24px' }}>
           <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent 0%,rgba(212,168,67,0.7) 50%,transparent 100%)', zIndex:99, pointerEvents:'none' }} />
           <div className="flex items-center">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse mr-2" />
@@ -982,14 +982,14 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               <div key={t.role} className="flex items-center gap-3">
                 <div className="flex flex-col items-center">
                   <span style={{ fontSize:'10px', textTransform:'uppercase', letterSpacing:'0.05em', color:'rgba(255,255,255,0.4)', display:'block', marginTop:'2px' }}>{t.role}</span>
-                  <span className={`text-sm font-mono ${t.full ? 'text-green-400 font-medium' : 'text-amber-400 font-medium animate-pulse'}`}>{t.value}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 500, fontSize: '14px', color: !t.full ? '#F59E0B' : '#D4A843' }} className={!t.full ? 'animate-pulse' : ''}>{t.value}</span>
                 </div>
                 {i < arr.length - 1 && <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span>}
               </div>
             ))}
           </div>
           <div className="flex-1" />
-          <span style={{ background: 'rgba(212,168,67,0.05)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '4px', padding: '2px 10px', fontSize: '11px', color: 'rgba(212,168,67,0.8)' }}>Prochain shift: 14h00 — 3 opérateurs</span>
+          <span style={{ background: 'transparent', border: '1px solid rgba(212,168,67,0.3)', borderRadius: '4px', padding: '2px 10px', fontSize: '11px', color: '#D4A843' }}>Prochain shift: 14h00 — 3 opérateurs</span>
         </div>
 
         <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5 relative z-[1] w-full" style={{ alignItems: 'start', borderRadius: 0, overflow: 'visible' }}>
