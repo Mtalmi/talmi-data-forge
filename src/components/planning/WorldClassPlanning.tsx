@@ -575,7 +575,7 @@ function ZoneHeader({ icon, label, right }: { icon: string; label: string; right
       paddingBottom: 12, borderBottom: `1px solid ${T.cardBorder}`,
     }}>
       <span style={{ fontSize: 16 }}>{icon}</span>
-      <span style={{ color: T.gold, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.2em' }}>{label}</span>
+      <span style={{ color: T.gold, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '2px' }}>{label}</span>
       <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
       {right}
     </div>
