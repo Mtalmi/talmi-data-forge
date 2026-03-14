@@ -1,47 +1,47 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip,
-  ResponsiveContainer, CartesianGrid,
-  LineChart, Line, Area, ComposedChart,
+  ResponsiveContainer, CartesianGrid, Area, AreaChart,
+  ComposedChart, Line, Cell,
 } from 'recharts';
 import {
   Truck, Package, Clock, MapPin, CheckCircle, ClipboardCheck,
-  Bell, TrendingUp, Zap, ChevronDown, Signal,
+  TrendingUp, Zap, ChevronDown, Brain, Fuel, Route,
+  Activity, AlertTriangle,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import WorldClassDeliveryArchive from '@/components/archive/WorldClassDeliveryArchive';
+import { FleetPredatorPage } from '@/components/fleet/FleetPredatorPage';
 import { supabase } from '@/integrations/supabase/client';
-import { format, startOfWeek, endOfWeek, subDays, addDays } from 'date-fns';
+import { format, startOfWeek, endOfWeek, subDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
 // ─────────────────────────────────────────────────────
 const T = {
-  gold: '#FFD700', goldDim: 'rgba(255,215,0,0.15)', goldGlow: 'rgba(255,215,0,0.25)', goldBorder: 'rgba(255,215,0,0.3)',
+  gold: '#D4A843', goldGlow: 'rgba(212,168,67,0.16)', goldBorder: 'rgba(212,168,67,0.28)',
   navy: '#0B1120', cardBg: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', cardBorder: '#1E2D4A',
-  success: '#10B981', warning: '#F59E0B', danger: '#EF4444', info: '#3B82F6', purple: '#8B5CF6', pink: '#EC4899',
-  textPri: '#F1F5F9', textSec: '#94A3B8', textDim: '#64748B',
+  success: '#22C55E', warning: '#F59E0B', danger: '#EF4444', info: '#3B82F6',
+  textPri: '#F1F5F9', textSec: '#94A3B8', textDim: '#9CA3AF',
 };
-
-const PRODUCT_COLORS: Record<string, string> = { B25: T.gold, B30: T.info, B35: T.success, B40: T.purple, Spécial: T.pink };
+const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
 
 // ─────────────────────────────────────────────────────
 // HOOKS
 // ─────────────────────────────────────────────────────
 function useAnimatedCounter(target: number, duration = 1000) {
   const [value, setValue] = useState(0);
-  const rafRef = useRef<number>();
+  const raf = useRef<number>();
   useEffect(() => {
     const start = performance.now();
-    const animate = (now: number) => {
+    const run = (now: number) => {
       const p = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
-      setValue(Math.round(eased * target * 10) / 10);
-      if (p < 1) rafRef.current = requestAnimationFrame(animate);
+      setValue(Math.round((1 - Math.pow(1 - p, 3)) * target * 10) / 10);
+      if (p < 1) raf.current = requestAnimationFrame(run);
     };
-    rafRef.current = requestAnimationFrame(animate);
-    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+    raf.current = requestAnimationFrame(run);
+    return () => { if (raf.current) cancelAnimationFrame(raf.current); };
   }, [target, duration]);
   return value;
 }
@@ -52,7 +52,6 @@ function useDeliveriesLiveData() {
   const [allBons, setAllBons] = useState<any[]>([]);
   const [fleet, setFleet] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
   const today = format(new Date(), 'yyyy-MM-dd');
   const weekStart = format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
   const weekEnd = format(endOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
@@ -61,7 +60,7 @@ function useDeliveriesLiveData() {
   const fetchAll = useCallback(async () => {
     try {
       const [bonsRes, weekRes, allRes, fleetRes] = await Promise.all([
-        supabase.from('bons_livraison_reels').select('bl_id, client_id, volume_m3, workflow_status, heure_prevue, camion_assigne, chauffeur_nom, formule_id, date_livraison, heure_depart_centrale, heure_arrivee_chantier').eq('date_livraison', today),
+        supabase.from('bons_livraison_reels').select('bl_id, client_id, volume_m3, workflow_status, heure_prevue, camion_assigne, chauffeur_nom, formule_id, date_livraison, heure_depart_centrale, heure_arrivee_chantier, prix_vente_m3').eq('date_livraison', today),
         supabase.from('bons_livraison_reels').select('bl_id, volume_m3, date_livraison, workflow_status').gte('date_livraison', weekStart).lte('date_livraison', weekEnd),
         supabase.from('bons_livraison_reels').select('bl_id, volume_m3, date_livraison, workflow_status').gte('date_livraison', last7Start).order('date_livraison', { ascending: true }),
         supabase.from('flotte').select('id_camion, immatriculation, statut, chauffeur_actuel').limit(20),
@@ -70,7 +69,7 @@ function useDeliveriesLiveData() {
       setWeekBons(weekRes.data || []);
       setAllBons(allRes.data || []);
       setFleet(fleetRes.data || []);
-    } catch (e) { console.error('WorldClassDeliveries fetch error:', e); }
+    } catch (e) { console.error('Deliveries fetch error:', e); }
     finally { setLoading(false); }
   }, [today, weekStart, weekEnd, last7Start]);
 
@@ -87,37 +86,26 @@ function useDeliveriesLiveData() {
 }
 
 // ─────────────────────────────────────────────────────
-// UI COMPONENTS
+// UI PRIMITIVES
 // ─────────────────────────────────────────────────────
-function Card({ children, style = {}, className = '' }: { children: React.ReactNode; style?: React.CSSProperties; className?: string }) {
+function Card({ children, style = {} }: { children: React.ReactNode; style?: React.CSSProperties }) {
   const [hov, setHov] = useState(false);
-  const [press, setPress] = useState(false);
   return (
-    <div className={className} onMouseEnter={() => setHov(true)} onMouseLeave={() => { setHov(false); setPress(false); }} onMouseDown={() => setPress(true)} onMouseUp={() => setPress(false)}
+    <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
       style={{ background: T.cardBg, border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`, borderRadius: 14, padding: 20, position: 'relative', overflow: 'hidden',
-        transform: press ? 'translateY(-1px) scale(0.995)' : hov ? 'translateY(-3px) scale(1.005)' : 'none',
-        boxShadow: hov ? `0 8px 24px rgba(0,0,0,0.25), 0 0 20px ${T.goldGlow}` : '0 4px 12px rgba(0,0,0,0.15)',
-        transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)', ...style }}>
-      {/* Gold top border */}
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${T.gold}, transparent)`, opacity: hov ? 1 : 0.5, transition: 'opacity 200ms' }} />
+        transform: hov ? 'translateY(-2px)' : 'none',
+        boxShadow: hov ? `0 8px 24px rgba(0,0,0,0.25), 0 0 16px ${T.goldGlow}` : '0 4px 12px rgba(0,0,0,0.15)',
+        transition: 'all 250ms cubic-bezier(0.4,0,0.2,1)', ...style }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${T.gold}, transparent)`, opacity: hov ? 1 : 0.4, transition: 'opacity 250ms' }} />
       {children}
     </div>
   );
 }
 
-function GoldBorderCard({ children, style = {}, className = '' }: { children: React.ReactNode; style?: React.CSSProperties; className?: string }) {
+function Bdg({ label, color, bg, pulse }: { label: string; color: string; bg: string; pulse?: boolean }) {
   return (
-    <div className={className} style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: 20, position: 'relative', overflow: 'hidden', ...style }}>
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent 0%, ${T.gold} 50%, transparent 100%)` }} />
-      {children}
-    </div>
-  );
-}
-
-function Badge({ label, color, bg, pulse = false }: { label: string; color: string; bg: string; pulse?: boolean }) {
-  return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px', borderRadius: 999, background: bg, border: `1px solid ${color}40`, color, fontSize: 10, fontWeight: 700, letterSpacing: '0.05em', animation: pulse ? 'tbos-pulse 2.5s infinite' : 'none', flexShrink: 0 }}>
-      <span style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 4, background: bg, border: `1px solid ${color}40`, color, fontSize: 11, fontFamily: MONO, fontWeight: 700, letterSpacing: '0.04em', flexShrink: 0 }}>
+      <span style={{ width: 5, height: 5, borderRadius: '50%', background: color, flexShrink: 0, animation: pulse ? 'tbos-pulse 1.5s ease-in-out infinite' : 'none' }} />
       {label}
     </span>
   );
@@ -127,167 +115,56 @@ function SectionHeader({ icon: Icon, label, right }: { icon: any; label: string;
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
       <Icon size={16} color={T.gold} />
-      <span style={{ color: T.gold, fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '2px' }}>{label}</span>
+      <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>{label}</span>
       <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
       {right}
     </div>
   );
 }
 
+function IABadge() {
+  return (
+    <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', padding: '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4, background: 'rgba(212,168,67,0.06)' }}>
+      Généré par IA · Claude Opus
+    </span>
+  );
+}
+
 function LiveClock() {
   const [time, setTime] = useState(new Date());
   useEffect(() => { const id = setInterval(() => setTime(new Date()), 1000); return () => clearInterval(id); }, []);
-  return <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 600, color: T.textSec }}>{time.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>;
+  return <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 600, color: T.gold }}>{time.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>;
 }
 
-function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive, delay = 0 }: { label: string; value: number; suffix: string; color: string; icon: any; trend: string; trendPositive: boolean; delay?: number }) {
-  const animated = useAnimatedCounter(value, 1200);
+// ─────────────────────────────────────────────────────
+// KPI CARD
+// ─────────────────────────────────────────────────────
+function KPICard({ label, value, color, subtitle, delay = 0 }: { label: string; value: string; color: string; subtitle?: string; delay?: number }) {
   const [visible, setVisible] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
   return (
-    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out', height: '100%' }}>
-      <GoldBorderCard style={{
-        height: '100%', borderLeft: '3px solid #D4A843', padding: '20px 18px',
+    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(16px)', transition: 'all 500ms ease-out' }}>
+      <div style={{
+        background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '18px 16px',
+        borderTop: `2px solid ${T.gold}`,
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</p>
-            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 36, fontWeight: 200, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em', WebkitFontSmoothing: 'antialiased' as any }}>
-              {suffix === 'm³' ? animated.toFixed(1) : Math.round(animated)}
-              <span style={{ fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>{suffix}</span>
-            </p>
-            <p style={{ fontSize: 12, color: trendPositive ? '#10B981' : '#EF4444', marginTop: 6, fontWeight: 500 }}>{trendPositive ? '↑' : '↓'} {trend}</p>
-          </div>
-          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(255, 215, 0, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon size={18} color="#FFD700" />
-          </div>
-        </div>
-      </GoldBorderCard>
-    </div>
-  );
-}
-function getStatusDisplay(ws: string | null) {
-  if (ws === 'validation_technique') return { label: 'Livré', color: T.success };
-  if (ws === 'production') return { label: 'En route', color: T.info };
-  if (ws === 'planification') return { label: 'Planifié', color: T.warning };
-  return { label: ws || 'N/A', color: T.textDim };
-}
-
-function PipelineCard({ label, count, color, icon: Icon, delay = 0, aiRisk }: { label: string; count: number; color: string; icon: any; delay?: number; aiRisk?: { label: string; pct: number } }) {
-  const [visible, setVisible] = useState(false);
-  const animated = useAnimatedCounter(count, 800);
-  useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
-  const riskColor = aiRisk ? (aiRisk.pct > 60 ? '#ef4444' : aiRisk.pct > 30 ? '#f59e0b' : '#22c55e') : '#22c55e';
-  return (
-    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'scale(1)' : 'scale(0.9)', transition: 'all 500ms ease-out', flex: 1 }}>
-      <Card style={{ textAlign: 'center', padding: '24px 16px' }}>
-        <div style={{ width: 52, height: 52, borderRadius: '50%', background: `${color}18`, border: `2px solid ${color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', animation: count > 0 ? 'tbos-pulse 3s infinite' : 'none' }}>
-          <Icon size={22} color={color} />
-        </div>
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 800, color, lineHeight: 1 }}>{Math.round(animated)}</p>
-        <p style={{ color: T.textSec, fontSize: 12, fontWeight: 600, marginTop: 6 }}>{label}</p>
-        {aiRisk && (
-          <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-            <span style={{
-              fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 4,
-              background: `${riskColor}18`, color: riskColor, border: `1px solid ${riskColor}40`,
-            }}>
-              {aiRisk.label} {aiRisk.pct}%
-            </span>
-            <span style={{ fontSize: 10, color: '#D4A843' }}>Analysé par IA</span>
-          </div>
-        )}
-      </Card>
-    </div>
-  );
-}
-
-function DeliveryRow({ d, delay = 0 }: { d: any; delay?: number }) {
-  const [visible, setVisible] = useState(false);
-  const [hov, setHov] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
-  const status = getStatusDisplay(d.workflow_status);
-  const isPulsing = d.workflow_status === 'production';
-
-  return (
-    <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      style={{ opacity: visible ? 1 : 0, transform: visible ? (hov ? 'translateX(4px)' : 'translateY(0)') : 'translateY(20px)', transition: 'all 400ms ease-out',
-        background: T.cardBg, border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`, borderLeft: `4px solid ${status.color}`, borderRadius: 10, padding: '14px 18px',
-        boxShadow: hov ? `0 4px 20px rgba(0,0,0,0.2), 0 0 12px ${T.goldGlow}` : '0 2px 8px rgba(0,0,0,0.1)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-        <div style={{ minWidth: 160 }}>
-          <p style={{ color: T.textDim, fontSize: 11, marginBottom: 2 }}>{d.bl_id}</p>
-          <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>{d.client_id?.substring(0, 8) || 'N/A'}</p>
-          {d._destination && <p style={{ fontSize: 10, color: T.textSec, marginTop: 2 }}>{d._destination}</p>}
-        </div>
-        <span style={{ padding: '2px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700, background: `${T.gold}18`, color: T.gold, border: `1px solid ${T.gold}40` }}>{d.formule_id || '—'}</span>
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 16, fontWeight: 700, color: T.gold }}>{d.volume_m3} m³</p>
-        {d.camion_assigne && <span style={{ padding: '2px 8px', borderRadius: 6, background: `${T.info}18`, color: T.info, fontSize: 11, fontWeight: 600, border: `1px solid ${T.info}30` }}>{d.camion_assigne}</span>}
-        {d.chauffeur_nom && <span style={{ color: T.textDim, fontSize: 11 }}>{d.chauffeur_nom}</span>}
-        {d.heure_prevue && <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} color={T.textDim} /><span style={{ color: T.textDim, fontSize: 11 }}>{d.heure_prevue}</span></div>}
-        {d._eta && <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, fontWeight: 600, color: '#D4A843', background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.25)', padding: '2px 8px', borderRadius: 4 }}>{d._eta}</span>}
-        <div style={{ marginLeft: 'auto' }}>
-          <Badge label={status.label} color={status.color} bg={`${status.color}18`} pulse={isPulsing} />
-        </div>
+        <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 8 }}>{label}</p>
+        <p style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color, margin: 0, lineHeight: 1, letterSpacing: '-0.02em' }}>{value}</p>
+        {subtitle && <p style={{ fontSize: 11, color: subtitle.includes('↑') || subtitle.includes('+') || subtitle.includes('marge') || subtitle.includes('livrée') ? T.success : subtitle.includes('maintenance') ? T.warning : T.textDim, marginTop: 6 }}>{subtitle}</p>}
       </div>
     </div>
   );
 }
 
-function FleetCard({ truck, delay = 0 }: { truck: any; delay?: number }) {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
-  const statusColor = truck.statut === 'disponible' ? T.success : truck.statut === 'en_mission' ? T.info : T.warning;
-  const statusLabel = truck.statut === 'disponible' ? 'Disponible' : truck.statut === 'en_mission' ? 'En mission' : truck.statut || 'N/A';
-
-  return (
-    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 500ms ease-out' }}>
-      <Card>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 14 }}>
-          <div style={{ width: 44, height: 44, borderRadius: 12, background: `${statusColor}18`, border: `1px solid ${statusColor}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Truck size={20} color={statusColor} />
-          </div>
-          <div style={{ flex: 1 }}>
-            <p style={{ fontWeight: 700, fontSize: 15, color: T.textPri, marginBottom: 4 }}>{truck.immatriculation || truck.id_camion}</p>
-            <Badge label={statusLabel} color={statusColor} bg={`${statusColor}18`} pulse={truck.statut === 'en_mission'} />
-          </div>
-        </div>
-        {truck.chauffeur_actuel && <p style={{ color: T.textSec, fontSize: 12 }}>{truck.chauffeur_actuel}</p>}
-      </Card>
-    </div>
-  );
-}
-
-function CustomTooltip({ active, payload, label }: any) {
-  if (!active || !payload?.length) return null;
-  return (
-    <div style={{ background: '#162036', border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '10px 14px', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
-      <p style={{ color: T.gold, fontWeight: 700, marginBottom: 6 }}>{label}</p>
-      {payload.map((p: any) => (
-        <p key={p.dataKey} style={{ color: p.color, fontSize: 12, marginBottom: 2 }}>{p.name}: <strong>{p.value}</strong></p>
-      ))}
-    </div>
-  );
-}
-
 // ─────────────────────────────────────────────────────
-// FLEET HEALTH DATA
+// SCORE RING
 // ─────────────────────────────────────────────────────
-const FLEET_HEALTH_DATA = [
-  { name: 'T-04 Toupie 8m³', score: 92, insight: 'RAS — véhicule optimal', fullDiag: 'Moteur: optimal · Pneus: 85% · Vidange: OK (il y a 12j) · Batterie: 98% · Freins: 90%' },
-  { name: 'T-07 Toupie 10m³', score: 74, insight: 'Vidange recommandée dans 5j', fullDiag: 'Moteur: bon · Pneus: 72% · Vidange: URGENT (dans 5j / 800km) · Batterie: 91% · Freins: 78%' },
-  { name: 'T-09 Toupie 8m³', score: 58, insight: 'Pneus à vérifier — usure détectée', fullDiag: 'Moteur: attention · Pneus: 35% CRITIQUE · Vidange: OK · Batterie: 84% · Freins: 65% — vibrations détectées' },
-  { name: 'T-12 Toupie 8m³', score: 86, insight: 'Visite technique dans 3 semaines', fullDiag: 'Moteur: optimal · Pneus: 80% · Vidange: OK · Batterie: 95% · Freins: 88% · VT prévue 28/03' },
-];
-
-// ─────────────────────────────────────────────────────
-// CIRCULAR PROGRESS RING
-// ─────────────────────────────────────────────────────
-function ScoreRing({ score, color, size = 72 }: { score: number; color: string; size?: number }) {
+function ScoreRing({ score, size = 72 }: { score: number; size?: number }) {
   const strokeWidth = 4;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;
+  const color = score >= 80 ? T.gold : score >= 60 ? T.warning : T.danger;
   return (
     <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
       <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={strokeWidth} />
@@ -298,82 +175,155 @@ function ScoreRing({ score, color, size = 72 }: { score: number; color: string; 
   );
 }
 
+// ─────────────────────────────────────────────────────
+// FLEET HEALTH DATA
+// ─────────────────────────────────────────────────────
+const FLEET_HEALTH_DATA = [
+  { name: 'T-04 Toupie 8m³', score: 92, insight: 'RAS — véhicule optimal', fullDiag: 'Moteur: optimal · Pneus: 85% · Vidange: OK (il y a 12j) · Batterie: 98% · Freins: 90%', revenue: '18,200 DH' },
+  { name: 'T-07 Toupie 10m³', score: 74, insight: 'Vidange recommandée dans 5j', fullDiag: 'Moteur: bon · Pneus: 72% · Vidange: URGENT (dans 5j / 800km) · Batterie: 91% · Freins: 78%', revenue: '12,460 DH' },
+  { name: 'T-09 Toupie 8m³', score: 58, insight: '⚠ Pneus à vérifier — usure détectée', fullDiag: 'Moteur: attention · Pneus: 35% CRITIQUE · Vidange: OK · Batterie: 84% · Freins: 65% — vibrations détectées', revenue: '0 DH' },
+  { name: 'T-12 Toupie 8m³', score: 86, insight: 'Visite technique dans 3 semaines', fullDiag: 'Moteur: optimal · Pneus: 80% · Vidange: OK · Batterie: 95% · Freins: 88% · VT prévue 28/03', revenue: '8,300 DH' },
+];
+
 function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; delay?: number }) {
   const [visible, setVisible] = useState(false);
   const [hov, setHov] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
-  const sc = v.score >= 80 ? '#22c55e' : v.score >= 60 ? '#f59e0b' : '#ef4444';
-  const isActive = v.score >= 60;
+  const borderColor = v.score >= 80 ? T.success : v.score >= 60 ? T.warning : T.danger;
+  const isLow = v.score < 60;
 
   return (
     <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(16px)', transition: 'all 500ms ease-out' }}
       onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}>
-      <GoldBorderCard style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 8, transition: 'all 200ms ease', transform: hov ? 'translateY(-2px)' : 'none', boxShadow: hov ? `0 8px 24px rgba(0,0,0,0.25), 0 0 12px ${sc}30` : 'none' }}>
+      <div style={{
+        background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: '20px 16px',
+        borderTop: `2px solid ${borderColor}`,
+        display: 'flex', flexDirection: 'column', gap: 8,
+        transition: 'all 250ms ease', transform: hov ? 'translateY(-2px)' : 'none',
+        boxShadow: hov ? `0 8px 24px rgba(0,0,0,0.25), 0 0 12px ${borderColor}30` : 'none',
+      }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{v.name}</span>
+          <span style={{ fontFamily: MONO, fontWeight: 700, fontSize: 13, color: T.textPri }}>{v.name}</span>
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ width: 10, height: 10, borderRadius: '50%', background: sc, boxShadow: `0 0 8px ${sc}60` }} />
-            {isActive && (
-              <div style={{
-                position: 'absolute', width: 18, height: 18, borderRadius: '50%', border: `2px solid ${sc}`,
-                animation: 'tbos-pulse 2s infinite', opacity: 0.5,
-              }} />
-            )}
+            <div style={{ width: 10, height: 10, borderRadius: '50%', background: borderColor, boxShadow: `0 0 8px ${borderColor}60` }} />
+            {isLow && <div style={{ position: 'absolute', width: 18, height: 18, borderRadius: '50%', border: `2px solid ${T.danger}`, animation: 'tbos-pulse 2s infinite', opacity: 0.5 }} />}
           </div>
         </div>
-        {/* Score with circular ring */}
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', padding: '4px 0' }}>
-          <ScoreRing score={v.score} color={sc} size={72} />
-          <span style={{
-            position: 'absolute', fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
-            fontSize: 26, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1, color: sc,
-            WebkitFontSmoothing: 'antialiased' as any,
-          }}>
+          <ScoreRing score={v.score} size={72} />
+          <span style={{ position: 'absolute', fontFamily: MONO, fontSize: 32, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1, color: v.score >= 80 ? T.gold : v.score >= 60 ? T.warning : T.danger }}>
             {v.score}
           </span>
         </div>
-        <span style={{ fontSize: 11, color: T.textSec, textAlign: 'center', lineHeight: 1.4 }}>{v.insight}</span>
-        {/* Expanded diagnostic on hover */}
-        <div style={{
-          maxHeight: hov ? 60 : 0, opacity: hov ? 1 : 0, overflow: 'hidden',
-          transition: 'max-height 0.3s ease, opacity 0.2s ease',
-        }}>
-          <div style={{ fontSize: 10, color: T.textDim, textAlign: 'center', lineHeight: 1.6, paddingTop: 6, borderTop: `1px solid ${T.cardBorder}` }}>
-            {v.fullDiag}
-          </div>
+        <span style={{ fontSize: 11, color: isLow ? T.danger : T.textSec, textAlign: 'center', lineHeight: 1.4 }}>{v.insight}</span>
+        <div style={{ maxHeight: hov ? 60 : 0, opacity: hov ? 1 : 0, overflow: 'hidden', transition: 'max-height 0.3s ease, opacity 0.2s ease' }}>
+          <div style={{ fontSize: 10, color: T.textDim, textAlign: 'center', lineHeight: 1.6, paddingTop: 6, borderTop: `1px solid ${T.cardBorder}` }}>{v.fullDiag}</div>
         </div>
-        <span style={{ fontSize: 10, color: '#D4A843', textAlign: 'center' }}>Diagnostic IA</span>
-      </GoldBorderCard>
+        <IABadge />
+        <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textAlign: 'center', margin: 0 }}>Revenu/jour: {v.revenue}</p>
+      </div>
     </div>
   );
 }
 
 // ─────────────────────────────────────────────────────
-// SEEDED DELIVERIES (fallback when no live data)
+// SEEDED DELIVERIES
 // ─────────────────────────────────────────────────────
 const SEEDED_DELIVERIES = [
-  {
-    bl_id: 'BL-2024-A8F3', client_id: 'Résidences Atlas', formule_id: 'B30',
-    volume_m3: 12, camion_assigne: 'T-04', chauffeur_nom: 'Youssef Benali',
-    workflow_status: 'production', heure_prevue: '10:30',
-    _destination: 'Chantier Maarif — Casablanca', _eta: '≈ 14 min',
-  },
-  {
-    bl_id: 'BL-2024-C1D7', client_id: 'Groupe Addoha', formule_id: 'B25',
-    volume_m3: 8, camion_assigne: 'T-07', chauffeur_nom: 'Karim Idrissi',
-    workflow_status: 'validation_technique', heure_prevue: '08:15',
-    _destination: 'Résidence Rabat Center', _eta: 'Livré à 09:02',
-  },
-  {
-    bl_id: 'BL-2024-E5B2', client_id: 'Saham Immobilier', formule_id: 'B35',
-    volume_m3: 10, camion_assigne: 'T-12', chauffeur_nom: 'Mehdi Tazi',
-    workflow_status: 'planification', heure_prevue: '14:00',
-    _destination: 'Marina Kénitra — Lot 7', _eta: 'Départ prévu 13:45',
-  },
+  { bl_id: 'BL-2024-A8F3', client_id: 'Résidences Atlas', formule_id: 'B30', volume_m3: 12, camion_assigne: 'T-04', chauffeur_nom: 'Youssef Benali', workflow_status: 'production', heure_prevue: '10:30', _destination: 'Chantier Maarif — Casablanca', _eta: '≈ 14 min', _delay: '+14 min' },
+  { bl_id: 'BL-2024-C1D7', client_id: 'Groupe Addoha', formule_id: 'B25', volume_m3: 8, camion_assigne: 'T-07', chauffeur_nom: 'Karim Idrissi', workflow_status: 'validation_technique', heure_prevue: '08:15', _destination: 'Résidence Rabat Center', _eta: 'Livré à 09:02' },
+  { bl_id: 'BL-2024-E5B2', client_id: 'Saham Immobilier', formule_id: 'B35', volume_m3: 10, camion_assigne: 'T-12', chauffeur_nom: 'Mehdi Tazi', workflow_status: 'planification', heure_prevue: '14:00', _destination: 'Marina Kénitra — Lot 7', _eta: 'Départ prévu 13:45' },
 ];
 
+function getStatusDisplay(ws: string | null) {
+  if (ws === 'validation_technique') return { label: 'Livré', color: T.success, style: 'outline' as const };
+  if (ws === 'production') return { label: 'En route', color: T.gold, style: 'pulse' as const };
+  if (ws === 'planification') return { label: 'Planifié', color: T.textDim, style: 'outline' as const };
+  return { label: ws || 'N/A', color: T.textDim, style: 'outline' as const };
+}
+
+function DeliveryCard({ d, index }: { d: any; index: number }) {
+  const [hov, setHov] = useState(false);
+  const status = getStatusDisplay(d.workflow_status);
+  const isOdd = index % 2 !== 0;
+
+  const formulaColor: Record<string, string> = { B25: T.gold, B30: '#3B82F6', B35: T.success, B40: '#8B5CF6' };
+  const fColor = formulaColor[d.formule_id] || T.gold;
+
+  return (
+    <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      style={{
+        background: isOdd ? 'rgba(212,168,67,0.03)' : T.cardBg,
+        border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`,
+        borderLeft: `4px solid ${status.color}`, borderRadius: 10, padding: '14px 18px',
+        boxShadow: hov ? `0 4px 20px rgba(0,0,0,0.2), 0 0 12px ${T.goldGlow}` : '0 2px 8px rgba(0,0,0,0.1)',
+        transition: 'all 250ms', transform: hov ? 'translateX(4px)' : 'none',
+      }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+        <div style={{ minWidth: 160 }}>
+          <p style={{ fontFamily: MONO, color: T.gold, fontSize: 12, marginBottom: 2 }}>{d.bl_id}</p>
+          <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>{d.client_id?.substring(0, 20) || 'N/A'}</p>
+          {d._destination && <p style={{ fontSize: 10, color: T.textSec, marginTop: 2 }}>{d._destination}</p>}
+        </div>
+        <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, fontFamily: MONO, fontWeight: 700, background: `${fColor}18`, color: fColor, border: `1px solid ${fColor}40` }}>{d.formule_id || '—'}</span>
+        <p style={{ fontFamily: MONO, fontSize: 16, fontWeight: 200, color: T.gold }}>{d.volume_m3} m³</p>
+        {d.camion_assigne && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, fontFamily: MONO, fontWeight: 700, background: 'transparent', border: `1px solid ${T.gold}40`, color: T.gold }}>{d.camion_assigne}</span>}
+        {d.chauffeur_nom && <span style={{ color: T.textDim, fontSize: 11 }}>{d.chauffeur_nom}</span>}
+        {d.heure_prevue && <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} color={T.textDim} /><span style={{ color: T.textDim, fontSize: 11 }}>{d.heure_prevue}</span></div>}
+        {d._delay && <span style={{ fontFamily: MONO, fontSize: 10, padding: '2px 6px', borderRadius: 4, background: 'rgba(239,68,68,0.15)', color: T.danger, border: `1px solid ${T.danger}40` }}>{d._delay}</span>}
+        <div style={{ marginLeft: 'auto' }}>
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 4,
+            background: status.style === 'pulse' ? `${status.color}18` : 'transparent',
+            border: `1px solid ${status.color}40`, color: status.color, fontSize: 11, fontFamily: MONO, fontWeight: 700,
+            animation: status.style === 'pulse' ? 'tbos-pulse 2.5s infinite' : 'none',
+          }}>
+            <span style={{ width: 5, height: 5, borderRadius: '50%', background: status.color }} />
+            {status.label}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─────────────────────────────────────────────────────
-// SEEDED WEEKLY DATA (fallback)
+// PIPELINE CARD
+// ─────────────────────────────────────────────────────
+function PipelineCard({ label, count, color, aiRisk, delay = 0 }: { label: string; count: number; color: string; aiRisk: { label: string; pct: number }; delay?: number }) {
+  const animated = useAnimatedCounter(count, 800);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
+  const riskColor = aiRisk.pct > 60 ? T.danger : aiRisk.pct > 30 ? T.warning : T.success;
+  return (
+    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'scale(1)' : 'scale(0.9)', transition: 'all 500ms ease-out', flex: 1 }}>
+      <Card style={{ textAlign: 'center', padding: '24px 16px' }}>
+        <p style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color, lineHeight: 1 }}>{Math.round(animated)}</p>
+        <p style={{ fontFamily: MONO, fontSize: 11, color: T.textSec, fontWeight: 600, marginTop: 8, letterSpacing: '1.5px', textTransform: 'uppercase' as const }}>{label}</p>
+        <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+          <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: 'transparent', color: riskColor, border: `1px solid ${riskColor}40` }}>
+            {aiRisk.label} {aiRisk.pct}%
+          </span>
+          <IABadge />
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
+// PROFIT DATA
+// ─────────────────────────────────────────────────────
+const PROFIT_DATA = [
+  { toupie: 'T-04', chauffeur: 'Youssef Benali', livraisons: 3, km: 127, revenu: 18200, carburant: -2400, maintenance: -800, tempsMort: '15 min', profit: 15000, dhKm: 118, badge: 'TOP', badgeColor: T.success },
+  { toupie: 'T-07', chauffeur: 'Karim Idrissi', livraisons: 2, km: 98, revenu: 12460, carburant: -1850, maintenance: -600, tempsMort: '22 min', profit: 10010, dhKm: 102, badge: '', badgeColor: T.success },
+  { toupie: 'T-12', chauffeur: 'Mehdi Tazi', livraisons: 1, km: 45, revenu: 8300, carburant: -950, maintenance: -400, tempsMort: '0 min', profit: 6950, dhKm: 154, badge: 'EFFICACE', badgeColor: T.gold },
+  { toupie: 'T-09', chauffeur: '—', livraisons: 0, km: 0, revenu: 0, carburant: 0, maintenance: -1200, tempsMort: 'MAINTENANCE', profit: -1200, dhKm: 0, badge: 'ARRÊT', badgeColor: T.danger },
+];
+const PROFIT_TOTALS = { toupie: 'TOTAL FLOTTE', chauffeur: '—', livraisons: 6, km: 270, revenu: 38960, carburant: -5200, maintenance: -3000, tempsMort: '—', profit: 30760, dhKm: 114 };
+
+// ─────────────────────────────────────────────────────
+// WEEKLY PERFORMANCE DATA
 // ─────────────────────────────────────────────────────
 function buildSeededWeeklyData() {
   const data = [];
@@ -382,13 +332,14 @@ function buildSeededWeeklyData() {
     const dayLabel = format(d, 'EEE dd/MM', { locale: fr });
     const counts = [5, 7, 4, 8, 6, 3, 2];
     const volumes = [42, 58, 35, 68, 50, 24, 16];
-    data.push({ day: dayLabel, livraisons: counts[6 - i], volume: volumes[6 - i] });
+    const revenue = [6300, 8700, 5250, 10200, 7500, 3600, 2400];
+    data.push({ day: dayLabel, livraisons: counts[6 - i], volume: volumes[6 - i], revenue: revenue[6 - i] });
   }
   return data;
 }
 
 // ─────────────────────────────────────────────────────
-// FORECAST 14J MOCK DATA
+// FORECAST DATA
 // ─────────────────────────────────────────────────────
 const FORECAST_14J = [
   { jour: 'J1', réel: 12, prévu: 11, upper: 14, lowerInv: -8 },
@@ -407,18 +358,49 @@ const FORECAST_14J = [
   { jour: 'J14', réel: null, prévu: 12, upper: 15, lowerInv: -9 },
 ];
 
+// ─────────────────────────────────────────────────────
+// TOOLTIPS
+// ─────────────────────────────────────────────────────
+function CustomTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{ background: '#1A2540', border: `1px solid ${T.goldBorder}`, borderRadius: 10, padding: '10px 14px' }}>
+      <p style={{ color: T.gold, fontWeight: 700, fontSize: 12, marginBottom: 6, fontFamily: MONO }}>{label}</p>
+      {payload.map((p: any) => (
+        <p key={p.dataKey} style={{ color: p.color, fontSize: 12, margin: '2px 0' }}>{p.name}: <strong style={{ fontFamily: MONO }}>{p.value}</strong></p>
+      ))}
+    </div>
+  );
+}
+
 function ForecastTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: '#162036', border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '10px 14px', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
-      <p style={{ color: '#D4A843', fontWeight: 700, marginBottom: 6 }}>{label}</p>
+    <div style={{ background: '#1A2540', border: `1px solid ${T.goldBorder}`, borderRadius: 10, padding: '10px 14px' }}>
+      <p style={{ color: T.gold, fontWeight: 700, marginBottom: 6, fontFamily: MONO }}>{label}</p>
       {payload.filter((p: any) => p.dataKey === 'réel' || p.dataKey === 'prévu').map((p: any) => (
-        <p key={p.dataKey} style={{ color: p.dataKey === 'réel' ? '#D4A843' : 'rgba(212,168,67,0.6)', fontSize: 12, marginBottom: 2 }}>
-          {p.name}: <strong>{p.value ?? '—'}</strong>
+        <p key={p.dataKey} style={{ color: p.dataKey === 'réel' ? T.gold : T.textDim, fontSize: 12, margin: '2px 0' }}>
+          {p.name}: <strong style={{ fontFamily: MONO }}>{p.value ?? '—'}</strong>
         </p>
       ))}
     </div>
   );
+}
+
+// Pulse dot for latest data point
+function LinePulseDot(color: string, total: number) {
+  return (props: any) => {
+    if (props.index !== total - 1) return null;
+    return (
+      <g>
+        <circle cx={props.cx} cy={props.cy} r={5} fill={color} />
+        <circle cx={props.cx} cy={props.cy} r={8} fill="none" stroke={color} strokeWidth={1.5} opacity={0.5}>
+          <animate attributeName="r" from="5" to="14" dur="1.5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" from="0.6" to="0" dur="1.5s" repeatCount="indefinite" />
+        </circle>
+      </g>
+    );
+  };
 }
 
 // ─────────────────────────────────────────────────────
@@ -428,73 +410,38 @@ function LogisticsBriefingBanner({ totalDeliveries, enRoute, planned }: { totalD
   const [expanded, setExpanded] = useState(true);
   return (
     <section>
-      <style>{`
-        @keyframes gold-shimmer-border {
-          0% { border-color: rgba(212,168,67,0.2); box-shadow: 0 0 0 rgba(212,168,67,0); }
-          50% { border-color: rgba(212,168,67,0.5); box-shadow: 0 0 20px rgba(212,168,67,0.08); }
-          100% { border-color: rgba(212,168,67,0.2); box-shadow: 0 0 0 rgba(212,168,67,0); }
-        }
-      `}</style>
-      <div
-        style={{
-          background: 'rgba(212,168,67,0.08)',
-          border: '1px solid rgba(212,168,67,0.2)',
-          borderLeft: '4px solid #D4A843',
-          borderRadius: 10,
-          overflow: 'hidden',
-          transition: 'all 0.3s ease',
-          animation: 'gold-shimmer-border 4s ease-in-out infinite',
-        }}
-      >
-        {/* Header — always visible */}
-        <button
-          onClick={() => setExpanded(e => !e)}
-          style={{
-            width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '14px 18px',
-            background: 'transparent', border: 'none', cursor: 'pointer', color: T.textPri,
-          }}
-        >
-          <Zap size={16} color="#D4A843" fill="#D4A843" />
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: '#D4A843', flex: 1, textAlign: 'left' }}>
+      <div style={{
+        background: 'rgba(212,168,67,0.03)', border: '1px solid rgba(212,168,67,0.2)',
+        borderLeft: '4px solid #D4A843', borderTop: '2px solid #D4A843',
+        borderRadius: 10, overflow: 'hidden',
+      }}>
+        <button onClick={() => setExpanded(e => !e)} style={{
+          width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '14px 18px',
+          background: 'transparent', border: 'none', cursor: 'pointer', color: T.textPri,
+        }}>
+          <Brain size={16} color={T.gold} />
+          <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: '0.15em', color: T.gold, flex: 1, textAlign: 'left' }}>
             BRIEFING LOGISTIQUE IA
           </span>
-          {/* AI source badge */}
-          <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 4,
-            background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.3)',
-            borderRadius: 6, padding: '3px 10px', fontSize: 10, fontWeight: 700,
-            color: '#D4A843', letterSpacing: '0.04em', backdropFilter: 'blur(8px)',
-            marginRight: 8,
-          }}>
-            <Zap size={9} />
-            Généré par IA · Gemini Pro
-          </span>
-          <span style={{ fontSize: 10, color: T.textDim, marginRight: 4 }}>{new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span>
-          <ChevronDown
-            size={16}
-            color={T.textSec}
-            style={{ transition: 'transform 0.3s ease', transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
-          />
+          <IABadge />
+          <ChevronDown size={16} color={T.textSec} style={{ transition: 'transform 0.3s', transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)' }} />
         </button>
-
-        {/* Collapsible body */}
-        <div style={{
-          maxHeight: expanded ? 300 : 0,
-          opacity: expanded ? 1 : 0,
-          overflow: 'hidden',
-          transition: 'max-height 0.35s ease, opacity 0.3s ease',
-          padding: expanded ? '0 18px 16px' : '0 18px',
-        }}>
+        <div style={{ maxHeight: expanded ? 300 : 0, opacity: expanded ? 1 : 0, overflow: 'hidden', transition: 'max-height 0.35s ease, opacity 0.3s ease', padding: expanded ? '0 18px 16px' : '0 18px' }}>
           <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 1.7 }}>
             <p style={{ margin: '0 0 8px' }}>
               📋 <strong style={{ color: T.textPri }}>{totalDeliveries} livraisons planifiées</strong> aujourd'hui — {enRoute} en route, {planned} en préparation.
             </p>
-            <p style={{ margin: '0 0 8px', color: '#F59E0B' }}>
-              ⚠️ <strong>Risque élevé :</strong> Livraison BL-2024-0847 (client Résidences Atlas) — retard estimé 45 min dû au trafic sur l'axe A3. Recommandation : réaffecter toupie T-09.
+            <p style={{ margin: '0 0 8px', color: T.warning }}>
+              ⚠️ <strong>Risque élevé :</strong> Livraison <strong style={{ color: T.gold }}>BL-2024-A8F3</strong> — <strong style={{ color: T.gold }}>retard estimé 45 min</strong> dû au trafic sur l'axe A3. Recommandation : <strong style={{ color: T.gold }}>réaffecter toupie T-09</strong>.
             </p>
             <p style={{ margin: 0, color: 'rgba(255,255,255,0.7)' }}>
-              🚛 <strong style={{ color: T.textPri }}>Déploiement optimal :</strong> 6 toupies actives suffisent pour le volume prévu ({totalDeliveries * 8} m³). Garder T-03 et T-12 en réserve pour les commandes flash après 14h.
+              🚛 <strong style={{ color: T.textPri }}>Déploiement optimal :</strong> 3 toupies actives suffisent pour le volume prévu ({totalDeliveries * 10} m³). Garder T-09 en réserve après maintenance.
             </p>
+          </div>
+          <div style={{ marginTop: 14 }}>
+            <button style={{ background: 'transparent', border: `1px solid ${T.gold}`, color: T.gold, fontSize: 11, fontWeight: 700, padding: '6px 16px', borderRadius: 6, cursor: 'pointer', fontFamily: MONO }}>
+              Voir Recommandations
+            </button>
           </div>
         </div>
       </div>
@@ -503,56 +450,120 @@ function LogisticsBriefingBanner({ totalDeliveries, enRoute, planned }: { totalD
 }
 
 // ─────────────────────────────────────────────────────
-export default function WorldClassDeliveries() {
-  const [activeTab, setActiveTab] = useState('aujourdhui');
-  const tabs = [{ id: 'aujourdhui', label: "Aujourd'hui" }, { id: 'semaine', label: 'Cette semaine' }, { id: 'historique', label: 'Historique' }];
+// GPS TAB CONTENT
+// ─────────────────────────────────────────────────────
+function CarteGPSTab() {
+  const [subTab, setSubTab] = useState('carte');
+  const subTabs = [
+    { id: 'carte', label: 'CARTE LIVE' },
+    { id: 'historique', label: 'HISTORIQUE TRAJETS' },
+    { id: 'zones', label: 'ZONES & PERFORMANCE' },
+  ];
+  
+  const fleetSidebar = [
+    { truck: 'T-04', driver: 'Youssef Benali', status: 'En route', location: 'A3 Casablanca → Maarif', eta: '14 min', speed: '45 km/h', color: T.gold },
+    { truck: 'T-07', driver: 'Karim Idrissi', status: 'Livré', location: 'Rabat Center', eta: '—', speed: '0 km/h', color: T.success },
+    { truck: 'T-12', driver: 'Mehdi Tazi', status: 'Planifié', location: 'Centrale BPE', eta: 'Départ 13:45', speed: '0 km/h', color: T.textDim },
+    { truck: 'T-09', driver: '—', status: 'Maintenance', location: 'Garage', eta: '—', speed: '—', color: T.danger },
+  ];
+  
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {/* Sub-tabs */}
+      <div style={{ display: 'flex', gap: 0, borderBottom: `1px solid ${T.cardBorder}` }}>
+        {subTabs.map(tab => (
+          <button key={tab.id} onClick={() => setSubTab(tab.id)} style={{
+            padding: '10px 20px', background: 'transparent', border: 'none', cursor: 'pointer',
+            fontFamily: MONO, fontSize: 11, letterSpacing: '1.5px', fontWeight: 700,
+            color: subTab === tab.id ? T.gold : T.textDim,
+            borderBottom: subTab === tab.id ? `2px solid ${T.gold}` : '2px solid transparent',
+            transition: 'all 200ms',
+          }}>{tab.label}</button>
+        ))}
+      </div>
 
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20 }}>
+        {/* Map */}
+        <div>
+          {subTab === 'carte' && <FleetPredatorPage />}
+          {subTab === 'historique' && <div style={{ padding: 60, textAlign: 'center', color: T.textDim }}>Historique des trajets — Contenu en cours de déploiement...</div>}
+          {subTab === 'zones' && <div style={{ padding: 60, textAlign: 'center', color: T.textDim }}>Zones & Performance — Contenu en cours de déploiement...</div>}
+        </div>
+
+        {/* Fleet sidebar */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ borderTop: `2px solid ${T.gold}`, background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: '16px 14px' }}>
+            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: '1.5px', marginBottom: 14, textTransform: 'uppercase' as const }}>Flotte GPS</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {fleetSidebar.map(f => (
+                <div key={f.truck} style={{ padding: '12px 10px', background: 'rgba(255,255,255,0.02)', borderRadius: 8, border: `1px solid ${T.cardBorder}`, borderLeft: `3px solid ${f.color}` }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                    <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: T.textPri }}>{f.truck}</span>
+                    <span style={{ fontFamily: MONO, fontSize: 10, padding: '2px 6px', borderRadius: 4, background: `${f.color}18`, color: f.color, border: `1px solid ${f.color}40` }}>{f.status}</span>
+                  </div>
+                  <p style={{ fontFamily: MONO, fontSize: 11, color: T.textSec, margin: '0 0 2px' }}>{f.driver}</p>
+                  <p style={{ fontSize: 10, color: T.textDim, margin: '0 0 2px' }}><MapPin size={9} style={{ display: 'inline', marginRight: 4 }} />{f.location}</p>
+                  <div style={{ display: 'flex', gap: 12, marginTop: 4 }}>
+                    <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>ETA: <span style={{ color: T.textPri }}>{f.eta}</span></span>
+                    <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>Vit: <span style={{ color: T.textPri }}>{f.speed}</span></span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
+// EMPTY TAB PLACEHOLDER
+// ─────────────────────────────────────────────────────
+function EmptyTabPlaceholder({ title, icon: Icon }: { title: string; icon: React.ElementType }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 40px', gap: 16 }}>
+      <div style={{ width: 64, height: 64, borderRadius: 16, background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Icon size={28} color={T.gold} />
+      </div>
+      <p style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: T.gold, textTransform: 'uppercase', letterSpacing: '2px' }}>{title}</p>
+      <p style={{ fontSize: 13, color: T.textDim, textAlign: 'center' }}>Contenu en cours de déploiement...</p>
+    </div>
+  );
+}
+
+// ═════════════════════════════════════════════════════
+// MAIN COMPONENT
+// ═════════════════════════════════════════════════════
+export default function WorldClassDeliveries() {
+  const [activeTab, setActiveTab] = useState('flotte');
   const { todayBons, weekBons, allBons, fleet, loading } = useDeliveriesLiveData();
 
-  // Use seeded deliveries as the active pipeline when no today data
   const activePipeline = todayBons.length > 0 ? todayBons : SEEDED_DELIVERIES;
-  const useSeeded = todayBons.length === 0;
-
-  // KPIs from active pipeline state (not timestamp-filtered)
   const totalDeliveries = activePipeline.length;
-  const totalVolumeLivre = Math.round(activePipeline.reduce((s, b) => s + (b.volume_m3 || 0), 0));
+  const totalVolume = Math.round(activePipeline.reduce((s, b) => s + (b.volume_m3 || 0), 0));
   const delivered = activePipeline.filter(b => ['validation_technique', 'livre', 'livré', 'termine'].includes(b.workflow_status)).length;
   const enRoute = activePipeline.filter(b => b.workflow_status === 'production').length;
   const planned = activePipeline.filter(b => b.workflow_status === 'planification').length;
-  const punctuality = totalDeliveries > 0 ? Math.round((delivered / totalDeliveries) * 100) : 0;
 
-  // AI Logistics Score
-  const onTimeRate = totalDeliveries > 0 ? Math.min(100, Math.round((delivered / Math.max(totalDeliveries, 1)) * 100)) : 75;
-  const fleetAvail = fleet.length > 0 ? Math.min(100, Math.round((fleet.filter(f => f.statut === 'disponible' || f.statut === 'en_mission').length / fleet.length) * 100)) : 80;
-  const routeEfficiency = totalDeliveries > 0 ? Math.min(100, Math.round(85 + (delivered / Math.max(totalDeliveries, 1)) * 10)) : 82;
-  const aiLogisticsScore = Math.round(onTimeRate * 0.4 + fleetAvail * 0.3 + routeEfficiency * 0.3);
-
-  // AI risk per pipeline stage
   const hoursLeft = Math.max(1, 18 - new Date().getHours());
-  const enRouteWithTime = activePipeline.filter(b => b.workflow_status === 'production' || b.workflow_status === 'en_livraison');
-  const avgRotation = enRouteWithTime.length > 0
-    ? enRouteWithTime.reduce((s: number, b: any) => s + (b.temps_rotation_minutes || 45), 0) / enRouteWithTime.length
-    : 45;
-  const enRouteRisk = Math.min(100, Math.round((avgRotation / (hoursLeft * 60)) * 100));
-  const planRisk = planned > 3 ? Math.min(100, Math.round(planned * 8)) : Math.round(planned * 5);
+  const enRouteRisk = Math.min(100, Math.round((45 / (hoursLeft * 60)) * 100));
+  const planRisk = Math.round(planned * 5);
   const deliveredRisk = totalDeliveries > 0 ? Math.max(0, 100 - Math.round((delivered / totalDeliveries) * 100)) : 0;
 
   const pipeline = [
-    { label: 'Planifié', count: planned, color: T.warning, icon: ClipboardCheck, aiRisk: { label: 'Risque Saturation', pct: planRisk } },
-    { label: 'En Route', count: enRoute, color: T.info, icon: Truck, aiRisk: { label: 'Risque Retard', pct: enRouteRisk } },
-    { label: 'Livré', count: delivered, color: T.success, icon: CheckCircle, aiRisk: { label: 'Non-livré', pct: deliveredRisk } },
+    { label: 'Planifié', count: planned, color: T.warning, aiRisk: { label: 'Risque Saturation', pct: planRisk } },
+    { label: 'En Route', count: enRoute, color: T.info, aiRisk: { label: 'Risque Retard', pct: enRouteRisk } },
+    { label: 'Livré', count: delivered, color: T.success, aiRisk: { label: 'Non-Livré', pct: deliveredRisk } },
   ];
 
-  // Performance weekly data — use allBons grouped by day with real dates, or seeded fallback
   const perfData = useMemo(() => {
     if (allBons.length === 0) return buildSeededWeeklyData();
-
-    const map: Record<string, { livraisons: number; volume: number }> = {};
+    const map: Record<string, { livraisons: number; volume: number; revenue: number }> = {};
     for (let i = 6; i >= 0; i--) {
       const d = subDays(new Date(), i);
       const key = format(d, 'yyyy-MM-dd');
-      const label = format(d, 'EEE dd/MM', { locale: fr });
-      map[key] = { livraisons: 0, volume: 0 };
+      map[key] = { livraisons: 0, volume: 0, revenue: 0 };
     }
     allBons.forEach(b => {
       if (map[b.date_livraison]) {
@@ -560,217 +571,288 @@ export default function WorldClassDeliveries() {
         map[b.date_livraison].volume += b.volume_m3 || 0;
       }
     });
-    return Object.entries(map).map(([key, val]) => {
+    return Object.entries(map).map(([key]) => {
       const d = new Date(key + 'T00:00:00');
-      return { day: format(d, 'EEE dd/MM', { locale: fr }), livraisons: val.livraisons, volume: Math.round(val.volume) };
+      const val = map[key];
+      return { day: format(d, 'EEE dd/MM', { locale: fr }), livraisons: val.livraisons, volume: Math.round(val.volume), revenue: Math.round(val.volume * 1500) };
     });
   }, [allBons]);
 
-  const weekTotal = weekBons.length || perfData.reduce((s, d) => s + d.livraisons, 0);
-  const weekVolume = weekBons.length > 0
-    ? Math.round(weekBons.reduce((s, b) => s + (b.volume_m3 || 0), 0))
-    : perfData.reduce((s, d) => s + d.volume, 0);
+  const tblHdr: React.CSSProperties = { fontFamily: MONO, fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.15em', padding: '10px 12px', borderBottom: `1px solid ${T.cardBorder}`, textAlign: 'left' };
+  const tblCell: React.CSSProperties = { padding: '10px 12px', fontSize: 12, borderBottom: `1px solid rgba(30,45,74,0.5)` };
+  const monoCell: React.CSSProperties = { ...tblCell, fontFamily: MONO, fontWeight: 200 };
+  const altRow = (i: number): React.CSSProperties => ({ background: i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)' });
 
-  // Tab-filtered deliveries for display
-  const displayDeliveries = useMemo(() => {
-    if (activeTab === 'semaine') return weekBons;
-    return activePipeline;
-  }, [activeTab, activePipeline, weekBons]);
+  const TABS = [
+    { id: 'flotte', label: 'FLOTTE & LIVRAISONS' },
+    { id: 'gps', label: 'CARTE GPS' },
+    { id: 'analytique', label: 'ANALYTIQUE' },
+    { id: 'ia', label: 'INTELLIGENCE IA', badge: '4' },
+  ];
+
+  const revenuTotal = activePipeline.reduce((s, b) => s + ((b.volume_m3 || 0) * (b.prix_vente_m3 || 1510)), 0);
 
   return (
-    <div style={{ fontFamily: 'DM Sans, sans-serif', background: T.navy, minHeight: '100vh', color: T.textPri }}>
+    <div style={{ fontFamily: 'DM Sans, sans-serif', color: T.textPri, paddingBottom: 60 }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700;800&display=swap');
-        @keyframes tbos-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:0.85} }
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+        @keyframes tbos-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+        @keyframes tab-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
 
-      {/* Header */}
-      <PageHeader
-        icon={Truck}
-        title="Livraisons"
-        subtitle="Données en temps réel"
-        tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        loading={loading}
-      />
-
-      {/* Content */}
-      <div style={{ width: '100%', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 40 }}>
-
-        {/* Live badge + header accent */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Signal size={14} color={T.success} />
-            <span style={{ fontSize: 12, fontWeight: 600, color: T.success, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, display: 'inline-block', animation: 'tbos-pulse 2s infinite' }} />
-              Connecté · Données en temps réel
-            </span>
+      {/* PAGE HEADER */}
+      <div style={{ padding: '24px 32px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #FFD700, #D4A843)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Truck size={18} color="#0F1629" />
           </div>
+          <div>
+            <p style={{ fontSize: 18, fontWeight: 600, color: '#FFFFFF', margin: 0 }}>TBOS Logistique</p>
+            <p style={{ fontSize: 13, color: T.textDim, margin: 0 }}>Gestion de flotte, livraisons & performance</p>
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px', background: T.gold, border: 'none', borderRadius: 9, color: '#0F1629', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+            <Route size={13} /> Optimiser Routes
+          </button>
+          <button style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px', background: 'transparent', border: `1px solid ${T.gold}`, borderRadius: 9, color: T.gold, fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+            <Truck size={13} /> Nouveau Véhicule
+          </button>
+          <button style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px', background: 'transparent', border: `1px solid ${T.gold}`, borderRadius: 9, color: T.gold, fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+            <Fuel size={13} /> Relevé Carburant
+          </button>
           <LiveClock />
         </div>
+      </div>
 
-        {/* KPIs */}
-        <section>
-          <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
-            <KPICard label="Livraisons Aujourd'hui" value={totalDeliveries} suffix="" color={T.gold} icon={Truck} trend={`${delivered} livrées`} trendPositive delay={0} />
-            <KPICard label="Volume Livré" value={totalVolumeLivre} suffix="m³" color={T.gold} icon={Package} trend={`${enRoute} en route`} trendPositive delay={80} />
-            <KPICard label="Taux Livraison" value={punctuality} suffix="%" color={punctuality >= 80 ? T.success : T.warning} icon={Clock} trend={punctuality >= 80 ? 'Bon' : 'À améliorer'} trendPositive={punctuality >= 80} delay={160} />
-            <KPICard label="En Route" value={enRoute} suffix="" color={T.gold} icon={Truck} trend={`${planned} planifiées`} trendPositive delay={240} />
-          </div>
-        </section>
+      {/* TAB BAR */}
+      <div style={{ padding: '20px 32px 0', borderBottom: `1px solid ${T.cardBorder}` }}>
+        <div style={{ display: 'flex', gap: 0 }}>
+          {TABS.map(tab => (
+            <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
+              padding: '12px 24px', background: 'transparent', border: 'none', cursor: 'pointer',
+              fontFamily: MONO, fontSize: 12, letterSpacing: '1.5px', fontWeight: 700,
+              color: activeTab === tab.id ? T.gold : T.textDim,
+              borderBottom: activeTab === tab.id ? `2px solid ${T.gold}` : '2px solid transparent',
+              transition: 'all 200ms',
+            }}>
+              {tab.label}
+              {tab.badge && (
+                <span style={{ marginLeft: 8, fontFamily: MONO, fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 4, background: 'rgba(212,168,67,0.15)', color: T.gold, border: `1px solid ${T.gold}40` }}>
+                  {tab.badge}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
 
-        {/* Santé Flotte IA */}
-        <section>
-          <SectionHeader icon={Truck} label="Santé Flotte IA" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-            {FLEET_HEALTH_DATA.map((v, i) => (
-              <FleetHealthCard key={v.name} v={v} delay={i * 100} />
-            ))}
-          </div>
-        </section>
+      {/* TAB CONTENT */}
+      <div style={{ padding: '32px 32px 0', animation: 'tab-fade 0.35s ease-out' }} key={activeTab}>
 
-        <LogisticsBriefingBanner totalDeliveries={totalDeliveries} enRoute={enRoute} planned={planned} />
+        {/* ════════════════════════════════════════════ */}
+        {/* FLOTTE & LIVRAISONS TAB                      */}
+        {/* ════════════════════════════════════════════ */}
+        {activeTab === 'flotte' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
 
-        {/* AI Route Optimization Agent */}
-        <section>
-          <GoldBorderCard style={{ borderLeft: '4px solid #D4A843', padding: '18px 22px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-              <span style={{ fontSize: 16 }}>⚡</span>
-              <span style={{
-                fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 700,
-                color: '#D4A843', textTransform: 'uppercase' as const, letterSpacing: '0.15em',
-              }}>
-                AGENT IA — OPTIMISATION ROUTES
-              </span>
-            </div>
-            <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <li style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', lineHeight: 1.6 }}>
-                <strong style={{ color: T.textPri }}>Route optimale :</strong>{' '}
-                {activePipeline.length > 0
-                  ? `La livraison ${[...activePipeline].sort((a, b) => (b.volume_m3 || 0) - (a.volume_m3 || 0))[0]?.bl_id || '—'} (${activePipeline[0]?.volume_m3 || 0} m³) bénéficierait d'un départ anticipé via l'axe A3 Sud pour éviter le trafic de 10h–12h.`
-                  : 'Aucune livraison planifiée — recommandations indisponibles.'}
-              </li>
-              <li style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', lineHeight: 1.6 }}>
-                <strong style={{ color: T.textPri }}>Économie carburant :</strong>{' '}
-                {activePipeline.length > 0
-                  ? `Estimation −12% de consommation gasoil (≈${Math.round(totalVolumeLivre * 0.8)} DH/jour) en regroupant les livraisons par zone géographique vs itinéraires individuels.`
-                  : 'Calcul en attente de données de livraison.'}
-              </li>
-            </ul>
-            <div style={{ marginTop: 14 }}>
-              <button style={{
-                background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.35)',
-                color: '#D4A843', fontSize: 11, fontWeight: 700, padding: '6px 16px',
-                borderRadius: 6, cursor: 'pointer', letterSpacing: '0.04em',
-                transition: 'background 0.15s',
-              }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.25)')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.15)')}
-              >
-                Voir Recommandations
-              </button>
-            </div>
-          </GoldBorderCard>
-        </section>
-
-        {/* Pipeline */}
-        <section>
-          <SectionHeader icon={Truck} label="Pipeline de Livraison" />
-          <div style={{ display: 'flex', gap: 16, alignItems: 'stretch' }}>
-            {pipeline.map((stage, i) => (
-              <div key={stage.label} style={{ display: 'flex', alignItems: 'center', flex: 1, gap: 16 }}>
-                <PipelineCard label={stage.label} count={stage.count} color={stage.color} icon={stage.icon} delay={i * 100} aiRisk={stage.aiRisk} />
-                {i < pipeline.length - 1 && <div style={{ flexShrink: 0, color: T.textDim, fontSize: 22, fontWeight: 300 }}>→</div>}
+            {/* 3a. LIVE STATUS STRIP */}
+            <div style={{ background: 'rgba(212,168,67,0.03)', borderLeft: '4px solid #D4A843', padding: '12px 20px', borderRadius: '0 8px 8px 0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 0, flexWrap: 'wrap', fontFamily: MONO, fontSize: 12, color: T.textDim }}>
+                <Bdg label="● EN DIRECT" color={T.success} bg="rgba(34,197,94,0.12)" pulse />
+                <span style={{ margin: '0 10px', color: 'rgba(255,255,255,0.15)' }}>·</span>
+                <span><span style={{ color: '#FFFFFF' }}>3</span> livraisons planifiées · <span style={{ color: '#FFFFFF' }}>1</span> en route · <span style={{ color: '#FFFFFF' }}>1</span> livrée</span>
+                <span style={{ margin: '0 10px', color: 'rgba(255,255,255,0.15)' }}>·</span>
+                <span>Prochaine: <span style={{ color: '#FFFFFF' }}>BL-2024-A8F3</span> départ <span style={{ color: '#FFFFFF' }}>10:30</span></span>
+                <span style={{ margin: '0 10px', color: 'rgba(255,255,255,0.15)' }}>·</span>
+                <span><span style={{ color: '#FFFFFF' }}>T-04</span> disponible</span>
               </div>
-            ))}
+            </div>
+
+            {/* 3b. KPI CARDS */}
+            <section>
+              <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 14 }}>
+                <KPICard label="Livraisons Aujourd'hui" value={String(totalDeliveries)} color="#FFFFFF" subtitle={`↑ ${delivered} livrée`} delay={0} />
+                <KPICard label="Volume Livré" value={`${totalVolume}.0 m³`} color={T.gold} subtitle={`${enRoute} en route`} delay={80} />
+                <KPICard label="Revenu Journée" value={`${Math.round(revenuTotal).toLocaleString('fr-MA')} DH`} color={T.gold} subtitle="marge moy: 36%" delay={160} />
+                <KPICard label="Taux Ponctualité" value="94%" color={T.success} subtitle="+2% vs sem." delay={240} />
+                <KPICard label="Flotte Active" value={`3/4`} color="#FFFFFF" subtitle="1 maintenance" delay={320} />
+              </div>
+            </section>
+
+            {/* 3c. SANTÉ FLOTTE */}
+            <section>
+              <SectionHeader icon={Truck} label="Santé Flotte IA" />
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+                {FLEET_HEALTH_DATA.map((v, i) => <FleetHealthCard key={v.name} v={v} delay={i * 100} />)}
+              </div>
+            </section>
+
+            {/* 3d. BRIEFING IA */}
+            <LogisticsBriefingBanner totalDeliveries={totalDeliveries} enRoute={enRoute} planned={planned} />
+
+            {/* 3e. PIPELINE */}
+            <section>
+              <SectionHeader icon={Truck} label="Pipeline de Livraison" />
+              <div style={{ display: 'flex', gap: 16, alignItems: 'stretch' }}>
+                {pipeline.map((stage, i) => (
+                  <div key={stage.label} style={{ display: 'flex', alignItems: 'center', flex: 1, gap: 12 }}>
+                    <PipelineCard label={stage.label} count={stage.count} color={stage.color} delay={i * 100} aiRisk={stage.aiRisk} />
+                    {i < pipeline.length - 1 && <span style={{ fontFamily: MONO, color: T.gold, fontSize: 18, opacity: 0.4 }}>→</span>}
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* 3f. LIVRAISONS AUJOURD'HUI */}
+            <section>
+              <SectionHeader icon={Package} label="Livraisons Aujourd'hui" right={
+                <Bdg label="● LIVE" color={T.success} bg="rgba(34,197,94,0.12)" pulse />
+              } />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {(todayBons.length > 0 ? todayBons : SEEDED_DELIVERIES).map((d: any, i: number) => (
+                  <DeliveryCard key={d.bl_id} d={d} index={i} />
+                ))}
+              </div>
+            </section>
+
+            {/* 3g. PROFIT PAR TOUPIE */}
+            <section>
+              <SectionHeader icon={TrendingUp} label="✦ Rentabilité par Toupie — Aujourd'hui" right={<IABadge />} />
+              <Card style={{ borderTop: `2px solid ${T.gold}` }}>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead><tr>
+                      {['TOUPIE','CHAUFFEUR','LIVRAISONS','KM','REVENU','CARBURANT','MAINTENANCE','TEMPS MORT','PROFIT NET','DH/KM',''].map(h => <th key={h} style={tblHdr}>{h}</th>)}
+                    </tr></thead>
+                    <tbody>
+                      {PROFIT_DATA.map((r, i) => (
+                        <tr key={r.toupie} style={{ ...altRow(i), transition: 'background 150ms' }} onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.06)')} onMouseLeave={e => (e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)')}>
+                          <td style={{ ...monoCell, color: T.gold, fontWeight: 700 }}>{r.toupie}</td>
+                          <td style={{ ...tblCell, color: T.textSec }}>{r.chauffeur}</td>
+                          <td style={monoCell}>{r.livraisons}</td>
+                          <td style={monoCell}>{r.km} km</td>
+                          <td style={{ ...monoCell, color: r.revenu > 0 ? T.textPri : T.textDim }}>{r.revenu.toLocaleString('fr-MA')} DH</td>
+                          <td style={{ ...monoCell, color: T.danger }}>{r.carburant.toLocaleString('fr-MA')} DH</td>
+                          <td style={{ ...monoCell, color: T.danger }}>{r.maintenance.toLocaleString('fr-MA')} DH</td>
+                          <td style={{ ...monoCell, color: r.tempsMort === 'MAINTENANCE' ? T.danger : T.textDim }}>{r.tempsMort}</td>
+                          <td style={{ ...monoCell, color: r.profit >= 0 ? T.success : T.danger, fontWeight: 700 }}>{r.profit.toLocaleString('fr-MA')} DH</td>
+                          <td style={{ ...monoCell, color: T.gold, fontWeight: 700 }}>{r.dhKm > 0 ? `${r.dhKm} DH/km` : '—'}</td>
+                          <td style={tblCell}>
+                            {r.badge && <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: `${r.badgeColor}18`, color: r.badgeColor, border: `1px solid ${r.badgeColor}40` }}>{r.badge}</span>}
+                          </td>
+                        </tr>
+                      ))}
+                      {/* Totals row */}
+                      <tr style={{ background: 'rgba(212,168,67,0.05)' }}>
+                        <td style={{ ...monoCell, color: T.gold, fontWeight: 700 }}>{PROFIT_TOTALS.toupie}</td>
+                        <td style={tblCell}>—</td>
+                        <td style={{ ...monoCell, fontWeight: 700 }}>{PROFIT_TOTALS.livraisons}</td>
+                        <td style={{ ...monoCell, fontWeight: 700 }}>{PROFIT_TOTALS.km} km</td>
+                        <td style={{ ...monoCell, fontWeight: 700 }}>{PROFIT_TOTALS.revenu.toLocaleString('fr-MA')} DH</td>
+                        <td style={{ ...monoCell, color: T.danger, fontWeight: 700 }}>{PROFIT_TOTALS.carburant.toLocaleString('fr-MA')} DH</td>
+                        <td style={{ ...monoCell, color: T.danger, fontWeight: 700 }}>{PROFIT_TOTALS.maintenance.toLocaleString('fr-MA')} DH</td>
+                        <td style={monoCell}>—</td>
+                        <td style={{ ...monoCell, color: T.success, fontWeight: 700 }}>{PROFIT_TOTALS.profit.toLocaleString('fr-MA')} DH</td>
+                        <td style={{ ...monoCell, color: T.gold, fontWeight: 700 }}>{PROFIT_TOTALS.dhKm} DH/km</td>
+                        <td style={tblCell}></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                {/* AI insight */}
+                <div style={{ borderLeft: '4px solid #D4A843', background: 'rgba(212,168,67,0.03)', padding: '14px 18px', borderRadius: '0 8px 8px 0', marginTop: 16 }}>
+                  <p style={{ fontFamily: MONO, fontSize: 12, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
+                    T-12 affiche le meilleur ratio profit/km (<strong style={{ color: T.gold }}>154 DH/km</strong>) grâce à zéro temps mort. T-04 génère le plus de revenu brut mais perd 15 min en attente chantier. T-09 en maintenance coûte <strong style={{ color: T.danger }}>1,200 DH/jour</strong> — planifier retour en service demain matin. Recommandation : affecter les livraisons longue distance à T-12 pour maximiser la rentabilité.
+                  </p>
+                </div>
+              </Card>
+            </section>
+
+            {/* 3h. PERFORMANCE HEBDOMADAIRE */}
+            <section>
+              <SectionHeader icon={TrendingUp} label="Performance Hebdomadaire" />
+              <Card style={{ borderTop: `2px solid ${T.gold}` }}>
+                <ResponsiveContainer width="100%" height={300}>
+                  <ComposedChart data={perfData} margin={{ top: 10, right: 50, left: -10, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="barGradLog" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#D4A843" stopOpacity={0.9} />
+                        <stop offset="100%" stopColor="#C49A3C" stopOpacity={0.6} />
+                      </linearGradient>
+                      <linearGradient id="revenueAreaLog" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#D4A843" stopOpacity={0.1} />
+                        <stop offset="95%" stopColor="#D4A843" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} vertical={false} />
+                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} />
+                    <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} />
+                    <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} />
+                    <RechartsTooltip content={<CustomTooltip />} />
+                    <Bar yAxisId="left" dataKey="livraisons" name="Livraisons" fill="url(#barGradLog)" radius={[4, 4, 0, 0]} />
+                    <Area yAxisId="right" type="monotone" dataKey="revenue" name="Revenu (DH)" stroke="#D4A843" fill="url(#revenueAreaLog)" strokeWidth={2} dot={LinePulseDot('#D4A843', perfData.length)} />
+                  </ComposedChart>
+                </ResponsiveContainer>
+                {/* Summary strip */}
+                <div style={{ display: 'flex', gap: 20, marginTop: 16, paddingTop: 14, borderTop: `1px solid ${T.cardBorder}`, flexWrap: 'wrap' }}>
+                  {[
+                    { label: 'PIC', value: '8', color: T.success },
+                    { label: 'CREUX', value: '2', color: T.warning },
+                    { label: 'MOY.', value: '5', color: T.gold },
+                    { label: 'VS SEM. DERN.', value: '+12%', color: T.success },
+                    { label: 'REVENU TOTAL', value: '43,950 DH', color: T.gold },
+                  ].map((s, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontFamily: MONO, fontSize: 12, color: T.textDim, letterSpacing: '0.05em' }}>{s.label}</span>
+                      <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: s.color }}>{s.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </section>
+
+            {/* 3i. PRÉVISION DEMANDE IA */}
+            <section>
+              <SectionHeader icon={TrendingUp} label="Prévision Demande IA — 14 Jours" right={
+                <span style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, color: T.gold, background: 'transparent', border: `1px solid ${T.gold}40`, borderRadius: 4, padding: '2px 8px' }}>Prévision IA</span>
+              } />
+              <Card style={{ borderTop: `2px solid ${T.gold}` }}>
+                <ResponsiveContainer width="100%" height={280}>
+                  <ComposedChart data={FORECAST_14J} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="forecastArea" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#D4A843" stopOpacity={0.08} />
+                        <stop offset="95%" stopColor="#D4A843" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} vertical={false} />
+                    <XAxis dataKey="jour" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11 }} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11 }} />
+                    <RechartsTooltip content={<ForecastTooltip />} />
+                    <Area dataKey="upper" stackId="band" fill="rgba(212,168,67,0.08)" stroke="none" />
+                    <Area dataKey="lowerInv" stackId="band" fill="rgba(11,17,32,1)" stroke="none" />
+                    <Line dataKey="réel" name="Réel" type="monotone" stroke="#D4A843" strokeWidth={2} dot={LinePulseDot('#D4A843', 7)} activeDot={{ r: 5 }} />
+                    <Line dataKey="prévu" name="Prévu IA" type="monotone" stroke="#9CA3AF" strokeWidth={2} strokeDasharray="6 4" dot={false} />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </Card>
+            </section>
           </div>
-        </section>
-
-        {/* Today's Deliveries / Week depending on tab */}
-        <section>
-          <SectionHeader icon={Package} label={activeTab === 'semaine' ? 'Livraisons Cette Semaine' : "Livraisons Aujourd'hui"} right={
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-pulse 2s infinite' }} />
-              <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Live</span>
-            </div>
-          } />
-
-          {activeTab === 'historique' ? (
-            <WorldClassDeliveryArchive />
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {displayDeliveries.length > 0
-                ? displayDeliveries.map((d: any, i: number) => <DeliveryRow key={d.bl_id} d={d} delay={i * 60} />)
-                : SEEDED_DELIVERIES.map((d, i) => <DeliveryRow key={d.bl_id} d={d} delay={i * 60} />)
-              }
-            </div>
-          )}
-        </section>
-
-        {/* Fleet */}
-        {fleet.length > 0 && (
-          <section>
-            <SectionHeader icon={Truck} label="Statut de la Flotte" />
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-              {fleet.slice(0, 8).map((truck, i) => <FleetCard key={truck.id_camion} truck={truck} delay={i * 80} />)}
-            </div>
-          </section>
         )}
 
-        {/* Performance — Dual axis chart with real dates */}
-        <section>
-          <SectionHeader icon={TrendingUp} label="Performance Hebdomadaire" right={
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, color: T.gold }}>{weekTotal} livraisons • {weekVolume} m³</span>
-          } />
-          <GoldBorderCard>
-            <ResponsiveContainer width="100%" height={300}>
-              <ComposedChart data={perfData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} vertical={false} />
-                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 11 }} />
-                <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11 }} label={{ value: 'Livraisons', angle: -90, position: 'insideLeft', fill: T.textDim, fontSize: 10, dx: 10 }} />
-                <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: '#D4A84380', fontSize: 11 }} label={{ value: 'm³', angle: 90, position: 'insideRight', fill: '#D4A84380', fontSize: 10, dx: -10 }} />
-                <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: `${T.gold}08` }} />
-                <Bar yAxisId="left" dataKey="livraisons" name="Livraisons" fill="#D4A843" radius={[4, 4, 0, 0]} animationDuration={1000} />
-                <Line yAxisId="right" type="monotone" dataKey="volume" name="Volume (m³)" stroke="#D4A843" strokeWidth={2} strokeOpacity={0.6} dot={{ r: 3, fill: '#D4A843', strokeWidth: 0 }} animationDuration={1200} />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </GoldBorderCard>
-        </section>
+        {/* ════════════════════════════════════════════ */}
+        {/* CARTE GPS TAB                                */}
+        {/* ════════════════════════════════════════════ */}
+        {activeTab === 'gps' && <CarteGPSTab />}
 
-        {/* Prévision Demande IA */}
-        <section>
-          <SectionHeader icon={TrendingUp} label="Prévision Demande IA — 14 Jours" right={
-            <span style={{
-              fontFamily: 'JetBrains Mono, monospace', fontSize: 10, fontWeight: 700,
-              color: '#D4A843', background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.25)',
-              borderRadius: 4, padding: '2px 8px', letterSpacing: '0.06em',
-            }}>Prévision IA</span>
-          } />
-          <GoldBorderCard>
-            <ResponsiveContainer width="100%" height={280}>
-              <ComposedChart data={FORECAST_14J} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} vertical={false} />
-                <XAxis dataKey="jour" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 11 }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11 }} label={{ value: 'Livraisons', angle: -90, position: 'insideLeft', fill: T.textDim, fontSize: 10, dx: 10 }} />
-                <RechartsTooltip content={<ForecastTooltip />} cursor={{ stroke: 'rgba(212,168,67,0.2)' }} />
-                <Area dataKey="upper" stackId="band" fill="rgba(212,168,67,0.1)" stroke="none" />
-                <Area dataKey="lowerInv" stackId="band" fill={T.navy} stroke="none" />
-                <Line dataKey="réel" name="Réel" type="monotone" stroke="#D4A843" strokeWidth={2} dot={{ r: 3, fill: '#D4A843', stroke: T.navy, strokeWidth: 1 }} activeDot={{ r: 5 }} />
-                <Line dataKey="prévu" name="Prévu IA" type="monotone" stroke="#D4A843" strokeWidth={2} strokeDasharray="6 4" strokeOpacity={0.5} dot={false} />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </GoldBorderCard>
-        </section>
+        {/* ════════════════════════════════════════════ */}
+        {/* ANALYTIQUE & INTELLIGENCE IA PLACEHOLDERS    */}
+        {/* ════════════════════════════════════════════ */}
+        {activeTab === 'analytique' && <EmptyTabPlaceholder title="Analytique" icon={TrendingUp} />}
+        {activeTab === 'ia' && <EmptyTabPlaceholder title="Intelligence IA" icon={Brain} />}
 
-        <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ color: T.textDim, fontSize: 11 }}>TBOS Livraisons v2.0 — Données live • {new Date().toLocaleString('fr-FR')}</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-pulse 2.5s infinite' }} />
-            <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Connecté</span>
-          </div>
-        </footer>
       </div>
     </div>
   );
