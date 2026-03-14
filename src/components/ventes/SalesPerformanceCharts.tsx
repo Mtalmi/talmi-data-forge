@@ -64,7 +64,7 @@ function StatChip({ value, label, color, subtext }: { value: number; label: stri
         <p style={{ fontSize: 14, color, opacity: 0.4, marginTop: 2 }}>—</p>
       )}
       {subtext && (
-        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{subtext}</p>
+        <p style={{ fontSize: 10, color: '#D4A843', fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", marginTop: 2 }}>{subtext}</p>
       )}
     </div>
   );
