@@ -1018,9 +1018,9 @@ function IntelligenceIATab() {
 
       {/* TOP SUMMARY STRIP */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
-        <IAKPICard label="ÉCONOMIES ROUTES" value="+52,000 MAD/an" color={T.success} />
+        <IAKPICard label="ÉCONOMIES ROUTES" value="+52,000 MAD/an" color={T.success} borderColor={T.success} />
         <IAKPICard label="ANOMALIES CARBURANT" value="1" color={T.danger} borderColor={T.danger} />
-        <IAKPICard label="PROFIT FLOTTE/JOUR" value="30,760 DH" color={T.gold} />
+        <IAKPICard label="PROFIT FLOTTE/JOUR" value="30,760 DH" color={T.gold} borderColor={T.gold} />
       </div>
 
       {/* ─── AGENT 1: PROFIT-PER-TRUCK ─── */}
