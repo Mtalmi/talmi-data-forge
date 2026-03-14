@@ -577,6 +577,9 @@ export default function WorldClassProduction() {
         @keyframes tbos-fade-up { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
         @keyframes tbos-spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
         @keyframes tbos-live { 0%,100%{opacity:1} 50%{opacity:0.4} }
+        @keyframes wfActifPulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+        @keyframes margePulseDot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:0.5} }
+        @keyframes livePulseGreen { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.3);opacity:0.5} }
       `}</style>
 
       {/* ── STICKY HEADER ── */}
