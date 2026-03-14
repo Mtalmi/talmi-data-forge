@@ -1574,6 +1574,7 @@ export default function WorldClassDeliveries() {
                      { color: T.warning, text: 'Fraîcheur béton: livraison Résidences Atlas à 47 min/90 min — surveiller. Si retard dépasse 25 min supplémentaires, préparer batch de remplacement.', pulse: false },
                      { color: T.danger, text: 'T-09 en maintenance — pneus à remplacer. Retour prévu demain 08:00. 3 livraisons T-09 réaffectées.', pulse: false },
                      { color: T.success, text: 'Carburant flotte : T-04 34% (ravitaillement ce soir), T-07 62% ✓, T-12 78% ✓', pulse: false },
+                     { color: T.danger, text: 'Surestaries non-facturées: 3,300 DH (Sigma Bâtiment 2,500 DH + Saudi Readymix 800 DH) — facturer avant fin de semaine', pulse: false },
                   ].map((item, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
                       <div style={{ width: 8, height: 8, borderRadius: '50%', background: item.color, marginTop: 4, flexShrink: 0, animation: item.pulse ? 'tbos-pulse 1.5s ease-in-out infinite' : 'none' }} />
