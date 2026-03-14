@@ -253,7 +253,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
               fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 30, fontWeight: 200,
               color: '#fff', letterSpacing: '-0.02em', lineHeight: 1,
             }}>
-              {animated.toLocaleString('fr-FR')}
+              {isDecimal ? (animated / 10).toFixed(1).replace('.', ',') : animated.toLocaleString('fr-FR')}
               {suffix && <span style={{ fontSize: 20, color: '#9CA3AF', marginLeft: 4, fontWeight: 400, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>{suffix}</span>}
             </p>
             <p style={{
