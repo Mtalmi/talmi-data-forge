@@ -652,14 +652,19 @@ function CollapsibleChronologique() {
 // IA AGENT SECTION
 // ─────────────────────────────────────────────────────
 function IAAgentSection({ name, content }: { name: string; content: React.ReactNode }) {
+  const urgencyColor = 
+    name.includes('MÉTÉO') || name.includes('RETARDS') ? '#EF4444' :
+    name.includes('ORCHESTRATION') || name.includes('FLOTTE') ? '#F59E0B' :
+    '#10B981';
   return (
     <section>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
+          <span style={{ width: 8, height: 8, borderRadius: '50%', background: urgencyColor, flexShrink: 0 }} />
           <span style={{ color: '#D4A843', fontSize: 14, animation: 'tbos-pulse 3s ease-in-out infinite' }}>✦</span>
           <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>AGENT IA: {name}</span>
         </div>
-        <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>Généré par IA · Claude Opus</span>
+        <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)', whiteSpace: 'nowrap', flexShrink: 0 }}>Généré par IA · Claude Opus</span>
       </div>
       <div style={{
         background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
