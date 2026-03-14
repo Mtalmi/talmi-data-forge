@@ -919,7 +919,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
             <div className="flex items-start gap-3">
               <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
               <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                Capacité optimale demain (<span style={{ color: '#fff', fontWeight: 600 }}>Samedi 14</span>). 2 livraisons planifiées sur capacité de 200 m³. Aucun conflit détecté.
+                Capacité optimale demain (<span style={{ color: '#D4A843', fontWeight: 600 }}>Samedi 14</span>). 2 livraisons planifiées sur capacité de 200 m³. Aucun conflit détecté.
               </p>
             </div>
             <div className="flex items-start gap-3">
