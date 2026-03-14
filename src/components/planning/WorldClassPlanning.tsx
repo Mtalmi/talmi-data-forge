@@ -707,6 +707,57 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
           />
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            {/* 0. DISPATCH SCORE HERO */}
+            <div style={{
+              background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
+              border: '1px solid rgba(245, 158, 11, 0.15)',
+              borderTop: '2px solid #D4A843',
+              borderRadius: 12, padding: '20px 24px',
+              display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap',
+              position: 'relative', overflow: 'hidden',
+            }}>
+              {/* Shimmer top border */}
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, transparent, #D4A843, transparent)', backgroundSize: '200% 100%', animation: 'shimmer 4s linear infinite' }} />
+
+              {/* Left: Score */}
+              <div style={{ flex: '1 1 200px' }}>
+                <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6 }}>SCORE DISPATCH DU JOUR</p>
+                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 42, fontWeight: 200, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em' }}>9.2<span style={{ fontSize: 20, color: '#9CA3AF' }}>/10</span></p>
+                <p style={{ fontSize: 12, color: T.success, marginTop: 4, fontWeight: 500 }}>↗ +0.3 pts vs hier</p>
+                <div style={{ display: 'flex', gap: 6, marginTop: 10, flexWrap: 'wrap' }}>
+                  {[
+                    { label: 'ON-TIME 94%', bg: 'rgba(16,185,129,0.12)', color: '#34d399' },
+                    { label: 'FLOTTE 87%', bg: 'rgba(96,165,250,0.12)', color: '#60A5FA' },
+                    { label: 'QUALITÉ 96%', bg: 'rgba(212,168,67,0.12)', color: '#D4A843' },
+                  ].map(b => (
+                    <span key={b.label} style={{ padding: '3px 8px', borderRadius: 999, fontSize: 9, fontWeight: 700, background: b.bg, color: b.color, letterSpacing: '0.08em' }}>{b.label}</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Center: Revenue */}
+              <div style={{ flex: '1 1 200px', textAlign: 'center' }}>
+                <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6 }}>REVENU JOURNÉE</p>
+                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 32, fontWeight: 200, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>153,250 <span style={{ fontSize: 16, color: '#9CA3AF' }}>DH</span></p>
+                <p style={{ fontSize: 11, color: T.textSec, marginTop: 6 }}>5 livraisons · 225 m³</p>
+                <p style={{ fontSize: 11, color: T.success, fontWeight: 600, marginTop: 2 }}>Marge moyenne: 36%</p>
+              </div>
+
+              {/* Right: Mini capacity donut */}
+              <div style={{ flex: '0 0 auto' }}>
+                <svg width={80} height={80} viewBox="0 0 80 80">
+                  <circle cx={40} cy={40} r={32} fill="none" stroke={T.cardBorder} strokeWidth={6} />
+                  <circle cx={40} cy={40} r={32} fill="none" stroke={T.warning} strokeWidth={6}
+                    strokeDasharray={`${0.72 * 2 * Math.PI * 32} ${2 * Math.PI * 32}`}
+                    strokeLinecap="round" transform="rotate(-90 40 40)"
+                    style={{ filter: `drop-shadow(0 0 4px ${T.warning}60)` }}
+                  />
+                  <text x={40} y={38} textAnchor="middle" style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 16, fontWeight: 200, fill: T.warning }}>72%</text>
+                  <text x={40} y={52} textAnchor="middle" style={{ fontSize: 7, fill: T.textDim, textTransform: 'uppercase', letterSpacing: '0.1em' }}>CAPACITÉ</text>
+                </svg>
+              </div>
+            </div>
+
             {/* 1. Alerte Météo IA */}
             <WeatherAlertBanner />
 
