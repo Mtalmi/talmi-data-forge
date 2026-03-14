@@ -760,7 +760,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
   } = useWorldClassLiveData();
 
   const totalAR = useAnimatedCounter(Math.round(arAgingData.reduce((s, d) => s + d.value, 0) / 1000) || 77);
-  const prodTotal = useAnimatedCounter(Math.round(stats.totalVolume) || 851);
+  const prodTotal = useAnimatedCounter(Math.round(stats.totalVolume) || 851, 1500);
 
   const prodChartData = hourlyProductionData.length ? hourlyProductionData : [
     { hour: '6h', volume: 12 }, { hour: '8h', volume: 65 }, { hour: '10h', volume: 95 },
