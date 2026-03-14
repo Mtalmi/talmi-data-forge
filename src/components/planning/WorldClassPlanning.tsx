@@ -437,8 +437,8 @@ function DeliveryCard({ d, delay = 0, routeData, weatherIndex = 0 }: { d: typeof
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? (hov ? 'translateX(4px)' : 'translateY(0)') : 'translateY(20px)',
-        transition: 'all 400ms ease-out',
-        background: T.cardBg,
+        transition: 'all 200ms ease-out',
+        background: hov ? 'rgba(212,168,67,0.03)' : 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
         border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`,
         borderTop: '2px solid #D4A843',
         borderLeft: `4px solid ${d.statusColor}`,
