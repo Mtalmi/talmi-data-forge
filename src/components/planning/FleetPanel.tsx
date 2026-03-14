@@ -265,10 +265,15 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
           </div>
         ) : (() => {
           const DEMO_TRUCKS = [
-            { id_camion: 'TOU-01', capacite_m3: 8, chauffeur: 'Hassan Amrani', statut: 'En Livraison', type: 'Toupie', rotations: '4/5', km: '127 km', fuel: '⛽ 45L', statusLabel: 'Mission', statusColor: '#34d399', statusBg: 'rgba(52,211,153,0.12)' },
-            { id_camion: 'TOU-02', capacite_m3: 8, chauffeur: 'Youssef Bakkali', statut: 'En Livraison', type: 'Toupie', rotations: '3/5', km: '89 km', fuel: '⛽ 32L', statusLabel: 'Mission', statusColor: '#34d399', statusBg: 'rgba(52,211,153,0.12)' },
-            { id_camion: 'TOU-03', capacite_m3: 8, chauffeur: 'Omar Tahiri', statut: 'Disponible', type: 'Toupie', rotations: '2/5', km: '54 km', fuel: '⛽ 19L', statusLabel: 'Dispo', statusColor: '#60A5FA', statusBg: 'rgba(96,165,250,0.12)' },
+            { id_camion: 'TOU-01', capacite_m3: 8, chauffeur: 'Hassan Amrani', statut: 'En Livraison', type: 'Toupie', rotations: '4/5', km: '127 km', fuel: '⛽ 45L', statusLabel: 'Mission', statusColor: '#34d399', statusBg: 'rgba(52,211,153,0.12)', revenu: 'Revenu: 72,000 DH · 3 livraisons' },
+            { id_camion: 'TOU-02', capacite_m3: 8, chauffeur: 'Youssef Bakkali', statut: 'En Livraison', type: 'Toupie', rotations: '3/5', km: '89 km', fuel: '⛽ 32L', statusLabel: 'Mission', statusColor: '#34d399', statusBg: 'rgba(52,211,153,0.12)', revenu: 'Revenu: 54,000 DH · 2 livraisons' },
+            { id_camion: 'TOU-03', capacite_m3: 8, chauffeur: 'Omar Tahiri', statut: 'Disponible', type: 'Toupie', rotations: '2/5', km: '54 km', fuel: '⛽ 19L', statusLabel: 'Dispo', statusColor: '#60A5FA', statusBg: 'rgba(96,165,250,0.12)', revenu: 'Revenu: 27,250 DH · 1 livraison' },
           ];
+          const truckRevenuMap: Record<string, string> = {
+            'TOU-01': 'Revenu: 72,000 DH · 3 livraisons',
+            'TOU-02': 'Revenu: 54,000 DH · 2 livraisons',
+            'TOU-03': 'Revenu: 27,250 DH · 1 livraison',
+          };
 
           const displayVehicles = vehicles.length > 0 ? vehicles : null;
 
@@ -292,8 +297,13 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
                   </div>
                   {v.chauffeur && <p className="text-[11px] text-white/30 truncate">{v.chauffeur}</p>}
                   {v.chauffeur && (
-                    <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', fontFamily: 'JetBrains Mono, monospace', marginBottom: 6 }}>
+                    <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', fontFamily: 'JetBrains Mono, monospace', marginBottom: 2 }}>
                       {v.id_camion === 'TOU-01' ? '4/5 rotations · 127 km · ⛽ 45L' : v.id_camion === 'TOU-02' ? '3/5 rotations · 89 km · ⛽ 32L' : v.id_camion === 'TOU-03' ? '2/5 rotations · 54 km · ⛽ 19L' : '—'}
+                    </p>
+                  )}
+                  {truckRevenuMap[v.id_camion] && (
+                    <p style={{ fontSize: 12, color: '#D4A843', fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', marginBottom: 6 }}>
+                      {truckRevenuMap[v.id_camion]}
                     </p>
                   )}
                   {isOnDelivery && (
@@ -340,8 +350,11 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
                 </span>
               </div>
               <p className="text-[11px] text-white/50 truncate mb-1">{truck.chauffeur}</p>
-              <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.30)', fontFamily: 'JetBrains Mono, monospace' }}>
+              <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.30)', fontFamily: 'JetBrains Mono, monospace', marginBottom: 2 }}>
                 {truck.rotations} rotations · {truck.km} · {truck.fuel}
+              </p>
+              <p style={{ fontSize: 12, color: '#D4A843', fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', marginBottom: 6 }}>
+                {truck.revenu}
               </p>
               <div className="flex gap-1 mt-1.5">
                 <Button variant="ghost" size="sm" className={cn("flex-1 h-6 text-[10px] px-1", truck.statut === 'Disponible' && "bg-success/20 text-success")} onClick={() => updateVehicleStatus(truck.id_camion, 'Disponible')}><CheckCircle className="h-3 w-3 mr-0.5" />{fp.available}</Button>
@@ -351,6 +364,13 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
             </div>
           ));
         })()}
+      </div>
+
+      {/* Fleet summary bar */}
+      <div style={{ padding: '12px 8px 8px', borderTop: '1px solid rgba(212,168,67,0.2)' }}>
+        <p style={{ color: '#fff', fontSize: 13, fontWeight: 600, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', textAlign: 'center' }}>
+          Flotte: 153,250 DH · Coût: 8,400 DH · Marge: 94.5%
+        </p>
       </div>
       
       {/* Truck Rescue Modal */}
