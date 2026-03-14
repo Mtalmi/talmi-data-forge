@@ -383,15 +383,19 @@ export function FacturesTable({
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm text-center font-mono">
+                  <TableCell className="text-sm text-center" style={{ fontFamily: 'ui-monospace, monospace' }}>
                     {format(parseISO(facture.date_facture), 'dd/MM/yyyy', { locale: dateLocale || undefined })}
                   </TableCell>
-                  <TableCell className="text-right font-mono">{facture.volume_m3}</TableCell>
-                  <TableCell className="text-right font-mono font-medium">
-                    {Number(facture.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  <TableCell className="text-right" style={{ fontFamily: 'ui-monospace, monospace' }}>{facture.volume_m3}</TableCell>
+                  <TableCell className="text-right">
+                    <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 300, color: 'white' }}>
+                      {Number(facture.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
                   </TableCell>
-                  <TableCell className="text-right font-mono text-muted-foreground">
-                    {Number(facture.total_ttc).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  <TableCell className="text-right">
+                    <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 300, color: '#9CA3AF' }}>
+                      {Number(facture.total_ttc).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
                   </TableCell>
                   <TableCell className="text-center">
                     {facture.marge_brute_pct !== null ? (
