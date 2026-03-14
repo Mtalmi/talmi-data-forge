@@ -303,7 +303,7 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
           <StatChip 
             value={winLossData.pending} 
             label={vt.inProgress} 
-            color={GOLD} 
+            color="#D4A843" 
             subtext={winLossData.pendingValueHT > 0 ? `${winLossData.pendingValueHT >= 1000 ? `${(winLossData.pendingValueHT / 1000).toFixed(0)}K` : winLossData.pendingValueHT} DH` : undefined}
           />
         </div>
