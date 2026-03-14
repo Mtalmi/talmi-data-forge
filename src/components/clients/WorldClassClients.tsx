@@ -25,6 +25,8 @@ const T = {
   textPri: '#F1F5F9', textSec: '#94A3B8', textDim: '#64748B',
 };
 
+const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
+
 const SEGMENT_COLORS: Record<string, string> = {
   Enterprise: '#D4A843', 'Mid-Market': '#A07820', PME: T.success, Startup: 'rgba(212,168,67,0.3)', Autre: T.textSec,
 };
@@ -53,6 +55,15 @@ function useFadeIn(delay = 0) {
   const [visible, setVisible] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
   return visible;
+}
+
+function useLiveClock() {
+  const [time, setTime] = useState(format(new Date(), 'HH:mm:ss'));
+  useEffect(() => {
+    const id = setInterval(() => setTime(format(new Date(), 'HH:mm:ss')), 1000);
+    return () => clearInterval(id);
+  }, []);
+  return time;
 }
 
 // ─────────────────────────────────────────────────────
@@ -93,11 +104,10 @@ function useClientsLiveData() {
 // ─────────────────────────────────────────────────────
 function Card({ children, style = {}, className = '', goldBorder: showGoldBorder = false }: { children: React.ReactNode; style?: React.CSSProperties; className?: string; goldBorder?: boolean }) {
   const [hov, setHov] = useState(false);
-  const [press, setPress] = useState(false);
   return (
-    <div className={className} onMouseEnter={() => setHov(true)} onMouseLeave={() => { setHov(false); setPress(false); }} onMouseDown={() => setPress(true)} onMouseUp={() => setPress(false)}
-      style={{ background: T.cardBg, border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`, borderTop: showGoldBorder ? '2px solid #D4A843' : undefined, borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden',
-        transform: press ? 'translateY(-1px) scale(0.995)' : hov ? 'translateY(-3px) scale(1.005)' : 'none',
+    <div className={className} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      style={{ background: T.cardBg, borderWidth: '1px', borderStyle: 'solid', borderColor: hov ? T.goldBorder : T.cardBorder, ...(showGoldBorder ? { borderTopWidth: '2px', borderTopColor: '#D4A843' } : {}), borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden',
+        transform: hov ? 'translateY(-1px)' : 'none',
         boxShadow: 'none',
         transition: 'all 200ms cubic-bezier(0.4,0,0.2,1)', ...style }}>
       {children}
@@ -145,16 +155,17 @@ function DarkTooltip({ active, payload, label, suffix = '' }: any) {
 function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive, delay = 0 }: { label: string; value: number; suffix: string; color: string; icon: any; trend: string; trendPositive: boolean; delay?: number }) {
   const animated = useAnimatedCounter(value, 1200);
   const visible = useFadeIn(delay);
+  const isDanger = trend.includes('risque');
   return (
     <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out', height: '100%' }}>
       <Card style={{ height: '100%', borderTop: '2px solid #D4A843', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,168,67,0.15)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</p>
-            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 30, fontWeight: 200, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>
-              {animated}<span style={{ fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>{suffix}</span>
+            <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 8, fontFamily: MONO }}>{label}</p>
+            <p style={{ fontFamily: MONO, fontSize: 42, fontWeight: 100, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em' }}>
+              {animated}<span style={{ fontSize: 18, fontWeight: 400, color: '#9CA3AF', marginLeft: 4, fontFamily: MONO }}>{suffix}</span>
             </p>
-            {trend && <p style={{ fontSize: 12, color: trendPositive ? '#10B981' : '#EF4444', marginTop: 6, fontWeight: 500 }}>{trendPositive ? '↑' : '↓'} {trend}</p>}
+            {trend && <p style={{ fontSize: 12, color: isDanger ? '#EF4444' : trendPositive ? '#10B981' : '#EF4444', marginTop: 6, fontWeight: 500 }}>{trendPositive && !isDanger ? '↑' : '↓'} {trend}</p>}
           </div>
           <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <Icon size={18} color="#D4A843" />
@@ -291,18 +302,18 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
         </div>
         <div style={{ flex: '1 1 90px', minWidth: 90 }}>
           <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>CA YTD</p>
-          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 15, fontWeight: 700, color: T.gold }}>{client.ca}</p>
+          <p style={{ fontFamily: MONO, fontSize: 15, fontWeight: 700, color: T.gold }}>{client.ca}</p>
         </div>
         <div style={{ flex: '1 1 100px', minWidth: 100 }}>
           <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>Dernière cmd</p>
-          <p style={{ color: T.textSec, fontSize: 12 }}>{client.lastOrder}</p>
+          <p style={{ color: T.textSec, fontSize: 12, fontFamily: MONO }}>{client.lastOrder}</p>
         </div>
         <div style={{ flex: '0.5 1 80px', minWidth: 80 }}>
           <Badge label={client.status} color={isInactif ? T.warning : T.success} bg={isInactif ? `${T.warning}18` : `${T.success}18`} pulse={isInactif} />
         </div>
         <div style={{ flex: '1 1 90px', minWidth: 90 }}>
           <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>Solde</p>
-          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: client.solde === 0 ? T.success : T.danger }}>
+          <p style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: client.solde === 0 ? T.success : T.danger }}>
             {client.solde === 0 ? '0 DH' : `${(client.solde / 1000).toFixed(0)}K DH`}
           </p>
         </div>
@@ -311,7 +322,6 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
 
       {/* AI Intelligence Brief */}
       {expanded && (() => {
-        // Parse JSON fields from client_intelligence
         const parseJsonField = (val: any): string[] => {
           if (!val) return [];
           if (Array.isArray(val)) return val;
@@ -329,7 +339,6 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
         const risques = parseJsonField(intel?.risques);
         const actions = parseJsonField(intel?.actions);
 
-        // Fallback to ai_client_briefs if no client_intelligence
         const displayBrief = brief || {};
         const MOCK_BRIEFS: Record<string, any> = {
           'TGCC': { summary: "Client Enterprise stratégique. Volume en hausse constante, +12% ce trimestre.", patterns: { avg_order_frequency_days: 7, preferred_formula: 'F-B30', avg_volume_per_order: 350 }, risk_level: 'low' },
@@ -354,7 +363,6 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
             <p style={{ color: T.textDim, fontSize: 12, fontStyle: 'italic' }}>🤖 Analyse IA en attente...</p>
           ) : (
             <>
-              {/* Header with score badge */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                 <p style={{ color: T.gold, fontWeight: 700, fontSize: 13 }}>🧠 Intelligence Client</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -371,14 +379,12 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
                 </div>
               </div>
 
-              {/* Resume */}
               <div style={{ marginBottom: 10 }}>
                 <p style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.55 }}>
                   {intel?.resume || fallbackBrief?.summary || 'Aucun résumé disponible.'}
                 </p>
               </div>
 
-              {/* Opportunités */}
               {opportunites.length > 0 && (
                 <div style={{ marginBottom: 8 }}>
                   <p style={{ color: T.success, fontWeight: 700, fontSize: 11, marginBottom: 4 }}>✨ Opportunités</p>
@@ -388,7 +394,6 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
                 </div>
               )}
 
-              {/* Risques */}
               {risques.length > 0 && (
                 <div style={{ marginBottom: 8 }}>
                   <p style={{ color: T.danger, fontWeight: 700, fontSize: 11, marginBottom: 4 }}>⚠️ Risques</p>
@@ -398,7 +403,6 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
                 </div>
               )}
 
-              {/* Actions recommandées */}
               {actions.length > 0 && (
                 <div style={{ marginBottom: 8 }}>
                   <p style={{ color: '#D4A843', fontWeight: 700, fontSize: 11, marginBottom: 4 }}>🎯 Actions Recommandées</p>
@@ -408,7 +412,6 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
                 </div>
               )}
 
-              {/* Fallback patterns from ai_client_briefs */}
               {!hasIntel && fallbackBrief?.patterns && (
                 <div style={{ marginBottom: 10 }}>
                   <p style={{ color: T.gold, fontWeight: 700, fontSize: 11, marginBottom: 6 }}>Tendances</p>
@@ -453,13 +456,30 @@ function HealthCard({ label, value, color, desc, icon: Icon, delay = 0 }: { labe
             <Icon size={20} color={color} />
           </div>
           <div>
-            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 28, fontWeight: 200, color, lineHeight: 1.1 }}>{animated}</p>
+            <p style={{ fontFamily: MONO, fontSize: 28, fontWeight: 200, color, lineHeight: 1.1 }}>{animated}</p>
             <p style={{ fontWeight: 700, fontSize: 13, color: T.textPri, marginTop: 4 }}>{label}</p>
             <p style={{ color: T.textDim, fontSize: 11, marginTop: 2 }}>{desc}</p>
           </div>
         </div>
       </Card>
     </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
+// Custom Pulse Dot for Area Chart
+// ─────────────────────────────────────────────────────
+function PulseDot(props: any) {
+  const { cx, cy, index, dataLength } = props;
+  if (index !== dataLength - 1) return null;
+  return (
+    <g>
+      <circle cx={cx} cy={cy} r={5} fill="#D4A843" />
+      <circle cx={cx} cy={cy} r={5} fill="#D4A843" opacity={0.5}>
+        <animate attributeName="r" from="5" to="12" dur="2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite" />
+      </circle>
+    </g>
   );
 }
 
@@ -474,14 +494,13 @@ export default function WorldClassClients() {
   const [newClient, setNewClient] = useState({ nom_client: '', segment: 'Mid-Market', email: '', telephone: '', ville: '' });
   const [creatingClient, setCreatingClient] = useState(false);
   const tabs = [{ id: 'tous', label: 'Tous' }, { id: 'actifs', label: 'Actifs' }, { id: 'inactifs', label: 'Inactifs' }];
+  const liveClock = useLiveClock();
 
   const { clients, factures, loading } = useClientsLiveData();
 
-  // Derived data
   const totalClients = clients.length;
   const activeClients = clients.filter(c => !c.credit_bloque).length;
 
-  // CA per client
   const caByClient = useMemo(() => {
     const map: Record<string, number> = {};
     factures.forEach(f => { map[f.client_id] = (map[f.client_id] || 0) + (f.total_ttc || 0); });
@@ -491,7 +510,6 @@ export default function WorldClassClients() {
   const totalCA = useMemo(() => Object.values(caByClient).reduce((s, v) => s + v, 0), [caByClient]);
   const avgCA = totalClients > 0 ? Math.round(totalCA / totalClients / 1000) : 0;
 
-  // Top clients
   const topClients = useMemo(() => {
     return Object.entries(caByClient)
       .sort((a, b) => b[1] - a[1])
@@ -502,7 +520,6 @@ export default function WorldClassClients() {
       });
   }, [caByClient, clients]);
 
-  // Segments
   const segments = useMemo(() => {
     const map: Record<string, number> = {};
     clients.forEach(c => {
@@ -514,7 +531,6 @@ export default function WorldClassClients() {
     return Object.entries(map).map(([name, value], i) => ({ name, value, color: SEGMENT_COLORS[name] || colors[i % colors.length] }));
   }, [clients, caByClient]);
 
-  // Monthly trend
   const trendData = useMemo(() => {
     const months: { month: string; ca: number; nouveaux: number }[] = [];
     for (let i = 5; i >= 0; i--) {
@@ -530,9 +546,7 @@ export default function WorldClassClients() {
     return months;
   }, [factures, clients]);
 
-  // Client list for table
   const clientList: ClientDisplay[] = useMemo(() => {
-    const thirtyDaysAgo = format(subDays(new Date(), 30), 'yyyy-MM-dd');
     return clients.map(c => {
       const ca = caByClient[c.client_id] || 0;
       const clientFactures = factures.filter(f => f.client_id === c.client_id);
@@ -616,11 +630,20 @@ export default function WorldClassClients() {
   const loyal = totalClients - atRisk;
   const totalNewCA = trendData.reduce((s, t) => s + t.ca, 0);
 
+  // Trend summary stats
+  const trendMax = trendData.reduce((max, t) => t.ca > max.ca ? t : max, trendData[0] || { month: '-', ca: 0 });
+  const trendMin = trendData.reduce((min, t) => t.ca < min.ca ? t : min, trendData[0] || { month: '-', ca: 0 });
+  const trendAvg = trendData.length > 0 ? Math.round(trendData.reduce((s, t) => s + t.ca, 0) / trendData.length) : 0;
+  const trendGrowth = trendData.length >= 2 && trendData[0].ca > 0
+    ? Math.round(((trendData[trendData.length - 1].ca - trendData[0].ca) / trendData[0].ca) * 100)
+    : 0;
+
   return (
     <div style={{ fontFamily: 'DM Sans, sans-serif', background: 'transparent', minHeight: '100vh', color: T.textPri }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700;800&display=swap');
         @keyframes tbos-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.1);opacity:0.8} }
+        @keyframes gold-pulse-dot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:0.6} }
         input::placeholder { color: #64748B; }
         input { outline: none; }
       `}</style>
@@ -636,18 +659,19 @@ export default function WorldClassClients() {
         loading={loading}
         actions={
           <>
+            <span style={{ fontFamily: MONO, fontSize: 13, color: '#9CA3AF', letterSpacing: '0.5px' }}>{liveClock}</span>
             <button
               onClick={() => setIsCreateModalOpen(true)}
               style={{
-                padding: '6px 16px',
-                borderRadius: 8,
-                background: 'linear-gradient(135deg, #C4933B, #FDB913)',
-                border: '1px solid rgba(245, 158, 11, 0.25)',
-                color: '#0F172A',
-                fontFamily: 'DM Sans, sans-serif',
-                fontWeight: 600,
-                fontSize: 13,
+                background: '#D4A843',
+                color: '#0F1629',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '8px 24px',
                 cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: 600,
+                fontFamily: MONO,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 6,
@@ -659,7 +683,24 @@ export default function WorldClassClients() {
             </button>
             <div style={{ position: 'relative' }}>
               <Search size={14} color="#6B7280" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />
-              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher..." style={{ padding: '6px 12px 6px 30px', borderRadius: 8, background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.1)', color: T.textPri, fontSize: 13, fontFamily: 'DM Sans, sans-serif', width: 180 }} onFocus={e => e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.3)'} onBlur={e => e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.1)'} />
+              <input
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Rechercher..."
+                style={{
+                  padding: '6px 12px 6px 30px',
+                  borderRadius: 8,
+                  background: 'rgba(15,22,41,0.5)',
+                  border: '1px solid rgba(212,168,67,0.2)',
+                  color: T.textPri,
+                  fontSize: 13,
+                  fontFamily: MONO,
+                  width: 180,
+                  transition: 'border-color 200ms',
+                }}
+                onFocus={e => e.currentTarget.style.borderColor = '#D4A843'}
+                onBlur={e => e.currentTarget.style.borderColor = 'rgba(212,168,67,0.2)'}
+              />
             </div>
           </>
         }
@@ -688,22 +729,26 @@ export default function WorldClassClients() {
           <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 24 }}>
             <Card goldBorder>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>Top Clients par CA</p>
-                <Badge label={`Top ${topClients.length}`} color={T.gold} bg={`${T.gold}18`} />
+                <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, fontFamily: MONO }}>Top Clients par CA</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontFamily: MONO, fontWeight: 600, color: '#D4A843', fontSize: 14 }}>{Math.round(totalCA / 1000)}K DH</span>
+                  <span style={{ border: '1px solid #D4A843', color: '#D4A843', fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 999 }}>Top {topClients.length}</span>
+                </div>
               </div>
               {topClients.length > 0 ? (
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={topClients} layout="vertical" margin={{ top: 0, right: 50, left: 10, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="barGoldGrad" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="#C49A3C" />
+                        <stop offset="100%" stopColor="#D4A843" />
+                      </linearGradient>
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} horizontal={false} />
-                    <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} tickFormatter={v => `${v}K`} />
-                    <YAxis dataKey="client" type="category" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 11 }} width={120} />
+                    <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#9CA3AF', fontSize: 10, fontFamily: MONO }} tickFormatter={v => `${v}K`} />
+                    <YAxis dataKey="client" type="category" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 13, fontFamily: MONO }} width={120} />
                     <RechartsTooltip content={<DarkTooltip suffix=" K DH" />} cursor={{ fill: `${T.gold}08` }} />
-                    <Bar dataKey="ca" name="CA" radius={[0, 6, 6, 0]} animationDuration={1000}>
-                      {topClients.map((_, i) => {
-                        const fills = ['#D4A843', '#C49A35', '#A07820', 'rgba(212,168,67,0.6)', 'rgba(212,168,67,0.4)'];
-                        return <Cell key={i} fill={fills[i] || fills[fills.length - 1]} />;
-                      })}
-                    </Bar>
+                    <Bar dataKey="ca" name="CA" radius={[0, 6, 6, 0]} animationDuration={1000} fill="url(#barGoldGrad)" />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
@@ -712,7 +757,7 @@ export default function WorldClassClients() {
             </Card>
 
             <Card goldBorder>
-              <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginBottom: 16 }}>Segmentation</p>
+              <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginBottom: 16, fontFamily: MONO }}>Segmentation</p>
               {segments.length > 0 ? (
                 <>
                   <ResponsiveContainer width="100%" height={160}>
@@ -720,16 +765,16 @@ export default function WorldClassClients() {
                       <Pie data={segments} cx="50%" cy="50%" innerRadius={52} outerRadius={72} dataKey="value" animationDuration={600} label={false}>
                         {segments.map((seg, i) => <Cell key={i} fill={seg.color} />)}
                       </Pie>
-                      <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 26, fontWeight: 800, fill: T.gold }}>{totalClients}</text>
-                      <text x="50%" y="60%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 10, fill: T.textSec }}>clients</text>
+                      <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: MONO, fontSize: 28, fontWeight: 100, fill: '#D4A843' }}>{totalClients}</text>
+                      <text x="50%" y="60%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 10, fill: T.textSec, fontFamily: MONO }}>clients</text>
                     </PieChart>
                   </ResponsiveContainer>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 8 }}>
                     {segments.map(seg => (
                       <div key={seg.name} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <div style={{ width: 8, height: 8, borderRadius: 2, background: seg.color, flexShrink: 0 }} />
-                        <span style={{ color: T.textSec, fontSize: 11 }}>{seg.name}</span>
-                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: seg.color, marginLeft: 'auto' }}>{seg.value}</span>
+                        <span style={{ color: T.textSec, fontSize: 12, fontFamily: MONO }}>{seg.name}</span>
+                        <span style={{ fontFamily: MONO, fontSize: 10, color: seg.color, marginLeft: 'auto' }}>{seg.value}</span>
                       </div>
                     ))}
                   </div>
@@ -744,31 +789,72 @@ export default function WorldClassClients() {
         {/* Revenue Trend */}
         <section>
           <SectionHeader icon={Banknote} label="Évolution CA Clients" right={
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: T.gold }}>{totalNewCA}K DH</span>
+            <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: '#D4A843' }}>{totalNewCA}K DH</span>
           } />
           <Card goldBorder>
             <ResponsiveContainer width="100%" height={240}>
               <AreaChart data={trendData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="caGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#D4A843" stopOpacity={0.08} />
+                  <linearGradient id="caGradGod" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#D4A843" stopOpacity={0.12} />
                     <stop offset="100%" stopColor="#D4A843" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,168,67,0.08)" vertical={false} />
-                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} tickFormatter={v => `${v}K`} />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 11, fontFamily: MONO }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 10, fontFamily: MONO }} tickFormatter={v => `${v}K`} />
                 <RechartsTooltip content={<DarkTooltip suffix="K DH" />} cursor={{ stroke: `${T.gold}40` }} />
-                <Area dataKey="ca" name="CA" type="monotone" stroke="#D4A843" strokeWidth={2.5} fill="url(#caGrad)" animationDuration={1200} dot={{ fill: '#D4A843', r: 4 }} />
+                <Area
+                  dataKey="ca"
+                  name="CA"
+                  type="monotone"
+                  stroke="#D4A843"
+                  strokeWidth={2.5}
+                  fill="url(#caGradGod)"
+                  animationDuration={1200}
+                  dot={(props: any) => {
+                    const { cx, cy, index } = props;
+                    const isLast = index === trendData.length - 1;
+                    if (isLast) {
+                      return (
+                        <g key={`pulse-${index}`}>
+                          <circle cx={cx} cy={cy} r={5} fill="#D4A843" />
+                          <circle cx={cx} cy={cy} r={5} fill="#D4A843" opacity={0.5}>
+                            <animate attributeName="r" from="5" to="12" dur="2s" repeatCount="indefinite" />
+                            <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite" />
+                          </circle>
+                        </g>
+                      );
+                    }
+                    return <circle key={`dot-${index}`} cx={cx} cy={cy} r={4} fill="#D4A843" />;
+                  }}
+                  activeDot={{ r: 6, fill: '#D4A843', stroke: '#0F1629', strokeWidth: 2 }}
+                />
                 <Bar dataKey="nouveaux" name="Nouveaux clients" fill={T.info} radius={[3, 3, 0, 0]} animationDuration={1000} />
               </AreaChart>
             </ResponsiveContainer>
+            {/* Summary strip */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16, paddingTop: 12, borderTop: '1px solid rgba(212,168,67,0.08)' }}>
+              {[
+                { label: 'PIC', value: `${trendMax?.ca || 0}K`, sub: trendMax?.month || '' },
+                { label: 'CREUX', value: `${trendMin?.ca || 0}K`, sub: trendMin?.month || '' },
+                { label: 'MOY.', value: `${trendAvg}K/mois`, sub: '' },
+                { label: 'CROISSANCE', value: `${trendGrowth >= 0 ? '+' : ''}${trendGrowth}%`, sub: '' },
+              ].map((s, i) => (
+                <div key={i} style={{ textAlign: 'center' }}>
+                  <p style={{ fontFamily: MONO, fontSize: 9, color: '#9CA3AF', letterSpacing: '1px', marginBottom: 4 }}>{s.label}</p>
+                  <p style={{ fontFamily: MONO, fontSize: 14, fontWeight: 600, color: '#D4A843' }}>
+                    {s.value}{s.sub && <span style={{ fontSize: 10, color: '#9CA3AF', marginLeft: 4 }}>· {s.sub}</span>}
+                  </p>
+                </div>
+              ))}
+            </div>
           </Card>
         </section>
 
         {/* Client List */}
         <section>
-          <SectionHeader icon={Users} label="Liste des Clients" right={<span style={{ color: '#6B7280', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}>{filteredClients.length} résultats</span>} />
+          <SectionHeader icon={Users} label="Liste des Clients" right={<span style={{ color: '#6B7280', fontSize: 11, fontFamily: MONO }}>{filteredClients.length} résultats</span>} />
           <Card goldBorder>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {filteredClients.slice(0, 20).map((c, i) => <ClientRow key={c.name + i} client={c} delay={i * 40} onOpenDetail={handleOpenClientDetail} />)}
@@ -802,7 +888,7 @@ export default function WorldClassClients() {
                 </div>
                 <div>
                   <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>ID Client</p>
-                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.clientId || '—'}</p>
+                  <p style={{ color: T.textPri, fontSize: 14, fontFamily: MONO }}>{selectedClient.clientId || '—'}</p>
                 </div>
                 <div>
                   <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Email</p>
@@ -810,7 +896,7 @@ export default function WorldClassClients() {
                 </div>
                 <div>
                   <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Téléphone</p>
-                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.telephone || '—'}</p>
+                  <p style={{ color: T.textPri, fontSize: 14, fontFamily: MONO }}>{selectedClient.telephone || '—'}</p>
                 </div>
                 <div>
                   <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Ville</p>
@@ -829,18 +915,18 @@ export default function WorldClassClients() {
           <div onClick={() => setIsCreateModalOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
             <form onClick={(e) => e.stopPropagation()} onSubmit={handleCreateClient} style={{ width: 'min(560px, 100%)', background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 20, display: 'grid', gap: 12 }}>
               <p style={{ color: T.gold, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Nouveau Client</p>
-              <input required value={newClient.nom_client} onChange={(e) => setNewClient(prev => ({ ...prev, nom_client: e.target.value }))} placeholder="nom_client" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri }} />
-              <select value={newClient.segment} onChange={(e) => setNewClient(prev => ({ ...prev, segment: e.target.value }))} style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri }}>
+              <input required value={newClient.nom_client} onChange={(e) => setNewClient(prev => ({ ...prev, nom_client: e.target.value }))} placeholder="nom_client" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri, fontFamily: MONO }} />
+              <select value={newClient.segment} onChange={(e) => setNewClient(prev => ({ ...prev, segment: e.target.value }))} style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri, fontFamily: MONO }}>
                 <option value="Mid-Market">Mid-Market</option>
                 <option value="Enterprise">Enterprise</option>
                 <option value="Startup">Startup</option>
               </select>
-              <input value={newClient.email} onChange={(e) => setNewClient(prev => ({ ...prev, email: e.target.value }))} placeholder="email" type="email" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri }} />
-              <input value={newClient.telephone} onChange={(e) => setNewClient(prev => ({ ...prev, telephone: e.target.value }))} placeholder="telephone" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri }} />
-              <input value={newClient.ville} onChange={(e) => setNewClient(prev => ({ ...prev, ville: e.target.value }))} placeholder="ville" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri }} />
+              <input value={newClient.email} onChange={(e) => setNewClient(prev => ({ ...prev, email: e.target.value }))} placeholder="email" type="email" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri, fontFamily: MONO }} />
+              <input value={newClient.telephone} onChange={(e) => setNewClient(prev => ({ ...prev, telephone: e.target.value }))} placeholder="telephone" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri, fontFamily: MONO }} />
+              <input value={newClient.ville} onChange={(e) => setNewClient(prev => ({ ...prev, ville: e.target.value }))} placeholder="ville" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri, fontFamily: MONO }} />
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 4 }}>
-                <button type="button" onClick={() => setIsCreateModalOpen(false)} style={{ padding: '8px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'transparent', color: T.textSec, cursor: 'pointer' }}>Annuler</button>
-                <button type="submit" disabled={creatingClient} style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.25)', background: 'linear-gradient(135deg, #C4933B, #FDB913)', color: '#0F172A', cursor: creatingClient ? 'not-allowed' : 'pointer', fontWeight: 600 }}>
+                <button type="button" onClick={() => setIsCreateModalOpen(false)} style={{ padding: '8px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'transparent', color: T.textSec, cursor: 'pointer', fontFamily: MONO }}>Annuler</button>
+                <button type="submit" disabled={creatingClient} style={{ padding: '8px 24px', borderRadius: 8, border: 'none', background: '#D4A843', color: '#0F1629', cursor: creatingClient ? 'not-allowed' : 'pointer', fontWeight: 600, fontFamily: MONO }}>
                   {creatingClient ? 'Création...' : 'Créer'}
                 </button>
               </div>
@@ -850,7 +936,7 @@ export default function WorldClassClients() {
 
         {/* Footer */}
         <footer style={{ borderTop: '1px solid rgba(245, 158, 11, 0.08)', paddingTop: 24, paddingBottom: 24, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <span style={{ color: '#4B5563', fontSize: 12 }}>TBOS Clients v2.0 — Données live • {format(new Date(), 'dd/MM/yyyy')}</span>
+          <span style={{ color: '#4B5563', fontSize: 12, fontFamily: MONO }}>TBOS Clients v2.0 — Données live • {format(new Date(), 'dd/MM/yyyy')}</span>
         </footer>
       </div>
     </div>
