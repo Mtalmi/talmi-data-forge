@@ -48,20 +48,41 @@ const CHART_COLORS = [T.gold, T.info, T.success, T.warning, T.danger, '#94A3B8',
 // ─────────────────────────────────────────────────────
 // ANIMATED COUNTER HOOK
 // ─────────────────────────────────────────────────────
-function useAnimatedCounter(target: number, duration = 800) {
+function useAnimatedCounter(target: number, duration = 1500, delay = 0) {
   const [value, setValue] = useState(0);
   const rafRef = useRef<number>();
   useEffect(() => {
-    const start = performance.now();
-    const animate = (now: number) => {
-      const p = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
-      setValue(Math.round(eased * target));
-      if (p < 1) rafRef.current = requestAnimationFrame(animate);
-    };
-    rafRef.current = requestAnimationFrame(animate);
-    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
-  }, [target, duration]);
+    const timeout = setTimeout(() => {
+      const start = performance.now();
+      const animate = (now: number) => {
+        const p = Math.min((now - start) / duration, 1);
+        const eased = p === 1 ? 1 : 1 - Math.pow(2, -10 * p); // easeOutExpo
+        setValue(Math.round(eased * target));
+        if (p < 1) rafRef.current = requestAnimationFrame(animate);
+      };
+      rafRef.current = requestAnimationFrame(animate);
+    }, delay);
+    return () => { clearTimeout(timeout); if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [target, duration, delay]);
+  return value;
+}
+
+function useAnimatedCounterDecimal(target: number, decimals = 1, duration = 1500, delay = 0) {
+  const [value, setValue] = useState(0);
+  const rafRef = useRef<number>();
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const start = performance.now();
+      const animate = (now: number) => {
+        const p = Math.min((now - start) / duration, 1);
+        const eased = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
+        setValue(parseFloat((eased * target).toFixed(decimals)));
+        if (p < 1) rafRef.current = requestAnimationFrame(animate);
+      };
+      rafRef.current = requestAnimationFrame(animate);
+    }, delay);
+    return () => { clearTimeout(timeout); if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [target, duration, decimals, delay]);
   return value;
 }
 
