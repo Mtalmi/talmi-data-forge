@@ -1980,12 +1980,12 @@ function IntelligenceIATab() {
 
         <div style={{ borderLeft: `4px solid ${T.warning}`, background: 'rgba(245,158,11,0.05)', padding: '14px 18px', borderRadius: '0 8px 8px 0', marginTop: 16 }}>
           <p style={{ fontFamily: MONO, fontSize: 12, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
-            ⚠ Alerte prioritaire : La certification NM 10.1.271 (Essais affaissement) expire le 1er avril 2025. Planifier le renouvellement immédiatement pour éviter un blocage réglementaire.
+            ⚠ Alerte prioritaire : La certification NM 10.1.271 (Essais affaissement) expire le 1er avril 2026. Planifier le renouvellement immédiatement pour éviter un blocage réglementaire.
           </p>
         </div>
 
         <div style={{ marginTop: 12 }}>
-          <button style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px', background: 'transparent', border: `1px solid ${T.gold}`, borderRadius: 9, color: T.gold, fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+          <button style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px', background: '#D4A843', border: 'none', borderRadius: 9, color: '#0F1629', fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
             <FileText size={13} /> Planifier Test
           </button>
         </div>
