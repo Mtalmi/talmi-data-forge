@@ -1325,7 +1325,7 @@ export default function WorldClassLaboratory() {
       <div style={{ padding: '32px 32px 0', animation: 'lab-tab-fade 0.35s ease-out' }} key={activeTab}>
         {activeTab === 'essais' && <EssaisDuJourTab labKpis={labKpis} />}
         {activeTab === 'historique' && <HistoriqueNormesTab />}
-        {activeTab === 'analytique' && <EmptyTabPlaceholder title="Analytique" icon={TrendingUp} />}
+        {activeTab === 'analytique' && <AnalytiqueTab />}
         {activeTab === 'ia' && <EmptyTabPlaceholder title="Intelligence IA" icon={Brain} />}
       </div>
     </div>
