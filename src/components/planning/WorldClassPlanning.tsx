@@ -747,9 +747,32 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
               <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 24 }}>
                 {dispatchMain}
 
-                {/* Planning Chronologique Table */}
-                <div>
-              <SectionHeader icon={Clock} label="Planning Chronologique" />
+                {/* Planning Chronologique Table — Collapsible */}
+                {(() => {
+                  const [chronoOpen, setChronoOpen] = React.useState(false);
+                  return (
+                    <div>
+                      <button
+                        onClick={() => setChronoOpen(!chronoOpen)}
+                        style={{
+                          width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+                          padding: '0 0 12px 0', background: 'transparent', border: 'none',
+                          cursor: 'pointer', textAlign: 'left',
+                        }}
+                      >
+                        <Clock size={16} color={T.gold} />
+                        <span style={{ color: T.gold, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>
+                          PLANNING CHRONOLOGIQUE — Vendredi 13 Mars 2026
+                        </span>
+                        <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
+                        {!chronoOpen && (
+                          <span style={{ fontSize: 11, color: T.textSec, fontWeight: 500, whiteSpace: 'nowrap' }}>
+                            5 livraisons · 225 m³ · 153 250 DH · Marge: 36%
+                          </span>
+                        )}
+                        {chronoOpen ? <ChevronUp size={16} color={T.textSec} /> : <ChevronDown size={16} color={T.textSec} />}
+                      </button>
+                      {chronoOpen && (
               <Card style={{ padding: 0, overflow: 'hidden' }}>
                 <div style={{
                   display: 'grid', gridTemplateColumns: '1.2fr 1.2fr 1fr 1fr 0.8fr 0.8fr 0.8fr 0.8fr',
@@ -810,7 +833,10 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                   </div>
                 </div>
               </Card>
-                </div>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
               {fleetPanel}
             </div>
