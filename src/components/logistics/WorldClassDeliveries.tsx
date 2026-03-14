@@ -1726,7 +1726,7 @@ function IntelligenceIATab() {
         </div>
 
         <RecommendationBox text={
-          <>Sigma Bâtiment (score <strong style={{ color: T.danger }}>23/100</strong>) est le chantier le plus problématique : 1 retour béton + 2 surestaries + 33% retard. Corrélation : ce client a aussi un score paiement de <strong style={{ color: T.danger }}>12/100</strong> (page Clients). Recommandation : exiger confirmation chantier + paiement anticipé pour toute livraison. Résidences Atlas (<strong style={{ color: T.warning }}>65/100</strong>) en baisse — 2 surestaries en 3 mois, enquêter sur changement de responsable chantier.</>
+          <>Sigma Bâtiment (score <strong style={{ color: T.danger }}>23/100</strong>) est le chantier le plus problématique : 1 retour béton + 2 surestaries + 33% retard. Corrélation : score chantier <strong style={{ color: T.danger }}>23/100</strong> <CrossRef page="Logistique" /> · score paiement <strong style={{ color: T.danger }}>12/100</strong> <CrossRef page="Créances" /> · volume en baisse <strong style={{ color: T.danger }}>−40%</strong> <CrossRef page="Ventes" />. Recommandation : exiger confirmation chantier + paiement anticipé pour toute livraison. Résidences Atlas (<strong style={{ color: T.warning }}>65/100</strong>) en baisse — 2 surestaries en 3 mois, enquêter sur changement de responsable chantier.</>
         } />
       </Card>
 
