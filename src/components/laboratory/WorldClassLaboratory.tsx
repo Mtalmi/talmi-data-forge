@@ -555,6 +555,23 @@ function EssaisDuJourTab({ labKpis }: { labKpis: { testsToday: number; conformes
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+      {/* LIVE STATUS STRIP */}
+      <section>
+        <div style={{ background: 'rgba(212,168,67,0.03)', borderLeft: '4px solid #D4A843', padding: '12px 20px', borderRadius: '0 8px 8px 0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 0, flexWrap: 'wrap', fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>
+            <Bdg label="● EN DIRECT" color={T.success} bg="rgba(34,197,94,0.12)" pulse />
+            <span style={{ margin: '0 10px', color: 'rgba(255,255,255,0.15)' }}>·</span>
+            <span>Prochain test: <span style={{ color: '#FFFFFF' }}>BN-0143</span> dans <span style={{ color: '#FFFFFF' }}>15 min</span></span>
+            <span style={{ margin: '0 10px', color: 'rgba(255,255,255,0.15)' }}>·</span>
+            <span>Malaxeur: <span style={{ color: '#FFFFFF' }}>ACTIF</span> batch <span style={{ color: '#FFFFFF' }}>#457-068</span></span>
+            <span style={{ margin: '0 10px', color: 'rgba(255,255,255,0.15)' }}>·</span>
+            <span>Formule: <span style={{ color: '#FFFFFF' }}>F-B25</span></span>
+            <span style={{ margin: '0 10px', color: 'rgba(255,255,255,0.15)' }}>·</span>
+            <span>Opérateur: <span style={{ color: '#FFFFFF' }}>Youssef M.</span></span>
+          </div>
+        </div>
+      </section>
+
       {/* KPIs */}
       <section>
         <SectionHeader icon={TrendingUp} label="Indicateurs du Jour" />
