@@ -1453,8 +1453,9 @@ export default function WorldClassDeliveries() {
                         <td style={{ ...monoCell, color: T.danger, fontWeight: 700 }}>{PROFIT_TOTALS.maintenance.toLocaleString('fr-MA')} DH</td>
                         <td style={monoCell}>—</td>
                         <td style={{ ...monoCell, color: T.success, fontWeight: 700 }}>{PROFIT_TOTALS.profit.toLocaleString('fr-MA')} DH</td>
-                        <td style={{ ...monoCell, color: T.gold, fontWeight: 700 }}>{PROFIT_TOTALS.dhKm} DH/km</td>
-                        <td style={tblCell}></td>
+                         <td style={{ ...monoCell, color: T.gold, fontWeight: 700 }}>{PROFIT_TOTALS.dhKm} DH/km</td>
+                         <td style={{ ...monoCell, color: PROFIT_TOTALS.retourVideColor }}>{PROFIT_TOTALS.retourVide}</td>
+                         <td style={tblCell}></td>
                       </tr>
                     </tbody>
                   </table>
