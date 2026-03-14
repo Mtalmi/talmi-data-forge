@@ -12,6 +12,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { MaterialPriceTracker } from '@/components/stocks/MaterialPriceTracker';
 import { CostImpactSimulator } from '@/components/stocks/CostImpactSimulator';
+import { SmartReorderQueue } from '@/components/stocks/SmartReorderQueue';
 import { format, subDays, startOfDay } from 'date-fns';
 
 // ─────────────────────────────────────────────────────
