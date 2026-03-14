@@ -48,10 +48,9 @@ export function SmartReorderBanner() {
       {visible.map(rec => (
         <div key={rec.id} style={{
           background: 'rgba(239,68,68,0.04)',
-          borderLeft: '3px solid #EF4444',
-          border: '1px solid rgba(239,68,68,0.15)',
-          borderLeftWidth: 3,
-          borderLeftColor: '#EF4444',
+          borderWidth: '1px 1px 1px 3px',
+          borderStyle: 'solid',
+          borderColor: 'rgba(239,68,68,0.15) rgba(239,68,68,0.15) rgba(239,68,68,0.15) #EF4444',
           borderRadius: 12, padding: '14px 20px',
           display: 'flex', alignItems: 'center', gap: 14,
         }}>
