@@ -238,8 +238,8 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
             <button key={tab.id} onClick={() => setActiveFilter(tab.id)}
               className="flex items-center gap-2 cursor-pointer" style={{
                 padding: '10px 16px', background: 'transparent', border: 'none',
-                borderBottom: active ? `2px solid ${T.gold}` : '2px solid transparent',
-                color: active ? '#fff' : 'rgba(255,255,255,0.45)',
+                borderBottom: active ? '2px solid #D4A843' : '2px solid transparent',
+                color: active ? '#D4A843' : '#9CA3AF',
                 fontWeight: active ? 500 : 400, fontSize: 13,
                 fontFamily: 'DM Sans, sans-serif', transition: 'all 150ms',
               }}>
