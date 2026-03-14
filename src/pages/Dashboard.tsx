@@ -1492,16 +1492,16 @@ export default function Dashboard() {
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 50 }} />
                 <div className="mb-3">
                   <div className="uppercase mb-2" style={{ fontFamily: "'JetBrains Mono', monospace", color: 'rgba(212,168,67,0.7)', letterSpacing: '2px', fontSize: '11px', fontWeight: 500 }}>File de Production</div>
-                  <div className="mb-2 p-2 rounded-lg border border-[#D4A843]/30 border-l-2 border-l-[#D4A843]/50" style={{ background: 'rgba(212,168,67,0.06)', borderLeft: '2px solid rgba(212,168,67,0.5)', boxShadow: '0 0 16px rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.25)' }}>
+                  <div className="mb-2 p-2 rounded-lg" style={{ background: 'rgba(212,168,67,0.06)', boxShadow: '0 0 16px rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.25)', borderLeft: '3px solid #D4A843', animation: 'batchBreathing 3s infinite' }}>
                     <div className="flex items-center gap-1.5 mb-1">
                       <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                       <span className="text-[10px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#403-068</span>
-                      <span className="ml-auto text-xs px-2 py-0.5 rounded font-medium" style={{ background: 'transparent', border: '1px solid #D4A843', color: '#D4A843' }}>Déchargement</span>
+                      <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '4px 12px', cursor: 'pointer', fontSize: '13px', marginLeft: 'auto' }}>Déchargement</button>
                     </div>
                     <div className="text-[8px] text-slate-400 mb-1.5">F-B25 · 8 m³ · BTP Maroc</div>
                     <div className="flex items-center gap-2">
                       <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
-                        <div className="h-1.5 rounded-full bg-[#D4A843] relative overflow-hidden" style={{ width: '72%', transition: 'width 1s ease-out' }}>
+                        <div className="h-1.5 rounded-full relative overflow-hidden" style={{ width: '72%', background: 'linear-gradient(90deg, #D4A843, #E8C96A)', animation: 'progressGrow 1s ease forwards' }}>
                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite]" />
                         </div>
                       </div>
@@ -1515,8 +1515,8 @@ export default function Dashboard() {
                     {[
                       { id: '#403-069', formula: 'F-B30 · 12 m³', client: 'Atlas BTP' },
                       { id: '#403-070', formula: 'F-B25 · 8 m³', client: 'Const. Modernes' },
-                    ].map((batch) => (
-                      <div key={batch.id} className="flex items-center gap-1.5 rounded px-2 py-1 -mx-2" style={{ cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.03)'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
+                    ].map((batch, idx) => (
+                      <div key={batch.id} className="flex items-center gap-1.5 rounded px-2 py-1 -mx-2" style={{ cursor: 'pointer', transition: 'all 0.2s', animation: `batchSlideIn 400ms ease forwards`, animationDelay: `${(idx + 1) * 100}ms`, opacity: 0 }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.03)'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
                         <span className="w-1 h-1 bg-slate-600 rounded-full" />
                         <div className="min-w-0">
                           <div className="text-[8px] text-slate-400" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{batch.id}</div>
@@ -1526,17 +1526,17 @@ export default function Dashboard() {
                     ))}
                   </div>
                 </div>
-                {/* Metrics */}
+                {/* Metrics (item 23) */}
                 <div className="mt-auto grid grid-cols-2 gap-2">
                   {[
-                    { label: 'Disponibilité', value: '97%', color: '#34D399' },
-                    { label: 'Cadence', value: '47 m³/h', color: '#C9A84C' },
-                    { label: 'Batches', value: '23', color: '#94A3B8' },
-                    { label: 'Attente', value: '12 min', color: '#FBBF24' },
+                    { label: 'Disponibilité', value: '97%' },
+                    { label: 'Cadence', value: '47 m³/h' },
+                    { label: 'Batches', value: '23' },
+                    { label: 'Attente', value: '12 min' },
                   ].map((m) => (
                     <div key={m.label} className="p-1.5 rounded" style={{ background: 'rgba(255,255,255,0.02)' }}>
                       <div className="text-[10px] uppercase tracking-wider text-white/40 block mb-0.5">{m.label}</div>
-                      <div className="text-sm font-medium text-white">{m.label === 'Cadence' ? <>{m.value.split(' ')[0]} <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>m³/h</span></> : m.value}</div>
+                      <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, color: '#D4A843' }}>{m.label === 'Cadence' ? <>{m.value.split(' ')[0]} <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>m³/h</span></> : m.value}</div>
                     </div>
                   ))}
                 </div>
