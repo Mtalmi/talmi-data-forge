@@ -130,11 +130,11 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 2, background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: 2 }}>
-            <button onClick={() => setViewMode('list')} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 6, border: 'none', cursor: 'pointer', background: viewMode === 'list' ? 'rgba(212,168,67,0.15)' : 'transparent', transition: 'background 150ms' }}>
+            <button onClick={() => setViewMode('list')} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 6, border: viewMode === 'list' ? '1px solid #D4A843' : 'none', cursor: 'pointer', background: viewMode === 'list' ? 'rgba(212,168,67,0.1)' : 'transparent', transition: 'background 150ms' }}>
               <List size={13} color={viewMode === 'list' ? '#D4A843' : '#64748B'} />
               <span style={{ fontSize: 10, fontWeight: 600, color: viewMode === 'list' ? '#D4A843' : '#64748B' }}>Vue Liste</span>
             </button>
-            <button onClick={() => setViewMode('map')} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 6, border: 'none', cursor: 'pointer', background: viewMode === 'map' ? 'rgba(212,168,67,0.15)' : 'transparent', transition: 'background 150ms' }}>
+            <button onClick={() => setViewMode('map')} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 6, border: viewMode === 'map' ? '1px solid #D4A843' : 'none', cursor: 'pointer', background: viewMode === 'map' ? 'rgba(212,168,67,0.1)' : 'transparent', transition: 'background 150ms' }}>
               <Map size={13} color={viewMode === 'map' ? '#D4A843' : '#64748B'} />
               <span style={{ fontSize: 10, fontWeight: 600, color: viewMode === 'map' ? '#D4A843' : '#64748B' }}>Vue Carte</span>
             </button>
