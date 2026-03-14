@@ -10,15 +10,13 @@ interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
 export function Skeleton({ className, style, ...props }: SkeletonProps) {
   return (
     <div 
-      className={cn(
-        "rounded-md relative overflow-hidden",
-        "bg-gradient-to-r from-muted/40 via-muted/60 to-muted/40",
-        "after:absolute after:inset-0 after:translate-x-[-100%]",
-        "after:bg-gradient-to-r after:from-transparent after:via-foreground/[0.04] after:to-transparent",
-        "after:animate-[shimmer_2.5s_ease-in-out_infinite]",
-        className
-      )}
-      style={style}
+      className={cn("rounded-md relative overflow-hidden", className)}
+      style={{
+        background: 'linear-gradient(90deg, rgba(212,168,67,0.03) 0%, rgba(212,168,67,0.08) 50%, rgba(212,168,67,0.03) 100%)',
+        backgroundSize: '200% 100%',
+        animation: 'tbosShimmer 1.5s ease-in-out infinite',
+        ...style,
+      }}
       {...props}
     />
   );
