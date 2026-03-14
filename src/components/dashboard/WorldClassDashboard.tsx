@@ -484,7 +484,7 @@ function AIAnalystBrief() {
         {/* Left column: insights (60%) */}
         <div className="col-span-3 flex flex-col gap-2.5">
           {insights.map((insight, i) => {
-            const color = insight.tone === 'critical' ? '#F87171' : '#D4A843';
+            const color = '#D4A843';
             return (
               <div
                 key={i}

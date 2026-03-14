@@ -1626,8 +1626,8 @@ export default function Dashboard() {
               </button>
               <button
                 style={{ background: 'transparent', border: '1px solid #D4A843', color: '#D4A843', fontWeight: 400, borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', transition: 'all 0.2s ease', fontSize: '12px' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.1)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.1)'; e.currentTarget.style.borderColor = '#D4A843'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = '#D4A843'; }}
               >
                 Passer
               </button>
