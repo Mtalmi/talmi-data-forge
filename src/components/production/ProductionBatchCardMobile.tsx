@@ -58,7 +58,7 @@ export function ProductionBatchCardMobile({
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-mono text-sm font-semibold text-primary">{batch.bl_id}</span>
+              <span className="font-mono text-sm font-semibold" style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontWeight: 500 }}>{batch.bl_id}</span>
               {batch.alerte_ecart && <AlertTriangle className="h-4 w-4 text-destructive" />}
             </div>
             <p className="text-xs text-muted-foreground">

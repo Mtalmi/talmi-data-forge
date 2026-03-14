@@ -110,7 +110,7 @@ export function ProductionBatchListResponsive({
                 <TableRow key={batch.bl_id}>
                   <TableCell className="font-mono font-semibold">
                     <div className="flex items-center gap-2">
-                      {batch.bl_id}
+                      <span style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontWeight: 500 }}>{batch.bl_id}</span>
                       {batch.alerte_ecart && (
                         <AlertTriangle className="h-4 w-4 text-destructive" />
                       )}
