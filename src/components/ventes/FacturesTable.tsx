@@ -291,16 +291,16 @@ export function FacturesTable({
                   />
                 </TableHead>
               )}
-              <TableHead>{ft.invoiceNumber}</TableHead>
-              <TableHead>{c.client}</TableHead>
-              <TableHead>{ft.blBc}</TableHead>
-              <TableHead className="text-center">{c.date}</TableHead>
-              <TableHead className="text-right">{c.volume} (m³)</TableHead>
-              <TableHead className="text-right">{c.totalHT} (DH)</TableHead>
-              <TableHead className="text-right">{ft.totalTtc || 'Total TTC'} (DH)</TableHead>
-              <TableHead className="text-center">{ft.margin}</TableHead>
-              <TableHead className="text-center">{c.status}</TableHead>
-              <TableHead className="text-center">{ft.actions}</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{ft.invoiceNumber}</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{c.client}</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{ft.blBc}</TableHead>
+              <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{c.date}</TableHead>
+              <TableHead className="text-right" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{c.volume} (m³)</TableHead>
+              <TableHead className="text-right" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{c.totalHT} (DH)</TableHead>
+              <TableHead className="text-right" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{ft.totalTtc || 'Total TTC'} (DH)</TableHead>
+              <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{ft.margin}</TableHead>
+              <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{c.status}</TableHead>
+              <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{ft.actions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
