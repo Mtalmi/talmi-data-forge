@@ -610,8 +610,8 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
                       {format(day, 'EEE', { locale: fr })}.
                     </p>
                     <p style={{
-                      fontFamily: 'ui-monospace, monospace', fontSize: 22, fontWeight: isT ? 600 : 300,
-                      color: isT ? T.gold : isBefore(day, startOfDay(new Date())) ? 'rgba(255,255,255,0.25)' : '#fff',
+                      fontFamily: 'ui-monospace, monospace', fontSize: isT ? 32 : 24, fontWeight: 200,
+                      color: isT ? '#D4A843' : isBefore(day, startOfDay(new Date())) ? 'rgba(255,255,255,0.25)' : '#fff',
                       marginTop: 2, letterSpacing: '-0.02em',
                     }}>
                       {format(day, 'dd')}
