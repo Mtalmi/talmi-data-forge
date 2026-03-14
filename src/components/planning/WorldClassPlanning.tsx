@@ -1019,7 +1019,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                         padding: '12px 8px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                         borderRight: `1px solid ${T.cardBorder}`,
                       }}>
-                        <span style={{ color: T.textDim, fontSize: 10, fontFamily: 'JetBrains Mono, monospace', writingMode: 'horizontal-tb' }}>{row.time}</span>
+                        <span style={{ color: '#D4A843', fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', writingMode: 'horizontal-tb' }}>{row.time}</span>
                       </div>
                       {row.slots.map((slot, si) => (
                         <div key={si} style={{ padding: 8, borderLeft: `1px solid ${T.cardBorder}` }}>
