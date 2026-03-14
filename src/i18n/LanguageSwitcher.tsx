@@ -19,6 +19,7 @@ export function LanguageSwitcher({ variant = 'compact' }: { variant?: 'compact' 
 
   const items = [
     { code: 'fr' as const, flag: '🇫🇷', label: 'Français', active: true },
+    { code: 'en' as const, flag: '🇬🇧', label: 'English', active: true, badge: 'Beta' },
     { code: 'ar' as const, flag: '🇲🇦', label: 'العربية', active: false, badge: 'Bientôt', tooltip: 'Support RTL arabe — disponible Q2 2026' },
   ];
 
