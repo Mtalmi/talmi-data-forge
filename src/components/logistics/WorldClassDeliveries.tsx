@@ -909,7 +909,7 @@ function AnalytiqueTab() {
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 16 }}>
               <span style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color: T.gold }}>1,420 DH</span>
               <span style={{ fontSize: 12, color: T.textDim }}>coût moyen/livraison</span>
-              <Bdg label="−8% vs mois dernier" color={T.success} bg="rgba(34,197,94,0.12)" />
+              <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: 'rgba(34,197,94,0.15)', color: T.success, border: `1px solid rgba(34,197,94,0.3)` }}>−8% vs mois dernier</span>
             </div>
             {/* Breakdown bars */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
