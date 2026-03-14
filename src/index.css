@@ -333,19 +333,30 @@ html {
   text-decoration: underline;
 }
 
-/* ─── Chart crosshair + tooltip ─── */
+/* ─── Chart crosshair + tooltip (TBOS unified) ─── */
 .recharts-wrapper {
   cursor: crosshair !important;
 }
 .recharts-tooltip-wrapper .recharts-default-tooltip {
   background: #1A2332 !important;
-  border: 1px solid rgba(212, 168, 67, 0.15) !important;
+  border: 1px solid rgba(212, 168, 67, 0.2) !important;
   border-radius: 6px !important;
   box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important;
   font-family: ui-monospace, SFMono-Regular, monospace !important;
   font-size: 11px !important;
   color: #FFFFFF !important;
-  padding: 6px 10px !important;
+  padding: 8px 12px !important;
+}
+.recharts-tooltip-item {
+  color: #D4A843 !important;
+  font-size: 11px !important;
+  font-family: ui-monospace, SFMono-Regular, monospace !important;
+}
+.recharts-tooltip-label {
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+  font-size: 11px !important;
+  font-family: ui-monospace, SFMono-Regular, monospace !important;
 }
 .recharts-active-dot circle {
   transition: r 150ms ease;
@@ -4030,35 +4041,36 @@ textarea.valid {
   animation: pieSpinIn 0.8s var(--ease-out) forwards;
 }
 
-/* Chart tooltip premium style */
-.recharts-tooltip-wrapper .recharts-default-tooltip {
-  background: hsl(var(--popover)) !important;
-  border: 1px solid hsl(var(--primary) / 0.2) !important;
-  border-radius: 10px !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
-  font-family: "JetBrains Mono", monospace !important;
-}
-.recharts-tooltip-item {
-  color: hsl(var(--primary)) !important;
-  font-size: 12px !important;
-}
-.recharts-tooltip-label {
-  color: hsl(var(--foreground)) !important;
-  font-weight: 600 !important;
-}
+/* Chart tooltip premium style — consolidated with global tooltip above */
+/* (duplicate removed, single source at lines ~336) */
 
-/* Recharts grid lines — subtle */
-.recharts-cartesian-grid-horizontal line,
+/* Recharts grid lines — horizontal only, gold-tinted */
+.recharts-cartesian-grid-horizontal line {
+  stroke: rgba(212, 168, 67, 0.06) !important;
+  stroke-opacity: 1 !important;
+}
 .recharts-cartesian-grid-vertical line {
-  stroke: hsl(var(--border)) !important;
-  stroke-opacity: 0.4 !important;
+  display: none !important;
 }
 
-/* Recharts axis text */
+/* Recharts axis text — unified monospace */
 .recharts-cartesian-axis-tick-value {
-  fill: hsl(var(--muted-foreground)) !important;
-  font-size: 11px !important;
-  font-family: "JetBrains Mono", monospace !important;
+  fill: #9CA3AF !important;
+  font-size: 10px !important;
+  font-family: ui-monospace, SFMono-Regular, monospace !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* Hide axis lines — labels float freely */
+.recharts-cartesian-axis-line,
+.recharts-cartesian-axis-tick-line {
+  display: none !important;
+}
+
+/* Donut/Pie segment separation */
+.recharts-pie-sector path {
+  stroke: #0F1629 !important;
+  stroke-width: 2px !important;
 }
 
 /* ══════════════════════════════════════════════════════════════
