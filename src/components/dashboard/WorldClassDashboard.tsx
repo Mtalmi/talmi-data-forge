@@ -881,9 +881,9 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                           {item.daysLeft <= 3 ? (
                             <button
                               style={{
-                                background: 'transparent',
-                                border: '1px solid rgba(212,168,67,0.4)',
+                                border: '1px solid #D4A843',
                                 color: '#D4A843',
+                                background: 'transparent',
                                 borderRadius: '6px',
                                 fontSize: '11px',
                                 fontWeight: 500,
@@ -891,8 +891,8 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                                 transition: 'all 0.2s ease',
                                 cursor: 'pointer',
                               }}
-                              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.08)'; e.currentTarget.style.borderColor = 'rgba(212,168,67,0.6)'; }}
-                              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(212,168,67,0.4)'; }}
+                              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.08)'; }}
+                              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                               onClick={() => fireCommanderToast(item.name, item.daysLeft)}
                             >
                               Commander
@@ -1119,9 +1119,9 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                           {item.daysLeft <= 3 ? (
                             <button
                               style={{
-                                background: 'transparent',
-                                border: '1px solid rgba(212,168,67,0.4)',
+                                border: '1px solid #D4A843',
                                 color: '#D4A843',
+                                background: 'transparent',
                                 borderRadius: '6px',
                                 fontSize: '11px',
                                 fontWeight: 500,
@@ -1129,8 +1129,8 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                                 transition: 'all 0.2s ease',
                                 cursor: 'pointer',
                               }}
-                              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.08)'; e.currentTarget.style.borderColor = 'rgba(212,168,67,0.6)'; }}
-                              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(212,168,67,0.4)'; }}
+                              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.08)'; }}
+                              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                               onClick={() => fireCommanderToast(item.name, item.daysLeft)}
                             >
                               Commander
