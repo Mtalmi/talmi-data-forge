@@ -291,7 +291,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                   onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,215,0,0.04)')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                 >
-                  <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 500, color: '#fff' }}>{row.bl_id}</span>
+                  <span style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 500 }}>{row.bl_id}</span>
                   <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.client}</span>
                   <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.60)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.formule}</span>
                   <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 400, color: '#fff', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.volume}</span>
