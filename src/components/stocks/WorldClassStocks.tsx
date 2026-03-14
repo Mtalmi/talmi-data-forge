@@ -316,39 +316,58 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   label: string; value: number; suffix: string; color: string;
   icon: any; trend: string; trendPositive: boolean; delay?: number; decimals?: number; isAlert?: boolean;
 }) {
-  const animated = useAnimatedCounter(value, 1200, decimals);
+  const animated = useAnimatedCounter(value, 2000, decimals);
   const [visible, setVisible] = useState(false);
+  const [hov, setHov] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
 
-  // Icon color: amber by default, red only for alert card when value > 0
-  const iconColor = isAlert && value > 0 ? T.danger : T.amber;
-  const iconBg = isAlert && value > 0 ? 'rgba(239, 68, 68, 0.15)' : T.amberHover;
+  const iconColor = isAlert && value > 0 ? T.danger : '#D4A843';
+  const iconBg = isAlert && value > 0 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(212,168,67,0.15)';
+  const valueColor = isAlert && value > 0 ? '#EF4444' : '#D4A843';
 
   return (
-    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out', height: '100%' }}>
-      <Card style={{ height: '100%' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', height: '100%' }}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</p>
-            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 30, fontWeight: 200, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>
-              {decimals > 0 ? animated.toFixed(decimals) : animated.toLocaleString('fr-FR')}
-              <span style={{ fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>{suffix}</span>
+    <div
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? (hov ? 'translateY(-1px)' : 'translateY(0)') : 'translateY(20px)',
+        transition: 'all 200ms ease-out',
+        height: '100%',
+        background: hov ? 'rgba(212,168,67,0.03)' : 'transparent',
+      }}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+    >
+      <div style={{
+        background: 'rgba(255,255,255,0.04)',
+        borderTop: '2px solid #D4A843',
+        borderRadius: 9,
+        border: '1px solid rgba(245,158,11,0.15)',
+        borderTopWidth: 2,
+        borderTopColor: '#D4A843',
+        padding: '20px 16px',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+        height: '100%',
+      }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</p>
+          <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 42, fontWeight: 100, color: valueColor, lineHeight: 1, letterSpacing: '-0.02em' }}>
+            {decimals > 0 ? animated.toFixed(decimals) : animated.toLocaleString('fr-FR')}
+            <span style={{ fontSize: 18, fontWeight: 400, color: '#9CA3AF', marginLeft: 4, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>{suffix}</span>
+          </p>
+          {trend ? (
+            <p style={{ fontSize: 12, color: trendPositive ? '#22C55E' : '#EF4444', marginTop: 6, fontWeight: 500 }}>
+              {trendPositive ? '↑' : '↓'} {trend}
             </p>
-            {trend ? (
-              <p style={{ fontSize: 12, color: trendPositive ? '#10B981' : '#EF4444', marginTop: 6, fontWeight: 500 }}>
-                {trendPositive ? '↑' : '↓'} {trend}
-              </p>
-            ) : (
-              <p style={{ fontSize: 12, color: value > 0 ? '#EF4444' : '#10B981', marginTop: 6, fontWeight: 500 }}>
-                {value > 0 ? `⚠ ${value} critique${value > 1 ? 's' : ''}` : '✓ Aucune alerte'}
-              </p>
-            )}
-          </div>
-          <div style={{ width: 40, height: 40, borderRadius: 10, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon size={18} color={iconColor} />
-          </div>
+          ) : (
+            <p style={{ fontSize: 12, color: value > 0 ? '#EF4444' : '#22C55E', marginTop: 6, fontWeight: 500 }}>
+              {value > 0 ? `⚠ ${value} critique${value > 1 ? 's' : ''}` : '✓ Aucune alerte'}
+            </p>
+          )}
         </div>
-      </Card>
+        <div style={{ width: 40, height: 40, borderRadius: 10, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <Icon size={18} color={iconColor} />
+        </div>
+      </div>
     </div>
   );
 }
