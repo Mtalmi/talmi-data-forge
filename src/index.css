@@ -205,6 +205,11 @@
   --transition-slow: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ─── Smooth scroll globally ─── */
+html {
+  scroll-behavior: smooth;
+}
+
 /* ─── Premium Scrollbar — gold thumb on dark track ─── */
 ::-webkit-scrollbar {
   width: 6px;
@@ -227,12 +232,26 @@
 
 /* ─── TBOS Top Navbar ─── */
 .tbos-top-navbar {
-  border-bottom: 1px solid rgba(212, 168, 67, 0.1);
+  border-bottom: 1px solid rgba(212, 168, 67, 0.06);
+}
+
+/* ─── Global Card Hover System ─── */
+[data-slot="card"],
+.tbos-card {
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+[data-slot="card"]:hover,
+.tbos-card:hover {
+  border-color: rgba(212, 168, 67, 0.15);
+  box-shadow: 0 2px 12px rgba(212, 168, 67, 0.05);
 }
 
 /* ─── Global Table System ─── */
 .tbos-table tbody tr:nth-child(odd) {
   background: rgba(212, 168, 67, 0.03);
+}
+.tbos-table tbody tr {
+  transition: background 150ms ease;
 }
 .tbos-table tbody tr:hover {
   background: rgba(212, 168, 67, 0.06) !important;
@@ -267,7 +286,7 @@
   border-bottom: 2px solid transparent;
   padding: 10px 0;
   cursor: pointer;
-  transition: all 200ms;
+  transition: all 200ms ease;
 }
 .tbos-tab-bar button:hover {
   color: #FFFFFF;
@@ -276,6 +295,54 @@
 .tbos-tab-bar button[data-active="true"] {
   color: #D4A843;
   border-bottom-color: #D4A843;
+}
+
+/* ─── Tab content fade-in ─── */
+.tbos-tab-content {
+  animation: tbosTabFadeIn 200ms ease forwards;
+}
+@keyframes tbosTabFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ─── Badge hover ─── */
+[data-slot="badge"] {
+  transition: box-shadow 200ms ease;
+}
+[data-slot="badge"]:hover {
+  box-shadow: 0 0 0 2px rgba(212, 168, 67, 0.1);
+}
+
+/* ─── Action link text hover ─── */
+.tbos-action-link {
+  color: #D4A843;
+  text-decoration: none;
+  transition: color 200ms ease;
+  cursor: pointer;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+.tbos-action-link:hover {
+  color: #E8C96A;
+  text-decoration: underline;
+}
+
+/* ─── Chart crosshair + tooltip ─── */
+.recharts-wrapper {
+  cursor: crosshair !important;
+}
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: #1A2332 !important;
+  border: 1px solid rgba(212, 168, 67, 0.15) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important;
+  font-family: ui-monospace, SFMono-Regular, monospace !important;
+  font-size: 11px !important;
+  color: #FFFFFF !important;
+  padding: 6px 10px !important;
+}
+.recharts-active-dot circle {
+  transition: r 150ms ease;
 }
 
 /* ─── Sidebar gold scrollbar ─── */
