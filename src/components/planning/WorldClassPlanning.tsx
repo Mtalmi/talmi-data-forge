@@ -817,6 +817,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
           </div>
         </div>
 
+        {/* Zone separator */}
+        <div style={{ height: 1, background: 'rgba(212, 168, 67, 0.2)', marginTop: 8 }} />
+
         {/* ═══════════════════════════════════════════════════
             ZONE 2: PLANNING & CAPACITÉ
             ═══════════════════════════════════════════════════ */}
