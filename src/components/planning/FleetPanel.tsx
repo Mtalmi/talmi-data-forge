@@ -301,6 +301,11 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
                       {v.id_camion === 'TOU-01' ? '4/5 rotations · 127 km · ⛽ 45L' : v.id_camion === 'TOU-02' ? '3/5 rotations · 89 km · ⛽ 32L' : v.id_camion === 'TOU-03' ? '2/5 rotations · 54 km · ⛽ 19L' : '—'}
                     </p>
                   )}
+                  {truckRevenuMap[v.id_camion] && (
+                    <p style={{ fontSize: 12, color: '#D4A843', fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', marginBottom: 6 }}>
+                      {truckRevenuMap[v.id_camion]}
+                    </p>
+                  )}
                   {isOnDelivery && (
                     <div className="text-[10px] bg-blue-400/10 rounded px-1.5 py-1 mb-1.5">
                       <div className="flex items-center justify-between">
