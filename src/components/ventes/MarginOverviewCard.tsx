@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Sparkles, TrendingDown } from 'lucide-react';
 import { BarChart, Bar, ResponsiveContainer, Cell } from 'recharts';
 
@@ -19,8 +19,10 @@ const GLASS = {
   radius: 12,
 };
 
+const monoFont = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
+
 const marginDistribution = [
-  { range: '≥18%', count: 2, color: T.success },
+  { range: '>18%', count: 2, color: T.success },
   { range: '10-17%', count: 2, color: T.warning },
   { range: '<10%', count: 2, color: T.danger },
 ];
@@ -31,9 +33,7 @@ export function MarginOverviewCard() {
       background: GLASS.bg,
       border: `1px solid ${GLASS.border}`,
       borderRadius: GLASS.radius,
-      borderTop: '2px solid transparent',
-      borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
-      borderImageSlice: '1 1 0 1',
+      borderTop: '2px solid #D4A843',
       padding: 20,
       position: 'relative',
       overflow: 'hidden',
@@ -62,8 +62,8 @@ export function MarginOverviewCard() {
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: 5,
           padding: '3px 10px', borderRadius: 20,
-          background: 'rgba(212,168,67,0.08)',
-          border: '1px solid rgba(212,168,67,0.25)',
+          background: 'rgba(212,168,67,0.06)',
+          border: '1px solid #D4A843',
           backdropFilter: 'blur(8px)',
         }}>
           <span style={{ fontSize: 9, fontWeight: 600, color: '#D4A843', letterSpacing: '0.05em' }}>Généré par IA · Claude Opus</span>
@@ -76,23 +76,23 @@ export function MarginOverviewCard() {
         <div style={{ background: `${T.cardBorder}40`, borderRadius: 10, padding: '14px 16px', border: `1px solid ${T.cardBorder}` }}>
           <p style={{ color: T.textDim, fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>Marge Moyenne Portefeuille</p>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 26, fontWeight: 200, color: T.warning }}>13.2%</span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 11, color: T.danger, fontFamily: 'JetBrains Mono, monospace' }}>
-              <TrendingDown size={12} /> ↓2.1% vs mois dernier
-            </span>
+            <span style={{ fontFamily: monoFont, fontSize: 36, fontWeight: 200, color: T.warning }}>13.2%</span>
           </div>
+          <span style={{ display: 'block', marginTop: 4, fontSize: 11, color: '#EF4444', fontFamily: monoFont, fontWeight: 600 }}>
+            <TrendingDown size={12} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} />-42.1% vs mois dernier
+          </span>
         </div>
 
         {/* Devis sous seuil */}
         <div style={{ background: `${T.cardBorder}40`, borderRadius: 10, padding: '14px 16px', border: `1px solid ${T.cardBorder}` }}>
           <p style={{ color: T.textDim, fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>Devis Sous Seuil</p>
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 26, fontWeight: 200, color: T.danger }}>4<span style={{ fontSize: 16, color: T.textDim }}>/6</span></span>
+          <span style={{ fontFamily: monoFont, fontSize: 36, fontWeight: 200, color: '#EF4444' }}>4<span style={{ fontSize: 16, color: T.textDim }}>/6</span></span>
         </div>
 
         {/* Gain potentiel */}
         <div style={{ background: `${T.cardBorder}40`, borderRadius: 10, padding: '14px 16px', border: `1px solid ${T.cardBorder}` }}>
           <p style={{ color: T.textDim, fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>Gain Potentiel si Optimisé</p>
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 26, fontWeight: 700, color: T.success }}>+38,400 <span style={{ fontSize: 14, fontWeight: 400 }}>MAD/mois</span></span>
+          <span style={{ fontFamily: monoFont, fontSize: 36, fontWeight: 200, color: '#22C55E', textShadow: '0 0 12px rgba(34,197,94,0.15)' }}>+38,400 <span style={{ fontSize: 14, fontWeight: 400 }}>MAD/mois</span></span>
         </div>
       </div>
 
@@ -113,7 +113,7 @@ export function MarginOverviewCard() {
           {marginDistribution.map(d => (
             <div key={d.range} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
               <span style={{ width: 8, height: 8, borderRadius: 2, background: d.color, opacity: 0.7 }} />
-              <span style={{ fontSize: 10, color: T.textSec }}>{d.range}: {d.count}</span>
+              <span style={{ fontSize: 10, color: d.color, fontFamily: monoFont }}>{d.range}: {d.count}</span>
             </div>
           ))}
         </div>
