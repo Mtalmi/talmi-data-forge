@@ -68,10 +68,10 @@ export const ResumeIABar = () => {
           </span>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '12px' }}>
+          <button style={{ borderWidth: '1px', borderStyle: 'solid', borderColor: '#D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '12px' }}>
             Voir Rapport
           </button>
-          <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '12px' }}>
+          <button style={{ borderWidth: '1px', borderStyle: 'solid', borderColor: '#D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '12px' }}>
             Ignorer
           </button>
         </div>

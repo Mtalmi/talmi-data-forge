@@ -881,7 +881,9 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                           {item.daysLeft <= 3 ? (
                             <button
                               style={{
-                                border: '1px solid #D4A843',
+                                borderWidth: '1px',
+                                borderStyle: 'solid',
+                                borderColor: '#D4A843',
                                 color: '#D4A843',
                                 background: 'transparent',
                                 borderRadius: '6px',
@@ -1119,7 +1121,9 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                           {item.daysLeft <= 3 ? (
                             <button
                               style={{
-                                border: '1px solid #D4A843',
+                                borderWidth: '1px',
+                                borderStyle: 'solid',
+                                borderColor: '#D4A843',
                                 color: '#D4A843',
                                 background: 'transparent',
                                 borderRadius: '6px',
