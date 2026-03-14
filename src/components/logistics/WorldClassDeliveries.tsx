@@ -371,7 +371,7 @@ function PipelineCard({ label, count, color, aiRisk, delay = 0 }: { label: strin
         <p style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color, lineHeight: 1 }}>{Math.round(animated)}</p>
         <p style={{ fontFamily: MONO, fontSize: 11, color: T.textSec, fontWeight: 600, marginTop: 8, letterSpacing: '1.5px', textTransform: 'uppercase' as const }}>{label}</p>
         <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-          <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: 'transparent', color: riskColor, border: `1px solid ${riskColor}40` }}>
+          <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: 'transparent', color: riskColor, border: `1px solid ${riskColor}` }}>
             {aiRisk.label} {aiRisk.pct}%
           </span>
           <IABadge />
