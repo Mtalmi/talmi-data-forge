@@ -990,7 +990,22 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
 
               {/* 2. Weekly Schedule */}
               <div>
-                <SectionHeader icon={CalendarDays} label="Planning Hebdomadaire" />
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 0 }}>
+                  <SectionHeader icon={CalendarDays} label="Planning Hebdomadaire" />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 2, background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: 2 }}>
+                    {(['standard', 'rentabilite'] as const).map(mode => (
+                      <button key={mode} onClick={() => setScheduleViewMode(mode)} style={{
+                        padding: '4px 12px', borderRadius: 6, border: 'none', cursor: 'pointer',
+                        fontSize: 11, fontWeight: 600,
+                        background: scheduleViewMode === mode ? 'rgba(212,168,67,0.15)' : 'transparent',
+                        color: scheduleViewMode === mode ? '#D4A843' : '#64748B',
+                        transition: 'all 150ms',
+                      }}>
+                        {mode === 'standard' ? 'Standard' : 'Rentabilité'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <Card style={{ padding: 0, overflow: 'hidden', overflowX: 'auto', borderTop: '2px solid #D4A843' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '80px repeat(6, minmax(120px, 1fr))', gap: 0, minWidth: 800 }}>
                     <div style={{ padding: '10px 14px', background: `${T.cardBorder}40`, borderBottom: `1px solid ${T.cardBorder}` }} />
