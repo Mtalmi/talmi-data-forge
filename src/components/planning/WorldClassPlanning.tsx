@@ -1059,7 +1059,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                     {/* Weather-adjusted capacity */}
                     <div style={{ borderTop: '1px solid rgba(212,168,67,0.15)', marginTop: 12, paddingTop: 12 }}>
                       <p style={{ color: '#9CA3AF', fontSize: 12, marginBottom: 6 }}>Capacité ajustée météo</p>
-                      <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 32, fontWeight: 200, color: '#F59E0B', lineHeight: 1, marginBottom: 8 }}>58%</p>
+                      <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 36, fontWeight: 200, color: '#F59E0B', lineHeight: 1, marginBottom: 8, textShadow: '0 0 12px rgba(245,158,11,0.2)' }}>58%</p>
                       <p style={{ color: '#F59E0B', fontSize: 12, marginBottom: 4 }}>⚠ Samedi 38°C — capacité réduite estimée 20%</p>
                       <p style={{ color: '#22C55E', fontSize: 12 }}>Dimanche: 72% (conditions normales)</p>
                     </div>
