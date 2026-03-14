@@ -139,7 +139,7 @@ function FormulaCard({ f }: { f: Formula }) {
       {/* Header */}
       <div className="flex items-start justify-between" style={{ background: T.cardBg, padding: '16px 24px', borderBottom: `1px solid ${T.cardBorder}` }}>
         <div>
-          <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 28, fontWeight: 200, color: '#D4A843' }}>{f.code}</p>
+          <span style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '28px', display: 'block' }}>{f.code}</span>
           <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.50)', marginTop: 2 }}>{f.name}</p>
         </div>
         <span style={{
@@ -155,12 +155,12 @@ function FormulaCard({ f }: { f: Formula }) {
       <div className="grid grid-cols-2" style={{ gap: '12px 32px', padding: '20px 24px' }}>
         {props.map(([label, value]) => (
           <div key={label}>
-            <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#9CA3AF', marginBottom: 2 }}>{label}</p>
-            <p style={{
-              fontSize: 13, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 300,
+            <span style={{ fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.5px', color: '#9CA3AF', marginBottom: 2, display: 'block' }}>{label}</span>
+            <span style={{
+              fontSize: 13, fontFamily: 'ui-monospace, monospace', display: 'block',
+              fontWeight: isPrix(label) || isMarge(label) ? 600 : 300,
               color: isPrix(label) ? '#D4A843' : isMarge(label) ? '#22C55E' : '#fff',
-              ...(isPrix(label) || isMarge(label) ? { fontWeight: 600 } : {}),
-            }}>{value}</p>
+            }}>{value}</span>
           </div>
         ))}
       </div>
