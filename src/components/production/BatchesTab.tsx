@@ -477,5 +477,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
         </div>
       </div>
     </div>
+    <BatchDetailDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+    </>
   );
 }
