@@ -151,7 +151,44 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
 
       {viewMode === 'map' ? (
         <div style={{ height: 420, background: '#1A1F2E', position: 'relative', overflow: 'hidden' }}>
+          {/* 7. TITLE - top center */}
+          <div style={{ position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)', zIndex: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#22C55E', animation: 'map-live-dot 1.5s ease-in-out infinite', flexShrink: 0 }} />
+            <span style={{ color: '#D4A843', fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 12, fontWeight: 700, letterSpacing: '2px' }}>SUIVI GPS EN DIRECT</span>
+          </div>
+
+          {/* 1. LEGEND - top left */}
+          <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 10, background: 'rgba(15,22,41,0.9)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: 8, padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {[
+              { color: '#10B981', label: 'En route' },
+              { color: '#F59E0B', label: 'Chargement' },
+              { color: '#60A5FA', label: 'Livré' },
+            ].map(item => (
+              <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: item.color, flexShrink: 0 }} />
+                <span style={{ fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', color: '#9CA3AF' }}>{item.label}</span>
+              </div>
+            ))}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ width: 8, height: 8, background: '#D4A843', transform: 'rotate(45deg)', flexShrink: 0 }} />
+              <span style={{ fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', color: '#9CA3AF' }}>Client</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ width: 10, height: 10, borderRadius: '50%', border: '1.5px solid #D4A843', background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 5, color: '#D4A843', fontWeight: 700, flexShrink: 0 }}>⬣</span>
+              <span style={{ fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', color: '#9CA3AF' }}>Centrale</span>
+            </div>
+          </div>
+
           <svg width="100%" height="380" viewBox="0 0 700 380" style={{ display: 'block' }}>
+            {/* CSS animations */}
+            <defs>
+              <style>{`
+                @keyframes map-plant-pulse { 0%, 100% { r: 22; opacity: 0.3; } 50% { r: 30; opacity: 0; } }
+                @keyframes map-live-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+                @keyframes map-eta-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+              `}</style>
+            </defs>
+
             {/* Background grid */}
             {Array.from({ length: 14 }).map((_, i) => (
               <line key={`vg${i}`} x1={i * 50} y1={0} x2={i * 50} y2={380} stroke="rgba(255,255,255,0.03)" strokeWidth={1} />
@@ -160,19 +197,21 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
               <line key={`hg${i}`} x1={0} y1={i * 50} x2={700} y2={i * 50} stroke="rgba(255,255,255,0.03)" strokeWidth={1} />
             ))}
 
-            {/* Route lines */}
-            {/* TOU-03 completed route (gray) */}
-            <line x1={350} y1={190} x2={280} y2={310} stroke="rgba(255,255,255,0.12)" strokeWidth={1.5} strokeDasharray="6 4" />
-            {/* TOU-01 active route (green) */}
-            <line x1={350} y1={190} x2={540} y2={95} stroke="rgba(16,185,129,0.4)" strokeWidth={1.5} strokeDasharray="6 4" />
-            {/* TOU-02 loading route (amber) */}
-            <line x1={350} y1={190} x2={160} y2={170} stroke="rgba(245,158,11,0.4)" strokeWidth={1.5} strokeDasharray="6 4" />
+            {/* 5. Route lines - distinct by status */}
+            {/* TOU-03 completed route (gray solid, faded) */}
+            <line x1={350} y1={190} x2={280} y2={310} stroke="#4A5568" strokeWidth={1.5} opacity={0.4} />
+            {/* TOU-01 active route (gold dashed) */}
+            <line x1={350} y1={190} x2={540} y2={95} stroke="#D4A843" strokeWidth={2} strokeDasharray="8 4" />
+            {/* TOU-02 loading route (amber dashed) */}
+            <line x1={350} y1={190} x2={160} y2={170} stroke="#F59E0B" strokeWidth={2} strokeDasharray="8 4" />
 
-            {/* Plant (TBOS) */}
+            {/* 2. Plant (TBOS) with pulse ring */}
+            <circle cx={350} cy={190} r={22} fill="none" stroke="rgba(212,168,67,0.3)" strokeWidth={2} style={{ animation: 'map-plant-pulse 3s ease-in-out infinite' }} />
             <circle cx={350} cy={190} r={14} fill="rgba(212,168,67,0.15)" stroke="#D4A843" strokeWidth={1.5} />
             <text x={350} y={194} textAnchor="middle" style={{ fontSize: 8, fontWeight: 700, fill: '#D4A843', letterSpacing: '0.1em' }}>TBOS</text>
+            <text x={350} y={214} textAnchor="middle" style={{ fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: '#D4A843', fontWeight: 500 }}>Atlas Concrete</text>
 
-            {/* Client diamonds */}
+            {/* 4. Client diamonds with glow */}
             {[
               { x: 540, y: 70, name: 'Constructions Modernes' },
               { x: 160, y: 140, name: 'Saudi Readymix' },
@@ -181,41 +220,43 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
               { x: 450, y: 300, name: 'ONCF' },
             ].map(c => (
               <g key={c.name}>
-                <rect x={c.x - 5} y={c.y - 5} width={10} height={10} fill="#D4A843" transform={`rotate(45 ${c.x} ${c.y})`} opacity={0.7} />
-                <text x={c.x + 12} y={c.y + 3} style={{ fontSize: 9, fill: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>{c.name}</text>
+                <rect x={c.x - 5} y={c.y - 5} width={10} height={10} fill="#D4A843" transform={`rotate(45 ${c.x} ${c.y})`} opacity={0.7} style={{ filter: 'drop-shadow(0 0 4px rgba(212,168,67,0.3))' }} />
+                <text x={c.x + 12} y={c.y + 3} style={{ fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>{c.name}</text>
               </g>
             ))}
 
-            {/* TOU-01 truck (green, en route, top-right) */}
+            {/* 3. TOU-01 truck (green, en route) */}
             <g>
               <circle cx={480} cy={120} r={10} fill="rgba(16,185,129,0.2)" stroke="#10B981" strokeWidth={1.5} />
               <text x={480} y={123} textAnchor="middle" style={{ fontSize: 7, fontWeight: 700, fill: '#10B981' }}>🚛</text>
-              <rect x={496} y={108} width={130} height={26} rx={6} fill="rgba(15,23,42,0.9)" stroke="rgba(16,185,129,0.3)" strokeWidth={1} />
-              <text x={504} y={118} style={{ fontSize: 9, fontWeight: 700, fill: '#10B981' }}>TOU-01</text>
-              <text x={504} y={129} style={{ fontSize: 8, fill: 'rgba(255,255,255,0.5)' }}>En route · BL-2602-013</text>
+              <rect x={496} y={106} width={135} height={30} rx={6} fill="rgba(15,23,42,0.9)" stroke="rgba(16,185,129,0.3)" strokeWidth={1} />
+              <text x={504} y={118} style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 600, fill: '#D4A843' }}>TOU-01</text>
+              <text x={504} y={130} style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: '#9CA3AF' }}>En route · BL-2602-013</text>
             </g>
 
-            {/* TOU-02 truck (amber, chargement, center-left) */}
+            {/* 3. TOU-02 truck (amber, chargement) */}
             <g>
               <circle cx={200} cy={200} r={10} fill="rgba(245,158,11,0.2)" stroke="#F59E0B" strokeWidth={1.5} />
               <text x={200} y={203} textAnchor="middle" style={{ fontSize: 7, fontWeight: 700, fill: '#F59E0B' }}>🚛</text>
-              <rect x={216} y={188} width={140} height={26} rx={6} fill="rgba(15,23,42,0.9)" stroke="rgba(245,158,11,0.3)" strokeWidth={1} />
-              <text x={224} y={198} style={{ fontSize: 9, fontWeight: 700, fill: '#F59E0B' }}>TOU-02</text>
-              <text x={224} y={209} style={{ fontSize: 8, fill: 'rgba(255,255,255,0.5)' }}>Chargement · BL-2602-014</text>
+              <rect x={216} y={186} width={150} height={30} rx={6} fill="rgba(15,23,42,0.9)" stroke="rgba(245,158,11,0.3)" strokeWidth={1} />
+              <text x={224} y={198} style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 600, fill: '#D4A843' }}>TOU-02</text>
+              <text x={224} y={210} style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: '#9CA3AF' }}>Chargement · BL-2602-014</text>
             </g>
 
-            {/* TOU-03 truck (blue, livré, bottom) */}
+            {/* 3. TOU-03 truck (blue, livré) */}
             <g>
               <circle cx={300} cy={300} r={10} fill="rgba(96,165,250,0.2)" stroke="#60A5FA" strokeWidth={1.5} />
               <text x={300} y={303} textAnchor="middle" style={{ fontSize: 7, fontWeight: 700, fill: '#60A5FA' }}>🚛</text>
-              <rect x={316} y={288} width={120} height={26} rx={6} fill="rgba(15,23,42,0.9)" stroke="rgba(96,165,250,0.3)" strokeWidth={1} />
-              <text x={324} y={298} style={{ fontSize: 9, fontWeight: 700, fill: '#60A5FA' }}>TOU-03</text>
-              <text x={324} y={309} style={{ fontSize: 8, fill: 'rgba(255,255,255,0.5)' }}>Livré · BL-2602-011</text>
+              <rect x={316} y={286} width={135} height={30} rx={6} fill="rgba(15,23,42,0.9)" stroke="rgba(96,165,250,0.3)" strokeWidth={1} />
+              <text x={324} y={298} style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 600, fill: '#D4A843' }}>TOU-03</text>
+              <text x={324} y={310} style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fill: '#9CA3AF' }}>Livré · BL-2602-011</text>
             </g>
           </svg>
+
+          {/* 6. Bottom summary bar */}
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px 20px', background: 'linear-gradient(to top, #1A1F2E, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ color: '#9CA3AF', fontSize: 12, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>
-              3 toupies actives · 2 en mission · 1 livré · Prochaine arrivée: TOU-01 ETA 10:55
+              <span style={{ color: '#D4A843' }}>3</span> toupies actives · <span style={{ color: '#D4A843' }}>2</span> en mission · <span style={{ color: '#D4A843' }}>1</span> livré · Prochaine arrivée: TOU-01 <span style={{ color: '#D4A843', animation: 'map-eta-pulse 1.5s ease-in-out infinite' }}>ETA 10:55</span>
             </span>
           </div>
         </div>
