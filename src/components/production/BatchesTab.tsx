@@ -38,7 +38,7 @@ interface BatchRow {
 function statusStyle(s: BatchRow['status']) {
   switch (s) {
     case 'valide': return { label: 'Validé', bg: 'rgba(52,211,153,0.12)', color: '#34d399', dot: '#34d399' };
-    case 'production': return { label: 'En Production', bg: 'rgba(96,165,250,0.12)', color: '#60a5fa', dot: '#60a5fa' };
+    case 'production': return { label: 'En Production', bg: 'rgba(212,168,67,0.15)', color: '#D4A843', dot: '#D4A843' };
     case 'planifie': return { label: 'Planifié', bg: 'rgba(212,168,67,0.12)', color: T.gold, dot: T.gold };
     case 'ecart': return { label: 'Écart', bg: 'rgba(248,113,113,0.12)', color: '#f87171', dot: '#f87171' };
   }
