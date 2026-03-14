@@ -196,6 +196,7 @@ export function SeasonalDemandForecasterCard() {
                           display: 'inline-block', padding: '2px 8px', borderRadius: 999,
                           fontSize: 10, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace',
                           background: `${cc}15`, color: cc, border: '1px solid rgba(255,255,255,0.2)',
+                          boxShadow: '0 0 0 1px rgba(212,168,67,0.3)',
                         }}>{r.confiance}%</span>
                       </td>
                       <td style={{ padding: '10px 14px', fontSize: 11, color: T.textSec }}>{r.facteur}</td>
