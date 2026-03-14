@@ -643,9 +643,9 @@ function CollapsibleChronologique() {
             >
               <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'ui-monospace, monospace', fontWeight: 600, color: '#D4A843' }}>{row.bl}</div>
               <div style={{ padding: '10px 14px', fontSize: 12, color: T.textPri, fontWeight: 600, borderLeft: `1px solid ${T.cardBorder}60` }}>{row.client}</div>
-              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: PRODUCT_COLORS[row.formule] || T.gold, borderLeft: `1px solid ${T.cardBorder}60` }}>{row.formule}</div>
-              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: T.textPri, textAlign: 'right', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.montant}</div>
-              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: T.textPri, textAlign: 'right', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.volume}</div>
+              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'ui-monospace, monospace', fontWeight: 700, color: PRODUCT_COLORS[row.formule] || T.gold, borderLeft: `1px solid ${T.cardBorder}60` }}>{row.formule}</div>
+              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'ui-monospace, monospace', fontWeight: 600, color: '#D4A843', textAlign: 'right', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.montant}</div>
+              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'ui-monospace, monospace', fontWeight: 700, color: T.textPri, textAlign: 'right', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.volume}</div>
               <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: T.textSec, textAlign: 'center', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.heure}</div>
               <div style={{ padding: '10px 14px', fontSize: 11, textAlign: 'center', borderLeft: `1px solid ${T.cardBorder}60` }}>
                 <span style={{ padding: '2px 8px', borderRadius: 999, background: `${T.info}18`, color: T.info, fontSize: 10, fontWeight: 600 }}>{row.camion}</span>
