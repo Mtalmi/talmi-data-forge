@@ -1544,30 +1544,30 @@ export default function Planning() {
             )}
             <div className="grid grid-cols-4 gap-2">
               <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
-                <div className="p-1.5 rounded-lg bg-blue-400/10 shrink-0"><Calendar className="h-4 w-4 text-blue-400" /></div>
+                <div className="p-1.5 rounded-lg bg-[#D4A843]/10 shrink-0"><Calendar className="h-4 w-4" style={{ color: '#D4A843' }} /></div>
                 <div className="min-w-0">
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayTotalBonsToday}</p>
+                  <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 36, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#D4A843' }}>{displayTotalBonsToday}</p>
                   <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.deliveriesToday}</p>
                 </div>
               </div>
               <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
-                <div className="p-1.5 rounded-lg bg-[#D4A843]/10 shrink-0"><Clock className="h-4 w-4 text-[#D4A843]" /></div>
+                <div className="p-1.5 rounded-lg bg-[#D4A843]/10 shrink-0"><Clock className="h-4 w-4" style={{ color: '#D4A843' }} /></div>
                 <div className="min-w-0">
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayPendingBons}</p>
+                  <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 36, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#D4A843' }}>{displayPendingBons}</p>
                   <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.waitingLabel}</p>
                 </div>
               </div>
               <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
-                <div className="p-1.5 rounded-lg bg-emerald-400/10 shrink-0"><Truck className="h-4 w-4 text-emerald-400" /></div>
+                <div className="p-1.5 rounded-lg bg-[#D4A843]/10 shrink-0"><Truck className="h-4 w-4" style={{ color: '#D4A843' }} /></div>
                 <div className="min-w-0">
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayAvailableCamions}/{displayTotalCamions}</p>
+                  <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 36, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#D4A843' }}>{displayAvailableCamions}/{displayTotalCamions}</p>
                   <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.trucksAvailable}</p>
                 </div>
               </div>
               <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
-                <div className="p-1.5 rounded-lg bg-blue-400/10 shrink-0"><Navigation className="h-4 w-4 text-blue-400" /></div>
+                <div className="p-1.5 rounded-lg bg-[#D4A843]/10 shrink-0"><Navigation className="h-4 w-4" style={{ color: '#D4A843' }} /></div>
                 <div className="min-w-0">
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayEnLivraison.length}</p>
+                  <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 36, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#D4A843' }}>{displayEnLivraison.length}</p>
                   <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.onRoute}</p>
                 </div>
               </div>
@@ -1638,11 +1638,11 @@ export default function Planning() {
         fleetPanel={!isMobile ? <FleetPanel selectedDate={selectedDate} isOpen={fleetPanelOpen} onOpenChange={setFleetPanelOpen} /> : undefined}
         footerActions={
           <div className="flex flex-wrap items-center gap-3">
-            <Button size="sm" className="gap-2" style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent' }} onClick={() => navigate('/logistique')}>
+            <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', fontSize: '14px', display: 'inline-flex', alignItems: 'center', gap: '8px' }} onClick={() => navigate('/logistique')}>
               <Crosshair className="h-4 w-4" />
               {t.pages.planning.gpsTracking}
-              {enLivraison.length > 0 && (<Badge className="bg-emerald-500 text-white ml-1">{enLivraison.length}</Badge>)}
-            </Button>
+              {enLivraison.length > 0 && (<span style={{ background: '#22C55E', color: 'white', borderRadius: 999, padding: '1px 6px', fontSize: 11, fontWeight: 600, marginLeft: 4 }}>{enLivraison.length}</span>)}
+            </button>
             <DailyPlanningReport
               date={parseISO(selectedDate)}
               stats={{
@@ -1671,10 +1671,10 @@ export default function Planning() {
                 <Badge className="bg-[#D4A843] text-black ml-1">{pendingBLCount}</Badge>
               </Button>
             )}
-            <Button size="sm" onClick={fetchData} disabled={loading} style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent' }}>
-              <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
+            <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', fontSize: '14px', display: 'inline-flex', alignItems: 'center', gap: '8px' }} onClick={fetchData} disabled={loading}>
+              <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
               {t.pages.planning.refresh}
-            </Button>
+            </button>
           </div>
         }
       />

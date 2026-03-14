@@ -638,15 +638,15 @@ function CollapsibleChronologique() {
               borderTop: i > 0 ? `1px solid ${T.cardBorder}60` : 'none',
               transition: 'background 150ms',
             }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255, 215, 0, 0.04)')}
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.03)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
             >
-              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: T.gold }}>{row.bl}</div>
+              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'ui-monospace, monospace', fontWeight: 600, color: '#D4A843' }}>{row.bl}</div>
               <div style={{ padding: '10px 14px', fontSize: 12, color: T.textPri, fontWeight: 600, borderLeft: `1px solid ${T.cardBorder}60` }}>{row.client}</div>
-              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: PRODUCT_COLORS[row.formule] || T.gold, borderLeft: `1px solid ${T.cardBorder}60` }}>{row.formule}</div>
-              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: T.textPri, textAlign: 'right', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.montant}</div>
-              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: T.textPri, textAlign: 'right', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.volume}</div>
-              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: T.textSec, textAlign: 'center', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.heure}</div>
+              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'ui-monospace, monospace', fontWeight: 700, color: PRODUCT_COLORS[row.formule] || T.gold, borderLeft: `1px solid ${T.cardBorder}60` }}>{row.formule}</div>
+              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'ui-monospace, monospace', fontWeight: 600, color: '#D4A843', textAlign: 'right', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.montant}</div>
+              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'ui-monospace, monospace', fontWeight: 700, color: T.textPri, textAlign: 'right', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.volume}</div>
+              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'ui-monospace, monospace', color: T.textSec, textAlign: 'center', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.heure}</div>
               <div style={{ padding: '10px 14px', fontSize: 11, textAlign: 'center', borderLeft: `1px solid ${T.cardBorder}60` }}>
                 <span style={{ padding: '2px 8px', borderRadius: 999, background: `${T.info}18`, color: T.info, fontSize: 10, fontWeight: 600 }}>{row.camion}</span>
               </div>
@@ -663,12 +663,12 @@ function CollapsibleChronologique() {
             background: `${T.cardBorder}40`,
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: T.gold }}>Total journée:</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#D4A843' }}>Total journée:</span>
             <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: T.textPri }}>153 250 DH</span>
-              <span style={{ fontSize: 11, color: T.textSec }}>5 livraisons</span>
-              <span style={{ fontSize: 11, color: T.textSec }}>225 m³</span>
-              <span style={{ fontSize: 11, fontWeight: 600, color: T.success }}>Marge moyenne: 36%</span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 700, color: '#D4A843' }}>153 250 DH</span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#D4A843' }}>5 livraisons</span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#D4A843' }}>225 m³</span>
+              <span style={{ fontSize: 11, fontWeight: 600, color: '#22C55E' }}>Marge moyenne: <span style={{ fontFamily: 'ui-monospace, monospace' }}>36%</span></span>
             </div>
           </div>
         </Card>
@@ -793,19 +793,10 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
               onClick={handleOptimizeRoutes}
               disabled={isOptimizing}
               style={{
-                padding: '6px 16px',
-                borderRadius: 8,
-                background: 'transparent',
-                border: '1px solid #D4A843',
-                color: '#D4A843',
-                fontFamily: 'DM Sans, sans-serif',
-                fontWeight: 600,
-                fontSize: 13,
-                cursor: isOptimizing ? 'wait' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                transition: 'all 200ms',
+                background: '#D4A843', color: '#0F1629', border: 'none',
+                borderRadius: '8px', padding: '8px 20px', cursor: isOptimizing ? 'wait' : 'pointer',
+                fontSize: '14px', fontWeight: 600,
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
                 opacity: isOptimizing ? 0.6 : 1,
               }}
             >
@@ -814,19 +805,10 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
             <button
               onClick={() => navigate('/bons')}
               style={{
-                padding: '6px 16px',
-                borderRadius: 8,
-                background: 'linear-gradient(135deg, #D4A843, #C49A3A)',
-                border: '1px solid rgba(212, 168, 67, 0.4)',
-                color: '#0F172A',
-                fontFamily: 'DM Sans, sans-serif',
-                fontWeight: 600,
-                fontSize: 13,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                transition: 'all 200ms',
+                border: '1px solid #D4A843', color: '#D4A843', background: 'transparent',
+                borderRadius: '8px', padding: '8px 20px', cursor: 'pointer',
+                fontSize: '14px',
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
               }}
             >
               <Plus size={13} />
@@ -856,7 +838,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
               <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, transparent, #D4A843, transparent)', backgroundSize: '200% 100%', animation: 'shimmer 4s linear infinite' }} />
               <div style={{ flex: '1 1 200px' }}>
                 <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6 }}>SCORE DISPATCH DU JOUR</p>
-                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 42, fontWeight: 200, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em' }}>9.2<span style={{ fontSize: 20, color: '#9CA3AF' }}>/10</span></p>
+                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 52, fontWeight: 100, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em', textShadow: '0 0 20px rgba(212,168,67,0.2)' }}>9.2<span style={{ fontSize: 20, color: '#9CA3AF' }}>/10</span></p>
                 <p style={{ fontSize: 12, color: T.success, marginTop: 4, fontWeight: 500 }}>↗ +0.3 pts vs hier</p>
                 <div style={{ display: 'flex', gap: 6, marginTop: 10, flexWrap: 'wrap' }}>
                   {[
@@ -870,7 +852,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
               </div>
               <div style={{ flex: '1 1 200px', textAlign: 'center' }}>
                 <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6 }}>REVENU JOURNÉE</p>
-                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 32, fontWeight: 200, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>153,250 <span style={{ fontSize: 16, color: '#9CA3AF' }}>DH</span></p>
+                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 36, fontWeight: 200, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em' }}>153,250 <span style={{ fontSize: 16, color: '#9CA3AF' }}>DH</span></p>
                 <p style={{ fontSize: 11, color: T.textSec, marginTop: 6 }}>5 livraisons · 225 m³</p>
                 <p style={{ fontSize: 11, color: T.success, fontWeight: 600, marginTop: 2 }}>Marge moyenne: 36%</p>
               </div>
@@ -880,7 +862,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                   <circle cx={40} cy={40} r={32} fill="none" stroke={T.warning} strokeWidth={6}
                     strokeDasharray={`${0.72 * 2 * Math.PI * 32} ${2 * Math.PI * 32}`}
                     strokeLinecap="round" transform="rotate(-90 40 40)"
-                    style={{ filter: `drop-shadow(0 0 4px ${T.warning}60)` }}
+                    style={{ filter: 'drop-shadow(0 0 8px rgba(212,168,67,0.2))' }}
                   />
                   <text x={40} y={38} textAnchor="middle" style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 16, fontWeight: 200, fill: T.warning }}>72%</text>
                   <text x={40} y={52} textAnchor="middle" style={{ fontSize: 7, fill: T.textDim, textTransform: 'uppercase', letterSpacing: '0.1em' }}>CAPACITÉ</text>
@@ -910,11 +892,12 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                     flex: 1, padding: '10px 12px', textAlign: 'center',
                     borderLeft: i > 0 ? `1px solid ${T.cardBorder}` : 'none',
                     background: w.color === '#EF4444' ? 'rgba(239,68,68,0.06)' : 'transparent',
+                    ...(w.color === '#EF4444' ? { borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(239,68,68,0.3)' } : {}),
                   }}>
                     <p style={{ fontSize: 10, fontWeight: 700, color: T.textDim, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{w.day}</p>
-                    <p style={{ fontSize: 16, marginBottom: 2 }}>{w.icon} <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: w.color === '#EF4444' ? '#EF4444' : T.textPri }}>{w.temp}</span></p>
-                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, color: w.color }}>
-                      <span style={{ width: 6, height: 6, borderRadius: '50%', background: w.color }} />
+                    <p style={{ fontSize: 16, marginBottom: 2 }}>{w.icon} <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 20, fontWeight: 200, color: w.color === '#EF4444' ? '#EF4444' : T.textPri }}>{w.temp}</span></p>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, color: w.label === 'Normal' ? '#D4A843' : w.color }}>
+                      <span style={{ width: 6, height: 6, borderRadius: '50%', background: w.label === 'Normal' ? '#D4A843' : w.color }} />
                       {w.label === 'Risque' ? '⚠ ' : '● '}{w.label}
                     </div>
                   </div>
@@ -953,12 +936,12 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                     <span style={{ color: '#D4A843', fontSize: 14, animation: 'tbos-pulse 3s ease-in-out infinite' }}>✦</span>
                     <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em' }}>INTELLIGENCE IA</span>
                   </div>
-                  <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>Généré par IA · Claude Opus</span>
+                  <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843' }}>Généré par IA · Claude Opus</span>
                 </div>
                 {[
-                  { dot: '#EF4444', text: 'Météo: Samedi 14 — 38°C risque fissuration. Retardateur requis B25/B30' },
-                  { dot: '#F59E0B', text: 'Retards: BL-2602-014 Saudi Readymix probabilité retard 35%' },
-                  { dot: '#34d399', text: 'Routes: 3 livraisons regroupées Casa Nord — Économie 180 DH' },
+                  { dot: '#EF4444', text: <><span style={{ color: '#D4A843', fontWeight: 700 }}>Météo:</span> Samedi 14 — 38°C risque fissuration. Retardateur requis B25/B30</> },
+                  { dot: '#F59E0B', text: <><span style={{ color: '#D4A843', fontWeight: 700 }}>Retards:</span> BL-2602-014 Saudi Readymix probabilité retard 35%</> },
+                  { dot: '#34d399', text: <><span style={{ color: '#D4A843', fontWeight: 700 }}>Routes:</span> 3 livraisons regroupées Casa Nord — Économie 180 DH</> },
                 ].map((ins, i) => (
                   <div key={i} style={{
                     display: 'flex', alignItems: 'center', gap: 12,
@@ -966,7 +949,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                     borderTop: i > 0 ? `1px solid ${T.cardBorder}60` : 'none',
                   }}>
                     <span style={{ width: 8, height: 8, borderRadius: '50%', background: ins.dot, flexShrink: 0 }} />
-                    <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, lineHeight: 1.4, flex: 1 }}>{ins.text}</span>
+                    <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, lineHeight: 1.4, flex: 1 }}>{ins.text as any}</span>
                   </div>
                 ))}
                 <div style={{ padding: '8px 18px', borderTop: `1px solid ${T.cardBorder}`, background: `${T.cardBorder}20` }}>

@@ -242,18 +242,18 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
       </div>
 
       {/* Summary Stats */}
-      <div className="p-2 border-b border-white/[0.06] grid grid-cols-3 gap-1 text-center text-xs">
-        <div className="p-1.5 rounded" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
-          <p className="font-mono font-normal text-emerald-400 text-lg">{availableCount}</p>
-          <p className="text-white/40 text-[10px]">{fp.available}</p>
-        </div>
-        <div className="p-1.5 rounded" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
-          <p className="font-mono font-normal text-blue-400 text-lg">{onMissionCount}</p>
-          <p className="text-white/40 text-[10px]">{fp.mission}</p>
-        </div>
-        <div className="p-1.5 rounded" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
-          <p className="font-mono font-normal text-[#D4A843] text-lg">{maintenanceCount}</p>
-          <p className="text-white/40 text-[10px]">{fp.stopped}</p>
+        <div className="p-2 border-b border-white/[0.06] grid grid-cols-3 gap-1 text-center text-xs">
+          <div className="p-1.5 rounded" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+            <p style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 400, fontSize: 20, color: '#22C55E' }}>{availableCount}</p>
+            <p className="text-white/40 text-[10px]">{fp.available}</p>
+          </div>
+          <div className="p-1.5 rounded" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+            <p style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 400, fontSize: 20, color: '#D4A843' }}>{onMissionCount}</p>
+            <p className="text-white/40 text-[10px]">{fp.mission}</p>
+          </div>
+          <div className="p-1.5 rounded" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+            <p style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 400, fontSize: 20, color: '#9CA3AF' }}>{maintenanceCount}</p>
+            <p className="text-white/40 text-[10px]">{fp.stopped}</p>
         </div>
       </div>
 
@@ -288,7 +288,7 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
                 <div key={v.id_camion} className={cn("p-2 rounded-lg transition-all", isOnDelivery && "border-blue-400/30")} style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: isOnDelivery ? '1px solid rgba(96, 165, 250, 0.2)' : '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', borderRadius: 12 }}>
                   <div className="flex items-center justify-between mb-1.5">
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="font-mono font-semibold text-sm text-white/80 truncate">{v.id_camion}</span>
+                      <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 500, fontSize: 14, color: '#D4A843' }}>{v.id_camion}</span>
                       {v.capacite_m3 && <span className="text-[10px] text-white/30">{v.capacite_m3}m³</span>}
                     </div>
                     <Badge variant="outline" className={cn("text-[10px] px-1.5 py-0 h-5 border", config.color)}>
@@ -302,7 +302,7 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
                     </p>
                   )}
                   {truckRevenuMap[v.id_camion] && (
-                    <p style={{ fontSize: 12, color: '#D4A843', fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', marginBottom: 6 }}>
+                    <p style={{ fontSize: 12, color: '#D4A843', fontFamily: 'ui-monospace, monospace', marginBottom: 6 }}>
                       {truckRevenuMap[v.id_camion]}
                     </p>
                   )}
@@ -341,7 +341,7 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
             <div key={truck.id_camion} className="p-2 rounded-lg transition-all" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', borderRadius: 12 }}>
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="font-mono font-semibold text-sm text-white/80 truncate">{truck.id_camion}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 500, fontSize: 14, color: '#D4A843' }}>{truck.id_camion}</span>
                   <span style={{ padding: '1px 6px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>{truck.capacite_m3}m³</span>
                 </div>
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: truck.statusBg, color: truck.statusColor, border: `1px solid ${truck.statusColor}30` }}>
@@ -353,7 +353,7 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
               <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.30)', fontFamily: 'JetBrains Mono, monospace', marginBottom: 2 }}>
                 {truck.rotations} rotations · {truck.km} · {truck.fuel}
               </p>
-              <p style={{ fontSize: 12, color: '#D4A843', fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', marginBottom: 6 }}>
+              <p style={{ fontSize: 12, color: '#D4A843', fontFamily: 'ui-monospace, monospace', marginBottom: 6 }}>
                 {truck.revenu}
               </p>
               <div className="flex gap-1 mt-1.5">
@@ -368,8 +368,8 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
 
       {/* Fleet summary bar */}
       <div style={{ padding: '12px 8px 8px', borderTop: '1px solid rgba(212,168,67,0.2)' }}>
-        <p style={{ color: '#fff', fontSize: 13, fontWeight: 600, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', textAlign: 'center' }}>
-          Flotte: 153,250 DH · Coût: 8,400 DH · Marge: 94.5%
+        <p style={{ color: '#fff', fontSize: 13, fontWeight: 600, fontFamily: 'ui-monospace, monospace', textAlign: 'center' }}>
+          Flotte: <span style={{ color: '#D4A843' }}>153,250 DH</span> · Coût: <span style={{ color: '#D4A843' }}>8,400 DH</span> · Marge: <span style={{ color: '#22C55E' }}>94.5%</span>
         </p>
       </div>
       

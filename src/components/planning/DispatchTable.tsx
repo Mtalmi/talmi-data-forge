@@ -130,19 +130,19 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 2, background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: 2 }}>
-            <button onClick={() => setViewMode('list')} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 6, border: 'none', cursor: 'pointer', background: viewMode === 'list' ? 'rgba(212,168,67,0.15)' : 'transparent', transition: 'background 150ms' }}>
+            <button onClick={() => setViewMode('list')} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 6, border: viewMode === 'list' ? '1px solid #D4A843' : 'none', cursor: 'pointer', background: viewMode === 'list' ? 'rgba(212,168,67,0.1)' : 'transparent', transition: 'background 150ms' }}>
               <List size={13} color={viewMode === 'list' ? '#D4A843' : '#64748B'} />
               <span style={{ fontSize: 10, fontWeight: 600, color: viewMode === 'list' ? '#D4A843' : '#64748B' }}>Vue Liste</span>
             </button>
-            <button onClick={() => setViewMode('map')} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 6, border: 'none', cursor: 'pointer', background: viewMode === 'map' ? 'rgba(212,168,67,0.15)' : 'transparent', transition: 'background 150ms' }}>
+            <button onClick={() => setViewMode('map')} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 6, border: viewMode === 'map' ? '1px solid #D4A843' : 'none', cursor: 'pointer', background: viewMode === 'map' ? 'rgba(212,168,67,0.1)' : 'transparent', transition: 'background 150ms' }}>
               <Map size={13} color={viewMode === 'map' ? '#D4A843' : '#64748B'} />
               <span style={{ fontSize: 10, fontWeight: 600, color: viewMode === 'map' ? '#D4A843' : '#64748B' }}>Vue Carte</span>
             </button>
           </div>
           <span style={{
             padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600,
-            background: 'rgba(212,168,67,0.12)', color: '#D4A843',
-            border: '1px solid rgba(212,168,67,0.25)',
+            background: 'rgba(212,168,67,0.06)', color: '#D4A843',
+            border: '1px solid #D4A843',
           }}>
             {uniqueToupies.size} toupies · {rows.length} livraisons
           </span>
@@ -262,7 +262,7 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
               transition: 'background 150ms',
               opacity: isLivre ? 0.55 : 1,
             }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255, 215, 0, 0.04)')}
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.03)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
           >
             {/* BL */}
@@ -311,7 +311,7 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
                       <span style={{ fontSize: 10, color: '#4A5568' }}>—</span>
                     ) : (
                       <span style={{
-                        fontSize: 10, fontWeight: 600, padding: '1px 6px', borderRadius: 999,
+                        fontSize: 10, fontWeight: 600, fontFamily: 'ui-monospace, monospace', padding: '1px 6px', borderRadius: 999,
                         background: p.type === 'green' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
                         color: p.type === 'green' ? '#22C55E' : '#EF4444',
                       }}>{p.badge}</span>
