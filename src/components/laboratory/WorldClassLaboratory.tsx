@@ -1645,9 +1645,9 @@ function IABadge() {
 // ─────────────────────────────────────────────────────
 function IntelligenceIATab() {
   const tblHdr: React.CSSProperties = { fontFamily: MONO, fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.15em', padding: '10px 14px', borderBottom: `1px solid ${T.cardBorder}`, textAlign: 'left' };
-  const tblCell: React.CSSProperties = { padding: '10px 14px', fontSize: 12, borderBottom: `1px solid rgba(30,45,74,0.5)` };
+  const tblCell: React.CSSProperties = { padding: '10px 14px', fontSize: 12, borderBottom: `1px solid rgba(30,45,74,0.5)`, transition: 'background 150ms' };
   const monoCell: React.CSSProperties = { ...tblCell, fontFamily: MONO, fontWeight: 200 };
-  const altRow = (i: number): React.CSSProperties => ({ background: i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)' });
+  const altRow = (i: number): React.CSSProperties => ({ background: i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)', transition: 'background 150ms' });
 
   const recoBox = (text: string, borderColor: string = T.gold): React.ReactNode => (
     <div style={{ borderLeft: `4px solid ${borderColor}`, background: borderColor === T.danger ? 'rgba(239,68,68,0.05)' : 'rgba(212,168,67,0.03)', padding: '14px 18px', borderRadius: '0 8px 8px 0', marginTop: 16 }}>
