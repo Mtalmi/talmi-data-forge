@@ -80,6 +80,8 @@ import {
   FileSpreadsheet,
   Briefcase,
   Eye,
+  BarChart3,
+  Bot,
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { getDateLocale } from '@/i18n/dateLocale';
