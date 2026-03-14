@@ -177,7 +177,7 @@ function PlanningModal({ onClose }: { onClose: () => void }) {
 
 export default function PlanningTab({ openModal }: { openModal?: boolean }) {
   const [weekOffset, setWeekOffset] = useState(0);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [showModal, setShowModal] = useState(false);
 
   // Allow parent to trigger modal open
