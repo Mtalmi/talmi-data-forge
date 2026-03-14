@@ -278,9 +278,10 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
           borderColor: `${hov ? T.cardBorder : 'transparent'} ${hov ? T.cardBorder : 'transparent'} ${hov ? T.cardBorder : 'transparent'} ${borderColor}`,
           borderRadius: 10,
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr 1fr',
+          gridTemplateColumns: '2fr 1fr 1fr 1.2fr',
           alignItems: 'center',
           cursor: 'pointer',
+          minHeight: 64,
         }}>
         {/* Col 1: Avatar + Name + badges */}
         <div style={{ paddingLeft: 16, paddingTop: 12, paddingBottom: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -344,19 +345,15 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
         </div>
 
         {/* Col 4: Score + Status + Solde + Trend + Chevron */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 14, paddingRight: 16, padding: '12px 16px 12px 8px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <p style={{ color: '#9CA3AF', fontSize: 9, fontFamily: MONO, letterSpacing: '1.5px', whiteSpace: 'nowrap' }}>SCORE SANTÉ</p>
-            <HealthGauge score={healthScore} />
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 12, paddingRight: 16, padding: '12px 16px 12px 8px' }}>
+          <span style={{ color: '#9CA3AF', fontSize: 9, fontFamily: MONO, letterSpacing: '1.5px', whiteSpace: 'nowrap', flexShrink: 0 }}>SCORE SANTÉ</span>
+          <div style={{ flexShrink: 0 }}><HealthGauge score={healthScore} /></div>
           <Badge label={client.status} color={isInactif ? T.warning : T.success} bg={isInactif ? `${T.warning}18` : `${T.success}18`} pulse={isInactif} />
-          <p style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: client.solde === 0 ? T.success : T.danger, whiteSpace: 'nowrap' }}>
+          <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: client.solde === 0 ? T.success : T.danger, whiteSpace: 'nowrap', flexShrink: 0, minWidth: 44, textAlign: 'right' }}>
             {client.solde === 0 ? '0 DH' : `${(client.solde / 1000).toFixed(0)}K DH`}
-          </p>
-          {trend && (
-            <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: trend.color }}>{trend.arrow}</span>
-          )}
-          <ChevronRight size={18} color={T.textDim} style={{ transition: 'transform 200ms', transform: expanded ? 'rotate(90deg)' : hov ? 'translateX(4px)' : 'none', flexShrink: 0 }} />
+          </span>
+          <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: trend?.color || 'transparent', flexShrink: 0, width: 16, textAlign: 'center' }}>{trend?.arrow || '·'}</span>
+          <ChevronRight size={16} color={T.textDim} style={{ transition: 'transform 200ms', transform: expanded ? 'rotate(90deg)' : hov ? 'translateX(4px)' : 'none', flexShrink: 0 }} />
         </div>
       </div>
 
