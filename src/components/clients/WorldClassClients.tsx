@@ -1359,43 +1359,8 @@ export default function WorldClassClients() {
           </div>
         )}
 
-        {/* ── MODALS (always rendered) ── */}
-        {selectedClient && (
-          <div onClick={() => setSelectedClient(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-            <div onClick={(e) => e.stopPropagation()} style={{ width: 'min(560px, 100%)', background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 20 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                <p style={{ color: T.gold, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Détail Client</p>
-                <button onClick={() => setSelectedClient(null)} style={{ border: 'none', background: 'transparent', color: T.textSec, cursor: 'pointer', fontSize: 18, lineHeight: 1 }}>×</button>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                <div>
-                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Nom</p>
-                  <p style={{ color: T.textPri, fontSize: 14, fontWeight: 600 }}>{selectedClient.name}</p>
-                </div>
-                <div>
-                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>ID Client</p>
-                  <p style={{ color: T.textPri, fontSize: 14, fontFamily: MONO }}>{selectedClient.clientId || '—'}</p>
-                </div>
-                <div>
-                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Email</p>
-                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.email || '—'}</p>
-                </div>
-                <div>
-                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Téléphone</p>
-                  <p style={{ color: T.textPri, fontSize: 14, fontFamily: MONO }}>{selectedClient.telephone || '—'}</p>
-                </div>
-                <div>
-                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Ville</p>
-                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.ville || '—'}</p>
-                </div>
-                <div>
-                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Segment</p>
-                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.segment}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* ── CLIENT DETAIL DRAWER ── */}
+        <ClientDetailDrawer client={selectedClient} onClose={() => setSelectedClient(null)} />
 
         {isCreateModalOpen && (
           <div onClick={() => setIsCreateModalOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
