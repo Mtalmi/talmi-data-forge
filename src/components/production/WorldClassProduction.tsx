@@ -625,6 +625,102 @@ export default function WorldClassProduction() {
           </div>
         </section>
 
+        {/* ── ALERT BANNER ── */}
+        <section>
+          <div className="rounded-lg overflow-hidden" style={{
+            border: '2px solid rgba(239, 68, 68, 0.5)',
+            background: 'rgba(239, 68, 68, 0.08)',
+            animation: 'alertPulse 3s ease-in-out infinite',
+            boxShadow: '0 0 15px rgba(239, 68, 68, 0.08)',
+          }}>
+            <style>{`@keyframes alertPulse { 0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.08); } 50% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.15); } }`}</style>
+            <div className="flex items-center justify-between p-3">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg" style={{ background: 'rgba(239, 68, 68, 0.2)' }}>
+                  <AlertTriangle className="h-5 w-5 text-destructive animate-pulse" />
+                </div>
+                <div>
+                  <p className="font-semibold text-destructive flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 animate-pulse" />
+                    Alerte Qualité Détectée
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Batch #403-066 — Écart affaissement +8mm sur formule F-B25. Correction doseur eau recommandée. Impact estimé: 2 batches · <span className="text-destructive font-bold">Perte estimée: 850 DH</span>
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-red-400 flex-shrink-0" />
+            </div>
+          </div>
+        </section>
+
+        {/* ── ENVIRONMENTAL STRIP ── */}
+        <section>
+          <div className="flex items-center gap-5 overflow-x-auto py-3 px-4 rounded-lg" style={{
+            borderTop: '1px solid rgba(212, 168, 67, 0.3)',
+            borderBottom: '1px solid rgba(212, 168, 67, 0.3)',
+            background: 'linear-gradient(90deg, rgba(212, 168, 67, 0.03), transparent, rgba(212, 168, 67, 0.03))',
+          }}>
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+              </span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#34d399', textTransform: 'uppercase', letterSpacing: '0.1em' }}>EN DIRECT</span>
+            </div>
+            <div style={{ width: 1, height: 24, background: 'rgba(255,255,255,0.08)' }} />
+            {[
+              { label: 'PRESSION', value: '1 013 hPa', status: 'Normal' },
+              { label: 'VENT', value: '12 km/h', status: 'Calme' },
+              { label: 'TEMPÉRATURE', value: '22°C', status: 'Optimal' },
+              { label: 'HUMIDITÉ', value: '45%', status: 'Optimal' },
+              { label: 'EAU DE GÂCHAGE', value: '18°C', status: 'Optimal' },
+              { label: 'BRUIT MALAXEUR', value: '72 dB', status: 'Normal' },
+            ].map((item, i) => (
+              <div key={i} className="flex flex-col items-center flex-shrink-0 px-2 py-1 rounded-md" style={{ transition: 'background 200ms' }}>
+                <span style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>{item.label}</span>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, fontWeight: 400, color: '#fff', marginTop: 2 }}>{item.value}</span>
+                <span style={{ fontSize: 9, fontWeight: 600, color: '#34d399', marginTop: 1 }}>{item.status}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── ÉQUIPE EN SERVICE ── */}
+        <section>
+          <div className="flex items-center justify-between flex-wrap gap-4 px-5 py-3.5 rounded-lg" style={{
+            background: T.cardBg,
+            border: `1px solid ${T.cardBorder}`,
+            borderTop: '2px solid #D4A843',
+          }}>
+            <div className="flex items-center gap-5 flex-wrap">
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                </span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.15em' }}>ÉQUIPE EN SERVICE</span>
+              </div>
+              <div style={{ width: 1, height: 24, background: 'rgba(255,255,255,0.08)' }} />
+              {[
+                { label: 'OPÉRATEURS', value: '3/3', color: '#34d399' },
+                { label: 'MALAXEUR', value: '1/1', color: '#34d399' },
+                { label: 'LABORATOIRE', value: '1/1', color: '#34d399' },
+                { label: 'CHAUFFEURS', value: '4/5', color: '#F59E0B' },
+                { label: 'MAINTENANCE', value: '2/2', color: '#34d399' },
+              ].map((item, i) => (
+                <div key={i} className="flex flex-col items-center flex-shrink-0">
+                  <span style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>{item.label}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 16, fontWeight: 400, color: item.color, marginTop: 2 }}>{item.value}</span>
+                </div>
+              ))}
+            </div>
+            <div className="flex-shrink-0">
+              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>Prochain shift: <span style={{ color: '#D4A843', fontWeight: 600 }}>14h00</span> — 3 opérateurs</span>
+            </div>
+          </div>
+        </section>
+
         {/* ── WORKFLOW PIPELINE ── */}
         <section>
           <SectionHeader icon={Activity} label="Workflow de Production" />
