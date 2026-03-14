@@ -236,7 +236,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
 
         {/* ── TABLE ── */}
         <div className="flex-1 min-w-0 flex flex-col">
-          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: '12px 12px 0 0', overflow: 'hidden' }}>
+          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: '12px 12px 0 0', overflow: 'hidden' }}>
             {/* Headers */}
             <div className="grid items-center" style={{
               gridTemplateColumns: '120px 1fr 100px 80px 70px 130px 110px 90px',
