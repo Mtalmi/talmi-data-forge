@@ -618,7 +618,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
                     </p>
                     {!isSunday && totalVol > 0 && (
                       <p style={{
-                        fontFamily: 'ui-monospace, monospace', fontSize: 9, color: T.gold + '80',
+                        fontFamily: 'ui-monospace, monospace', fontSize: 12, color: '#D4A843',
                         marginTop: 3, fontWeight: 500,
                       }}>
                         {totalVol}m³
