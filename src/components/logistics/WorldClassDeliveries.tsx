@@ -219,7 +219,7 @@ function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; del
         <div style={{ maxHeight: hov ? 60 : 0, opacity: hov ? 1 : 0, overflow: 'hidden', transition: 'max-height 0.3s ease, opacity 0.2s ease' }}>
           <div style={{ fontSize: 10, color: T.textDim, textAlign: 'center', lineHeight: 1.6, paddingTop: 6, borderTop: `1px solid ${T.cardBorder}` }}>{v.fullDiag}</div>
         </div>
-        <IABadge />
+        <IABadge small />
         <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textAlign: 'center', margin: 0 }}>Revenu/jour: {v.revenue}</p>
         {/* Driver info */}
         <div style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 8, marginTop: 4 }}>
