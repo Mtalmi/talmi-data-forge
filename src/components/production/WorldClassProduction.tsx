@@ -897,7 +897,7 @@ export default function WorldClassProduction() {
                 <div>
                   <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 4 }}>Production Horaire</p>
                   <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 36, fontWeight: 200, color: '#D4A843' }}>
-                    {useAnimatedCounter(Math.round(kpis.totalVolume), 1500)} m³
+                    {animatedTotalVolume} m³
                   </p>
                 </div>
                 <div className="flex items-center gap-1.5">
