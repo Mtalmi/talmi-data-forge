@@ -137,11 +137,22 @@ export function VentesFilters({
           </SelectContent>
         </Select>
 
-        <Button
-          variant={showAdvanced ? 'secondary' : 'outline'}
-          size="sm"
+        <button
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="gap-2"
+          style={{
+            border: '1px solid #D4A843',
+            color: '#D4A843',
+            background: showAdvanced ? 'rgba(212,168,67,0.1)' : 'transparent',
+            borderRadius: 8,
+            padding: '8px 20px',
+            cursor: 'pointer',
+            fontSize: 14,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.1)')}
+          onMouseLeave={e => (e.currentTarget.style.background = showAdvanced ? 'rgba(212,168,67,0.1)' : 'transparent')}
         >
           <Filter className="h-4 w-4" />
           {c.filters}
@@ -150,7 +161,7 @@ export function VentesFilters({
               {activeFilterCount}
             </Badge>
           )}
-        </Button>
+        </button>
 
         {(activeFilterCount > 0 || filters.search) && (
           <Button variant="ghost" size="sm" onClick={clearFilters}>
@@ -160,21 +171,27 @@ export function VentesFilters({
         )}
 
         <div className="flex items-center gap-2 ml-auto">
-          <Button
-            variant={autoRefreshEnabled ? 'secondary' : 'ghost'}
-            size="sm"
+          <button
             onClick={onAutoRefreshToggle}
-            className={cn(
-              "gap-2 text-xs",
-              autoRefreshEnabled && "bg-success/10 text-success hover:bg-success/20"
-            )}
+            style={{
+              border: autoRefreshEnabled ? '1px solid #22C55E' : '1px solid rgba(255,255,255,0.1)',
+              color: autoRefreshEnabled ? '#22C55E' : '#9CA3AF',
+              background: autoRefreshEnabled ? 'rgba(34,197,94,0.06)' : 'transparent',
+              borderRadius: 8,
+              padding: '6px 14px',
+              cursor: 'pointer',
+              fontSize: 12,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+            }}
           >
             <div className={cn(
               "h-2 w-2 rounded-full",
               autoRefreshEnabled ? "bg-success animate-pulse" : "bg-muted-foreground"
             )} />
             {c.auto}
-          </Button>
+          </button>
           
           <Button
             variant="ghost"
