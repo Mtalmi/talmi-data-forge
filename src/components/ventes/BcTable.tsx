@@ -495,8 +495,8 @@ export function BcTable({
                   bcIsEmergency && bc.statut === 'pret_production' && "bg-red-500/5 animate-pulse border-l-2 border-l-red-500",
                   bc.statut === 'en_attente_validation' && "bg-amber-500/5 border-l-2 border-l-amber-500"
                 )}
-                style={{ background: undefined }}
-                onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = 'rgba(245, 158, 11, 0.04)'; }}
+                style={{ background: undefined, transition: 'background 200ms' }}
+                onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = 'rgba(212,168,67,0.03)'; }}
                 onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = ''; }}
                 onClick={() => onOpenDetail(bc)}
               >
