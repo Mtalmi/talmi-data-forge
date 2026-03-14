@@ -52,6 +52,7 @@ import { ConversionPredictorCard } from '@/components/ventes/ConversionPredictor
 import { RelanceIntelligenteCard } from '@/components/ventes/RelanceIntelligenteCard';
 import { ScoringDynamiquePrixCard } from '@/components/ventes/ScoringDynamiquePrixCard';
 import { ConcentrationClientCard } from '@/components/ventes/ConcentrationClientCard';
+import { IntelligenceTabHeader, AgentGrid } from '@/components/ui/agent-card';
 
 // Phase 5-7 Components
 import { useVentesKeyboardShortcuts, KeyboardShortcutsHint } from '@/components/ventes/KeyboardShortcuts';
