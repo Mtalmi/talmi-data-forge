@@ -1611,9 +1611,9 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center gap-2 shrink-0">
               <button
-                style={{ background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.5)', color: '#D4A843', fontWeight: 600, borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', transition: 'all 0.2s ease', fontSize: '12px' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.1)'; e.currentTarget.style.borderColor = '#D4A843'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; e.currentTarget.style.borderColor = 'rgba(212,168,67,0.5)'; }}
+                style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', fontWeight: 600, borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', transition: 'all 0.2s ease', fontSize: '12px' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.1)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                 onClick={() => {
                   setShowLancerToast(true);
                   setLancerToastVisible(true);
