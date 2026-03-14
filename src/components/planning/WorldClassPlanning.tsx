@@ -663,12 +663,12 @@ function CollapsibleChronologique() {
             background: `${T.cardBorder}40`,
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: T.gold }}>Total journée:</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#D4A843' }}>Total journée:</span>
             <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: T.textPri }}>153 250 DH</span>
-              <span style={{ fontSize: 11, color: T.textSec }}>5 livraisons</span>
-              <span style={{ fontSize: 11, color: T.textSec }}>225 m³</span>
-              <span style={{ fontSize: 11, fontWeight: 600, color: T.success }}>Marge moyenne: 36%</span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 700, color: '#D4A843' }}>153 250 DH</span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#D4A843' }}>5 livraisons</span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#D4A843' }}>225 m³</span>
+              <span style={{ fontSize: 11, fontWeight: 600, color: '#22C55E' }}>Marge moyenne: <span style={{ fontFamily: 'ui-monospace, monospace' }}>36%</span></span>
             </div>
           </div>
         </Card>
