@@ -955,11 +955,12 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
               {/* 1. Planning KPIs */}
               <div ref={kpisRef}>
                 <SectionHeader icon={BarChart3} label="Planning KPIs" />
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" style={{ alignItems: 'stretch' }}>
+                <div className="grid grid-cols-2 lg:grid-cols-5 gap-4" style={{ alignItems: 'stretch' }}>
                   <KPICard label="Commandes Semaine" value={pKpis.commandes} suffix="" color={T.gold} icon={FileText} trend="+3 vs sem. dern." trendPositive delay={0} />
                   <KPICard label="Volume Planifié" value={pKpis.volumePlanifie} suffix="m³" color={T.gold} icon={BarChart3} trend="+8% vs sem. dern." trendPositive delay={80} />
                   <KPICard label="Capacité Utilisée" value={pKpis.capaciteUsed} suffix="%" color={T.gold} icon={BarChart3} trend="+5% vs sem. dern." trendPositive delay={160} />
                   <KPICard label="Livraisons Prévues" value={pKpis.livraisons} suffix="" color={T.gold} icon={Truck} trend="stable" trendPositive delay={240} />
+                  <KPICard label="Revenu Planifié" value={892} suffix="K DH" color={T.gold} icon={TrendingUp} trend="↗ +6% vs sem. dern." trendPositive delay={320} />
                 </div>
               </div>
 
