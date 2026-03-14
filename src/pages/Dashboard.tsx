@@ -1005,7 +1005,9 @@ export default function Dashboard() {
                 animation: `ccSectionIn 300ms ease-out ${200 + i * 50}ms both`,
                 ...(kpi.healthyGlow ? {
                   boxShadow: '0 0 20px rgba(34,197,94,0.06), inset 0 1px 0 rgba(34,197,94,0.08), 0 1px 3px rgba(0,0,0,0.12), 0 8px 32px rgba(0,0,0,0.15)',
-                  borderColor: 'rgba(34,197,94,0.12)',
+                  borderRightColor: 'rgba(34,197,94,0.12)',
+                  borderBottomColor: 'rgba(34,197,94,0.12)',
+                  borderLeftColor: 'rgba(34,197,94,0.12)',
                 } : {}),
               }}
             >
