@@ -1087,6 +1087,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                             onClick={() => setDeliverySort(s)}
                             style={{
                               fontSize: 11, cursor: 'pointer', paddingBottom: 2,
+                              fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
                               color: deliverySort === s ? '#D4A843' : '#9CA3AF',
                               borderBottom: deliverySort === s ? '2px solid #D4A843' : '2px solid transparent',
                               fontWeight: deliverySort === s ? 600 : 400,
