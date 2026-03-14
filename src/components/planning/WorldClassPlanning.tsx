@@ -344,7 +344,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
 // ─────────────────────────────────────────────────────
 // SCHEDULE BLOCK
 // ─────────────────────────────────────────────────────
-function ScheduleBlock({ slot, delay = 0, riskyClients, onClick }: { slot: { product: string; volume: number; client: string } | null; delay?: number; riskyClients?: Set<string>; onClick?: () => void }) {
+function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = false }: { slot: { product: string; volume: number; client: string } | null; delay?: number; riskyClients?: Set<string>; onClick?: () => void; rentabilite?: boolean }) {
   const [visible, setVisible] = useState(false);
   const [hov, setHov] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
