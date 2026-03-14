@@ -391,6 +391,82 @@ function BatchCard({ batch, delay = 0 }: { batch: BatchDisplay; delay?: number }
   );
 }
 
+
+// ─────────────────────────────────────────────────────
+// DONUT FORMULA CARD — Interactive with hover effects
+// ─────────────────────────────────────────────────────
+function DonutFormulaCard({ productData, totalProductVolume, cardBg, cardBorder }: {
+  productData: { name: string; volume: number; color: string }[];
+  totalProductVolume: number; cardBg: string; cardBorder: string;
+}) {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const dominant = productData.length > 0 ? productData.reduce((max, p) => p.volume > max.volume ? p : max, productData[0]) : null;
+  const dominantPct = dominant && totalProductVolume > 0 ? Math.round(dominant.volume / totalProductVolume * 100) : 0;
+
+  return (
+    <div style={{ background: cardBg, border: `1px solid ${cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, padding: 20 }}>
+      <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 16 }}>Production par Formule</p>
+      {productData.length > 0 ? (
+        <>
+          <div style={{ filter: 'drop-shadow(0 0 8px rgba(212,168,67,0.15))' }}>
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie data={productData} dataKey="volume" nameKey="name" innerRadius={60} outerRadius={90} animationBegin={200} animationDuration={800} label={false}
+                  onMouseEnter={(_, index) => setHoveredIndex(index)} onMouseLeave={() => setHoveredIndex(null)}>
+                  {productData.map((p, i) => (
+                    <Cell key={i} fill={p.color} opacity={hoveredIndex !== null && hoveredIndex !== i ? 0.5 : 1}
+                      style={{ transform: hoveredIndex === i ? 'scale(1.05)' : 'scale(1)', transformOrigin: 'center', transition: 'all 200ms ease' }} />
+                  ))}
+                </Pie>
+                <text x="50%" y="44%" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 32, fontWeight: 200, fill: '#D4A843' }}>{totalProductVolume}</text>
+                <text x="50%" y="58%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 11, fill: '#9CA3AF' }}>m³ Total</text>
+                <Tooltip content={({ active, payload }) => {
+                  if (!active || !payload?.length) return null;
+                  const d = payload[0];
+                  const pct = totalProductVolume > 0 ? Math.round((d.value as number) / totalProductVolume * 100) : 0;
+                  return (
+                    <div style={{ background: '#1A1F2E', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 8, padding: '8px 12px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}>
+                      <p style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontSize: 12, fontWeight: 600, marginBottom: 2 }}>{d.name}</p>
+                      <p style={{ color: (d.payload as any).color, fontFamily: 'ui-monospace, monospace', fontWeight: 400, fontSize: 13 }}>{(d.value as number).toLocaleString('fr-FR')} m³</p>
+                      <p style={{ color: '#9CA3AF', fontSize: 11, marginTop: 2 }}>{pct}% du total</p>
+                    </div>
+                  );
+                }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="flex flex-col gap-1.5 mt-2">
+            {productData.map((p, i) => (
+              <div key={p.name} className="flex items-center justify-between"
+                style={{ cursor: 'pointer', opacity: hoveredIndex !== null && hoveredIndex !== i ? 0.5 : 1, fontWeight: hoveredIndex === i ? 600 : 400, transition: 'opacity 200ms, font-weight 200ms' }}
+                onMouseEnter={() => setHoveredIndex(i)} onMouseLeave={() => setHoveredIndex(null)}>
+                <div className="flex items-center gap-2">
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: p.color }} />
+                  <span style={{ color: 'rgba(255,255,255,0.50)', fontSize: 11 }}>{p.name}</span>
+                </div>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'rgba(255,255,255,0.50)' }}>{totalProductVolume > 0 ? Math.round(p.volume / totalProductVolume * 100) : 0}% · {p.volume} m³</span>
+              </div>
+            ))}
+          </div>
+          {dominant && (
+            <p style={{ fontSize: 11, color: '#9CA3AF', borderTop: '1px solid rgba(212,168,67,0.08)', paddingTop: 8, marginTop: 8 }}>
+              {dominant.name} domine à {dominantPct}% — formule la plus demandée cette semaine
+            </p>
+          )}
+        </>
+      ) : (
+        <div className="flex flex-col items-center justify-center" style={{ height: 260 }}>
+          <svg width="180" height="180" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="75" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="20" />
+          </svg>
+          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 24, color: 'rgba(255,255,255,0.15)', marginTop: -110, marginBottom: 80 }}>—</p>
+          <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12 }}>Aucune donnée</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─────────────────────────────────────────────────────
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────
