@@ -1,12 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import {
-  LineChart, Line, XAxis, YAxis, Tooltip as RechartsTooltip,
+  XAxis, YAxis, Tooltip as RechartsTooltip,
   ResponsiveContainer, CartesianGrid, Area, AreaChart, ReferenceLine,
 } from 'recharts';
-import { TrendingUp, AlertTriangle, ShoppingCart, Zap } from 'lucide-react';
-import { MaterialPriceTracker } from '@/components/stocks/MaterialPriceTracker';
-import { CostImpactSimulator } from '@/components/stocks/CostImpactSimulator';
+import { TrendingUp, AlertTriangle, ShoppingCart } from 'lucide-react';
 import { SmartReorderQueue } from '@/components/stocks/SmartReorderQueue';
 
 const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
