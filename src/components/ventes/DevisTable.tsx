@@ -435,16 +435,17 @@ export function DevisTable({
               <TableRow 
                 key={devis.id}
                 className={cn(
-                  "transition-all duration-200 cursor-pointer border-b border-white/5",
-                  getExpirationInfo && getExpirationInfo(devis).isExpired && "opacity-60 bg-muted/30",
+                  "cursor-pointer",
+                  getExpirationInfo && getExpirationInfo(devis).isExpired && "opacity-60",
                   isSelected && "bg-primary/5"
                 )}
                 style={{
-                  borderLeft: devis.niveau_score === 'Élevé' ? '2px solid #D4A843' : '2px solid transparent',
-                  boxShadow: devis.niveau_score === 'Élevé' ? 'inset 2px 0 12px rgba(212,168,67,0.12)' : undefined,
+                  borderBottom: '1px solid rgba(255,255,255,0.04)',
+                  borderLeft: '2px solid transparent',
+                  transition: 'all 200ms',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.03)')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.03)'; e.currentTarget.style.borderLeft = '2px solid #D4A843'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderLeft = '2px solid transparent'; }}
                 onClick={() => onRowClick?.(devis)}
               >
                 <TableCell onClick={(e) => e.stopPropagation()} style={{ padding: '10px 8px' }}>
