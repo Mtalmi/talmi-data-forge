@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 // PageHeader removed — using custom sticky tab bar
 import { supabase } from '@/integrations/supabase/client';
+import { MaterialPriceTracker } from '@/components/stocks/MaterialPriceTracker';
+import { CostImpactSimulator } from '@/components/stocks/CostImpactSimulator';
 import { format, subDays, startOfDay } from 'date-fns';
 
 // ─────────────────────────────────────────────────────
@@ -1094,6 +1096,12 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
             </div>
           );
         })()}
+
+        {/* ── MATERIAL PRICE TRACKER ── */}
+        <MaterialPriceTracker />
+
+        {/* ── COST IMPACT SIMULATOR ── */}
+        <CostImpactSimulator />
 
         {/* ── PLAN DE RÉAPPROVISIONNEMENT + ALERTES — Two-column layout ── */}
         <div style={{ display: 'flex', gap: 24 }}>
