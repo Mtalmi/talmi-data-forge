@@ -1445,6 +1445,10 @@ export default function Dashboard() {
                       </>
                     ) : (
                       <div className="flex-1 relative overflow-hidden rounded-lg mt-2 cursor-pointer" onClick={() => window.location.href = '/surveillance'} style={{ boxShadow: '0 0 15px rgba(239, 68, 68, 0.03)' }}>
+                        {/* Scan lines (item 14) */}
+                        {[0, 1, 2].map(i => (
+                          <div key={i} className="absolute left-0 right-0 z-[1]" style={{ height: '1px', background: 'rgba(212,168,67,0.15)', animation: `cameraScanLine 4s linear infinite`, animationDelay: `${i * 1.3}s` }} />
+                        ))}
                         <div className="absolute inset-0 flex flex-col items-center justify-center z-[2] gap-4">
                           <div className="relative" style={{ width: 96, height: 96 }}>
                             <div className="absolute inset-0 rounded-full" style={{ border: '1px solid rgba(212,168,67,0.15)' }} />
@@ -1462,10 +1466,12 @@ export default function Dashboard() {
                               </span>
                             </div>
                           </div>
-                          <span className="text-sm text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Recherche du signal...</span>
-                          <span className="text-[10px] tracking-[0.08em] uppercase text-muted-foreground/30 font-medium" style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace" }}>Dernière capture: il y a 4h</span>
+                          <span className="text-sm" style={{ fontFamily: "'JetBrains Mono', monospace", color: '#D4A843', textShadow: '0 0 8px rgba(212,168,67,0.3)' }}>Recherche du signal...</span>
+                          <span className="text-[10px] tracking-[0.08em] uppercase font-medium" style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", color: '#D4A843' }}>Dernière capture: il y a 4h</span>
                         </div>
-                        <div className="absolute bottom-0 left-0 right-0 z-[3] p-2.5" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)' }}>
+                        {/* Ticking timestamp (item 15) */}
+                        <div className="absolute bottom-10 right-3 z-[4]" style={{ fontFamily: 'ui-monospace, monospace', fontSize: '11px', color: '#D4A843', opacity: 0.7 }}>{cameraTime}</div>
+                        <div className="absolute bottom-0 left-0 right-0 z-[3] p-2.5" style={{ background: 'rgba(212,168,67,0.04)', borderTop: '1px solid rgba(212,168,67,0.15)' }}>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                               <span className="text-[10px] text-white/80 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>47 m³/h</span>
