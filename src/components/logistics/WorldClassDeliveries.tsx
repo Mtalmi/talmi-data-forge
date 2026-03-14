@@ -489,8 +489,20 @@ function CarteGPSTab() {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20 }}>
         {/* Map */}
-        <div>
-          {subTab === 'carte' && <FleetPredatorPage />}
+        <div style={{ position: 'relative' }}>
+          {subTab === 'carte' && (
+            <>
+              <FleetPredatorPage />
+              {/* Bottom map overlay strip */}
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(15,22,41,0.92)', backdropFilter: 'blur(8px)', padding: '10px 16px', borderTop: `1px solid ${T.cardBorder}`, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontFamily: MONO, fontSize: 11, color: T.gold }}>3 véhicules actifs</span>
+                <span style={{ color: `${T.gold}40` }}>·</span>
+                <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>Distance totale: <span style={{ color: T.gold }}>270 km</span></span>
+                <span style={{ color: `${T.gold}40` }}>·</span>
+                <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>Prochain arrêt: <span style={{ color: T.gold }}>T-04 à Résidences Atlas</span> (ETA <span style={{ color: T.danger }}>10:44</span>)</span>
+              </div>
+            </>
+          )}
           {subTab === 'historique' && <div style={{ padding: 60, textAlign: 'center', color: T.textDim }}>Historique des trajets — Contenu en cours de déploiement...</div>}
           {subTab === 'zones' && <div style={{ padding: 60, textAlign: 'center', color: T.textDim }}>Zones & Performance — Contenu en cours de déploiement...</div>}
         </div>
