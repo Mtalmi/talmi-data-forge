@@ -779,7 +779,7 @@ function AnalytiqueTab() {
 
       {/* ROW 2 — BREAKDOWN */}
       <section>
-        <SectionHeader icon={TrendingUp} label="Décomposition" />
+        <SectionHeader icon={TrendingUp} label="✦ Décomposition" />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
 
           {/* Card 1: Revenu par Toupie */}
