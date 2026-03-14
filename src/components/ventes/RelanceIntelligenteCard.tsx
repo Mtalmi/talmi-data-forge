@@ -1,4 +1,5 @@
 import { useCountUp } from '@/hooks/useCountUp';
+import { WhatsAppButton, WhatsAppBadge } from '@/components/ui/WhatsAppElements';
 
 const mono = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
 
@@ -8,8 +9,8 @@ export function RelanceIntelligenteCard() {
   const tauxVal = useCountUp(68, 1500);
 
   const rows = [
-    { client: 'Alliances', devis: 'DEV-2602-XXX', montant: '22,400 DH', jours: 34, joursColor: '#EF4444', action: 'Relancer par WhatsApp' },
-    { client: 'Palmeraie', devis: 'DEV-2602-XXX', montant: '24,600 DH', jours: 31, joursColor: '#F59E0B', action: 'Relancer par Email' },
+    { client: 'Alliances', devis: 'DEV-2602-XXX', montant: '22,400 DH', jours: 34, joursColor: '#EF4444', channel: 'whatsapp' as const },
+    { client: 'Palmeraie', devis: 'DEV-2602-XXX', montant: '24,600 DH', jours: 31, joursColor: '#F59E0B', channel: 'email' as const },
   ];
 
   return (
@@ -22,6 +23,7 @@ export function RelanceIntelligenteCard() {
         <span style={{ color: '#D4A843', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '2px', fontFamily: mono }}>
           ✦ Agent IA: Relance Intelligente
         </span>
+        <WhatsAppBadge />
         <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(212,168,67,0.3), transparent 80%)' }} />
         <span style={{ fontSize: 9, fontWeight: 600, color: '#D4A843', background: 'rgba(212,168,67,0.06)', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 100, padding: '3px 10px', fontFamily: mono }}>
           ✨ Généré par IA · Claude Opus
@@ -67,7 +69,13 @@ export function RelanceIntelligenteCard() {
                 <td style={{ padding: '10px 12px 10px 0', fontSize: 13, color: '#D4A843', fontFamily: mono }}>{r.montant}</td>
                 <td style={{ padding: '10px 12px 10px 0', fontSize: 12, color: r.joursColor, fontFamily: mono, fontWeight: 600 }}>{r.jours} jours</td>
                 <td style={{ padding: '10px 12px 10px 0' }}>
-                  <button style={{ background: '#D4A843', color: '#0F1629', fontSize: 11, fontWeight: 600, padding: '5px 14px', borderRadius: 6, border: 'none', cursor: 'pointer', fontFamily: mono }}>{r.action}</button>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    {r.channel === 'whatsapp' ? (
+                      <WhatsAppButton label="Relancer par WhatsApp" />
+                    ) : (
+                      <button style={{ background: 'transparent', color: '#D4A843', fontSize: 12, fontWeight: 600, padding: '6px 14px', borderRadius: 6, border: '1px solid rgba(212,168,67,0.4)', cursor: 'pointer', fontFamily: mono }}>Relancer par Email</button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
