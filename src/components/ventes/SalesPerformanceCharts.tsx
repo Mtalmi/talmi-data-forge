@@ -14,12 +14,9 @@ interface SalesPerformanceChartsProps {
 }
 
 /* ───── Palette ───── */
-const GOLD = '#FDB913';
 const PRODUCT_COLORS = ['#D4A843', '#A07820', '#5A3F10'];
-// Status colors are mapped dynamically in the component using statusColorMap
-const SUCCESS = '#10B981';
-const DANGER = '#FF6B6B';
-const WARNING = '#FB923C';
+const SUCCESS = '#22C55E';
+const DANGER = '#EF4444';
 
 /* ───── Custom Tooltip ───── */
 const GoldTooltip = ({ active, payload, label }: any) => {
@@ -28,17 +25,18 @@ const GoldTooltip = ({ active, payload, label }: any) => {
     <div style={{
       borderRadius: 10, padding: '8px 14px',
       background: 'rgba(13,18,32,0.95)',
-      border: '1px solid rgba(253,185,19,0.2)',
+      border: '1px solid rgba(212,168,67,0.25)',
       boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+      backdropFilter: 'blur(8px)',
     }}>
-      {label && <p style={{ fontWeight: 700, color: 'white', fontSize: 11, marginBottom: 4 }}>{label}</p>}
+      {label && <p style={{ fontWeight: 600, color: 'white', fontSize: 11, marginBottom: 4, fontFamily: 'ui-monospace, monospace' }}>{label}</p>}
       {payload.map((entry: any, i: number) => (
         <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
           <div style={{ width: 6, height: 6, borderRadius: '50%', background: entry.color || entry.fill }} />
-          <span style={{ color: 'rgba(148,163,184,0.6)', fontSize: 10 }}>{entry.name}:</span>
-          <span style={{ fontWeight: 700, marginLeft: 'auto', fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: entry.color || entry.fill }}>
+          <span style={{ color: '#9CA3AF', fontSize: 10, fontFamily: 'ui-monospace, monospace' }}>{entry.name}:</span>
+          <span style={{ fontWeight: 600, marginLeft: 'auto', fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#D4A843' }}>
             {typeof entry.value === 'number'
-              ? entry.value >= 1000 ? `${(entry.value / 1000).toFixed(1)}K DH` : `${entry.value}`
+              ? entry.value >= 1000 ? `${(entry.value / 1000).toFixed(1)}K DH` : `${entry.value.toLocaleString('fr-FR')} DH`
               : entry.value}
           </span>
         </div>
@@ -54,17 +52,21 @@ function StatChip({ value, label, color, subtext }: { value: number; label: stri
     <div style={{
       textAlign: 'center', padding: 12, borderRadius: 12,
       background: 'rgba(255,255,255,0.02)',
-      border: '1px solid rgba(255,255,255,0.08)',
-    }}>
-      <p style={{ fontSize: 28, fontWeight: 200, fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", color }}>
+      border: '1px solid rgba(255,255,255,0.06)',
+      transition: 'background 200ms',
+    }}
+    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.03)'; }}
+    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; }}
+    >
+      <p style={{ fontSize: 36, fontWeight: 100, fontFamily: 'ui-monospace, monospace', color }}>
         {animated >= 1000 ? `${(animated / 1000).toFixed(1)}K` : animated}
       </p>
-      <p style={{ fontSize: 10, color: 'rgba(148,163,184,0.4)', fontWeight: 500, textTransform: 'uppercase' as const, letterSpacing: '0.1em', marginTop: 4 }}>{label}</p>
+      <p style={{ fontSize: 10, color: '#9CA3AF', fontWeight: 500, textTransform: 'uppercase' as const, letterSpacing: '0.1em', marginTop: 4, fontFamily: 'ui-monospace, monospace' }}>{label}</p>
       {value === 0 && !subtext && (
         <p style={{ fontSize: 14, color, opacity: 0.4, marginTop: 2 }}>—</p>
       )}
       {subtext && (
-        <p style={{ fontSize: 10, color: '#D4A843', fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", marginTop: 2 }}>{subtext}</p>
+        <p style={{ fontSize: 11, color: '#9CA3AF', fontFamily: 'ui-monospace, monospace', marginTop: 2 }}>{subtext}</p>
       )}
     </div>
   );
@@ -73,17 +75,30 @@ function StatChip({ value, label, color, subtext }: { value: number; label: stri
 /* ───── Section Header ───── */
 function SectionHeader({ title }: { title: string }) {
   return (
-    <div className="flex items-center gap-3 mb-4">
-      <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">{title}</span>
-      <div className="flex-1 border-t border-amber-500/30" />
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+      <span style={{ fontFamily: 'ui-monospace, monospace', letterSpacing: '2px', fontSize: 12, color: '#D4A843', fontWeight: 600, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{title}</span>
+      <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(212,168,67,0.3), transparent 80%)' }} />
     </div>
   );
 }
+
+/* ───── Card wrapper ───── */
+const cardStyle: React.CSSProperties = {
+  background: 'rgba(15,23,41,0.6)',
+  border: '1px solid rgba(212,168,67,0.12)',
+  borderTop: '2px solid #D4A843',
+  borderRadius: 12,
+  padding: 24,
+  overflow: 'hidden',
+  transition: 'background 200ms',
+  alignSelf: 'start',
+};
 
 export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceChartsProps) {
   const { t } = useI18n();
   const vt = t.pages.ventes;
   const formulaNames = (t as any).formulaNames || {};
+
   /* ── Sales by product (formule) ── */
   const productData = useMemo(() => {
     const map = new Map<string, number>();
@@ -115,7 +130,7 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
     : 0;
 
   const winLossPie = [
-    { name: vt.inProgress, value: winLossData.pending, color: GOLD },
+    { name: vt.inProgress, value: winLossData.pending, color: '#D4A843' },
     { name: vt.won, value: winLossData.won, color: SUCCESS },
     { name: vt.lost, value: winLossData.lost, color: DANGER },
   ].filter(d => d.value > 0);
@@ -137,24 +152,19 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
 
   const STATUS_COLORS: Record<string, string> = {
     [vt.validated]: '#D4A843',
-    [vt.statusLivre]: '#C49A35',
-    [vt.other]: 'rgba(212,168,67,0.4)',
+    [vt.statusLivre]: '#22C55E',
+    [vt.other]: '#9CA3AF',
     Production: '#A07820',
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      {/* ── Revenue by Product ── */}
-      <div style={{
-        background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
-        border: '1px solid rgba(245, 158, 11, 0.15)',
-        borderRadius: 12,
-        borderTop: '2px solid transparent',
-        borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
-        borderImageSlice: '1 1 0 1',
-        padding: 24,
-        overflow: 'hidden',
-      }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16, alignItems: 'start' }}>
+      {/* ── CA PAR FORMULE ── */}
+      <div
+        style={cardStyle}
+        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.02)'; }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,23,41,0.6)'; }}
+      >
         <SectionHeader title={vt.revenueByFormula} />
         {productData.length > 0 ? (
           <>
@@ -173,17 +183,17 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
                     animationDuration={900}
                   >
                     {productData.map((_, i) => (
-                      <Cell key={i} fill={PRODUCT_COLORS[i % PRODUCT_COLORS.length]} stroke="transparent" />
+                      <Cell key={i} fill={PRODUCT_COLORS[i % PRODUCT_COLORS.length]} stroke="transparent" cursor="pointer" />
                     ))}
                   </Pie>
-                  <text x="50%" y="48%" textAnchor="middle" dominantBaseline="middle"
-                    fill="#D4A843" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200, fontSize: 24 }}>
+                  <text x="50%" y="45%" textAnchor="middle" dominantBaseline="middle"
+                    fill="#D4A843" style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 100, fontSize: 36 }}>
                     {totalProductRevenue >= 1000
                       ? `${(totalProductRevenue / 1000).toFixed(0)}K`
                       : totalProductRevenue.toFixed(0)}
                   </text>
-                  <text x="50%" y="48%" dy={18} textAnchor="middle" dominantBaseline="middle"
-                    fill="#9CA3AF" style={{ fontSize: 9, fontFamily: "ui-monospace, monospace" }}>
+                  <text x="50%" y="45%" dy={22} textAnchor="middle" dominantBaseline="middle"
+                    fill="#9CA3AF" style={{ fontSize: 11, fontFamily: 'ui-monospace, monospace' }}>
                     DH Total
                   </text>
                   <Tooltip content={<GoldTooltip />} />
@@ -193,12 +203,11 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 12 }}>
               {productData.map((d, i) => {
                 const pct = totalProductRevenue > 0 ? Math.round((d.value / totalProductRevenue) * 100) : 0;
-                const color = PRODUCT_COLORS[i % PRODUCT_COLORS.length];
                 return (
                   <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
-                    <span style={{ fontSize: 10, color: 'rgba(148,163,184,0.6)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.name}</span>
-                    <span style={{ fontSize: 10, fontWeight: 600, fontFamily: 'JetBrains Mono, monospace', color }}>{pct}%</span>
+                    <div style={{ width: 6, height: 6, borderRadius: '50%', background: PRODUCT_COLORS[i % PRODUCT_COLORS.length], flexShrink: 0 }} />
+                    <span style={{ fontSize: 10, color: '#9CA3AF', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'ui-monospace, monospace' }}>{d.name}</span>
+                    <span style={{ fontSize: 11, fontWeight: 600, fontFamily: 'ui-monospace, monospace', color: '#D4A843' }}>{pct}%</span>
                   </div>
                 );
               })}
@@ -207,34 +216,29 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
         ) : (
           <div style={{ height: 176, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <Trophy style={{ width: 32, height: 32, color: 'rgba(148,163,184,0.2)' }} />
-            <p style={{ fontSize: 12, color: 'rgba(148,163,184,0.4)' }}>Aucune commande enregistrée</p>
+            <p style={{ fontSize: 12, color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>Aucune commande enregistrée</p>
           </div>
         )}
       </div>
 
-      {/* ── Revenue by Status (bar) ── */}
-      <div style={{
-        background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
-        border: '1px solid rgba(245, 158, 11, 0.15)',
-        borderRadius: 12,
-        borderTop: '2px solid transparent',
-        borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
-        borderImageSlice: '1 1 0 1',
-        padding: 24,
-        overflow: 'hidden',
-      }}>
+      {/* ── PIPELINE PAR STATUT ── */}
+      <div
+        style={cardStyle}
+        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.02)'; }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,23,41,0.6)'; }}
+      >
         <SectionHeader title={vt.pipelineByStatus} />
         {statusRevenueData.length > 0 ? (
           <div style={{ height: 208 }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={statusRevenueData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="2 4" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="name" tick={{ fontSize: 10, fill: 'rgba(148,163,184,0.5)' }} axisLine={false} tickLine={false} />
-                <YAxis tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}K` : v} tick={{ fontSize: 10, fill: 'rgba(148,163,184,0.5)' }} axisLine={false} tickLine={false} />
-                <Tooltip content={<GoldTooltip />} />
+                <CartesianGrid strokeDasharray="2 4" stroke="rgba(255,255,255,0.04)" />
+                <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }} axisLine={false} tickLine={false} />
+                <YAxis tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}K` : v} tick={{ fontSize: 10, fill: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }} axisLine={false} tickLine={false} />
+                <Tooltip content={<GoldTooltip />} cursor={{ fill: 'rgba(212,168,67,0.06)' }} />
                 <Bar dataKey="value" name="CA" radius={[6, 6, 0, 0]} animationDuration={900}>
                   {statusRevenueData.map((entry, i) => (
-                    <Cell key={i} fill={STATUS_COLORS[entry.name] || 'rgba(148,163,184,0.20)'} />
+                    <Cell key={i} fill={STATUS_COLORS[entry.name] || '#9CA3AF'} cursor="pointer" />
                   ))}
                 </Bar>
               </BarChart>
@@ -243,7 +247,7 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
         ) : (
           <div style={{ height: 208, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <Target style={{ width: 32, height: 32, color: 'rgba(148,163,184,0.2)' }} />
-            <p style={{ fontSize: 12, color: 'rgba(148,163,184,0.4)' }}>Aucune donnée disponible</p>
+            <p style={{ fontSize: 12, color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>Aucune donnée disponible</p>
           </div>
         )}
         {statusRevenueData.length > 0 && (
@@ -251,9 +255,9 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
             {statusRevenueData.map((d) => (
               <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <div style={{ width: 6, height: 6, borderRadius: '50%', background: STATUS_COLORS[d.name] }} />
-                <span style={{ fontSize: 10, color: 'rgba(148,163,184,0.6)' }}>{d.name}</span>
-                <span style={{ fontSize: 10, fontWeight: 600, marginLeft: 'auto', fontFamily: 'JetBrains Mono, monospace', color: STATUS_COLORS[d.name] }}>
-                  {d.value >= 1000 ? `${(d.value / 1000).toFixed(1)}K` : d.value} DH
+                <span style={{ fontSize: 10, color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>{d.name}</span>
+                <span style={{ fontSize: 11, fontWeight: 600, marginLeft: 'auto', fontFamily: 'ui-monospace, monospace', color: '#D4A843' }}>
+                  {d.value >= 1000 ? `${(d.value / 1000).toFixed(1)}K` : d.value.toLocaleString('fr-FR')} DH
                 </span>
               </div>
             ))}
@@ -261,24 +265,19 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
         )}
       </div>
 
-      {/* ── Win / Loss Analysis ── */}
-      <div style={{
-        background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
-        border: '1px solid rgba(245, 158, 11, 0.15)',
-        borderRadius: 12,
-        borderTop: '2px solid transparent',
-        borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
-        borderImageSlice: '1 1 0 1',
-        padding: 24,
-        overflow: 'hidden',
-      }}>
+      {/* ── ANALYSE DEVIS ── */}
+      <div
+        style={cardStyle}
+        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.02)'; }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,23,41,0.6)'; }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
           <SectionHeader title={vt.quoteAnalysis} />
           {winRate > 0 && (
             <span style={{
-              fontSize: 10, fontWeight: 600,
+              fontSize: 10, fontWeight: 600, fontFamily: 'ui-monospace, monospace',
               padding: '3px 10px', borderRadius: 6,
-              background: winRate >= 50 ? 'rgba(16,185,129,0.08)' : 'rgba(255,107,107,0.08)',
+              background: winRate >= 50 ? 'rgba(34,197,94,0.08)' : 'rgba(239,68,68,0.08)',
               color: winRate >= 50 ? SUCCESS : DANGER,
             }}>
               {winRate}% taux
@@ -313,9 +312,9 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
           <div style={{
             padding: '6px 10px', borderRadius: 8, marginBottom: 12,
             background: 'rgba(212,168,67,0.04)', border: '1px solid rgba(212,168,67,0.1)',
-            fontSize: 10, color: 'rgba(148,163,184,0.5)', fontFamily: 'JetBrains Mono, monospace',
+            fontSize: 11, color: '#9CA3AF', fontFamily: 'ui-monospace, monospace',
           }}>
-            {winLossData.pending} deals actifs · Valeur totale: {winLossData.pendingValueHT >= 1000 ? `${(winLossData.pendingValueHT / 1000).toFixed(0)}K` : winLossData.pendingValueHT} DH · Décision attendue: 14j moy.
+            {winLossData.pending} deals actifs · Valeur totale: <span style={{ color: '#D4A843' }}>{winLossData.pendingValueHT >= 1000 ? `${(winLossData.pendingValueHT / 1000).toFixed(0)}K` : winLossData.pendingValueHT} DH</span> · Décision attendue: <span style={{ color: '#D4A843' }}>14j</span> moy.
           </div>
         )}
 
@@ -336,9 +335,9 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
         ) : (
             <div style={{ width: 140, height: 140, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
               <svg width="80" height="80" viewBox="0 0 80 80">
-                <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(212,168,67,0.15)" strokeWidth="8" />
+                <circle cx="40" cy="40" r="30" fill="none" stroke="#D4A843" strokeWidth="8" opacity={0.2} />
               </svg>
-              <p style={{ fontSize: 12, color: 'rgba(148,163,184,0.4)', textAlign: 'center' }}>Aucun deal finalisé</p>
+              <p style={{ fontSize: 12, color: '#9CA3AF', textAlign: 'center', fontFamily: 'ui-monospace, monospace' }}>Aucun deal finalisé</p>
             </div>
         )}
 
@@ -347,31 +346,32 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
           {(winLossData.won === 0 && winLossData.lost === 0) ? (
             <div style={{
               height: 8, borderRadius: 4,
-              background: 'rgba(148,163,184,0.15)',
+              background: 'linear-gradient(90deg, #C49A3C, #D4A843)',
+              opacity: 0.25,
               position: 'relative',
             }}>
               <span style={{
                 position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)',
-                fontSize: 10, fontStyle: 'italic', color: 'rgba(255,255,255,0.4)', whiteSpace: 'nowrap',
+                fontSize: 10, fontStyle: 'italic', color: '#9CA3AF', whiteSpace: 'nowrap', fontFamily: 'ui-monospace, monospace',
               }}>{vt.noCompletedDeals}</span>
             </div>
           ) : (
             <>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: 'rgba(148,163,184,0.5)' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>
                   <CheckCircle2 style={{ width: 12, height: 12, color: SUCCESS }} /> {vt.won}
                 </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: 'rgba(148,163,184,0.5)' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>
                   <XCircle style={{ width: 12, height: 12, color: DANGER }} /> {vt.lost}
                 </span>
               </div>
               <div style={{ height: 8, borderRadius: 4, overflow: 'hidden', display: 'flex', background: 'rgba(255,255,255,0.04)' }}>
-                <div style={{ width: `${winRate}%`, height: '100%', background: SUCCESS, borderRadius: '4px 0 0 4px', transition: 'width 1s ease' }} />
+                <div style={{ width: `${winRate}%`, height: '100%', background: `linear-gradient(90deg, #C49A3C, ${SUCCESS})`, borderRadius: '4px 0 0 4px', transition: 'width 1s ease' }} />
                 <div style={{ width: `${100 - winRate}%`, height: '100%', background: DANGER, borderRadius: '0 4px 4px 0', transition: 'width 1s ease' }} />
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: SUCCESS }}>{winRate}%</span>
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: DANGER }}>{100 - winRate}%</span>
+                <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: SUCCESS }}>{winRate}%</span>
+                <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: DANGER }}>{100 - winRate}%</span>
               </div>
             </>
           )}
