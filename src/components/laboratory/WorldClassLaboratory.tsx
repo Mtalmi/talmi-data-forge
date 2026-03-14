@@ -398,7 +398,7 @@ function KPICard({ label, value, color, icon: Icon, trend, delay = 0 }: {
             <p style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color, lineHeight: 1, letterSpacing: '-0.02em', margin: 0 }}>{animated}</p>
             {trend && <p style={{ fontSize: 12, fontWeight: 500, marginTop: 6, color: T.success, margin: '6px 0 0' }}>↑ {trend}</p>}
           </div>
-          <Icon size={18} color="#D4A843" style={{ opacity: 0.5 }} />
+          <Icon size={14} color="#9CA3AF" />
         </div>
       </Card>
     </div>
