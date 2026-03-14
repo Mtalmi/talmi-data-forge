@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Users, Sparkles } from 'lucide-react';
+import { WhatsAppButton, WhatsAppBadge } from '@/components/ui/WhatsAppElements';
 
 const T = {
   gold: '#FFD700', goldDim: 'rgba(255,215,0,0.15)',
