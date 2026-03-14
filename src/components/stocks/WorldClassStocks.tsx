@@ -739,14 +739,15 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
           })}
         </div>
         <button style={{
-          padding: '7px 16px', borderRadius: 8, background: '#F59E0B', color: '#000000',
-          fontWeight: 700, fontSize: 12,
+          padding: '8px 24px', borderRadius: 8, background: '#D4A843', color: '#0F1629',
+          fontWeight: 600, fontSize: 14,
           border: 'none', cursor: 'pointer',
-          transition: 'background 150ms',
+          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+          transition: 'filter 150ms',
         }}
           onClick={() => onNewMovement ? onNewMovement() : toast.info('Utilisez les boutons d\'action dans l\'en-tête pour créer un mouvement.')}
-          onMouseEnter={e => (e.currentTarget.style.background = '#D97706')}
-          onMouseLeave={e => (e.currentTarget.style.background = '#F59E0B')}
+          onMouseEnter={e => (e.currentTarget.style.filter = 'brightness(1.15)')}
+          onMouseLeave={e => (e.currentTarget.style.filter = 'brightness(1)')}
         >
           + Nouveau Mouvement
         </button>
