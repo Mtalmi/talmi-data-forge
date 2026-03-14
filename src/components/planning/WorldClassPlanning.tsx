@@ -348,14 +348,14 @@ function ScheduleBlock({ slot, delay = 0, riskyClients }: { slot: { product: str
   const [hov, setHov] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
 
-  if (!slot) {
+   if (!slot) {
     return (
       <div style={{
         opacity: visible ? 1 : 0, transition: 'opacity 500ms ease-out',
-        border: '1px dashed rgba(245, 158, 11, 0.1)', borderRadius: 8, padding: '10px 12px',
+        border: '1px dashed rgba(212, 168, 67, 0.2)', borderRadius: 8, padding: '10px 12px',
         display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 58,
       }}>
-        <span style={{ color: T.textDim, fontSize: 10 }}>Disponible</span>
+        <span style={{ color: 'rgba(212, 168, 67, 0.4)', fontSize: 10 }}>Disponible</span>
       </div>
     );
   }
