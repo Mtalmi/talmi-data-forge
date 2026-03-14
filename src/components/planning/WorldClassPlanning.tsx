@@ -979,7 +979,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                       </div>
                       {row.slots.map((slot, si) => (
                         <div key={si} style={{ padding: 8, borderLeft: `1px solid ${T.cardBorder}` }}>
-                          <ScheduleBlock slot={slot} delay={ri * 80 + si * 30} riskyClients={riskyClients} />
+                          <ScheduleBlock slot={slot} delay={ri * 80 + si * 30} riskyClients={riskyClients} onClick={slot ? () => setSelectedSlot({ slot, dayLabel: weekDays[si], timeLabel: row.time }) : undefined} />
                         </div>
                       ))}
                     </div>
