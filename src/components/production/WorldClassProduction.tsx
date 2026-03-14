@@ -753,14 +753,14 @@ export default function WorldClassProduction() {
                 { label: 'CHAUFFEURS', value: '4/5', color: '#F59E0B' },
                 { label: 'MAINTENANCE', value: '2/2', color: '#34d399' },
               ].map((item, i) => (
-                <div key={i} className="flex flex-col items-center flex-shrink-0">
+              <div key={i} className="flex flex-col items-center flex-shrink-0">
                   <span style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>{item.label}</span>
-                  <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 16, fontWeight: 400, color: item.color, marginTop: 2 }}>{item.value}</span>
+                  <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 16, fontWeight: 400, color: item.label === 'CHAUFFEURS' ? '#F59E0B' : '#D4A843', marginTop: 2 }}>{item.value}</span>
                 </div>
               ))}
             </div>
             <div className="flex-shrink-0">
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>Prochain shift: <span style={{ color: '#D4A843', fontWeight: 600 }}>14h00</span> — 3 opérateurs</span>
+              <span style={{ fontSize: 11, color: '#D4A843', border: '1px solid rgba(212,168,67,0.3)', padding: '3px 10px', borderRadius: 999 }}>Prochain shift: <span style={{ fontWeight: 600 }}>14h00</span> — 3 opérateurs</span>
             </div>
           </div>
         </section>
