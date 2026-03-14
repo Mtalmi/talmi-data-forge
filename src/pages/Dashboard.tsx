@@ -1098,6 +1098,23 @@ export default function Dashboard() {
                   )}
                 </div>
                 <div style={{ marginTop: 'auto' }}>
+                  {/* P&L breakdown for Marge card */}
+                  {'plBreakdown' in kpi && kpi.plBreakdown && (
+                    <div style={{ borderTop: '1px solid rgba(212,168,67,0.08)', paddingTop: 8, marginBottom: 6 }}>
+                      {[
+                        { label: 'Revenu', value: '75.6K', color: '#D4A843' },
+                        { label: '− Matières', value: '37.8K', color: '#9CA3AF' },
+                        { label: '− Logistique', value: '5.2K', color: '#9CA3AF' },
+                        { label: '− Autres', value: '8.4K', color: '#9CA3AF' },
+                        { label: '= Net', value: '24.2K', color: '#22C55E' },
+                      ].map(row => (
+                        <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 10, lineHeight: 1.8 }}>
+                          <span style={{ color: '#9CA3AF' }}>{row.label}</span>
+                          <span style={{ color: row.color, fontWeight: row.label === '= Net' ? 600 : 200 }}>{row.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   <div className="flex items-end justify-between pt-3 mt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
                     <svg width="130" height="44" viewBox="0 0 130 44" className="min-w-[130px] min-h-[44px]" style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.2))' }}>
                       {(() => {
