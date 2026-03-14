@@ -380,23 +380,24 @@ export function DevisTable({
 
   return (
     <>
-      <Table className="w-full table-fixed">
+      <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+      <Table style={{ minWidth: 1200 }}>
         <colgroup>
-          <col style={{ width: '3%' }} />
-          <col style={{ width: '10%' }} />
-          <col style={{ width: '20%' }} />
-          <col style={{ width: '8%' }} />
-          <col style={{ width: '6%' }} />
-          <col style={{ width: '10%' }} />
-          <col style={{ width: '10%' }} />
-          <col style={{ width: '8%' }} />
-          <col style={{ width: '8%' }} />
-          <col style={{ width: '5%' }} />
-          <col style={{ width: '12%' }} />
+          <col style={{ width: 40 }} />
+          <col style={{ width: 140 }} />
+          <col style={{ width: 200 }} />
+          <col style={{ width: 80 }} />
+          <col style={{ width: 70 }} />
+          <col style={{ width: 120 }} />
+          <col style={{ width: 110 }} />
+          <col style={{ width: 100 }} />
+          <col style={{ width: 90 }} />
+          <col style={{ width: 50 }} />
+          <col style={{ width: 200 }} />
         </colgroup>
         <TableHeader>
           <TableRow>
-            <TableHead>
+            <TableHead style={{ padding: '10px 8px' }}>
               <Checkbox 
                 checked={allSelected}
                 onCheckedChange={handleSelectAll}
@@ -404,16 +405,16 @@ export function DevisTable({
                 className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
               />
             </TableHead>
-            <TableHead>N° Devis</TableHead>
-            <TableHead>Client</TableHead>
-            <TableHead className="text-center">Formule</TableHead>
-            <TableHead className="text-right">Volume (m³)</TableHead>
-            <TableHead className="text-right">Total HT (DH)</TableHead>
-            <TableHead className="text-center">Statut</TableHead>
-            <TableHead className="text-center">Score IA</TableHead>
-            <TableHead className="text-center">Conversion</TableHead>
-            <TableHead className="text-center">Priorité</TableHead>
-            <TableHead className="text-center">Actions</TableHead>
+            <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>N° Devis</TableHead>
+            <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Client</TableHead>
+            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Formule</TableHead>
+            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Vol (m³)</TableHead>
+            <TableHead className="text-right" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Total HT (DH)</TableHead>
+            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Statut</TableHead>
+            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Score IA</TableHead>
+            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Conversion</TableHead>
+            <TableHead className="text-center" style={{ padding: '10px 4px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Prté</TableHead>
+            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -439,26 +440,26 @@ export function DevisTable({
                 onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                 onClick={() => onRowClick?.(devis)}
               >
-                <TableCell onClick={(e) => e.stopPropagation()}>
+                <TableCell onClick={(e) => e.stopPropagation()} style={{ padding: '10px 8px' }}>
                   <Checkbox 
                     checked={isSelected}
                     onCheckedChange={(checked) => handleSelectOne(devis.id, !!checked)}
                     aria-label={`Sélectionner ${devis.devis_id}`}
                   />
                 </TableCell>
-                <TableCell style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontWeight: 500 }}>{devis.devis_id}</TableCell>
-                <TableCell style={{ color: 'rgba(255,255,255,0.9)' }}>
+                <TableCell style={{ padding: '10px 8px', color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontWeight: 500, fontSize: 13 }}>{devis.devis_id}</TableCell>
+                <TableCell style={{ padding: '10px 8px', color: 'rgba(255,255,255,0.9)', fontSize: 13 }}>
                   {devis.client ? (
                     <ClientHoverPreview clientId={devis.client_id || ''} clientName={devis.client.nom_client} />
                   ) : (
                     <span className="text-xs text-amber-400/60 bg-amber-400/10 rounded-full px-2 py-0.5">{dt.unassigned}</span>
                   )}
                 </TableCell>
-                <TableCell className="text-center" style={{ color: 'rgba(255,255,255,0.9)' }}>
+                <TableCell className="text-center" style={{ padding: '10px 8px', color: 'rgba(255,255,255,0.9)' }}>
                   <span className="text-xs font-mono">{devis.formule_id}</span>
                 </TableCell>
-                <TableCell className="text-right font-mono" style={{ color: 'rgba(255,255,255,0.9)' }}>{devis.volume_m3}</TableCell>
-                <TableCell className="text-right" style={{ color: 'rgba(255,255,255,0.9)', fontFamily: 'ui-monospace, monospace', fontWeight: 300 }}>
+                <TableCell className="text-center font-mono" style={{ padding: '10px 8px', color: 'rgba(255,255,255,0.9)', fontSize: 13 }}>{devis.volume_m3}</TableCell>
+                <TableCell className="text-right" style={{ padding: '10px 8px', color: 'rgba(255,255,255,0.9)', fontFamily: 'ui-monospace, monospace', fontWeight: 300, fontSize: 13 }}>
                   {Number(devis.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </TableCell>
                 <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
@@ -673,6 +674,7 @@ export function DevisTable({
           })}
         </TableBody>
       </Table>
+      </div>
       
       {/* Confirmation Dialog for Annulé Status */}
       <AlertDialog open={!!cancelConfirmDevis} onOpenChange={(open) => !open && setCancelConfirmDevis(null)}>
