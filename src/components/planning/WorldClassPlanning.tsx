@@ -1354,12 +1354,12 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
               />
 
               {/* 5. Placeholder — Satisfaction Client */}
-              <div style={{ height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', opacity: 0.5, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12 }}>
+              <div style={{ height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', opacity: 0.5, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, overflow: 'hidden' }}>
                 <div className="flex items-center gap-2">
                   <span style={{ color: '#D4A843', fontSize: 14 }}>✦</span>
-                  <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>AGENT IA: SATISFACTION CLIENT</span>
+                  <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '1.5px' }}>AGENT IA: SATISFACTION CLIENT</span>
                 </div>
-                <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(148,163,184,0.12)', color: T.textDim, border: '1px solid rgba(148,163,184,0.2)' }}>Prochainement</span>
+                <span style={{ padding: '3px 10px', borderRadius: 999, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 10, fontWeight: 600, background: 'rgba(148,163,184,0.12)', color: T.textDim, border: '1px solid rgba(148,163,184,0.2)' }}>Prochainement</span>
               </div>
             </div>
           </div>
