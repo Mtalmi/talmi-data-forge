@@ -925,7 +925,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
             <div className="flex items-start gap-3">
               <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
               <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                <span style={{ color: '#fff', fontWeight: 600 }}>Lundi 09 Mars</span>: 2 livraisons simultanées à 08:00 (BTP Maroc + Constructions Modernes). Recommandation: décaler Constructions Modernes à <span style={{ color: '#D4A843', fontWeight: 600 }}>09:00</span> pour éviter congestion chargement.
+                <span style={{ color: '#D4A843', fontWeight: 600 }}>Lundi 09 Mars</span>: 2 livraisons simultanées à 08:00 (BTP Maroc + Constructions Modernes). Recommandation: décaler Constructions Modernes à <span style={{ color: '#D4A843', fontWeight: 600 }}>09:00</span> pour éviter congestion chargement.
               </p>
             </div>
             <div className="flex items-start gap-3">
