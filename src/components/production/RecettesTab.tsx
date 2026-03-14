@@ -115,7 +115,7 @@ function FormulaCard({ f }: { f: Formula }) {
   ];
 
   return (
-    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, overflow: 'hidden' }}>
+    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, overflow: 'hidden' }}>
       {/* Header */}
       <div className="flex items-start justify-between" style={{ background: T.cardBg, padding: '16px 24px', borderBottom: `1px solid ${T.cardBorder}` }}>
         <div>
