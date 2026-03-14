@@ -168,15 +168,13 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
   };
 
   // Calculate summary stats
-  const availableCount = vehicles.length > 0
-    ? vehicles.filter(v => v.statut === 'Disponible' && !activeDeliveries[v.id_camion]).length
-    : 1;
-  const onMissionCount = vehicles.length > 0
-    ? Object.keys(activeDeliveries).length
-    : 2;
-  const maintenanceCount = vehicles.length > 0
-    ? vehicles.filter(v => v.statut === 'Maintenance' || v.statut === 'Hors Service').length
-    : 0;
+  const realAvailable = vehicles.length > 0 ? vehicles.filter(v => v.statut === 'Disponible' && !activeDeliveries[v.id_camion]).length : 0;
+  const realMission = vehicles.length > 0 ? Object.keys(activeDeliveries).length : 0;
+  const realMaintenance = vehicles.length > 0 ? vehicles.filter(v => v.statut === 'Maintenance' || v.statut === 'Hors Service').length : 0;
+  const hasRealOperationalData = (realAvailable + realMission + realMaintenance) > 0;
+  const availableCount = hasRealOperationalData ? realAvailable : 1;
+  const onMissionCount = hasRealOperationalData ? realMission : 2;
+  const maintenanceCount = hasRealOperationalData ? realMaintenance : 0;
 
   // Collapsed state: slim vertical bar
   if (!isOpen) {

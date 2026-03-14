@@ -549,7 +549,7 @@ function ZoneHeader({ icon, label, right }: { icon: string; label: string; right
   );
 }
 
-export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPanelOpen?: boolean }) {
+export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHeader, dispatchMain, fleetPanel, footerActions }: { fleetPanelOpen?: boolean; dispatchHeader?: React.ReactNode; dispatchMain?: React.ReactNode; fleetPanel?: React.ReactNode; footerActions?: React.ReactNode }) {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dispatch');
   const dispatchRef = useRef<HTMLDivElement | null>(null);
@@ -739,8 +739,16 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
               ))}
             </div>
 
-            {/* 3. Planning Chronologique Table */}
-            <div>
+            {/* Dispatch header content (calendar, KPIs) */}
+            {dispatchHeader}
+
+            {/* Main dispatch area + fleet sidebar */}
+            <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 24 }}>
+                {dispatchMain}
+
+                {/* Planning Chronologique Table */}
+                <div>
               <SectionHeader icon={Clock} label="Planning Chronologique" />
               <Card style={{ padding: 0, overflow: 'hidden' }}>
                 <div style={{
@@ -802,6 +810,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
                   </div>
                 </div>
               </Card>
+                </div>
+              </div>
+              {fleetPanel}
             </div>
           </div>
         </div>
@@ -1069,11 +1080,14 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
         </div>
 
         {/* ── FOOTER ── */}
-        <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ color: T.textDim, fontSize: 11 }}>TBOS Planning & Expédition v2.0 — Dernière mise à jour: {new Date().toLocaleString('fr-FR')}</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-pulse 2.5s infinite' }} />
-            <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Système opérationnel</span>
+        <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {footerActions}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ color: T.textDim, fontSize: 11 }}>TBOS Planning & Expédition v2.0 — Dernière mise à jour: {new Date().toLocaleString('fr-FR')}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-pulse 2.5s infinite' }} />
+              <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Système opérationnel</span>
+            </div>
           </div>
         </footer>
       </div>

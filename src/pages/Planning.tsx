@@ -1451,580 +1451,363 @@ export default function Planning() {
   // Desktop view
   return (
     <MainLayout>
-      <WorldClassPlanning fleetPanelOpen={false} />
-      <div className="flex w-full gap-4 transition-all duration-300" style={{ padding: '32px 24px' }}>
-      <div className="flex-1 min-w-0 space-y-6">
-        {isReadOnly && (
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 flex items-center gap-3">
-            <Eye className="h-5 w-5 text-amber-500" />
-            <div>
-              <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
-                {t.pages.planning.readOnlyMode}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {t.pages.planning.readOnlyDescription}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-3">
-          {/* GPS Tracking Link */}
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2 border-white/[0.08] text-white/60 hover:bg-white/[0.05]"
-            onClick={() => navigate('/logistique')}
-          >
-            <Crosshair className="h-4 w-4" style={{ color: '#D4A843' }} />
-            {t.pages.planning.gpsTracking}
-            {enLivraison.length > 0 && (
-              <Badge className="bg-emerald-500 text-white ml-1">{enLivraison.length}</Badge>
+      <WorldClassPlanning 
+        fleetPanelOpen={false}
+        dispatchHeader={
+          <div className="space-y-6">
+            {isReadOnly && (
+              <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 flex items-center gap-3">
+                <Eye className="h-5 w-5 text-amber-500" />
+                <div>
+                  <p className="text-sm font-medium text-amber-600 dark:text-amber-400">{t.pages.planning.readOnlyMode}</p>
+                  <p className="text-xs text-muted-foreground">{t.pages.planning.readOnlyDescription}</p>
+                </div>
+              </div>
             )}
-          </Button>
-          
-          <DailyPlanningReport
-            date={parseISO(selectedDate)}
-            stats={{
-              totalDeliveries: bons.length,
-              pendingCount: pendingValidation.length + aProduire.length,
-              trucksAvailable: availableCamions,
-              trucksTotal: camions.length,
-              enRouteCount: enLivraison.length,
-              totalVolume: bons.reduce((sum, b) => sum + b.volume_m3, 0),
-              deliveredCount: aFacturer.length + facturesAujourdhui.length,
-            }}
-            deliveries={bons.map(b => ({
-              bl_id: b.bl_id,
-              client_name: b.clients?.nom_client || b.client_id,
-              formule_id: b.formule_id,
-              volume_m3: b.volume_m3,
-              heure_prevue: b.heure_prevue,
-              toupie_assignee: b.toupie_assignee || b.camion_assigne,
-              workflow_status: b.workflow_status,
-            }))}
-          />
-          
-          {pendingBLCount > 0 && pendingEarliestDate && (
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="gap-2 border-[#D4A843]/50 text-[#D4A843] hover:bg-[#D4A843]/10 relative"
-              onClick={() => {
-                setFocusPending(true);
-              }}
-            >
-              <BellRing className="h-4 w-4" />
-              {t.pages.planning.toConfirm}
-              <Badge className="bg-[#D4A843] text-black ml-1">{pendingBLCount}</Badge>
-            </Button>
-          )}
-          
-          <Button variant="outline" size="sm" onClick={fetchData} disabled={loading} className="border-white/[0.08] text-white/60 hover:bg-white/[0.05]">
-            <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
-            {t.pages.planning.refresh}
-          </Button>
-        </div>
-
-        {/* Collapsible Calendar Header */}
-        <PlanningCalendarHeader
-          selectedDate={selectedDate}
-          onDateChange={setSelectedDate}
-          deliveryData={monthlyDeliveryData}
-          isOpen={calendarOpen}
-          onOpenChange={setCalendarOpen}
-        />
-
-        {/* 🆕 Pending Validation Section - NEW BLs awaiting dispatcher confirmation */}
-        {pendingValidation.length > 0 && (
-          <div ref={pendingValidationRef}>
-          <Collapsible open={pendingValidationOpen} onOpenChange={setPendingValidationOpen}>
-            <Card className="border-2 border-dashed border-amber-500/50 bg-gradient-to-r from-amber-500/5 to-orange-500/5">
-              <CollapsibleTrigger asChild>
-                <CardHeader className="cursor-pointer hover:bg-muted/30 transition-colors pb-3">
-                  <CardTitle className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-amber-500/20 animate-pulse">
-                      <ClipboardCheck className="h-5 w-5 text-amber-600" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span>{t.pages.planning.toConfirm}</span>
-                        <Badge className="bg-amber-500 text-white animate-bounce">{pendingValidation.length}</Badge>
-                        <Sparkles className="h-4 w-4 text-amber-500" />
-                        <div className="ml-auto" onClick={(e) => e.stopPropagation()}>
-                          <BulkConfirmAction
-                            pendingBLs={pendingValidation}
-                            onConfirmAll={confirmAllPending}
-                          />
+            <PlanningCalendarHeader
+              selectedDate={selectedDate}
+              onDateChange={setSelectedDate}
+              deliveryData={monthlyDeliveryData}
+              isOpen={calendarOpen}
+              onOpenChange={setCalendarOpen}
+            />
+            {pendingValidation.length > 0 && (
+              <div ref={pendingValidationRef}>
+              <Collapsible open={pendingValidationOpen} onOpenChange={setPendingValidationOpen}>
+                <Card className="border-2 border-dashed border-amber-500/50 bg-gradient-to-r from-amber-500/5 to-orange-500/5">
+                  <CollapsibleTrigger asChild>
+                    <CardHeader className="cursor-pointer hover:bg-muted/30 transition-colors pb-3">
+                      <CardTitle className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-amber-500/20 animate-pulse">
+                          <ClipboardCheck className="h-5 w-5 text-amber-600" />
                         </div>
-                      </div>
-                      <p className="text-xs text-muted-foreground font-normal mt-0.5">
-                        {t.pages.planning.pendingDispatcherValidation}
-                      </p>
-                    </div>
-                    {pendingValidationOpen ? (
-                      <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                    )}
-                  </CardTitle>
-                </CardHeader>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <CardContent className="pt-0">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {pendingValidation.map(bon => (
-                      <Card key={bon.bl_id} className="border border-amber-500/30 bg-card hover:shadow-lg transition-all">
-                        <CardContent className="p-4">
-                          <div className="flex justify-between items-start mb-3">
-                            <div>
-                              <p className="font-semibold text-sm">{bon.bl_id}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {bon.clients?.nom_client || bon.client_id}
-                              </p>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span>{t.pages.planning.toConfirm}</span>
+                            <Badge className="bg-amber-500 text-white animate-bounce">{pendingValidation.length}</Badge>
+                            <Sparkles className="h-4 w-4 text-amber-500" />
+                            <div className="ml-auto" onClick={(e) => e.stopPropagation()}>
+                              <BulkConfirmAction pendingBLs={pendingValidation} onConfirmAll={confirmAllPending} />
                             </div>
-                            <Badge variant="outline" className="border-amber-500 text-amber-600 text-xs">
-                              {t.pages.planning.newLabel}
-                            </Badge>
                           </div>
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs mb-4">
-                            <div className="flex items-center gap-1.5 text-muted-foreground">
-                              <Package className="h-3 w-3" />
-                              <span>{bon.formule_id}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                              <Factory className="h-3 w-3 text-muted-foreground" />
-                              <span className="font-semibold">{bon.volume_m3} m³</span>
-                            </div>
-                            {bon.zones_livraison && (
-                              <div className="flex items-center gap-1.5 text-muted-foreground col-span-2">
-                                <Navigation className="h-3 w-3" />
-                                <span>Zone {bon.zones_livraison.code_zone}</span>
+                          <p className="text-xs text-muted-foreground font-normal mt-0.5">{t.pages.planning.pendingDispatcherValidation}</p>
+                        </div>
+                        {pendingValidationOpen ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
+                      </CardTitle>
+                    </CardHeader>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <CardContent className="pt-0">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {pendingValidation.map(bon => (
+                          <Card key={bon.bl_id} className="border border-amber-500/30 bg-card hover:shadow-lg transition-all">
+                            <CardContent className="p-4">
+                              <div className="flex justify-between items-start mb-3">
+                                <div>
+                                  <p className="font-semibold text-sm">{bon.bl_id}</p>
+                                  <p className="text-xs text-muted-foreground">{bon.clients?.nom_client || bon.client_id}</p>
+                                </div>
+                                <Badge variant="outline" className="border-amber-500 text-amber-600 text-xs">{t.pages.planning.newLabel}</Badge>
                               </div>
-                            )}
-                          </div>
-
-                          <div className="flex gap-2">
-                            <Button 
-                              size="sm" 
-                              className="flex-1 bg-success hover:bg-success/90 text-white gap-1.5"
-                              onClick={() => confirmBl(bon)}
-                            >
-                              <CheckCircle className="h-4 w-4" />
-                               {t.pages.planning.confirm}
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              className="border-destructive/50 text-destructive hover:bg-destructive/10"
-                              onClick={() => rejectBl(bon)}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs mb-4">
+                                <div className="flex items-center gap-1.5 text-muted-foreground"><Package className="h-3 w-3" /><span>{bon.formule_id}</span></div>
+                                <div className="flex items-center gap-1.5"><Factory className="h-3 w-3 text-muted-foreground" /><span className="font-semibold">{bon.volume_m3} m³</span></div>
+                                {bon.zones_livraison && (<div className="flex items-center gap-1.5 text-muted-foreground col-span-2"><Navigation className="h-3 w-3" /><span>Zone {bon.zones_livraison.code_zone}</span></div>)}
+                              </div>
+                              <div className="flex gap-2">
+                                <Button size="sm" className="flex-1 bg-success hover:bg-success/90 text-white gap-1.5" onClick={() => confirmBl(bon)}><CheckCircle className="h-4 w-4" /> {t.pages.planning.confirm}</Button>
+                                <Button size="sm" variant="outline" className="border-destructive/50 text-destructive hover:bg-destructive/10" onClick={() => rejectBl(bon)}><X className="h-4 w-4" /></Button>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </CollapsibleContent>
+                </Card>
+              </Collapsible>
+              </div>
+            )}
+            {conflicts.length > 0 && (
+              <Card className="border-destructive bg-destructive/10">
+                <CardContent className="p-4 flex items-start gap-3">
+                  <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-destructive">{t.pages.planning.conflictDetected}</p>
+                    <p className="text-sm text-muted-foreground">{conflicts.length} {t.pages.planning.conflictDescription}</p>
+                    <div className="mt-2 space-y-1">
+                      {conflicts.map((c, i) => (<p key={i} className="text-xs text-destructive">• {c.bl1.bl_id} ({c.bl1.heure_prevue}) ↔ {c.bl2.bl_id} ({c.bl2.heure_prevue})</p>))}
+                    </div>
                   </div>
                 </CardContent>
-              </CollapsibleContent>
-            </Card>
-          </Collapsible>
-          </div>
-        )}
-
-        {/* Conflict Alert */}
-        {conflicts.length > 0 && (
-          <Card className="border-destructive bg-destructive/10">
-            <CardContent className="p-4 flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="font-semibold text-destructive">{t.pages.planning.conflictDetected}</p>
-                <p className="text-sm text-muted-foreground">
-                  {conflicts.length} {t.pages.planning.conflictDescription}
-                </p>
-                <div className="mt-2 space-y-1">
-                  {conflicts.map((c, i) => (
-                    <p key={i} className="text-xs text-destructive">
-                      • {c.bl1.bl_id} ({c.bl1.heure_prevue}) ↔ {c.bl2.bl_id} ({c.bl2.heure_prevue})
-                    </p>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Stats */}
-        <div className="grid grid-cols-4 gap-2">
-          <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
-            <div className="p-1.5 rounded-lg bg-blue-400/10 shrink-0">
-              <Calendar className="h-4 w-4 text-blue-400" />
-            </div>
-            <div className="min-w-0">
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayTotalBonsToday}</p>
-              <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.deliveriesToday}</p>
-            </div>
-          </div>
-          <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
-            <div className="p-1.5 rounded-lg bg-[#D4A843]/10 shrink-0">
-              <Clock className="h-4 w-4 text-[#D4A843]" />
-            </div>
-            <div className="min-w-0">
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayPendingBons}</p>
-              <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.waitingLabel}</p>
-            </div>
-          </div>
-          <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
-            <div className="p-1.5 rounded-lg bg-emerald-400/10 shrink-0">
-              <Truck className="h-4 w-4 text-emerald-400" />
-            </div>
-            <div className="min-w-0">
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayAvailableCamions}/{displayTotalCamions}</p>
-              <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.trucksAvailable}</p>
-            </div>
-          </div>
-          <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
-            <div className="p-1.5 rounded-lg bg-blue-400/10 shrink-0">
-              <Navigation className="h-4 w-4 text-blue-400" />
-            </div>
-            <div className="min-w-0">
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayEnLivraison.length}</p>
-              <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.onRoute}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* 🆕 Command Center - Intelligence Dashboard */}
-        <CommandCenterSection 
-          bons={displayCommandCenterBons}
-          camions={displayCommandCenterCamions}
-          demoMode={isBottomDemoMode}
-        />
-
-        {/* Live Dispatch Board */}
-        <div className="rounded-2xl p-5 overflow-x-auto" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
-        <div className="flex flex-col md:flex-row gap-8 lg:gap-10 md:min-w-[980px]">
-          {/* À Produire */}
-           <Card className="rounded-xl flex-1 min-w-[320px]" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-3 text-base">
-                <ClipboardList className="h-6 w-6 text-[#D4A843] flex-shrink-0" strokeWidth={1.5} />
-                <span className="text-lg font-medium text-white whitespace-nowrap">
-                  {t.pages.planning.toProduce}
-                </span>
-                <Badge className="ml-auto text-xs bg-[#D4A843]/20 text-[#D4A843] border-0">
-                  {displayAProduire.length}
-                </Badge>
-              </CardTitle>
-              <p className="text-[11px] text-muted-foreground">{t.pages.planning.next2Hours}</p>
-            </CardHeader>
-            <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
-              {displayAProduire.length === 0 ? (
-                <div className="text-center py-12">
-                  <ClipboardList className="h-12 w-12 mx-auto mb-4 text-[#D4A843]/20" strokeWidth={1.5} />
-                  <p className="text-sm text-muted-foreground">{t.pages.planning.noPlannedDelivery}</p>
-                </div>
-              ) : (
-                displayAProduire.map(bon => <BonCard key={bon.bl_id} bon={bon} showTimeInput />)
-              )}
-            </CardContent>
-          </Card>
-
-          {/* En Chargement */}
-           <Card className="rounded-xl flex-1 min-w-[320px]" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-3 text-base">
-                <Loader className="h-6 w-6 text-blue-400 flex-shrink-0" strokeWidth={1.5} />
-                <span className="text-lg font-medium text-white whitespace-nowrap">
-                  {t.pages.planning.enChargement}
-                </span>
-                <Badge className="ml-auto bg-blue-400/20 text-blue-400 border-0">
-                  {displayEnChargement.length}
-                </Badge>
-                {displayEnChargement.length > 0 && (
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="ml-auto gap-1 text-blue-400 hover:bg-blue-400/10 h-7 text-[9px] px-1.5 whitespace-nowrap"
-                    data-testid="centre-production-link"
-                    onClick={() => navigate(`/production?date=${selectedDate}`)}
-                  >
-                    <Eye className="h-3 w-3" />
-                    {t.pages.planning.productionCenter}
-                    <ExternalLink className="h-3 w-3" />
-                  </Button>
-                )}
-              </CardTitle>
-              <p className="text-[11px] text-muted-foreground">{t.pages.planning.productionAndValidation}</p>
-            </CardHeader>
-            <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
-              {displayEnChargement.length === 0 ? (
-                <div className="text-center py-12">
-                  <Loader className="h-12 w-12 mx-auto mb-4 text-blue-400/20" strokeWidth={1.5} />
-                  <p className="text-sm text-muted-foreground">{t.pages.planning.noLoadingInProgress}</p>
-                </div>
-              ) : (
-                displayEnChargement.map(bon => <BonCard key={bon.bl_id} bon={bon} />)
-              )}
-            </CardContent>
-          </Card>
-
-          {/* En Livraison */}
-           <Card className="rounded-xl flex-1 min-w-[320px]" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-3 text-base">
-                <Truck className="h-6 w-6 text-emerald-400 flex-shrink-0" strokeWidth={1.5} />
-                <span className="text-lg font-medium text-white whitespace-nowrap">
-                  {t.pages.planning.enLivraison}
-                </span>
-                <Badge className="ml-auto bg-emerald-400/20 text-emerald-400 border-0">
-                  {displayEnLivraison.length}
-                </Badge>
-              </CardTitle>
-              <p className="text-[11px] text-muted-foreground">{t.pages.planning.trucksOnRoute}</p>
-            </CardHeader>
-            <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
-              {displayEnLivraison.length === 0 ? (
-                <div className="text-center py-12">
-                  <Truck className="h-12 w-12 mx-auto mb-4 text-emerald-400/20" />
-                  <p className="text-sm text-muted-foreground">{t.pages.planning.noTruckOnDelivery}</p>
-                </div>
-              ) : (
-                displayEnLivraison.map(bon => <BonCard key={bon.bl_id} bon={bon} />)
-              )}
-            </CardContent>
-          </Card>
-
-          {/* 🆕 À Facturer - Livrées mais pas encore facturées (PRIORITÉ!) */}
-          {aFacturer.length > 0 && (
-            <Card className="border-2 border-warning/50 bg-warning/5">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <div className="p-1.5 rounded bg-warning/20 animate-pulse">
-                    <Receipt className="h-4 w-4 text-warning" />
-                  </div>
-                  {t.pages.planning.toInvoice}
-                  <Badge className="ml-auto bg-warning text-white">{aFacturer.length}</Badge>
-                </CardTitle>
-                <p className="text-xs text-muted-foreground">{t.pages.planning.deliveredAwaitingInvoice}</p>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {aFacturer.map(bon => (
-                    <div 
-                      key={bon.bl_id}
-                      className="flex items-center justify-between p-3 bg-warning/10 border border-warning/30 rounded-lg hover:bg-warning/20 transition-colors cursor-pointer"
-                      onClick={() => {
-                        setSelectedDeliveryForInvoice(bon);
-                        setInvoiceDialogOpen(true);
-                      }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="font-mono font-semibold">{bon.bl_id}</span>
-                        <span className="text-muted-foreground">{bon.clients?.nom_client || bon.client_id}</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="font-semibold">{bon.volume_m3} m³</span>
-                        {bon.facturer_attente && (
-                          <Badge variant="outline" className="border-warning text-warning text-xs gap-1">
-                            <Clock className="h-3 w-3" />
-                            {t.pages.planning.waiting}
-                          </Badge>
-                        )}
-                        <Button size="sm" className="gap-1 bg-success hover:bg-success/90">
-                          <Receipt className="h-4 w-4" />
-                          {t.pages.planning.invoice}
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Facturées Aujourd'hui - Archivable */}
-          {facturesAujourdhui.length > 0 && (
-            <Card className="border-success/30 bg-success/5 opacity-80">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <div className="p-1.5 rounded bg-success/10">
-                    <CheckCircle className="h-4 w-4 text-success" />
-                  </div>
-                  {t.pages.planning.invoiced}
-                  <Badge variant="outline" className="ml-auto border-success/30 text-success">{facturesAujourdhui.length}</Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {facturesAujourdhui.map(bon => (
-                    <div 
-                      key={bon.bl_id}
-                      className="flex items-center justify-between p-2 bg-muted/30 rounded text-sm"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="font-mono font-medium">{bon.bl_id}</span>
-                        <span className="text-muted-foreground">{bon.clients?.nom_client || bon.client_id}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold">{bon.volume_m3} m³</span>
-                        <Badge variant="outline" className="text-success border-success/30 text-xs">
-                          {t.pages.planning.invoicedCheck}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-        </div>
-
-        {/* Full Day Schedule */}
-        <div className="rounded-xl bg-white/[0.02] border border-white/[0.06]">
-          <div className="p-5 pb-3 border-b border-white/[0.06]">
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4" style={{ color: '#D4A843' }} />
-              <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: '#D4A843' }}>
-                {t.pages.planning.chronologicalPlanning}
-              </span>
-              <span className="text-xs text-white/30 font-mono ml-2">— {formattedPlanningDate}</span>
-            </div>
-          </div>
-          <div className="p-5">
-            {displayChronologicalBons.length === 0 ? (
-              <p className="text-center text-white/30 py-8">
-                {t.pages.planning.noScheduledDelivery}
-              </p>
-            ) : (
-              <div className="space-y-0">
-                {/* Column Headers */}
-                <div className="grid grid-cols-[80px_190px_1.2fr_1fr_150px_120px] gap-4 px-4 pb-3 mb-2 border-b border-white/[0.06]">
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">Heure</span>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">BL</span>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25 text-center">Client</span>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25 text-center">Formule</span>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25 text-center">Toupie</span>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25 text-center">Statut</span>
-                </div>
-                {displayChronologicalBons
-                  .sort((a, b) => {
-                    const am = timeToMinutes(a.heure_prevue);
-                    const bm = timeToMinutes(b.heure_prevue);
-                    if (am === null && bm === null) return 0;
-                    if (am === null) return 1;
-                    if (bm === null) return -1;
-                    return am - bm;
-                  })
-                  .map(bon => (
-                    <div 
-                      key={bon.bl_id}
-                      className="grid grid-cols-[80px_190px_1.2fr_1fr_150px_120px] gap-4 items-center px-4 py-3 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
-                    >
-                      <span className="font-mono font-normal text-lg text-white/50">
-                        {formatTimeHHmm(bon.heure_prevue) || '--:--'}
-                      </span>
-                      <span className="font-mono font-medium text-white/80">{bon.bl_id}</span>
-                      <span className="text-sm text-white/50 text-center">{bon.clients?.nom_client || bon.client_id}</span>
-                      <span className="text-sm text-white/60 text-center">{bon.formule_id} · {bon.volume_m3}m³</span>
-                      <div className="flex items-center justify-center gap-2">
-                        <Truck className="h-3.5 w-3.5 text-white/25" />
-                        <span className="text-sm font-mono text-white/50">{bon.camion_assigne || bon.toupie_assignee || t.pages.planning.notAssigned}</span>
-                      </div>
-                      <div className="flex justify-center">{getStatusBadge(bon.workflow_status)}</div>
-                    </div>
-                  ))}
-              </div>
+              </Card>
             )}
+            <div className="grid grid-cols-4 gap-2">
+              <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
+                <div className="p-1.5 rounded-lg bg-blue-400/10 shrink-0"><Calendar className="h-4 w-4 text-blue-400" /></div>
+                <div className="min-w-0">
+                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayTotalBonsToday}</p>
+                  <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.deliveriesToday}</p>
+                </div>
+              </div>
+              <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
+                <div className="p-1.5 rounded-lg bg-[#D4A843]/10 shrink-0"><Clock className="h-4 w-4 text-[#D4A843]" /></div>
+                <div className="min-w-0">
+                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayPendingBons}</p>
+                  <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.waitingLabel}</p>
+                </div>
+              </div>
+              <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
+                <div className="p-1.5 rounded-lg bg-emerald-400/10 shrink-0"><Truck className="h-4 w-4 text-emerald-400" /></div>
+                <div className="min-w-0">
+                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayAvailableCamions}/{displayTotalCamions}</p>
+                  <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.trucksAvailable}</p>
+                </div>
+              </div>
+              <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
+                <div className="p-1.5 rounded-lg bg-blue-400/10 shrink-0"><Navigation className="h-4 w-4 text-blue-400" /></div>
+                <div className="min-w-0">
+                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayEnLivraison.length}</p>
+                  <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.onRoute}</p>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-
-        {/* Smart Invoice Dialog */}
-        {selectedDeliveryForInvoice && (
-          <SmartInvoiceDialog
-            open={invoiceDialogOpen}
-            onOpenChange={setInvoiceDialogOpen}
-            delivery={selectedDeliveryForInvoice}
-            onInvoiceGenerated={fetchData}
-          />
-        )}
-
-        {/* CEO Approval Dialog for Credit Limit Override */}
-        {pendingCreditApproval && (
-          <CeoApprovalCodeDialog
-            open={ceoApprovalOpen}
-            onOpenChange={(open) => {
-              setCeoApprovalOpen(open);
-              if (!open) setPendingCreditApproval(null);
-            }}
-            clientName={pendingCreditApproval.clientName}
-            clientId={pendingCreditApproval.bon.client_id}
-            solde={pendingCreditApproval.solde}
-            limite={pendingCreditApproval.limite}
-            onApproved={handleCeoApprovalSuccess}
-          />
-        )}
-
-        {/* CEO Code Request Dialog for Agent Admin */}
-        {ceoCodeRequestData && (
-          <CeoCodeRequestDialog
-            open={ceoCodeDialogOpen}
-            onOpenChange={(open) => {
-              setCeoCodeDialogOpen(open);
-              if (!open) setCeoCodeRequestData(null);
-            }}
-            blId={ceoCodeRequestData.blId}
-            clientId={ceoCodeRequestData.clientId}
-            clientName={ceoCodeRequestData.clientName}
-            solde={ceoCodeRequestData.solde}
-            limite={ceoCodeRequestData.limite}
-            onCodeVerified={async () => {
-              // Find the bon and start production
-              const bon = bons.find(b => b.bl_id === ceoCodeRequestData.blId);
-              if (bon) {
-                await logPlanningAction('CEO_CODE_PRODUCTION', bon.bl_id, {
-                  action: 'Production started with CEO emergency code',
-                  client_id: bon.client_id,
-                  timestamp: new Date().toISOString(),
-                });
-                await startProduction(bon);
-              }
-            }}
-          />
-        )}
-
-        {/* Midnight Protocol Justification Dialog */}
-        <MidnightJustificationDialog
-          open={midnightDialogOpen}
+        }
+        dispatchMain={
+          <div className="space-y-6">
+            <CommandCenterSection bons={displayCommandCenterBons} camions={displayCommandCenterCamions} demoMode={isBottomDemoMode} />
+            <div className="rounded-2xl p-5 overflow-x-auto" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
+            <div className="flex flex-col md:flex-row gap-8 lg:gap-10 md:min-w-[980px]">
+              <Card className="rounded-xl flex-1 min-w-[320px]" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-3 text-base">
+                    <ClipboardList className="h-6 w-6 text-[#D4A843] flex-shrink-0" strokeWidth={1.5} />
+                    <span className="text-lg font-medium text-white whitespace-nowrap">{t.pages.planning.toProduce}</span>
+                    <Badge className="ml-auto text-xs bg-[#D4A843]/20 text-[#D4A843] border-0">{displayAProduire.length}</Badge>
+                  </CardTitle>
+                  <p className="text-[11px] text-muted-foreground">{t.pages.planning.next2Hours}</p>
+                </CardHeader>
+                <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
+                  {displayAProduire.length === 0 ? (
+                    <div className="text-center py-12">
+                      <ClipboardList className="h-12 w-12 mx-auto mb-4 text-[#D4A843]/20" strokeWidth={1.5} />
+                      <p className="text-sm text-muted-foreground">{t.pages.planning.noPlannedDelivery}</p>
+                    </div>
+                  ) : (displayAProduire.map(bon => <BonCard key={bon.bl_id} bon={bon} showTimeInput />))}
+                </CardContent>
+              </Card>
+              <Card className="rounded-xl flex-1 min-w-[320px]" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-3 text-base">
+                    <Loader className="h-6 w-6 text-blue-400 flex-shrink-0" strokeWidth={1.5} />
+                    <span className="text-lg font-medium text-white whitespace-nowrap">{t.pages.planning.enChargement}</span>
+                    <Badge className="ml-auto bg-blue-400/20 text-blue-400 border-0">{displayEnChargement.length}</Badge>
+                    {displayEnChargement.length > 0 && (
+                      <Button variant="ghost" size="sm" className="ml-auto gap-1 text-blue-400 hover:bg-blue-400/10 h-7 text-[9px] px-1.5 whitespace-nowrap" data-testid="centre-production-link" onClick={() => navigate(`/production?date=${selectedDate}`)}>
+                        <Eye className="h-3 w-3" />{t.pages.planning.productionCenter}<ExternalLink className="h-3 w-3" />
+                      </Button>
+                    )}
+                  </CardTitle>
+                  <p className="text-[11px] text-muted-foreground">{t.pages.planning.productionAndValidation}</p>
+                </CardHeader>
+                <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
+                  {displayEnChargement.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Loader className="h-12 w-12 mx-auto mb-4 text-blue-400/20" strokeWidth={1.5} />
+                      <p className="text-sm text-muted-foreground">{t.pages.planning.noLoadingInProgress}</p>
+                    </div>
+                  ) : (displayEnChargement.map(bon => <BonCard key={bon.bl_id} bon={bon} />))}
+                </CardContent>
+              </Card>
+              <Card className="rounded-xl flex-1 min-w-[320px]" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-3 text-base">
+                    <Truck className="h-6 w-6 text-emerald-400 flex-shrink-0" strokeWidth={1.5} />
+                    <span className="text-lg font-medium text-white whitespace-nowrap">{t.pages.planning.enLivraison}</span>
+                    <Badge className="ml-auto bg-emerald-400/20 text-emerald-400 border-0">{displayEnLivraison.length}</Badge>
+                  </CardTitle>
+                  <p className="text-[11px] text-muted-foreground">{t.pages.planning.trucksOnRoute}</p>
+                </CardHeader>
+                <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
+                  {displayEnLivraison.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Truck className="h-12 w-12 mx-auto mb-4 text-emerald-400/20" />
+                      <p className="text-sm text-muted-foreground">{t.pages.planning.noTruckOnDelivery}</p>
+                    </div>
+                  ) : (displayEnLivraison.map(bon => <BonCard key={bon.bl_id} bon={bon} />))}
+                </CardContent>
+              </Card>
+              {aFacturer.length > 0 && (
+                <Card className="border-2 border-warning/50 bg-warning/5">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-base">
+                      <div className="p-1.5 rounded bg-warning/20 animate-pulse"><Receipt className="h-4 w-4 text-warning" /></div>
+                      {t.pages.planning.toInvoice}
+                      <Badge className="ml-auto bg-warning text-white">{aFacturer.length}</Badge>
+                    </CardTitle>
+                    <p className="text-xs text-muted-foreground">{t.pages.planning.deliveredAwaitingInvoice}</p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {aFacturer.map(bon => (
+                        <div key={bon.bl_id} className="flex items-center justify-between p-3 bg-warning/10 border border-warning/30 rounded-lg hover:bg-warning/20 transition-colors cursor-pointer" onClick={() => { setSelectedDeliveryForInvoice(bon); setInvoiceDialogOpen(true); }}>
+                          <div className="flex items-center gap-3">
+                            <span className="font-mono font-semibold">{bon.bl_id}</span>
+                            <span className="text-muted-foreground">{bon.clients?.nom_client || bon.client_id}</span>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="font-semibold">{bon.volume_m3} m³</span>
+                            {bon.facturer_attente && (<Badge variant="outline" className="border-warning text-warning text-xs gap-1"><Clock className="h-3 w-3" />{t.pages.planning.waiting}</Badge>)}
+                            <Button size="sm" className="gap-1 bg-success hover:bg-success/90"><Receipt className="h-4 w-4" />{t.pages.planning.invoice}</Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+              {facturesAujourdhui.length > 0 && (
+                <Card className="border-success/30 bg-success/5 opacity-80">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-base">
+                      <div className="p-1.5 rounded bg-success/10"><CheckCircle className="h-4 w-4 text-success" /></div>
+                      {t.pages.planning.invoiced}
+                      <Badge variant="outline" className="ml-auto border-success/30 text-success">{facturesAujourdhui.length}</Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {facturesAujourdhui.map(bon => (
+                        <div key={bon.bl_id} className="flex items-center justify-between p-2 bg-muted/30 rounded text-sm">
+                          <div className="flex items-center gap-3">
+                            <span className="font-mono font-medium">{bon.bl_id}</span>
+                            <span className="text-muted-foreground">{bon.clients?.nom_client || bon.client_id}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold">{bon.volume_m3} m³</span>
+                            <Badge variant="outline" className="text-success border-success/30 text-xs">{t.pages.planning.invoicedCheck}</Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+            </div>
+          </div>
+        }
+        fleetPanel={!isMobile ? <FleetPanel selectedDate={selectedDate} isOpen={fleetPanelOpen} onOpenChange={setFleetPanelOpen} /> : undefined}
+        footerActions={
+          <div className="flex flex-wrap items-center gap-3">
+            <Button variant="outline" size="sm" className="gap-2" style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent' }} onClick={() => navigate('/logistique')}>
+              <Crosshair className="h-4 w-4" />
+              {t.pages.planning.gpsTracking}
+              {enLivraison.length > 0 && (<Badge className="bg-emerald-500 text-white ml-1">{enLivraison.length}</Badge>)}
+            </Button>
+            <DailyPlanningReport
+              date={parseISO(selectedDate)}
+              stats={{
+                totalDeliveries: bons.length,
+                pendingCount: pendingValidation.length + aProduire.length,
+                trucksAvailable: availableCamions,
+                trucksTotal: camions.length,
+                enRouteCount: enLivraison.length,
+                totalVolume: bons.reduce((sum, b) => sum + b.volume_m3, 0),
+                deliveredCount: aFacturer.length + facturesAujourdhui.length,
+              }}
+              deliveries={bons.map(b => ({
+                bl_id: b.bl_id,
+                client_name: b.clients?.nom_client || b.client_id,
+                formule_id: b.formule_id,
+                volume_m3: b.volume_m3,
+                heure_prevue: b.heure_prevue,
+                toupie_assignee: b.toupie_assignee || b.camion_assigne,
+                workflow_status: b.workflow_status,
+              }))}
+            />
+            {pendingBLCount > 0 && pendingEarliestDate && (
+              <Button variant="outline" size="sm" className="gap-2 border-[#D4A843]/50 text-[#D4A843] hover:bg-[#D4A843]/10 relative" onClick={() => setFocusPending(true)}>
+                <BellRing className="h-4 w-4" />
+                {t.pages.planning.toConfirm}
+                <Badge className="bg-[#D4A843] text-black ml-1">{pendingBLCount}</Badge>
+              </Button>
+            )}
+            <Button variant="outline" size="sm" onClick={fetchData} disabled={loading} style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent' }}>
+              <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
+              {t.pages.planning.refresh}
+            </Button>
+          </div>
+        }
+      />
+      {selectedDeliveryForInvoice && (
+        <SmartInvoiceDialog
+          open={invoiceDialogOpen}
+          onOpenChange={setInvoiceDialogOpen}
+          delivery={selectedDeliveryForInvoice}
+          onInvoiceGenerated={fetchData}
+        />
+      )}
+      {pendingCreditApproval && (
+        <CeoApprovalCodeDialog
+          open={ceoApprovalOpen}
           onOpenChange={(open) => {
-            setMidnightDialogOpen(open);
-            if (!open) setPendingNightBon(null);
+            setCeoApprovalOpen(open);
+            if (!open) setPendingCreditApproval(null);
           }}
-          actionLabel={t.pages.planning.launchProductionUrgency}
-          loading={midnightLoading}
-          onConfirm={async (justification) => {
-            if (!pendingNightBon) return;
-            setMidnightLoading(true);
-            try {
-              await executeStartProduction(pendingNightBon, justification);
-            } finally {
-              setMidnightLoading(false);
-              setMidnightDialogOpen(false);
-              setPendingNightBon(null);
+          clientName={pendingCreditApproval.clientName}
+          clientId={pendingCreditApproval.bon.client_id}
+          solde={pendingCreditApproval.solde}
+          limite={pendingCreditApproval.limite}
+          onApproved={handleCeoApprovalSuccess}
+        />
+      )}
+      {ceoCodeRequestData && (
+        <CeoCodeRequestDialog
+          open={ceoCodeDialogOpen}
+          onOpenChange={(open) => {
+            setCeoCodeDialogOpen(open);
+            if (!open) setCeoCodeRequestData(null);
+          }}
+          blId={ceoCodeRequestData.blId}
+          clientId={ceoCodeRequestData.clientId}
+          clientName={ceoCodeRequestData.clientName}
+          solde={ceoCodeRequestData.solde}
+          limite={ceoCodeRequestData.limite}
+          onCodeVerified={async () => {
+            const bon = bons.find(b => b.bl_id === ceoCodeRequestData.blId);
+            if (bon) {
+              await logPlanningAction('CEO_CODE_PRODUCTION', bon.bl_id, {
+                action: 'Production started with CEO emergency code',
+                client_id: bon.client_id,
+                timestamp: new Date().toISOString(),
+              });
+              await startProduction(bon);
             }
           }}
         />
-
-      </div>
-        {/* Fleet Panel - Right Sidebar (Desktop and Tablet) */}
-        {!isMobile && (
-          <FleetPanel selectedDate={selectedDate} isOpen={fleetPanelOpen} onOpenChange={setFleetPanelOpen} />
-        )}
-      </div>
+      )}
+      <MidnightJustificationDialog
+        open={midnightDialogOpen}
+        onOpenChange={(open) => {
+          setMidnightDialogOpen(open);
+          if (!open) setPendingNightBon(null);
+        }}
+        actionLabel={t.pages.planning.launchProductionUrgency}
+        loading={midnightLoading}
+        onConfirm={async (justification) => {
+          if (!pendingNightBon) return;
+          setMidnightLoading(true);
+          try {
+            await executeStartProduction(pendingNightBon, justification);
+          } finally {
+            setMidnightLoading(false);
+            setMidnightDialogOpen(false);
+            setPendingNightBon(null);
+          }
+        }}
+      />
     </MainLayout>
   );
 }
