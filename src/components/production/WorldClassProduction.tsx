@@ -467,6 +467,17 @@ export default function WorldClassProduction() {
 
   const hasQualityData = qualityData.some(d => d.ok > 0 || d.variances > 0 || d.critical > 0);
 
+  // Demo quality data when no live data
+  const demoQualityData = [
+    { day: 'Lun', ok: 97, variances: 3, critical: 0 },
+    { day: 'Mar', ok: 97, variances: 3, critical: 0 },
+    { day: 'Mer', ok: 98, variances: 2, critical: 0 },
+    { day: 'Jeu', ok: 96, variances: 4, critical: 0 },
+    { day: 'Ven', ok: 97, variances: 3, critical: 0 },
+    { day: 'Sam', ok: 98, variances: 2, critical: 0 },
+  ];
+  const displayQualityData = hasQualityData ? qualityData : demoQualityData;
+
   // ── Batch display list ──
   const batchDisplayList: BatchDisplay[] = useMemo(() => {
     return batches.slice(0, 8).map((b) => {

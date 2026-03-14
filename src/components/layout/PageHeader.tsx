@@ -120,17 +120,19 @@ export function PageHeader({
                 onClick={() => onTabChange?.(tab.id)}
                 style={{
                   padding: '6px 12px',
-                  borderRadius: 8,
+                  borderRadius: 0,
                   cursor: 'pointer',
-                  background: activeTab === tab.id ? '#D4A843' : 'transparent',
-                  border: activeTab === tab.id ? '1px solid #D4A843' : '1px solid rgba(212,168,67,0.2)',
-                  color: activeTab === tab.id ? '#0F1629' : 'rgba(212,168,67,0.6)',
+                  background: 'transparent',
+                  border: 'none',
+                  borderBottom: activeTab === tab.id ? '2px solid #D4A843' : '2px solid transparent',
+                  color: activeTab === tab.id ? '#fff' : '#94A3B8',
                   fontFamily: 'DM Sans, sans-serif',
-                  fontWeight: 600,
+                  fontWeight: activeTab === tab.id ? 600 : 500,
                   fontSize: 13,
                   transition: 'all 200ms',
                   whiteSpace: 'nowrap',
                   flexShrink: 0,
+                  paddingBottom: 8,
                 }}
               >
                 {tab.label}
