@@ -562,6 +562,206 @@ function PageTabBar({ active, onChange }: { active: string; onChange: (id: strin
 }
 
 // ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────
+// AGENT 2: POTENTIEL DE CROISSANCE
+// ─────────────────────────────────────────────────────
+const GROWTH_ROWS = [
+  { client: 'Saudi Readymix Co.', vol: '50 m³', trend: '↑ +200%', trendColor: '#22C55E', potentiel: '+720K MAD', action: 'Proposer Contrat Annuel', actionFilled: true },
+  { client: 'TGCC', vol: '120 m³', trend: '→ stable', trendColor: '#9CA3AF', potentiel: '+180K MAD', action: 'Proposer Remise Volume', actionFilled: false },
+  { client: 'BTP Maroc SARL', vol: '35 m³', trend: '↑ +45%', trendColor: '#22C55E', potentiel: '+240K MAD', action: 'Relancer Commercial', actionFilled: false },
+  { client: 'Ciments & Béton du Sud', vol: '25 m³', trend: '↓ -12%', trendColor: '#EF4444', potentiel: '—', action: 'Diagnostic', actionFilled: false },
+];
+
+function GrowthPotentialAgent() {
+  const v1 = useAnimatedCounter(3, 1200);
+  const v2 = useAnimatedCounter(1.8, 1200, 1);
+  const v3 = useAnimatedCounter(2, 1200);
+  return (
+    <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A', borderTop: '2px solid #22C55E', borderRadius: 12, overflow: 'hidden', position: 'relative' }}>
+      <div style={{ position: 'absolute', inset: 0, borderRadius: 12, pointerEvents: 'none', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.15), transparent)', backgroundSize: '200% 100%', animation: 'churn-shimmer 4s ease-in-out infinite' }} />
+      {/* Header */}
+      <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 10, position: 'relative', zIndex: 1 }}>
+        <div style={{ width: 30, height: 30, borderRadius: 8, background: 'rgba(34,197,94,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <span style={{ fontSize: 14 }}>📈</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>
+          <span style={{ color: '#D4A843', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', fontFamily: MONO }}>✦ Agent IA: Potentiel de Croissance</span>
+          <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(212,168,67,0.4), transparent 80%)' }} />
+        </div>
+        <span style={{ background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', fontSize: 11, borderRadius: 9999, padding: '2px 10px', fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0, fontFamily: MONO }}>✨ Généré par IA · Claude Opus</span>
+      </div>
+
+      <div style={{ padding: '0 20px 20px', position: 'relative', zIndex: 1 }}>
+        {/* KPIs */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 20 }}>
+          <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 8, border: '1px solid #1E2D4A', padding: '10px 12px' }}>
+            <p style={{ fontSize: 9, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 5, fontFamily: MONO }}>CLIENTS EN CROISSANCE</p>
+            <p style={{ fontFamily: MONO, fontWeight: 100, fontSize: 42, color: '#22C55E', lineHeight: 1 }}>{v1}</p>
+            <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 4, fontFamily: MONO }}>volume ↑ sur 3 mois</p>
+          </div>
+          <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 8, border: '1px solid #1E2D4A', padding: '10px 12px' }}>
+            <p style={{ fontSize: 9, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 5, fontFamily: MONO }}>POTENTIEL ANNUEL</p>
+            <p style={{ fontFamily: MONO, fontWeight: 100, fontSize: 42, color: '#D4A843', lineHeight: 1 }}>+{v2}M</p>
+            <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 4, fontFamily: MONO }}>MAD identifié</p>
+          </div>
+          <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 8, border: '1px solid #1E2D4A', padding: '10px 12px' }}>
+            <p style={{ fontSize: 9, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 5, fontFamily: MONO }}>UPSELL PRÊTS</p>
+            <p style={{ fontFamily: MONO, fontWeight: 100, fontSize: 42, color: '#D4A843', lineHeight: 1 }}>{v3}</p>
+            <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 4, fontFamily: MONO }}>propositions à envoyer</p>
+          </div>
+        </div>
+
+        {/* Table */}
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                {['CLIENT', 'VOL. MENSUEL MOY.', 'TENDANCE 3 MOIS', 'POTENTIEL ANNUEL', 'ACTION'].map(h => (
+                  <th key={h} style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textAlign: 'left', padding: '8px 12px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {GROWTH_ROWS.map((r, i) => (
+                <GrowthRow key={i} {...r} />
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Recommandation */}
+        <div style={{ marginTop: 16, borderLeft: '3px solid #D4A843', background: 'rgba(212,168,67,0.04)', borderRadius: '0 8px 8px 0', padding: 16 }}>
+          <p style={{ fontSize: 13, lineHeight: 1.7, color: '#94A3B8' }}>
+            <span style={{ color: '#22C55E', fontWeight: 600 }}>Opportunité majeure : </span>
+            Saudi Readymix a triplé ses commandes ce trimestre (<span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>50m³</span> vs <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>17m³</span> habituels). Profil idéal pour contrat cadre annuel : <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>200 m³/mois</span> garanti = <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>+1,440,000 MAD/an</span> de CA sécurisé. Fenêtre d'action : avant que la concurrence ne réagisse.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GrowthRow({ client, vol, trend, trendColor, potentiel, action, actionFilled }: typeof GROWTH_ROWS[0]) {
+  const [hov, setHov] = useState(false);
+  return (
+    <tr onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{ background: hov ? 'rgba(212,168,67,0.03)' : 'transparent', transition: 'background 200ms' }}>
+      <td style={{ padding: '10px 12px', color: '#F1F5F9', fontSize: 13, fontWeight: 500 }}>{client}</td>
+      <td style={{ padding: '10px 12px', fontFamily: MONO, color: '#94A3B8', fontSize: 13 }}>{vol}</td>
+      <td style={{ padding: '10px 12px', fontFamily: MONO, color: trendColor, fontSize: 13, fontWeight: 600 }}>{trend}</td>
+      <td style={{ padding: '10px 12px', fontFamily: MONO, color: potentiel === '—' ? '#9CA3AF' : '#D4A843', fontSize: 13, fontWeight: 600 }}>{potentiel}</td>
+      <td style={{ padding: '10px 12px' }}>
+        <button style={{
+          fontFamily: MONO, fontSize: 11, fontWeight: 600, padding: '4px 12px', borderRadius: 6, cursor: 'pointer', whiteSpace: 'nowrap',
+          ...(actionFilled
+            ? { background: '#D4A843', color: '#0F1629', border: 'none' }
+            : { background: 'transparent', color: '#D4A843', border: '1px solid #D4A843' }),
+        }}>{action}</button>
+      </td>
+    </tr>
+  );
+}
+
+// ─────────────────────────────────────────────────────
+// AGENT 3: SANTÉ FINANCIÈRE
+// ─────────────────────────────────────────────────────
+const FINANCE_ROWS = [
+  { client: 'TGCC', factures: '0', montant: '0 DH', retard: '—', retardColor: '#9CA3AF', score: '98/100', scoreBg: '#22C55E', risque: '✓ Faible', risqueColor: '#22C55E', highlight: false },
+  { client: 'Saudi Readymix Co.', factures: '0', montant: '0 DH', retard: '—', retardColor: '#9CA3AF', score: '95/100', scoreBg: '#22C55E', risque: '✓ Faible', risqueColor: '#22C55E', highlight: false },
+  { client: 'Constructions Modernes', factures: '1', montant: '42,400 DH', retard: '12 jours', retardColor: '#F59E0B', score: '72/100', scoreBg: '#F59E0B', risque: '⚠ Modéré', risqueColor: '#F59E0B', highlight: false },
+  { client: 'Ciments & Béton du Sud', factures: '1', montant: '13,200 DH', retard: '18 jours', retardColor: '#F59E0B', score: '65/100', scoreBg: '#F59E0B', risque: '⚠ Modéré', risqueColor: '#F59E0B', highlight: false },
+  { client: 'Sigma Bâtiment', factures: '4', montant: '189,000 DH', retard: '47 jours', retardColor: '#EF4444', score: '12/100', scoreBg: '#EF4444', risque: '🔴 Critique', risqueColor: '#EF4444', highlight: true },
+];
+
+function FinancialHealthAgent() {
+  const v1 = useAnimatedCounter(28, 1200);
+  const v2 = useAnimatedCounter(4, 1200);
+  const v3 = useAnimatedCounter(94, 1200);
+  return (
+    <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A', borderTop: '2px solid #F59E0B', borderRadius: 12, overflow: 'hidden', position: 'relative' }}>
+      <div style={{ position: 'absolute', inset: 0, borderRadius: 12, pointerEvents: 'none', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.15), transparent)', backgroundSize: '200% 100%', animation: 'churn-shimmer 4s ease-in-out infinite' }} />
+      {/* Header */}
+      <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 10, position: 'relative', zIndex: 1 }}>
+        <div style={{ width: 30, height: 30, borderRadius: 8, background: 'rgba(245,158,11,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <span style={{ fontSize: 14 }}>💰</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>
+          <span style={{ color: '#D4A843', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px', fontFamily: MONO }}>✦ Agent IA: Santé Financière</span>
+          <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(212,168,67,0.4), transparent 80%)' }} />
+        </div>
+        <span style={{ background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', fontSize: 11, borderRadius: 9999, padding: '2px 10px', fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0, fontFamily: MONO }}>✨ Généré par IA · Claude Opus</span>
+      </div>
+
+      <div style={{ padding: '0 20px 20px', position: 'relative', zIndex: 1 }}>
+        {/* KPIs */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 20 }}>
+          <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 8, border: '1px solid #1E2D4A', padding: '10px 12px' }}>
+            <p style={{ fontSize: 9, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 5, fontFamily: MONO }}>DÉLAI MOYEN PAIEMENT</p>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+              <span style={{ fontFamily: MONO, fontWeight: 100, fontSize: 42, color: '#F59E0B', lineHeight: 1 }}>{v1}</span>
+              <span style={{ fontFamily: MONO, fontSize: 16, color: '#9CA3AF' }}>jours</span>
+            </div>
+          </div>
+          <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 8, border: '1px solid #1E2D4A', padding: '10px 12px' }}>
+            <p style={{ fontSize: 9, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 5, fontFamily: MONO }}>FACTURES EN RETARD</p>
+            <p style={{ fontFamily: MONO, fontWeight: 100, fontSize: 42, color: '#EF4444', lineHeight: 1 }}>{v2}</p>
+            <p style={{ fontFamily: MONO, fontSize: 13, color: '#EF4444', marginTop: 4 }}>189K MAD</p>
+          </div>
+          <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 8, border: '1px solid #1E2D4A', padding: '10px 12px' }}>
+            <p style={{ fontSize: 9, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 5, fontFamily: MONO }}>TAUX RECOUVREMENT</p>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
+              <span style={{ fontFamily: MONO, fontWeight: 100, fontSize: 42, color: '#22C55E', lineHeight: 1 }}>{v3}</span>
+              <span style={{ fontFamily: MONO, fontSize: 16, color: '#9CA3AF' }}>%</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Table */}
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                {['CLIENT', 'FACTURES DUES', 'MONTANT', 'RETARD MOYEN', 'SCORE PAIEMENT', 'RISQUE'].map(h => (
+                  <th key={h} style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textAlign: 'left', padding: '8px 12px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {FINANCE_ROWS.map((r, i) => (
+                <FinanceRow key={i} {...r} />
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Recommandation */}
+        <div style={{ marginTop: 16, borderLeft: '3px solid #D4A843', background: 'rgba(212,168,67,0.04)', borderRadius: '0 8px 8px 0', padding: 16 }}>
+          <p style={{ fontSize: 13, lineHeight: 1.7, color: '#94A3B8' }}>
+            <span style={{ color: '#EF4444', fontWeight: 600 }}>Alerte critique : </span>
+            Sigma Bâtiment cumule <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>189,000 MAD</span> d'impayés sur <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>47 jours</span> en moyenne. Score paiement <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>12/100</span> — le plus bas du portefeuille. Risque de créance irrécouvrable si aucune action sous <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>15 jours</span>. Recommandation : suspendre nouvelles livraisons, exiger paiement partiel de <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>95,000 MAD</span> avant reprise.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FinanceRow({ client, factures, montant, retard, retardColor, score, scoreBg, risque, risqueColor, highlight }: typeof FINANCE_ROWS[0]) {
+  const [hov, setHov] = useState(false);
+  return (
+    <tr onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{ background: hov ? 'rgba(212,168,67,0.03)' : highlight ? 'rgba(239,68,68,0.04)' : 'transparent', transition: 'background 200ms' }}>
+      <td style={{ padding: '10px 12px', color: '#F1F5F9', fontSize: 13, fontWeight: 500 }}>{client}</td>
+      <td style={{ padding: '10px 12px', fontFamily: MONO, color: '#94A3B8', fontSize: 13 }}>{factures}</td>
+      <td style={{ padding: '10px 12px', fontFamily: MONO, color: highlight ? '#EF4444' : '#94A3B8', fontSize: 13, fontWeight: highlight ? 600 : 400 }}>{montant}</td>
+      <td style={{ padding: '10px 12px', fontFamily: MONO, color: retardColor, fontSize: 13, fontWeight: highlight ? 600 : 400 }}>{retard}</td>
+      <td style={{ padding: '10px 12px' }}>
+        <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 999, background: `${scoreBg}18`, color: scoreBg, border: `1px solid ${scoreBg}40` }}>{score}</span>
+      </td>
+      <td style={{ padding: '10px 12px', fontFamily: MONO, color: risqueColor, fontSize: 12, fontWeight: 600 }}>{risque}</td>
+    </tr>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // MAIN
 // ─────────────────────────────────────────────────────
 export default function WorldClassClients() {
@@ -865,34 +1065,41 @@ export default function WorldClassClients() {
         {/* ═══════════════════════════════════════════════ */}
         {pageTab === 'intelligence' && (
           <div key="intelligence" style={{ display: 'flex', flexDirection: 'column', gap: 40, animation: 'tab-fade-in 200ms ease forwards' }}>
-            {/* Agent 1: Churn Predictor */}
+            {/* ── HEADER ── */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
+              <div>
+                <p style={{ fontFamily: MONO, letterSpacing: '2px', fontSize: 12, color: '#D4A843', fontWeight: 700 }}>✦ CENTRE D'INTELLIGENCE CLIENT</p>
+                <p style={{ fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>
+                  <span style={{ color: '#22C55E' }}>3 agents actifs</span> · Surveillance continue · Claude Opus
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+                {[
+                  { label: 'CLIENTS À RISQUE', value: '2', color: '#EF4444' },
+                  { label: 'OPPORTUNITÉS CROISSANCE', value: '3', color: '#22C55E' },
+                  { label: 'EXPOSITION IMPAYÉS', value: '189K MAD', color: '#F59E0B' },
+                ].map((s, i) => (
+                  <div key={i} style={{ textAlign: 'center' }}>
+                    <p style={{ fontFamily: MONO, fontSize: 9, letterSpacing: '1px', color: '#9CA3AF', marginBottom: 2 }}>{s.label}</p>
+                    <p style={{ fontFamily: MONO, fontSize: 28, fontWeight: 100, color: s.color, lineHeight: 1 }}>{s.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── AGENT 1: ATTRITION ── */}
             <section>
               <ClientChurnPredictorCard />
             </section>
 
-            {/* Agent 2 & 3 placeholders — will be populated in next prompt */}
-            <section style={{ opacity: 0.5 }}>
-              <Card goldBorder>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 0' }}>
-                  <span style={{ fontSize: 16 }}>🔮</span>
-                  <div>
-                    <p style={{ fontFamily: MONO, fontSize: 12, color: '#D4A843', fontWeight: 600, letterSpacing: '1px' }}>AGENT IA: SCORING CRÉDIT PRÉDICTIF</p>
-                    <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 4 }}>Prochainement — Évaluation automatique du risque crédit</p>
-                  </div>
-                </div>
-              </Card>
+            {/* ── AGENT 2: POTENTIEL DE CROISSANCE ── */}
+            <section>
+              <GrowthPotentialAgent />
             </section>
 
-            <section style={{ opacity: 0.5 }}>
-              <Card goldBorder>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 0' }}>
-                  <span style={{ fontSize: 16 }}>📊</span>
-                  <div>
-                    <p style={{ fontFamily: MONO, fontSize: 12, color: '#D4A843', fontWeight: 600, letterSpacing: '1px' }}>AGENT IA: OPTIMISATION PORTEFEUILLE</p>
-                    <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 4 }}>Prochainement — Recommandations stratégiques de segmentation</p>
-                  </div>
-                </div>
-              </Card>
+            {/* ── AGENT 3: SANTÉ FINANCIÈRE ── */}
+            <section>
+              <FinancialHealthAgent />
             </section>
           </div>
         )}
