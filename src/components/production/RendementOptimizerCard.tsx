@@ -246,7 +246,7 @@ export function RendementOptimizerCard() {
             <div>
               <p style={{
                 fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
-                fontSize: 30, fontWeight: 200, color: '#fff',
+                fontSize: 32, fontWeight: 200, color: '#D4A843',
                 WebkitFontSmoothing: 'antialiased', letterSpacing: '-0.02em', lineHeight: 1,
               }}>
                 {Math.round((d.activeHours / 12) * 100)}%
@@ -263,10 +263,10 @@ export function RendementOptimizerCard() {
             <div>
               <p style={{
                 fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
-                fontSize: 30, fontWeight: 200, color: '#fff',
+                fontSize: 32, fontWeight: 200, color: '#D4A843',
                 WebkitFontSmoothing: 'antialiased', letterSpacing: '-0.02em', lineHeight: 1,
               }}>87%</p>
-              <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: 12, fontWeight: 500, marginTop: 8 }}>Objectif: 90%</p>
+              <p style={{ color: '#9CA3AF', fontSize: 12, fontWeight: 500, marginTop: 8 }}>Objectif: 90%</p>
             </div>
           )}
         </MetricCard>
