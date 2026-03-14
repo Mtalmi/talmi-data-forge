@@ -456,9 +456,9 @@ function AIAnalystBrief() {
 
   return (
       <div
-        style={{ position: 'relative', overflow: 'hidden', background: 'linear-gradient(to right, rgba(212,168,67,0.04), transparent)', border: '1px solid rgba(212,168,67,0.12)', borderRadius: 8, transition: 'all 200ms ease-out' }}
+        style={{ position: 'relative', overflow: 'hidden', background: 'linear-gradient(to right, rgba(212,168,67,0.04), transparent)', border: '1px solid rgba(212,168,67,0.12)', borderTop: '2px solid #D4A843', borderRadius: 8, transition: 'all 200ms ease-out' }}
         onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.12)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.12)'; e.currentTarget.style.borderTop = '2px solid #D4A843'; e.currentTarget.style.transform = 'translateY(0)'; }}
       >
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 99, pointerEvents: 'none' }} />
       <Card className="ops-enter ops-surface-card" style={{ borderRadius: 8, border: 'none', background: 'transparent', transition: 'all 200ms ease-out' }}>
@@ -471,20 +471,28 @@ function AIAnalystBrief() {
           </div>
           <span className="text-[11px] font-medium tracking-wider uppercase" style={{ color: T.goldBright }}>Analyst Brief</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute h-full w-full rounded-full opacity-30" style={{ background: T.gold, animation: 'livePulse 2s ease-in-out infinite' }} />
-            <span className="relative rounded-full h-1.5 w-1.5" style={{ background: T.gold, animation: 'livePulse 2s ease-in-out infinite' }} />
-          </span>
-          <span className="text-[9px] font-mono text-slate-600 tabular-nums">live</span>
+        <div className="flex items-center gap-3">
+          <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: '#9CA3AF' }}>✦ Généré par IA · Claude Opus</span>
+          <div className="flex items-center gap-1.5">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute h-full w-full rounded-full" style={{ background: '#22C55E', animation: 'iaLivePulse 2s ease-in-out infinite' }} />
+              <span className="relative rounded-full h-1.5 w-1.5" style={{ background: '#22C55E' }} />
+            </span>
+            <span className="text-[9px] font-mono text-slate-600 tabular-nums">live</span>
+          </div>
         </div>
       </div>
+      <style>{`
+        @keyframes iaLivePulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.3); opacity: 0.5; }
+        }
+      `}</style>
       
       <div className="grid grid-cols-5 gap-4">
         {/* Left column: insights (60%) */}
         <div className="col-span-3 flex flex-col gap-2.5">
           {insights.map((insight, i) => {
-            const color = '#D4A843';
             return (
               <div
                 key={i}
@@ -494,12 +502,12 @@ function AIAnalystBrief() {
                   transform: i < visibleLines ? 'translateY(0)' : 'translateY(8px)',
                 }}
               >
-                <span className="w-1.5 h-1.5 rounded-full mt-[6px] shrink-0" style={{ background: color, boxShadow: `0 0 8px ${color}50` }} />
+                <span className="w-1.5 h-1.5 rounded-full mt-[6px] shrink-0" style={{ background: '#D4A843', boxShadow: '0 0 8px rgba(212,168,67,0.5)' }} />
                 <span className="text-sm leading-relaxed">
                   {(() => {
                     const { headline, detail } = splitHeadlineDetail(insight.text);
                     return <>
-                      <span style={{ fontWeight: 600, color: '#E2E8F0' }}>{headline}</span>
+                      <span style={{ fontWeight: 600, color: '#D4A843' }}>{headline}</span>
                       {detail && <span className="font-normal text-muted-foreground/60"> {detail}</span>}
                     </>;
                   })()}
@@ -515,14 +523,14 @@ function AIAnalystBrief() {
           style={{
             position: 'relative',
             overflow: 'hidden',
-            borderLeft: '1px solid rgba(255,255,255,0.06)',
+            background: 'rgba(212,168,67,0.04)',
+            borderLeft: '3px solid #D4A843',
             opacity: showReco ? 1 : 0,
             transform: showReco ? 'translateY(0)' : 'translateY(8px)',
           }}
         >
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 99, pointerEvents: 'none' }} />
           <div className="flex items-start gap-2">
-            <span className="text-sm mt-0.5">💡</span>
+            <span className="text-sm mt-0.5" style={{ color: '#D4A843' }}>💡</span>
             <div>
               <span className="text-[10px] tracking-wider uppercase" style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation</span>
               <p className="mt-1 text-sm leading-relaxed">
