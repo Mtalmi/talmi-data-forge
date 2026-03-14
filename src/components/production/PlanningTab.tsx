@@ -387,10 +387,10 @@ function DetailItem({ item, index }: { item: { id: string; formule: string; clie
 
       <div className="flex items-center justify-between mb-1.5">
         <span style={{
-          fontFamily: 'ui-monospace, monospace', fontSize: 20, fontWeight: 200,
-          color: '#fff', letterSpacing: '-0.03em',
+          fontFamily: 'ui-monospace, monospace', fontSize: 24, fontWeight: 200,
+          color: '#D4A843', letterSpacing: '-0.03em',
         }}>
-          {item.volume} <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>m³</span>
+          {item.volume} <span style={{ fontSize: 12, color: 'rgba(212,168,67,0.6)' }}>m³</span>
         </span>
       </div>
 
