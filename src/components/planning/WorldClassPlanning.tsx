@@ -452,12 +452,12 @@ function DeliveryCard({ d, delay = 0, routeData, weatherIndex = 0 }: { d: typeof
             <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: 15, color: T.textPri }}>{d.client}</p>
             {(() => {
               const ratings: Record<string, { score: string; color: string }> = {
-                'Ciments du Maroc': { score: '4.8', color: '#10B981' },
-                'ONCF': { score: '4.2', color: '#10B981' },
-                'Addoha Group': { score: '4.5', color: '#10B981' },
+                'Ciments du Maroc': { score: '4.8', color: '#D4A843' },
+                'ONCF': { score: '4.2', color: '#D4A843' },
+                'Addoha Group': { score: '4.5', color: '#D4A843' },
                 'TGCC': { score: '3.8', color: '#F59E0B' },
-                'Alliances': { score: '4.6', color: '#10B981' },
-                'Jet Contractors': { score: '4.1', color: '#10B981' },
+                'Alliances': { score: '4.6', color: '#D4A843' },
+                'Jet Contractors': { score: '4.1', color: '#D4A843' },
               };
               const r = ratings[d.client];
               return r ? <span style={{ fontSize: 10, fontWeight: 700, color: r.color }}>★ {r.score}</span> : null;
