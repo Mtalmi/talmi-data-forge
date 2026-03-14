@@ -324,16 +324,16 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6, whiteSpace: 'nowrap' }}>{label}</p>
-            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 30, fontWeight: 200, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>
+            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 36, fontWeight: 200, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em' }}>
               {animated.toLocaleString('fr-FR')}
               {suffix && <span style={{ fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>{suffix}</span>}
             </p>
-            <p style={{ fontSize: 12, color: trendPositive ? '#10B981' : '#EF4444', marginTop: 5, fontWeight: 500, whiteSpace: 'nowrap' }}>
-              {trendPositive ? '↑' : '↓'} {trend}
+            <p style={{ fontSize: 12, color: trend.toLowerCase() === 'stable' ? '#9CA3AF' : (trendPositive ? '#22C55E' : '#EF4444'), marginTop: 5, fontWeight: trend.toLowerCase() === 'stable' ? 400 : 500, whiteSpace: 'nowrap' }}>
+              {trend.toLowerCase() === 'stable' ? '—' : (trendPositive ? '↑' : '↓')} {trend}
             </p>
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon size={18} color="#F59E0B" />
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(212, 168, 67, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Icon size={18} color="#D4A843" />
           </div>
         </div>
       </Card>
