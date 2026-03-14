@@ -159,7 +159,7 @@ function MovementRow({ m, index, isFirst = false }: { m: { date: string; type: s
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(16px)',
         transition: 'all 350ms ease-out',
-        background: hov ? 'rgba(212,168,67,0.05)' : isOdd ? 'rgba(212,168,67,0.03)' : isFirst ? 'rgba(212,168,67,0.04)' : 'transparent',
+        background: hov ? 'rgba(212,168,67,0.06)' : isOdd ? 'rgba(212,168,67,0.03)' : isFirst ? 'rgba(212,168,67,0.04)' : 'transparent',
         border: `1px solid ${hov ? T.cardBorder : 'transparent'}`,
         borderLeft: `2px solid ${leftBorder}`,
         borderRadius: 8, padding: '10px 14px',
