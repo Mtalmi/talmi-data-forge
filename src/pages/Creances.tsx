@@ -2145,11 +2145,7 @@ export default function Creances() {
               </CardContent>
             </Card>
           )}
-          <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: '#9CA3AF' }}>
-              Contenu en cours de déploiement...
-            </p>
-          </div>
+          <EmptyState />
         </>)}
 
         {/* ANALYTIQUE TAB */}
