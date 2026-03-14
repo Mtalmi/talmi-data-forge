@@ -2010,24 +2010,33 @@ function IntelligenceIATab() {
             </tr></thead>
             <tbody>
               {operators.map((op, i) => {
-                const confColor = op.conf >= 90 ? T.success : op.conf >= 85 ? T.warning : T.danger;
-                const scoreColor = op.scoreIA >= 85 ? T.success : op.scoreIA >= 70 ? T.warning : T.danger;
+                const isKarim = op.name === 'Karim B.';
+                const confColor = isKarim ? T.danger : op.conf >= 90 ? T.success : op.conf >= 85 ? T.warning : T.danger;
+                const scoreColor = isKarim ? T.warning : op.scoreIA >= 85 ? T.success : op.scoreIA >= 70 ? T.warning : T.danger;
                 return (
-                  <tr key={i} style={{ ...altRow(i), borderLeft: op.conf < 85 ? `3px solid ${T.danger}` : 'none' }}>
-                    <td style={{ ...tblCell, color: T.textPri, fontWeight: 600 }}>{op.name}</td>
-                    <td style={monoCell}>{op.tests}</td>
-                    <td style={tblCell}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div style={{ flex: 1, height: 6, borderRadius: 99, background: 'rgba(255,255,255,0.06)', overflow: 'hidden', maxWidth: 120 }}>
-                          <div style={{ height: '100%', width: `${op.conf}%`, background: confColor, borderRadius: 99, transition: 'width 800ms ease-out' }} />
+                  <React.Fragment key={i}>
+                    <tr style={{ ...altRow(i), borderLeft: isKarim ? `3px solid ${T.danger}` : 'none', transition: 'background 150ms' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)'; }}
+                    >
+                      <td style={{ ...tblCell, color: T.textPri, fontWeight: 600 }}>{op.name}</td>
+                      <td style={monoCell}>{op.tests}</td>
+                      <td style={tblCell}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div style={{ flex: 1, height: 6, borderRadius: 99, background: 'rgba(255,255,255,0.06)', overflow: 'hidden', maxWidth: 120 }}>
+                            <div style={{ height: '100%', width: `${op.conf}%`, background: confColor, borderRadius: 99, transition: 'width 800ms ease-out' }} />
+                          </div>
+                          <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 200, color: confColor }}>{op.conf}%</span>
                         </div>
-                        <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 200, color: confColor }}>{op.conf}%</span>
-                      </div>
-                    </td>
-                    <td style={tblCell}>
-                      <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 200, color: scoreColor, padding: '2px 8px', border: `1px solid ${scoreColor}40`, borderRadius: 4 }}>{op.scoreIA}</span>
-                    </td>
-                  </tr>
+                      </td>
+                      <td style={tblCell}>
+                        <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 200, color: scoreColor, padding: '2px 8px', border: `1px solid ${scoreColor}40`, borderRadius: 4 }}>{op.scoreIA}</span>
+                      </td>
+                    </tr>
+                    {isKarim && (
+                      <tr><td colSpan={4} style={{ padding: '4px 14px 10px', fontSize: 11, fontFamily: MONO, color: T.warning }}>⚠ Accompagnement recommandé</td></tr>
+                    )}
+                  </React.Fragment>
                 );
               })}
             </tbody>
