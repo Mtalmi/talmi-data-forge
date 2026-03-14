@@ -971,7 +971,7 @@ function AnalytiqueTab() {
             </div>
           ))}
         </div>
-        <p style={{ fontFamily: MONO, fontSize: 13, color: T.gold, margin: '0 0 8px' }}>Temps moyen mélange→livraison: <strong>54 min</strong></p>
+        <p style={{ fontFamily: MONO, fontSize: 13, color: T.textDim, margin: '0 0 8px' }}>Temps moyen mélange→livraison: <span style={{ fontFamily: MONO, fontWeight: 200, fontSize: 24, color: T.gold }}>54 min</span></p>
         <p style={{ fontFamily: MONO, fontSize: 12, color: T.success, margin: '0 0 12px' }}>0 livraisons hors délai 90 min ce mois ✓</p>
         {/* Mini sparkline */}
         <svg width="100%" height={40} viewBox="0 0 300 40" preserveAspectRatio="none" style={{ display: 'block' }}>
