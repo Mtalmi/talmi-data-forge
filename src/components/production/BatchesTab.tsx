@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { BatchDetailDrawer } from './BatchDetailDrawer';
 import {
   CheckCircle, Clock, Search, SlidersHorizontal, Pause,
   Play, Eye, RefreshCw, Download, BarChart3, Wifi, AlertTriangle,
@@ -67,6 +68,7 @@ interface BatchesTabProps {
 export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('tous');
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Demo fallback data
   const DEMO_ROWS: BatchRow[] = [
@@ -132,6 +134,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
   const mono = 'JetBrains Mono, monospace';
 
   return (
+    <>
     <div className="flex flex-col gap-6">
 
       {/* ═══ 1. ACTION BUTTONS ═══ */}
@@ -290,6 +293,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                 }}
                   onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,215,0,0.04)')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  onClick={() => setDrawerOpen(true)}
                 >
                   <span style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 500 }}>{row.bl_id}</span>
                   <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.client}</span>
@@ -474,5 +478,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
         </div>
       </div>
     </div>
+    <BatchDetailDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+    </>
   );
 }
