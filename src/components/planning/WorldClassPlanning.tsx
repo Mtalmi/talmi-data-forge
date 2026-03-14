@@ -1080,11 +1080,14 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
         </div>
 
         {/* ── FOOTER ── */}
-        <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ color: T.textDim, fontSize: 11 }}>TBOS Planning & Expédition v2.0 — Dernière mise à jour: {new Date().toLocaleString('fr-FR')}</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-pulse 2.5s infinite' }} />
-            <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Système opérationnel</span>
+        <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {footerActions}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ color: T.textDim, fontSize: 11 }}>TBOS Planning & Expédition v2.0 — Dernière mise à jour: {new Date().toLocaleString('fr-FR')}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-pulse 2.5s infinite' }} />
+              <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Système opérationnel</span>
+            </div>
           </div>
         </footer>
       </div>
