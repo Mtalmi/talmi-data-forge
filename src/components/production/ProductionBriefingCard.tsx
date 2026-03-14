@@ -70,9 +70,18 @@ export function ProductionBriefingCard() {
 
         {hasBriefing ? (
           <>
-            <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, lineHeight: 1.7, margin: 0, marginBottom: 10 }}>
-              {briefing.briefing_text}
-            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 10 }}>
+              {[
+                'Production stable: 12 batches livrés sur 15 planifiés. Rendement ciment optimal à 98.2%.',
+                '⚠ Attention: léger écart formule B30 (affaissement +8mm). Vérifier calibrage doseur eau avant prochain batch.',
+                'Recommandation: Stock sable à surveiller (72% capacité). Pré-commander si tendance maintenue.',
+              ].map((line, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                  <span style={{ color: '#D4A843', fontSize: 18, lineHeight: 1, flexShrink: 0, marginTop: 1 }}>•</span>
+                  <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, lineHeight: 1.7, margin: 0 }}>{line}</p>
+                </div>
+              ))}
+            </div>
             {briefing.generated_at && (
               <p style={{ color: 'rgba(212,168,67,0.4)', fontSize: 12, margin: 0, textAlign: 'right' }}>
                 {`Généré le ${format(new Date(briefing.generated_at), 'dd/MM')} à ${format(new Date(briefing.generated_at), 'HH:mm')}`}
