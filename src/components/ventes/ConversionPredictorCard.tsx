@@ -1,7 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { formatCurrencyDH } from '@/lib/formatters';
+import {
+  AgentContainer, AgentHeader,
+  AgentRecommendation, GoldText,
+} from '@/components/ui/agent-card';
 
 const monoFont = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
 
@@ -40,7 +43,7 @@ function sortOrder(niveau: string | null) {
   return 2;
 }
 
-export function ConversionPredictorCard() {
+export function ConversionPredictorCard({ index }: { index?: number }) {
   const [rows, setRows] = useState<DevisRow[]>([]);
 
   useEffect(() => {
@@ -65,45 +68,8 @@ export function ConversionPredictorCard() {
   if (!sorted.length) return null;
 
   return (
-    <div style={{
-      background: 'rgba(15,23,41,0.6)',
-      border: '1px solid rgba(212,168,67,0.12)',
-      borderRadius: 12,
-      borderTop: '2px solid #22C55E',
-      padding: '24px',
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Sparkles size={14} color="#D4A843" />
-          <span style={{ color: '#D4A843', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '2px', fontFamily: monoFont }}>
-            Agent IA: Prédicteur de Conversion
-          </span>
-          {/* LIVE badge */}
-          <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 5,
-            padding: '3px 10px', borderRadius: 20,
-            background: 'rgba(34,197,94,0.15)',
-            border: '1px solid rgba(34,197,94,0.3)',
-            fontSize: 10, fontWeight: 600, color: '#22C55E', fontFamily: monoFont,
-          }}>
-            <span style={{
-              width: 6, height: 6, borderRadius: '50%', background: '#22C55E',
-              animation: 'pulse 2s ease-in-out infinite',
-            }} />
-            LIVE
-          </span>
-        </div>
-        <span style={{
-          fontSize: 9, fontWeight: 600, color: '#D4A843',
-          background: 'rgba(212,168,67,0.06)', border: '1px solid rgba(212,168,67,0.3)',
-          borderRadius: 100, padding: '3px 10px', letterSpacing: '0.05em', fontFamily: monoFont,
-        }}>
-          ✨ Généré par IA · Claude Opus
-        </span>
-      </div>
+    <AgentContainer severity="operational" index={index}>
+      <AgentHeader name="Prédicteur de Conversion" severityBadge="live" />
 
       {/* Table */}
       <div style={{ overflowX: 'auto' }}>
@@ -142,7 +108,7 @@ export function ConversionPredictorCard() {
                   <td style={{
                     padding: '10px 12px 10px 0', fontSize: 13, color: '#D4A843',
                     fontFamily: monoFont,
-                    fontWeight: 400, whiteSpace: 'nowrap',
+                    fontWeight: 400, whiteSpace: 'nowrap', textAlign: 'right',
                   }}>
                     {formatCurrencyDH(d.total_ht, { compact: false })}
                   </td>
@@ -171,10 +137,10 @@ export function ConversionPredictorCard() {
 
       {/* Summary */}
       {summary && (
-        <div style={{ marginTop: 16, fontSize: 12, color: '#9CA3AF', fontFamily: monoFont }}>
-          <span style={{ color: '#D4A843' }}>{summary.count}</span> deals analysés · Potentiel estimé: <span style={{ color: '#D4A843' }}>{formatCurrencyDH(summary.total, { compact: false })}</span> · Confiance moyenne: <span style={{ color: '#D4A843' }}>{summary.avgConf}%</span>
-        </div>
+        <AgentRecommendation severity="gold" title="Synthèse">
+          <GoldText>{summary.count}</GoldText> deals analysés · Potentiel estimé: <GoldText>{formatCurrencyDH(summary.total, { compact: false })}</GoldText> · Confiance moyenne: <GoldText>{summary.avgConf}%</GoldText>
+        </AgentRecommendation>
       )}
-    </div>
+    </AgentContainer>
   );
 }

@@ -1,8 +1,12 @@
 import { useCountUp } from '@/hooks/useCountUp';
+import {
+  AgentContainer, AgentHeader, AgentKPITriplet,
+  AgentRecommendation, GoldText, DangerText,
+} from '@/components/ui/agent-card';
 
 const mono = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
 
-export function ScoringDynamiquePrixCard() {
+export function ScoringDynamiquePrixCard({ index }: { index?: number }) {
   const recalcVal = useCountUp(3, 1500);
   const erosionVal = useCountUp(42, 1500);
   const impactVal = useCountUp(14400, 1500);
@@ -14,43 +18,17 @@ export function ScoringDynamiquePrixCard() {
   ];
 
   return (
-    <div style={{
-      background: 'rgba(15,23,41,0.6)', border: '1px solid rgba(212,168,67,0.12)',
-      borderRadius: 12, borderTop: '2px solid #EF4444', padding: 24,
-    }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
-        <span style={{ color: '#D4A843', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '2px', fontFamily: mono }}>
-          ✦ Agent IA: Scoring Dynamique de Prix
-        </span>
-        <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(212,168,67,0.3), transparent 80%)' }} />
-        <span style={{ fontSize: 9, fontWeight: 600, color: '#D4A843', background: 'rgba(212,168,67,0.06)', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 100, padding: '3px 10px', fontFamily: mono }}>
-          ✨ Généré par IA · Claude Opus
-        </span>
-      </div>
+    <AgentContainer severity="critical" index={index}>
+      <AgentHeader name="Scoring Dynamique de Prix" severityBadge="forensique" />
 
-      {/* KPIs */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 20 }}>
-        <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 10, padding: '16px 18px', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, fontFamily: mono }}>Devis à Recalculer</p>
-          <span style={{ fontFamily: mono, fontSize: 42, fontWeight: 100, color: '#EF4444' }}>{recalcVal}</span>
-        </div>
-        <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 10, padding: '16px 18px', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, fontFamily: mono }}>Érosion Marge Moy.</p>
-          <span style={{ fontFamily: mono, fontSize: 42, fontWeight: 100, color: '#EF4444' }}>-{(erosionVal / 10).toFixed(1)}</span>
-          <span style={{ fontSize: 16, color: '#9CA3AF', fontFamily: mono, marginLeft: 4 }}>pts</span>
-        </div>
-        <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 10, padding: '16px 18px', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, fontFamily: mono }}>Impact Mensuel</p>
-          <span style={{ fontFamily: mono, fontSize: 42, fontWeight: 100, color: '#EF4444', textShadow: '0 0 15px rgba(239,68,68,0.3)' }}>
-            -{impactVal.toLocaleString('fr-FR')}
-          </span>
-          <span style={{ fontSize: 16, color: '#9CA3AF', fontFamily: mono, marginLeft: 4 }}>DH</span>
-        </div>
-      </div>
+      <AgentKPITriplet kpis={[
+        { label: 'Devis à Recalculer', value: recalcVal, color: '#EF4444' },
+        { label: 'Érosion Marge Moy.', value: `-${(erosionVal / 10).toFixed(1)}`, color: '#EF4444', subtitle: 'pts' },
+        { label: 'Impact Mensuel', value: `-${impactVal.toLocaleString('fr-FR').replace(/\u202F/g, ' ').replace(/\u00A0/g, ' ')}`, color: '#EF4444', subtitle: 'DH' },
+      ]} />
 
       {/* Table */}
-      <div style={{ overflowX: 'auto', marginBottom: 20 }}>
+      <div style={{ overflowX: 'auto', marginTop: 16 }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
@@ -82,13 +60,9 @@ export function ScoringDynamiquePrixCard() {
         </table>
       </div>
 
-      {/* Recommandation */}
-      <div style={{ background: 'rgba(212,168,67,0.04)', borderLeft: '3px solid #D4A843', borderRadius: '0 8px 8px 0', padding: 16 }}>
-        <span style={{ color: '#EF4444', fontWeight: 600, fontFamily: mono, fontSize: 13 }}>Alerte : </span>
-        <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13 }}>
-          le prix du ciment a augmenté de <span style={{ color: '#D4A843', fontFamily: mono, fontWeight: 600 }}>+6%</span> depuis le 1er mars. <span style={{ color: '#D4A843', fontFamily: mono, fontWeight: 600 }}>3</span> devis F-B30/F-B20 en attente ont des marges érodées. Action immédiate recommandée sur <span style={{ color: '#D4A843', fontFamily: mono }}>DEV-2602-349</span> (plus gros écart).
-        </span>
-      </div>
-    </div>
+      <AgentRecommendation severity="red" title="Alerte">
+        Le prix du ciment a augmenté de <GoldText>+6%</GoldText> depuis le 1er mars. <GoldText>3</GoldText> devis F-B30/F-B20 en attente ont des marges érodées. Action immédiate recommandée sur <GoldText>DEV-2602-349</GoldText> (plus gros écart).
+      </AgentRecommendation>
+    </AgentContainer>
   );
 }
