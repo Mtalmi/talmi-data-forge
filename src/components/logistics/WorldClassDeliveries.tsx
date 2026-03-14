@@ -1070,7 +1070,7 @@ function IntelligenceIATab() {
         </div>
 
         <RecommendationBox text={
-          <>T-09 en arrêt maintenance génère une perte sèche de <strong style={{ color: T.danger }}>1,200 DH/jour</strong>. Retour en service estimé demain 08:00. Impact : les 3 livraisons prévues demain pour T-09 sont réaffectées à T-04 et T-12. Le ratio profit/km de la flotte peut atteindre <strong style={{ color: T.gold }}>135 DH/km</strong> si T-09 revient en service et que les livraisons longue distance sont affectées à T-12.</>
+          <>T-09 en arrêt maintenance génère une perte sèche de <strong style={{ color: T.danger }}>1,200 DH/jour</strong>. Retour en service estimé demain 08:00. Impact : les 3 livraisons prévues demain pour T-09 sont réaffectées à T-04 et T-12. Le ratio profit/km de la flotte peut atteindre <strong style={{ color: T.gold }}>135 DH/km</strong> si T-09 revient en service et que les livraisons longue distance sont affectées à T-12. Revenus non-réclamés détectés : <strong style={{ color: T.danger }}>12,400 DH</strong> de surestaries + <strong style={{ color: T.danger }}>4,200 DH</strong> retour béton Sigma Bâtiment non-facturé = <strong style={{ color: T.gold }}>16,600 DH de manque à gagner</strong>. Action immédiate recommandée.</>
         } />
       </Card>
 
