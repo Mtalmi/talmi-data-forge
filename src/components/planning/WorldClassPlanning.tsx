@@ -4,7 +4,7 @@ import {
   RadialBarChart, RadialBar, ResponsiveContainer,
 } from 'recharts';
 import {
-  FileText, BarChart3, Truck, Bell, CalendarDays, Clock, Plus, Cloud, ChevronDown, ChevronUp,
+  FileText, BarChart3, Truck, Bell, CalendarDays, Clock, Plus, Cloud, ChevronDown, ChevronUp, TrendingUp,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/layout/PageHeader';
