@@ -667,6 +667,7 @@ function IAAgentSection({ name, content }: { name: string; content: React.ReactN
   );
 }
 
+export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHeader, dispatchMain, fleetPanel, footerActions }: { fleetPanelOpen?: boolean; dispatchHeader?: React.ReactNode; dispatchMain?: React.ReactNode; fleetPanel?: React.ReactNode; footerActions?: React.ReactNode }) {
 
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dispatch');
