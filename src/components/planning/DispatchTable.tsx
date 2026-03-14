@@ -262,7 +262,7 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
               transition: 'background 150ms',
               opacity: isLivre ? 0.55 : 1,
             }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255, 215, 0, 0.04)')}
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.03)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
           >
             {/* BL */}
