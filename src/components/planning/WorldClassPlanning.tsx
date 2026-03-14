@@ -949,7 +949,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                     borderTop: i > 0 ? `1px solid ${T.cardBorder}60` : 'none',
                   }}>
                     <span style={{ width: 8, height: 8, borderRadius: '50%', background: ins.dot, flexShrink: 0 }} />
-                    <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, lineHeight: 1.4, flex: 1 }}>{ins.text}</span>
+                    <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, lineHeight: 1.4, flex: 1 }}>{ins.text as any}</span>
                   </div>
                 ))}
                 <div style={{ padding: '8px 18px', borderTop: `1px solid ${T.cardBorder}`, background: `${T.cardBorder}20` }}>
