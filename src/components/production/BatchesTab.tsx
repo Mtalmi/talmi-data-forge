@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { BatchDetailDrawer } from './BatchDetailDrawer';
 import {
   CheckCircle, Clock, Search, SlidersHorizontal, Pause,
   Play, Eye, RefreshCw, Download, BarChart3, Wifi, AlertTriangle,
