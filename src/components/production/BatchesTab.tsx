@@ -420,7 +420,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1.5">
-                    <div className="animate-pulse" style={{ width: 7, height: 7, borderRadius: '50%', background: '#34d399' }} />
+                    <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#34d399', animation: 'live-dot-pulse 2s ease-in-out infinite' }} />
                     <span style={{ color: '#34d399', fontSize: 11, fontWeight: 500 }}>Temps réel</span>
                   </div>
                   <button className="cursor-pointer" style={{ background: 'transparent', border: 'none', padding: 4 }}>
