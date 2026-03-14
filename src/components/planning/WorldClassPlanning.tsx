@@ -554,7 +554,7 @@ function ZoneHeader({ icon, label, right }: { icon: string; label: string; right
 // COLLAPSIBLE CHRONOLOGIQUE TABLE
 // ─────────────────────────────────────────────────────
 function CollapsibleChronologique() {
-  const [chronoOpen, setChronoOpen] = useState(false);
+  const [chronoOpen, setChronoOpen] = useState(true);
   return (
     <div style={{ borderBottom: chronoOpen ? 'none' : '1px solid rgba(212, 168, 67, 0.2)' }}>
       <button
@@ -882,15 +882,16 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
               {dispatchHeader}
 
               {/* 4. Main dispatch area + fleet sidebar */}
-              <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-                <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 24 }}>
+              <div style={{ display: 'flex', gap: 16, alignItems: 'stretch' }}>
+                <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 0 }}>
                   {dispatchMain}
+                  {/* Planning Chronologique fills remaining space alongside fleet sidebar */}
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginTop: 20 }}>
+                    <CollapsibleChronologique />
+                  </div>
                 </div>
                 {fleetPanel}
               </div>
-
-              {/* Planning Chronologique — Collapsible (outside fleet row) */}
-              <CollapsibleChronologique />
 
               {/* 5. Compact AI Insight Strip */}
               <div style={{
