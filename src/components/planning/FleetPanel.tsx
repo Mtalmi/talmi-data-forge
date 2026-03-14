@@ -350,8 +350,11 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
                 </span>
               </div>
               <p className="text-[11px] text-white/50 truncate mb-1">{truck.chauffeur}</p>
-              <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.30)', fontFamily: 'JetBrains Mono, monospace' }}>
+              <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.30)', fontFamily: 'JetBrains Mono, monospace', marginBottom: 2 }}>
                 {truck.rotations} rotations · {truck.km} · {truck.fuel}
+              </p>
+              <p style={{ fontSize: 12, color: '#D4A843', fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', marginBottom: 6 }}>
+                {truck.revenu}
               </p>
               <div className="flex gap-1 mt-1.5">
                 <Button variant="ghost" size="sm" className={cn("flex-1 h-6 text-[10px] px-1", truck.statut === 'Disponible' && "bg-success/20 text-success")} onClick={() => updateVehicleStatus(truck.id_camion, 'Disponible')}><CheckCircle className="h-3 w-3 mr-0.5" />{fp.available}</Button>
