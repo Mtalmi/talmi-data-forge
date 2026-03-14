@@ -106,7 +106,7 @@ function Card({ children, style = {}, className = '', goldBorder: showGoldBorder
   const [hov, setHov] = useState(false);
   return (
     <div className={className} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      style={{ background: T.cardBg, border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`, borderTop: showGoldBorder ? '2px solid #D4A843' : undefined, borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden',
+      style={{ background: T.cardBg, borderWidth: '1px', borderStyle: 'solid', borderColor: hov ? T.goldBorder : T.cardBorder, ...(showGoldBorder ? { borderTopWidth: '2px', borderTopColor: '#D4A843' } : {}), borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden',
         transform: hov ? 'translateY(-1px)' : 'none',
         boxShadow: 'none',
         transition: 'all 200ms cubic-bezier(0.4,0,0.2,1)', ...style }}>
