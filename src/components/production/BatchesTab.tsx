@@ -1,4 +1,5 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { Smile } from 'lucide-react';
 import { BatchDetailDrawer } from './BatchDetailDrawer';
 import {
   CheckCircle, Clock, Search, SlidersHorizontal, Pause,
@@ -259,12 +260,12 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
           <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: '12px 12px 0 0', overflow: 'hidden' }}>
             {/* Headers */}
             <div className="grid items-center" style={{
-              gridTemplateColumns: '110px 1fr 90px 70px 65px 90px 70px 120px 100px 80px',
+              gridTemplateColumns: '110px 1fr 90px 70px 65px 90px 70px 60px 120px 100px 80px',
               padding: '12px 16px', borderBottom: `1px solid ${T.cardBorder}`,
             }}>
-              {['N° BL', 'CLIENT', 'FORMULE', 'VOL (M³)', 'HEURE', 'COÛT', 'MARGE', 'STATUT', 'PROGRESSION', 'ACTIONS'].map(h => {
+              {['N° BL', 'CLIENT', 'FORMULE', 'VOL (M³)', 'HEURE', 'COÛT', 'MARGE', 'SATISF.', 'STATUT', 'PROGRESSION', 'ACTIONS'].map(h => {
                 const align: 'left' | 'center' | 'right' =
-                  ['FORMULE', 'VOL (M³)', 'HEURE', 'COÛT', 'MARGE', 'STATUT', 'PROGRESSION', 'ACTIONS'].includes(h) ? 'center' : 'left';
+                  ['FORMULE', 'VOL (M³)', 'HEURE', 'COÛT', 'MARGE', 'SATISF.', 'STATUT', 'PROGRESSION', 'ACTIONS'].includes(h) ? 'center' : 'left';
                 return (
                   <span key={h} style={{
                     fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.12em',
@@ -273,7 +274,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                     display: 'flex',
                     width: '100%',
                     justifyContent: align === 'center' ? 'center' : 'flex-start',
-                  }}>{h}</span>
+                  }}>{h === 'SATISF.' ? <Smile size={14} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.35)' }} /> : h}</span>
                 );
               })}
             </div>
@@ -285,7 +286,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
               const isInProd = row.status === 'production';
               return (
                 <div key={row.bl_id} className="grid items-center" style={{
-                  gridTemplateColumns: '110px 1fr 90px 70px 65px 90px 70px 120px 100px 80px',
+                  gridTemplateColumns: '110px 1fr 90px 70px 65px 90px 70px 60px 120px 100px 80px',
                   padding: '16px 16px',
                   borderBottom: '1px solid rgba(255,255,255,0.04)',
                   borderLeft: isInProd ? '2px solid rgba(96,165,250,0.50)' : '2px solid transparent',
@@ -302,6 +303,25 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                   <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.45)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.heure}</span>
                   <span style={{ fontFamily: mono, fontSize: 12, color: 'rgba(255,255,255,0.60)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.cout}</span>
                   <span style={{ fontFamily: mono, fontSize: 12, fontWeight: 500, display: 'flex', width: '100%', justifyContent: 'center', color: row.marge >= 35 ? '#34d399' : row.marge >= 30 ? '#F59E0B' : '#EF4444' }}>{row.marge}%</span>
+                  {/* Client satisfaction */}
+                  {(() => {
+                    const satisfMap: Record<string, { color: string; label: string }> = {
+                      '#403-068': { color: '#10B981', label: 'Satisfait' },
+                      '#403-067': { color: '#F59E0B', label: 'En attente retour' },
+                      '#403-066': { color: '#6B7280', label: 'En cours' },
+                      '#403-065': { color: '#10B981', label: 'Satisfait' },
+                      '#403-064': { color: '#10B981', label: 'Satisfait' },
+                      '#403-063': { color: '#6B7280', label: 'En cours' },
+                      '#403-062': { color: '#F59E0B', label: 'Réclamation: slump hors tolérance' },
+                      '#403-061': { color: '#10B981', label: 'Satisfait' },
+                    };
+                    const s = satisfMap[row.bl_id] || { color: '#6B7280', label: '—' };
+                    return (
+                      <span style={{ display: 'flex', justifyContent: 'center', position: 'relative' }} title={s.label}>
+                        <span style={{ width: 10, height: 10, borderRadius: '50%', background: s.color, cursor: 'default' }} />
+                      </span>
+                    );
+                  })()}
                   {/* Status badge */}
                   <span style={{
                     display: 'inline-flex', alignItems: 'center', gap: 6, width: 'fit-content',
