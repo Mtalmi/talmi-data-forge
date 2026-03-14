@@ -936,8 +936,8 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
             </div>
           </div>
           <div className="flex gap-2 mt-4">
-            <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>3 recommandations</span>
-            <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 87%</span>
+            <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843' }}>3 recommandations</span>
+            <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843' }}>Confiance: 87%</span>
           </div>
         </div>
       </div>
