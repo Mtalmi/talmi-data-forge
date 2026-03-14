@@ -231,10 +231,10 @@ export function MouvementsTab({ MOVEMENT_DATA, MOVEMENTS, VALUE_BREAKDOWN }: Mou
       {/* ── SECTION 1: KPI STRIP ── */}
       <section>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-          <MouvKPI label="MOUVEMENTS AUJOURD'HUI" value={todayMovements} color="#FFFFFF" />
-          <MouvKPI label="ENTRÉES" value={totalEntrees} suffix="kg" color="#22C55E" />
-          <MouvKPI label="SORTIES" value={totalSorties} suffix="kg" color="#EF4444" />
-          <MouvKPIText label="VALEUR STOCK" text="2.4 M DH" color="#D4A843" />
+          <MouvKPI label="MOUVEMENTS AUJOURD'HUI" value={todayMovements} color="#FFFFFF" borderColor="#D4A843" />
+          <MouvKPIText label="ENTRÉES" text="+5,650 kg" color="#22C55E" borderColor="#22C55E" />
+          <MouvKPIText label="SORTIES" text="−24,100 kg" color="#EF4444" borderColor="#EF4444" />
+          <MouvKPIText label="VALEUR STOCK" text="2.4 M DH" color="#D4A843" borderColor="#D4A843" />
         </div>
       </section>
 
