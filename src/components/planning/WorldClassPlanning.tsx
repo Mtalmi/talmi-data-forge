@@ -793,19 +793,10 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
               onClick={handleOptimizeRoutes}
               disabled={isOptimizing}
               style={{
-                padding: '6px 16px',
-                borderRadius: 8,
-                background: 'transparent',
-                border: '1px solid #D4A843',
-                color: '#D4A843',
-                fontFamily: 'DM Sans, sans-serif',
-                fontWeight: 600,
-                fontSize: 13,
-                cursor: isOptimizing ? 'wait' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                transition: 'all 200ms',
+                background: '#D4A843', color: '#0F1629', border: 'none',
+                borderRadius: '8px', padding: '8px 20px', cursor: isOptimizing ? 'wait' : 'pointer',
+                fontSize: '14px', fontWeight: 600,
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
                 opacity: isOptimizing ? 0.6 : 1,
               }}
             >
@@ -814,19 +805,10 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
             <button
               onClick={() => navigate('/bons')}
               style={{
-                padding: '6px 16px',
-                borderRadius: 8,
-                background: 'linear-gradient(135deg, #D4A843, #C49A3A)',
-                border: '1px solid rgba(212, 168, 67, 0.4)',
-                color: '#0F172A',
-                fontFamily: 'DM Sans, sans-serif',
-                fontWeight: 600,
-                fontSize: 13,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                transition: 'all 200ms',
+                border: '1px solid #D4A843', color: '#D4A843', background: 'transparent',
+                borderRadius: '8px', padding: '8px 20px', cursor: 'pointer',
+                fontSize: '14px',
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
               }}
             >
               <Plus size={13} />
