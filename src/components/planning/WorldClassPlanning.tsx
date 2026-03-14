@@ -1042,8 +1042,8 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                         <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#9CA3AF', fontSize: 11, letterSpacing: '0.3px' }}>Production hebdomadaire · Semaine 11</p>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E', animation: 'tbos-pulse 2.5s infinite' }} />
-                        <span style={{ fontSize: 9, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#22C55E', letterSpacing: '0.5px' }}>LIVE</span>
+                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E', animation: 'liveDotPulse 2s infinite' }} />
+                        <span style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#22C55E', letterSpacing: '0.5px' }}>LIVE</span>
                       </div>
                     </div>
 
