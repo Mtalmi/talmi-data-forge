@@ -1539,14 +1539,443 @@ function AnalytiqueTab() {
 }
 
 // ─────────────────────────────────────────────────────
-function EmptyTabPlaceholder({ title, icon: Icon }: { title: string; icon: React.ElementType }) {
+// MINI CONFIDENCE GAUGE (SVG circle)
+// ─────────────────────────────────────────────────────
+function MiniGauge({ value, size = 28 }: { value: number; size?: number }) {
+  const r = (size - 4) / 2;
+  const circ = 2 * Math.PI * r;
+  const color = value >= 85 ? T.success : value >= 70 ? T.warning : T.danger;
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 40px', gap: 16 }}>
-      <div style={{ width: 64, height: 64, borderRadius: 16, background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Icon size={28} color="#D4A843" />
+    <svg width={size} height={size} style={{ flexShrink: 0 }}>
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={2.5} />
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={2.5}
+        strokeDasharray={circ} strokeDashoffset={circ * (1 - value / 100)}
+        strokeLinecap="round" transform={`rotate(-90 ${size/2} ${size/2})`}
+        style={{ transition: 'stroke-dashoffset 800ms ease-out' }} />
+      <text x={size/2} y={size/2} textAnchor="middle" dominantBaseline="central"
+        fill={color} fontSize={8} fontFamily={MONO} fontWeight={700}>{value}%</text>
+    </svg>
+  );
+}
+
+// ─────────────────────────────────────────────────────
+// AGENT KPI CARD
+// ─────────────────────────────────────────────────────
+function AgentKPI({ label, value, color, subtitle, borderColor }: { label: string; value: string; color: string; subtitle?: string; borderColor?: string }) {
+  return (
+    <div style={{
+      flex: 1, padding: '16px 18px',
+      background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
+      border: `1px solid ${T.cardBorder}`, borderRadius: 10,
+      borderTop: `2px solid ${borderColor || color}`,
+    }}>
+      <p style={{ fontFamily: MONO, fontSize: 10, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '1px', marginBottom: 6 }}>{label}</p>
+      <p style={{ fontFamily: MONO, fontSize: 28, fontWeight: 200, color, margin: 0 }}>{value}</p>
+      {subtitle && <p style={{ fontSize: 10, color: T.textDim, marginTop: 4, margin: 0 }}>{subtitle}</p>}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
+// IA BADGE HELPER
+// ─────────────────────────────────────────────────────
+function IABadge() {
+  return (
+    <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', padding: '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4, background: 'rgba(212,168,67,0.06)' }}>
+      Généré par IA · Claude Opus
+    </span>
+  );
+}
+
+// ─────────────────────────────────────────────────────
+// TAB CONTENT: INTELLIGENCE IA
+// ─────────────────────────────────────────────────────
+function IntelligenceIATab() {
+  const tblHdr: React.CSSProperties = { fontFamily: MONO, fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.15em', padding: '10px 14px', borderBottom: `1px solid ${T.cardBorder}`, textAlign: 'left' };
+  const tblCell: React.CSSProperties = { padding: '10px 14px', fontSize: 12, borderBottom: `1px solid rgba(30,45,74,0.5)` };
+  const monoCell: React.CSSProperties = { ...tblCell, fontFamily: MONO, fontWeight: 200 };
+  const altRow = (i: number): React.CSSProperties => ({ background: i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)' });
+
+  const recoBox = (text: string, borderColor: string = T.gold): React.ReactNode => (
+    <div style={{ borderLeft: `4px solid ${borderColor}`, background: borderColor === T.danger ? 'rgba(239,68,68,0.05)' : 'rgba(212,168,67,0.03)', padding: '14px 18px', borderRadius: '0 8px 8px 0', marginTop: 16 }}>
+      <p style={{ fontFamily: MONO, fontSize: 12, color: T.textSec, lineHeight: 1.7, margin: 0 }}>{text}</p>
+    </div>
+  );
+
+  const agentHeader = (title: string, borderColor: string, badges: React.ReactNode) => (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 10 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <Brain size={16} color={borderColor} />
+        <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>{title}</span>
       </div>
-      <p style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '2px' }}>{title}</p>
-      <p style={{ fontSize: 13, color: '#9CA3AF', textAlign: 'center', maxWidth: 400 }}>Cette section sera disponible prochainement avec des analyses avancées et des outils interactifs.</p>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>{badges}</div>
+    </div>
+  );
+
+  // NM Check data
+  const nmRows = [
+    { batch: 'BN-0142', formule: 'F-B25',    aff: '18 cm', ec: '0.500', r7j: '28.5 MPa', check: 'validé' },
+    { batch: 'BN-0141', formule: 'F-B25',    aff: '18 cm', ec: '0.495', r7j: '28.5 MPa', check: 'validé' },
+    { batch: 'BN-0140', formule: 'F-B25-HP', aff: '22 cm', ec: '0.520', r7j: '—',        check: 'bloqué' },
+    { batch: 'BN-0139', formule: 'F-B30',    aff: '16 cm', ec: '0.450', r7j: '32.1 MPa', check: 'validé' },
+    { batch: 'BN-0138', formule: 'F-B30',    aff: '15 cm', ec: '0.448', r7j: '32.1 MPa', check: 'validé' },
+    { batch: 'BN-0137', formule: 'F-B20',    aff: '19 cm', ec: '0.565', r7j: '—',        check: 'validé' },
+  ];
+
+  // Prediction data
+  const predRows = [
+    { batch: 'BN-0142', formule: 'F-B25',    r7j: '28.5 MPa', pred: '26.8 MPa', conf: 92, risk: 'FAIBLE' },
+    { batch: 'BN-0141', formule: 'F-B25',    r7j: '28.5 MPa', pred: '27.1 MPa', conf: 94, risk: 'FAIBLE' },
+    { batch: 'BN-0140', formule: 'F-B25-HP', r7j: '—',        pred: '23.4 MPa', conf: 67, risk: 'ÉLEVÉ' },
+    { batch: 'BN-0139', formule: 'F-B30',    r7j: '32.1 MPa', pred: '33.8 MPa', conf: 91, risk: 'FAIBLE' },
+    { batch: 'BN-0138', formule: 'F-B30',    r7j: '32.1 MPa', pred: '34.2 MPa', conf: 93, risk: 'FAIBLE' },
+    { batch: 'BN-0137', formule: 'F-B20',    r7j: '—',        pred: '22.1 MPa', conf: 88, risk: 'FAIBLE' },
+  ];
+
+  // Formule optimization data
+  const formulaRows = [
+    { formule: 'F-B25', cimentActuel: 350, cimentOpti: 330, ecart: '+24.8%', econAn: '374,400 MAD', risque: 'Aucun' },
+    { formule: 'F-B30', cimentActuel: 400, cimentOpti: 385, ecart: '+3.9%', econAn: '48,000 MAD', risque: 'Faible' },
+    { formule: 'F-B20', cimentActuel: 280, cimentOpti: 275, ecart: '+1.8%', econAn: '16,000 MAD', risque: 'Aucun' },
+  ];
+
+  // Certification data
+  const certRows = [
+    { norme: 'NM 10.1.008', desc: 'Béton — Spécification, performances, production', statut: 'Conforme', expire: '2026-06-15' },
+    { norme: 'NM 10.1.271', desc: 'Essais pour béton frais — Affaissement', statut: 'À renouveler', expire: '2025-04-01' },
+    { norme: 'NM 10.1.012', desc: 'Essais pour béton durci — Résistance compression', statut: 'Conforme', expire: '2026-09-30' },
+  ];
+
+  // Operators
+  const operators = [
+    { name: 'Youssef M.', tests: 42, conf: 96, scoreIA: 94 },
+    { name: 'Sarah L.',   tests: 38, conf: 91, scoreIA: 87 },
+    { name: 'Ahmed R.',   tests: 35, conf: 88, scoreIA: 81 },
+    { name: 'Karim B.',   tests: 28, conf: 84, scoreIA: 72 },
+  ];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+
+      {/* ── HEADER ── */}
+      <div>
+        <p style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: T.gold, letterSpacing: '2px', textTransform: 'uppercase' as const, margin: '0 0 6px' }}>
+          ✦ Centre d'Intelligence Laboratoire
+        </p>
+        <p style={{ fontFamily: MONO, fontSize: 12, color: T.gold, margin: 0 }}>
+          5 agents actifs · Surveillance continue · Claude Opus
+        </p>
+      </div>
+
+      {/* ── TOP SUMMARY STRIP ── */}
+      <div style={{ display: 'flex', gap: 16 }}>
+        <AgentKPI label="Alertes Qualité" value="2" color={T.warning} borderColor={T.warning} />
+        <AgentKPI label="Économies Détectées" value="+374,400 MAD/an" color={T.success} borderColor={T.success} />
+        <AgentKPI label="Score Conformité" value="96.2%" color={T.gold} borderColor={T.gold} />
+      </div>
+
+      {/* ══════════════════════════════════════════════════ */}
+      {/* AGENT 1 — CONFORMITÉ NM AUTO-CHECK                */}
+      {/* ══════════════════════════════════════════════════ */}
+      <Card style={{ borderTop: `2px solid ${T.success}` }}>
+        {agentHeader('✦ Agent IA: Conformité NM Auto-Check', T.success, <>
+          <Bdg label="● LIVE" color={T.success} bg="rgba(34,197,94,0.12)" pulse />
+          <IABadge />
+        </>)}
+
+        <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
+          <AgentKPI label="Batches Vérifiés" value="14/14" color={T.success} borderColor={T.success} />
+          <AgentKPI label="Conformité Auto" value="87.5%" color={T.gold} borderColor={T.gold} />
+          <AgentKPI label="Bloqués Aujourd'hui" value="1" color={T.danger} borderColor={T.danger} />
+        </div>
+
+        <p style={{ fontFamily: MONO, fontSize: 12, color: T.textDim, marginBottom: 16 }}>
+          Chaque batch vérifié automatiquement contre NM 10.1.008 avant autorisation de chargement camion.
+        </p>
+
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead><tr>
+              {['BATCH','FORMULE','AFFAISSEMENT','E/C','RÉSISTANCE 7J','NM CHECK'].map(h => <th key={h} style={tblHdr}>{h}</th>)}
+            </tr></thead>
+            <tbody>
+              {nmRows.map((r, i) => (
+                <tr key={i} style={{ ...altRow(i), borderLeft: r.check === 'bloqué' ? '3px solid #EF4444' : 'none' }}>
+                  <td style={{ ...monoCell, color: T.gold }}>{r.batch}</td>
+                  <td style={tblCell}><span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, fontFamily: MONO, fontWeight: 700, background: r.formule.includes('B25') ? 'rgba(212,168,67,0.15)' : r.formule.includes('B30') ? 'rgba(196,154,60,0.15)' : 'rgba(232,201,106,0.15)', color: r.formule.includes('B25') ? '#D4A843' : r.formule.includes('B30') ? '#C49A3C' : '#E8C96A' }}>{r.formule}</span></td>
+                  <td style={monoCell}>{r.aff}</td>
+                  <td style={monoCell}>{r.ec}</td>
+                  <td style={monoCell}>{r.r7j}</td>
+                  <td style={tblCell}>
+                    {r.check === 'validé'
+                      ? <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: 'rgba(34,197,94,0.12)', color: T.success, border: `1px solid ${T.success}40` }}>✓ VALIDÉ</span>
+                      : <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: 'rgba(239,68,68,0.12)', color: T.danger, border: `1px solid ${T.danger}40` }}>✗ BLOQUÉ</span>
+                    }
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {recoBox("Tous les batches conformes sauf BN-0140 (bloqué à 11:48 — excès d'eau détecté). Correction doseur appliquée à 11:55. Prochain contrôle automatique dans 45 min. Aucun camion n'a quitté l'usine avec du béton non-conforme aujourd'hui.")}
+      </Card>
+
+      {/* ══════════════════════════════════════════════════ */}
+      {/* AGENT 2 — PRÉDICTEUR DE RÉSISTANCE 28 JOURS       */}
+      {/* ══════════════════════════════════════════════════ */}
+      <Card style={{ borderTop: `2px solid ${T.gold}` }}>
+        {agentHeader('✦ Agent IA: Prédicteur de Résistance 28 Jours', T.gold, <IABadge />)}
+
+        <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
+          <AgentKPI label="Précision Modèle" value="94.2%" color={T.gold} borderColor={T.gold} />
+          <AgentKPI label="Batches Prédits" value="14" color={T.textPri} subtitle="aujourd'hui" borderColor={T.gold} />
+          <AgentKPI label="Alertes Précoces" value="1" color={T.warning} borderColor={T.warning} />
+        </div>
+
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead><tr>
+              {['BATCH','FORMULE','RÉSISTANCE 7J','PRÉDICTION 28J','CONFIANCE','RISQUE'].map(h => <th key={h} style={tblHdr}>{h}</th>)}
+            </tr></thead>
+            <tbody>
+              {predRows.map((r, i) => {
+                const isHigh = r.risk === 'ÉLEVÉ';
+                return (
+                  <tr key={i} style={{ ...altRow(i), borderLeft: isHigh ? '3px solid #EF4444' : 'none' }}>
+                    <td style={{ ...monoCell, color: T.gold }}>{r.batch}</td>
+                    <td style={tblCell}><span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, fontFamily: MONO, fontWeight: 700, background: r.formule.includes('B25') ? 'rgba(212,168,67,0.15)' : r.formule.includes('B30') ? 'rgba(196,154,60,0.15)' : 'rgba(232,201,106,0.15)', color: r.formule.includes('B25') ? '#D4A843' : r.formule.includes('B30') ? '#C49A3C' : '#E8C96A' }}>{r.formule}</span></td>
+                    <td style={monoCell}>{r.r7j}</td>
+                    <td style={{ ...monoCell, color: isHigh ? T.danger : T.gold }}>{r.pred}</td>
+                    <td style={tblCell}><MiniGauge value={r.conf} /></td>
+                    <td style={tblCell}>
+                      <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4,
+                        background: isHigh ? 'rgba(239,68,68,0.12)' : 'rgba(34,197,94,0.12)',
+                        color: isHigh ? T.danger : T.success,
+                        border: `1px solid ${isHigh ? T.danger : T.success}40`,
+                      }}>{r.risk}</span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {recoBox("Batch BN-0140 (F-B25-HP) présente un ratio E/C de 0.520 avant correction. Prédiction résistance 28j : 23.4 MPa (requis : 25 MPa). Confiance : 67%. Risque de non-conformité à 28 jours : 34%. Recommandation : surveiller étroitement ce batch au jour 7. Si résistance 7j < 18 MPa, déclencher alerte client et préparer batch de remplacement.", T.warning)}
+      </Card>
+
+      {/* ══════════════════════════════════════════════════ */}
+      {/* AGENT 3 — DÉTECTEUR DE FRAUDE QUALITÉ             */}
+      {/* ══════════════════════════════════════════════════ */}
+      <Card style={{ borderTop: `2px solid ${T.danger}` }}>
+        {agentHeader('✦ Agent IA: Détecteur de Fraude Qualité', T.danger, <>
+          <span style={{ fontFamily: MONO, fontSize: 11, color: T.danger, padding: '4px 8px', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 4, background: 'rgba(239,68,68,0.15)' }}>FORENSIQUE</span>
+          <IABadge />
+        </>)}
+
+        <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
+          <AgentKPI label="Anomalies E/C" value="3" color={T.danger} subtitle="sur 14 jours" borderColor={T.danger} />
+          <AgentKPI label="Shift Suspect" value="Nuit (22h-6h)" color={T.warning} subtitle="67% des écarts" borderColor={T.warning} />
+          <AgentKPI label="Perte Estimée" value="45,000 MAD/an" color={T.danger} subtitle="béton sous-performant" borderColor={T.danger} />
+        </div>
+
+        {/* Triangle de vérification */}
+        <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 16 }}>
+          Triangle de Vérification
+        </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 24 }}>
+          {/* Card: Recette */}
+          <div style={{ flex: 1, padding: '16px 18px', background: 'linear-gradient(145deg, #111B2E, #162036)', border: `1px solid ${T.cardBorder}`, borderRadius: 10, borderTop: `2px solid ${T.gold}` }}>
+            <p style={{ fontSize: 12, margin: '0 0 2px' }}>📋 RECETTE</p>
+            <p style={{ fontSize: 10, color: T.textDim, margin: '0 0 8px' }}>F-B25 Théorique</p>
+            <p style={{ fontFamily: MONO, fontSize: 24, fontWeight: 200, color: T.gold, margin: 0 }}>E/C: 0.500</p>
+          </div>
+          {/* Arrow */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 6px' }}>
+            <span style={{ fontFamily: MONO, fontSize: 10, color: T.warning }}>+4%</span>
+            <span style={{ color: T.textDim, fontSize: 16 }}>→</span>
+          </div>
+          {/* Card: Production */}
+          <div style={{ flex: 1, padding: '16px 18px', background: 'linear-gradient(145deg, #111B2E, #162036)', border: `1px solid ${T.cardBorder}`, borderRadius: 10, borderTop: `2px solid ${T.warning}` }}>
+            <p style={{ fontSize: 12, margin: '0 0 2px' }}>⚙️ PRODUCTION</p>
+            <p style={{ fontSize: 10, color: T.textDim, margin: '0 0 8px' }}>Doseur Réel</p>
+            <p style={{ fontFamily: MONO, fontSize: 24, fontWeight: 200, color: T.warning, margin: 0 }}>E/C: 0.520</p>
+            <span style={{ fontFamily: MONO, fontSize: 10, padding: '2px 6px', borderRadius: 3, background: 'rgba(245,158,11,0.12)', color: T.warning, border: `1px solid ${T.warning}40` }}>+4.0%</span>
+          </div>
+          {/* Arrow */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 6px' }}>
+            <span style={{ fontFamily: MONO, fontSize: 10, color: T.danger }}>+4%</span>
+            <span style={{ color: T.textDim, fontSize: 16 }}>→</span>
+          </div>
+          {/* Card: Laboratoire */}
+          <div style={{ flex: 1, padding: '16px 18px', background: 'linear-gradient(145deg, #111B2E, #162036)', border: `1px solid ${T.cardBorder}`, borderRadius: 10, borderTop: `2px solid ${T.danger}` }}>
+            <p style={{ fontSize: 12, margin: '0 0 2px' }}>🔬 LABORATOIRE</p>
+            <p style={{ fontSize: 10, color: T.textDim, margin: '0 0 8px' }}>Mesuré</p>
+            <p style={{ fontFamily: MONO, fontSize: 24, fontWeight: 200, color: T.danger, margin: 0 }}>E/C: 0.540</p>
+            <span style={{ fontFamily: MONO, fontSize: 10, padding: '2px 6px', borderRadius: 3, background: 'rgba(239,68,68,0.12)', color: T.danger, border: `1px solid ${T.danger}40` }}>+8.0%</span>
+          </div>
+        </div>
+
+        {/* Incident timeline */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
+          <div style={{ padding: '16px 18px', background: 'linear-gradient(145deg, #111B2E, #162036)', border: `1px solid ${T.cardBorder}`, borderRadius: 10, borderTop: `3px solid ${T.danger}` }}>
+            <p style={{ fontFamily: MONO, fontSize: 12, color: T.danger, fontWeight: 700, marginBottom: 8 }}>8 mars · Shift Nuit</p>
+            <p style={{ fontSize: 12, color: T.textSec, marginBottom: 4 }}>Batch BN-0098 — E/C mesuré 0.552 vs recette 0.500</p>
+            <p style={{ fontSize: 12, color: T.textDim, marginBottom: 4 }}>Opérateur: #03 · Aucune correction doseur signalée</p>
+            <p style={{ fontSize: 12, color: T.danger, margin: 0 }}>Résistance 28j résultat : 23.1 MPa (requis 25) — <strong>NON-CONFORME</strong></p>
+          </div>
+          <div style={{ padding: '16px 18px', background: 'linear-gradient(145deg, #111B2E, #162036)', border: `1px solid ${T.cardBorder}`, borderRadius: 10, borderTop: `3px solid ${T.warning}` }}>
+            <p style={{ fontFamily: MONO, fontSize: 12, color: T.warning, fontWeight: 700, marginBottom: 8 }}>5 mars · Shift Nuit</p>
+            <p style={{ fontSize: 12, color: T.textSec, marginBottom: 4 }}>Batch BN-0087 — E/C mesuré 0.535 vs recette 0.500</p>
+            <p style={{ fontSize: 12, color: T.textDim, marginBottom: 4 }}>Opérateur: #03 · Ajustement eau +7L non-documenté</p>
+            <p style={{ fontSize: 12, color: T.warning, margin: 0 }}>Résistance 28j résultat : 24.2 MPa — <strong>LIMITE</strong></p>
+          </div>
+        </div>
+
+        {/* Red alert box */}
+        <div style={{ borderLeft: `4px solid ${T.danger}`, background: 'rgba(239,68,68,0.05)', padding: '14px 18px', borderRadius: '0 8px 8px 0', marginBottom: 12 }}>
+          <p style={{ fontFamily: MONO, fontSize: 12, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
+            Pattern identifié : 3 écarts E/C &gt;5% sur 14 jours, tous concentrés sur shift nuit (22h-6h), opérateur #03 impliqué dans 100% des cas. L'écart progressif Recette→Production→Lab (+8%) dépasse largement la tolérance de 3%. Impact qualité : résistance 28j réduite de ~8% sur batches affectés. Coût estimé : 45,000 MAD/an en béton sous-performant livré aux clients.
+          </p>
+        </div>
+
+        {recoBox("Actions recommandées : (1) Convoquer opérateur #03 — entretien sur procédures dosage eau. (2) Installer capteur de débit eau automatique sur ligne de production — supprime le facteur humain. (3) Mettre en place double validation pour ajustements eau >2L pendant shifts nuit. (4) Audit croisé recette-production-lab sur les 30 derniers batches nuit. Investissement capteur : ~15,000 MAD. ROI : 3 mois.", T.danger)}
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}><IABadge /></div>
+      </Card>
+
+      {/* ══════════════════════════════════════════════════ */}
+      {/* AGENT 4 — OPTIMISATION FORMULES                   */}
+      {/* ══════════════════════════════════════════════════ */}
+      <Card style={{ borderTop: `2px solid ${T.gold}` }}>
+        {agentHeader('✦ Agent IA: Optimisation Formules', T.gold, <IABadge />)}
+
+        <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
+          <AgentKPI label="Coût Moyen / m³" value="36 MAD" color={T.gold} borderColor={T.gold} />
+          <AgentKPI label="Économie Potentielle" value="374,400 MAD" color={T.success} subtitle="par an" borderColor={T.success} />
+          <AgentKPI label="Formules Optimisables" value="3" color={T.warning} borderColor={T.warning} />
+        </div>
+
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead><tr>
+              {['FORMULE','CIMENT ACTUEL (kg/m³)','CIMENT OPTIMISÉ','ÉCART','ÉCONOMIE/AN','RISQUE'].map(h => <th key={h} style={tblHdr}>{h}</th>)}
+            </tr></thead>
+            <tbody>
+              {formulaRows.map((r, i) => (
+                <tr key={i} style={altRow(i)}>
+                  <td style={{ ...monoCell, color: T.gold }}>{r.formule}</td>
+                  <td style={monoCell}>{r.cimentActuel}</td>
+                  <td style={{ ...monoCell, color: T.success }}>{r.cimentOpti}</td>
+                  <td style={{ ...monoCell, color: parseFloat(r.ecart) > 5 ? T.danger : T.warning }}>{r.ecart}</td>
+                  <td style={{ ...monoCell, color: T.success, fontWeight: 700 }}>{r.econAn}</td>
+                  <td style={tblCell}>
+                    <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4,
+                      background: r.risque === 'Aucun' ? 'rgba(34,197,94,0.12)' : 'rgba(245,158,11,0.12)',
+                      color: r.risque === 'Aucun' ? T.success : T.warning,
+                      border: `1px solid ${r.risque === 'Aucun' ? T.success : T.warning}40`,
+                    }}>{r.risque}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {recoBox("Recommandation prioritaire : Réduire le dosage ciment de la formule F-B25 de 350 à 330 kg/m³. Les tests de résistance sur 90 jours montrent une marge de +24.8% au-dessus du seuil requis. Économie annuelle estimée : 374,400 MAD sans aucun risque sur la conformité NM.")}
+      </Card>
+
+      {/* ══════════════════════════════════════════════════ */}
+      {/* AGENT 5 — CONFORMITÉ RÉGLEMENTAIRE                */}
+      {/* ══════════════════════════════════════════════════ */}
+      <Card style={{ borderTop: `2px solid ${T.success}` }}>
+        {agentHeader('✦ Agent IA: Conformité Réglementaire', T.success, <IABadge />)}
+
+        <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
+          <AgentKPI label="Score Conformité" value="78" color={T.gold} borderColor={T.gold} />
+          <AgentKPI label="Certifications Actives" value="3" color={T.success} borderColor={T.success} />
+          <AgentKPI label="Alertes Réglementaires" value="1" color={T.warning} subtitle="renouvellement" borderColor={T.warning} />
+        </div>
+
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead><tr>
+              {['NORME','DESCRIPTION','STATUT','EXPIRATION'].map(h => <th key={h} style={tblHdr}>{h}</th>)}
+            </tr></thead>
+            <tbody>
+              {certRows.map((r, i) => {
+                const isWarning = r.statut === 'À renouveler';
+                return (
+                  <tr key={i} style={{ ...altRow(i), borderLeft: isWarning ? '3px solid #F59E0B' : 'none' }}>
+                    <td style={{ ...monoCell, color: T.gold }}>{r.norme}</td>
+                    <td style={{ ...tblCell, color: T.textSec }}>{r.desc}</td>
+                    <td style={tblCell}>
+                      <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4,
+                        background: isWarning ? 'rgba(245,158,11,0.12)' : 'rgba(34,197,94,0.12)',
+                        color: isWarning ? T.warning : T.success,
+                        border: `1px solid ${isWarning ? T.warning : T.success}40`,
+                      }}>{r.statut}</span>
+                    </td>
+                    <td style={{ ...monoCell, color: isWarning ? T.warning : T.textDim }}>{r.expire}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <div style={{ borderLeft: `4px solid ${T.warning}`, background: 'rgba(245,158,11,0.05)', padding: '14px 18px', borderRadius: '0 8px 8px 0', marginTop: 16 }}>
+          <p style={{ fontFamily: MONO, fontSize: 12, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
+            ⚠ Alerte prioritaire : La certification NM 10.1.271 (Essais affaissement) expire le 1er avril 2025. Planifier le renouvellement immédiatement pour éviter un blocage réglementaire.
+          </p>
+        </div>
+
+        <div style={{ marginTop: 12 }}>
+          <button style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px', background: 'transparent', border: `1px solid ${T.gold}`, borderRadius: 9, color: T.gold, fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+            <FileText size={13} /> Planifier Test
+          </button>
+        </div>
+      </Card>
+
+      {/* ══════════════════════════════════════════════════ */}
+      {/* PERFORMANCE OPÉRATEURS                            */}
+      {/* ══════════════════════════════════════════════════ */}
+      <Card style={{ borderTop: `2px solid ${T.gold}` }}>
+        <SectionHeader icon={User} label="✦ Performance Opérateurs" right={<IABadge />} />
+
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead><tr>
+              {['OPÉRATEUR','TESTS RÉALISÉS','CONFORMITÉ','SCORE IA'].map(h => <th key={h} style={tblHdr}>{h}</th>)}
+            </tr></thead>
+            <tbody>
+              {operators.map((op, i) => {
+                const confColor = op.conf >= 90 ? T.success : op.conf >= 85 ? T.warning : T.danger;
+                const scoreColor = op.scoreIA >= 85 ? T.success : op.scoreIA >= 70 ? T.warning : T.danger;
+                return (
+                  <tr key={i} style={{ ...altRow(i), borderLeft: op.conf < 85 ? `3px solid ${T.danger}` : 'none' }}>
+                    <td style={{ ...tblCell, color: T.textPri, fontWeight: 600 }}>{op.name}</td>
+                    <td style={monoCell}>{op.tests}</td>
+                    <td style={tblCell}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{ flex: 1, height: 6, borderRadius: 99, background: 'rgba(255,255,255,0.06)', overflow: 'hidden', maxWidth: 120 }}>
+                          <div style={{ height: '100%', width: `${op.conf}%`, background: confColor, borderRadius: 99, transition: 'width 800ms ease-out' }} />
+                        </div>
+                        <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 200, color: confColor }}>{op.conf}%</span>
+                      </div>
+                    </td>
+                    <td style={tblCell}>
+                      <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 200, color: scoreColor, padding: '2px 8px', border: `1px solid ${scoreColor}40`, borderRadius: 4 }}>{op.scoreIA}</span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
     </div>
   );
 }
@@ -1650,7 +2079,7 @@ export default function WorldClassLaboratory() {
         {activeTab === 'essais' && <EssaisDuJourTab labKpis={labKpis} />}
         {activeTab === 'historique' && <HistoriqueNormesTab />}
         {activeTab === 'analytique' && <AnalytiqueTab />}
-        {activeTab === 'ia' && <EmptyTabPlaceholder title="Intelligence IA" icon={Brain} />}
+        {activeTab === 'ia' && <IntelligenceIATab />}
       </div>
     </div>
   );
