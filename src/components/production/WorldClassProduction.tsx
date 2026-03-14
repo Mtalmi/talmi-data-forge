@@ -723,7 +723,7 @@ export default function WorldClassProduction() {
             ].map((item, i) => (
               <div key={i} className="flex flex-col items-center flex-shrink-0 px-2 py-1 rounded-md" style={{ transition: 'background 200ms' }}>
                 <span style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>{item.label}</span>
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, fontWeight: 400, color: '#fff', marginTop: 2 }}>{item.value}</span>
+                <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 14, fontWeight: 200, color: '#fff', marginTop: 2 }}>{item.value}</span>
                 <span style={{ fontSize: 9, fontWeight: 600, color: item.status === 'Normal' || item.status === 'Calme' || item.status === 'Optimal' ? '#D4A843' : '#F59E0B', marginTop: 1 }}>{item.status}</span>
               </div>
             ))}
