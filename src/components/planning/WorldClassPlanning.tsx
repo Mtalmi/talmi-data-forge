@@ -1096,7 +1096,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                           <div key={m.label} style={{
                             display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
                             padding: '10px 0',
-                            borderBottom: i < 2 ? '1px solid rgba(212,168,67,0.06)' : 'none',
+                            borderBottom: i < 2 ? '1px solid rgba(212,168,67,0.08)' : 'none',
                           }}>
                             <span style={{ color: '#64748B', fontSize: 11, fontStyle: 'italic' }}>{m.label}</span>
                             <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
