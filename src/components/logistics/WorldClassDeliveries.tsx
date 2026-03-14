@@ -1462,9 +1462,9 @@ export default function WorldClassDeliveries() {
                 </div>
                 {/* AI insight */}
                 <div style={{ borderLeft: '4px solid #D4A843', background: 'rgba(212,168,67,0.03)', padding: '14px 18px', borderRadius: '0 8px 8px 0', marginTop: 16 }}>
-                  <p style={{ fontFamily: MONO, fontSize: 12, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
-                    T-12 affiche le meilleur ratio profit/km (<strong style={{ color: T.gold }}>154 DH/km</strong>) grâce à zéro temps mort. T-04 génère le plus de revenu brut mais perd 15 min en attente chantier. T-09 en maintenance coûte <strong style={{ color: T.danger }}>1,200 DH/jour</strong> — planifier retour en service demain matin. Recommandation : affecter les livraisons longue distance à T-12 pour maximiser la rentabilité.
-                  </p>
+                   <p style={{ fontFamily: MONO, fontSize: 12, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
+                     T-12 affiche le meilleur ratio profit/km (<strong style={{ color: T.gold }}>154 DH/km</strong>) grâce à zéro temps mort. T-04 génère le plus de revenu brut mais perd 15 min en attente chantier. T-09 en maintenance coûte <strong style={{ color: T.danger }}>1,200 DH/jour</strong> — planifier retour en service demain matin. Recommandation : affecter les livraisons longue distance à T-12 pour maximiser la rentabilité. Taux retour à vide flotte : <strong style={{ color: T.warning }}>38%</strong> (objectif &lt;25%). En combinant livraison Résidences Atlas + chargement retour matériaux Saham Im, élimination de <strong style={{ color: T.success }}>23 km à vide</strong>. Économie estimée : <strong style={{ color: T.gold }}>8,400 MAD/mois</strong>.
+                   </p>
                 </div>
               </Card>
             </section>
