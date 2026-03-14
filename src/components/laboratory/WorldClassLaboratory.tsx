@@ -1510,7 +1510,7 @@ function AnalytiqueTab() {
               ].map((b, i) => (
                 <div key={i} style={{ padding: '8px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: `1px solid ${T.cardBorder}` }}>
                   <p style={{ fontSize: 10, color: T.textDim, margin: '0 0 4px' }}>{b.label}</p>
-                  <p style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: b.color, margin: 0 }}>{b.value}</p>
+                  <p style={{ fontFamily: MONO, fontSize: 14, fontWeight: 200, color: b.color, margin: 0 }}>{b.value}</p>
                 </div>
               ))}
             </div>
