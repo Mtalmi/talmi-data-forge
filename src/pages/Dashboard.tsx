@@ -93,6 +93,7 @@ export default function Dashboard() {
   const [midPanelView, setMidPanelView] = useState<'data' | 'camera'>('data');
   const [expandedKpi, setExpandedKpi] = useState<string | null>(null);
   const [cameraTime, setCameraTime] = useState('');
+  const [demoMarket, setDemoMarket] = useState<'ma' | 'eu' | 'us'>('ma');
 
   // Camera ticking timestamp
   useEffect(() => {
