@@ -265,10 +265,15 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
           </div>
         ) : (() => {
           const DEMO_TRUCKS = [
-            { id_camion: 'TOU-01', capacite_m3: 8, chauffeur: 'Hassan Amrani', statut: 'En Livraison', type: 'Toupie', rotations: '4/5', km: '127 km', fuel: '⛽ 45L', statusLabel: 'Mission', statusColor: '#34d399', statusBg: 'rgba(52,211,153,0.12)' },
-            { id_camion: 'TOU-02', capacite_m3: 8, chauffeur: 'Youssef Bakkali', statut: 'En Livraison', type: 'Toupie', rotations: '3/5', km: '89 km', fuel: '⛽ 32L', statusLabel: 'Mission', statusColor: '#34d399', statusBg: 'rgba(52,211,153,0.12)' },
-            { id_camion: 'TOU-03', capacite_m3: 8, chauffeur: 'Omar Tahiri', statut: 'Disponible', type: 'Toupie', rotations: '2/5', km: '54 km', fuel: '⛽ 19L', statusLabel: 'Dispo', statusColor: '#60A5FA', statusBg: 'rgba(96,165,250,0.12)' },
+            { id_camion: 'TOU-01', capacite_m3: 8, chauffeur: 'Hassan Amrani', statut: 'En Livraison', type: 'Toupie', rotations: '4/5', km: '127 km', fuel: '⛽ 45L', statusLabel: 'Mission', statusColor: '#34d399', statusBg: 'rgba(52,211,153,0.12)', revenu: 'Revenu: 72,000 DH · 3 livraisons' },
+            { id_camion: 'TOU-02', capacite_m3: 8, chauffeur: 'Youssef Bakkali', statut: 'En Livraison', type: 'Toupie', rotations: '3/5', km: '89 km', fuel: '⛽ 32L', statusLabel: 'Mission', statusColor: '#34d399', statusBg: 'rgba(52,211,153,0.12)', revenu: 'Revenu: 54,000 DH · 2 livraisons' },
+            { id_camion: 'TOU-03', capacite_m3: 8, chauffeur: 'Omar Tahiri', statut: 'Disponible', type: 'Toupie', rotations: '2/5', km: '54 km', fuel: '⛽ 19L', statusLabel: 'Dispo', statusColor: '#60A5FA', statusBg: 'rgba(96,165,250,0.12)', revenu: 'Revenu: 27,250 DH · 1 livraison' },
           ];
+          const truckRevenuMap: Record<string, string> = {
+            'TOU-01': 'Revenu: 72,000 DH · 3 livraisons',
+            'TOU-02': 'Revenu: 54,000 DH · 2 livraisons',
+            'TOU-03': 'Revenu: 27,250 DH · 1 livraison',
+          };
 
           const displayVehicles = vehicles.length > 0 ? vehicles : null;
 
