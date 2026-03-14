@@ -51,6 +51,7 @@ function estimateETA(depart: string | null): string {
 
 export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+  const [impactModalOpen, setImpactModalOpen] = useState(false);
   const rows = useMemo(() => {
     if (bons.length === 0) {
       return DEMO_ROWS.map(d => ({
