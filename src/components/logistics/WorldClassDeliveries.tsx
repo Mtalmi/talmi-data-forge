@@ -1486,7 +1486,7 @@ export default function WorldClassDeliveries() {
                         </tr>
                       ))}
                       {/* Totals row */}
-                      <tr style={{ background: 'rgba(212,168,67,0.05)' }}>
+                      <tr style={{ background: 'rgba(212,168,67,0.05)', borderTop: `2px solid ${T.gold}` }}>
                         <td style={{ ...monoCell, color: T.gold, fontWeight: 700 }}>{PROFIT_TOTALS.toupie}</td>
                         <td style={tblCell}>—</td>
                         <td style={{ ...monoCell, fontWeight: 700 }}>{PROFIT_TOTALS.livraisons}</td>
