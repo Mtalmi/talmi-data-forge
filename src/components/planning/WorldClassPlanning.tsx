@@ -1220,6 +1220,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
         </footer>
       </div>
       <RouteOptimizationPanel open={routePanelOpen} onClose={() => setRoutePanelOpen(false)} />
+      <ScheduleDetailDrawer info={selectedSlot} onClose={() => setSelectedSlot(null)} />
     </div>
   );
 }
