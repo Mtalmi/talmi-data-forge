@@ -854,7 +854,8 @@ export default function WorldClassProduction() {
                     strokeLinejoin="round"
                     points="0,6 28,5 57,10 85,8 114,16 142,22 171,30 200,36"
                   />
-                  <circle cx={200} cy={36} r={4} fill="#F59E0B" style={{ animation: 'marge-pulse 2s infinite' }} />
+                  <circle cx={200} cy={36} r={4} fill="#F59E0B" />
+                  <circle cx={200} cy={36} r={4} fill="#F59E0B" style={{ animation: 'margePulseDot 2s infinite', transformOrigin: '200px 36px' }} />
                 </svg>
                 <style>{`@keyframes marge-pulse { 0%, 100% { r: 4; opacity: 1; } 50% { r: 5.6; opacity: 0.5; } }`}</style>
                 <p style={{ color: '#F59E0B', fontSize: 14, marginTop: 6, fontWeight: 600 }}>
