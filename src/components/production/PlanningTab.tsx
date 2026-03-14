@@ -399,7 +399,45 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
 
             <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }} className="scrollbar-thin">
               {selectedDate ? (
-                selectedDayChips.length > 0 ? (
+                isSelectedToday ? (
+                  <>
+                    {todayDetailItems.map(item => (
+                      <div
+                        key={item.id}
+                        style={{
+                          padding: '12px 16px', borderLeft: '3px solid #D4A843',
+                          margin: '0 12px 6px', borderRadius: '0 8px 8px 0',
+                          transition: 'background 150ms',
+                        }}
+                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.02)')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 400, color: '#fff' }}>
+                            {item.formule}
+                          </span>
+                          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>
+                            {item.heure}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 400, color: T.gold }}>
+                            {item.volume} m³
+                          </span>
+                        </div>
+                        <span style={{ fontSize: 10, color: T.textSec }}>{item.client}</span>
+                      </div>
+                    ))}
+                    <div style={{ padding: '12px 16px', marginTop: 8, borderTop: `1px solid ${T.cardBorder}` }}>
+                      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: T.gold }}>
+                        3 livraisons · 105 m³
+                      </p>
+                      <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 6 }}>
+                        ⚡ Capacité restante: 95 m³
+                      </p>
+                    </div>
+                  </>
+                ) : selectedDayChips.length > 0 ? (
                   selectedDayChips.map(chip => {
                     const cs = chipStyle(chip.status);
                     return (
