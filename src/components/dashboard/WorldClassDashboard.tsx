@@ -1178,7 +1178,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '12px', marginBottom: '12px' }}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium">Satisfaction Client</span>
-                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '28px', color: '#D4A843' }}>4.6<span style={{ fontSize: '16px', color: 'rgba(255,255,255,0.4)' }}>/5</span></span> <span style={{ color: '#D4A843' }}>★★★★</span><span style={{ opacity: 0.2, color: '#D4A843' }}>★</span></span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace' }}><span style={{ fontWeight: 200, fontSize: '28px', color: '#D4A843' }}>4.6</span><span style={{ fontSize: '16px', color: 'rgba(255,255,255,0.4)' }}>/5</span> <span style={{ color: '#D4A843' }}>★★★★</span><span style={{ opacity: 0.2, color: '#D4A843' }}>★</span></span>
                 </div>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="inline-flex items-center gap-1 text-xs rounded px-2 py-0.5" style={{ background: 'rgba(34,197,94,0.06)', border: '1px solid #22C55E', color: '#22C55E' }}>12 livraisons à l'heure</span>
