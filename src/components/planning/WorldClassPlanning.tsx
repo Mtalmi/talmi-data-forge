@@ -124,6 +124,7 @@ function Card({ children, style = {}, className = '' }: { children: React.ReactN
       style={{
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
         border: `1px solid ${hov ? 'rgba(245, 158, 11, 0.3)' : 'rgba(245, 158, 11, 0.15)'}`,
+        borderTop: '2px solid #D4A843',
         borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden',
         transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
         ...style,
