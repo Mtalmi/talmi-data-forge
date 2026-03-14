@@ -189,7 +189,7 @@ function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; del
   const [visible, setVisible] = useState(false);
   const [hov, setHov] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
-  const borderColor = v.score >= 80 ? T.success : v.score >= 60 ? T.warning : T.danger;
+  const borderColor = v.score >= 80 ? T.gold : v.score >= 60 ? T.warning : T.danger;
   const isLow = v.score < 60;
 
   return (
