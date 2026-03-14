@@ -2079,7 +2079,7 @@ export default function WorldClassLaboratory() {
         {activeTab === 'essais' && <EssaisDuJourTab labKpis={labKpis} />}
         {activeTab === 'historique' && <HistoriqueNormesTab />}
         {activeTab === 'analytique' && <AnalytiqueTab />}
-        {activeTab === 'ia' && <EmptyTabPlaceholder title="Intelligence IA" icon={Brain} />}
+        {activeTab === 'ia' && <IntelligenceIATab />}
       </div>
     </div>
   );
