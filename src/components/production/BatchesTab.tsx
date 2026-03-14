@@ -88,6 +88,8 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
       formule: b.formule_id || '—',
       volume: b.volume_m3 || 0,
       heure: (b.heure_prevue || b.production_batch_time || '—').slice(0, 5),
+      cout: '—',
+      marge: 0,
       status: (b.variance_ciment_pct || 0) > 5 ? 'ecart' as const :
         b.workflow_status === 'planification' ? 'planifie' as const :
         b.workflow_status === 'production' ? 'production' as const :
