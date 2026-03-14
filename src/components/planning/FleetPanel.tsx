@@ -353,7 +353,7 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
               <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.30)', fontFamily: 'JetBrains Mono, monospace', marginBottom: 2 }}>
                 {truck.rotations} rotations · {truck.km} · {truck.fuel}
               </p>
-              <p style={{ fontSize: 12, color: '#D4A843', fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', marginBottom: 6 }}>
+              <p style={{ fontSize: 12, color: '#D4A843', fontFamily: 'ui-monospace, monospace', marginBottom: 6 }}>
                 {truck.revenu}
               </p>
               <div className="flex gap-1 mt-1.5">
