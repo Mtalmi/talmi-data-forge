@@ -862,9 +862,9 @@ export default function Dashboard() {
                     <button
                       onClick={() => navigate('/ventes')}
                       className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
-                      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.10)', color: 'rgba(255,255,255,0.8)' }}
-                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.20)'; e.currentTarget.style.color = '#fff'; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.10)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
+                      style={{ background: 'transparent', border: '1px solid #D4A843', color: '#D4A843' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.1)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                     >
                       <PlusCircle size={16} className="opacity-60" />
                       NOUVEAU DEVIS
@@ -872,9 +872,9 @@ export default function Dashboard() {
                     <button
                       onClick={() => navigate('/recouvrement')}
                       className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
-                      style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.20)', color: 'rgba(255,255,255,0.8)' }}
-                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.15)'; e.currentTarget.style.color = '#fff'; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
+                      style={{ background: 'transparent', border: '1px solid #D4A843', color: '#D4A843' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.1)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                     >
                       <PhoneCall size={16} className="opacity-60" />
                       RELANCER CLIENTS
@@ -1625,9 +1625,9 @@ export default function Dashboard() {
                 Lancer
               </button>
               <button
-                style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.5)', fontWeight: 400, borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', transition: 'all 0.2s ease', fontSize: '12px' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; }}
+                style={{ background: 'transparent', border: '1px solid #D4A843', color: '#D4A843', fontWeight: 400, borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', transition: 'all 0.2s ease', fontSize: '12px' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.1)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
               >
                 Passer
               </button>

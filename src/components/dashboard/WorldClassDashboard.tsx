@@ -1257,7 +1257,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             </div>
             <div className="flex items-center gap-2 flex-shrink-0 ml-4">
               <button className="text-xs px-3 py-1.5 rounded-lg hover:brightness-110 transition-colors" style={{ boxShadow: '0 0 12px rgba(245,158,11,0.35)', background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.4)', color: 'rgb(251,191,36)', fontWeight: '500' }}>Alerter Client</button>
-              <span style={{ border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.4)', borderRadius: '4px', padding: '4px 12px', fontSize: '12px', cursor: 'pointer' }} className="hover:text-white/60 transition-colors">Ignorer</span>
+              <span style={{ border: '1px solid #D4A843', color: '#D4A843', borderRadius: '4px', padding: '4px 12px', fontSize: '12px', cursor: 'pointer', transition: 'all 0.2s ease' }} className="hover:bg-[#D4A843]/10 transition-colors" onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(212,168,67,0.1)'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>Ignorer</span>
             </div>
           </div>
         )}
