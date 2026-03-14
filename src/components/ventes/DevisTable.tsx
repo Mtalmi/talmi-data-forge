@@ -455,7 +455,11 @@ export function DevisTable({
                     aria-label={`Sélectionner ${devis.devis_id}`}
                   />
                 </TableCell>
-                <TableCell style={{ padding: '10px 8px', color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontWeight: 500, fontSize: 13 }}>{devis.devis_id}</TableCell>
+                <TableCell
+                  style={{ padding: '10px 8px', color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontWeight: 500, fontSize: 13, cursor: 'pointer' }}
+                  onMouseEnter={e => { (e.currentTarget.firstChild as HTMLElement)?.style && ((e.currentTarget as HTMLElement).style.textDecoration = 'underline'); }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}
+                >{devis.devis_id}</TableCell>
                 <TableCell style={{ padding: '10px 8px', color: 'rgba(255,255,255,0.9)', fontSize: 13 }}>
                   {devis.client ? (
                     <ClientHoverPreview clientId={devis.client_id || ''} clientName={devis.client.nom_client} />
