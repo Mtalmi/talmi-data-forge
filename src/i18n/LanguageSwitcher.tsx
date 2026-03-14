@@ -1,77 +1,100 @@
-import { forwardRef } from 'react';
-import { useI18n, Language } from '@/i18n/I18nContext';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { useState, useRef, useEffect } from 'react';
+import { useI18n } from '@/i18n/I18nContext';
 
-const LANGUAGES: { code: Language; flag: string; nativeLabel: string; shortLabel: string }[] = [
-  { code: 'ar', flag: '🇲🇦', nativeLabel: 'العربية', shortLabel: 'AR' },
-  { code: 'fr', flag: '🇫🇷', nativeLabel: 'Français', shortLabel: 'FR' },
-  { code: 'en', flag: '🇬🇧', nativeLabel: 'English', shortLabel: 'EN' },
-];
+const MONO = 'ui-monospace, SFMono-Regular, monospace';
 
-interface LanguageSwitcherProps {
-  variant?: 'compact' | 'full';
-  className?: string;
-}
-
-const LangTriggerButton = forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement> & { flag: string; shortLabel: string; nativeLabel?: string; showFull?: boolean }>(
-  ({ flag, shortLabel, nativeLabel, showFull, ...props }, ref) => (
-    <button
-      ref={ref}
-      {...props}
-      className="flex items-center gap-1.5 h-8 px-2.5 text-xs font-medium transition-all duration-150 rounded-md"
-      style={{
-        background: 'rgba(245, 158, 11, 0.08)',
-        border: '1px solid rgba(245, 158, 11, 0.15)',
-        borderRadius: 6,
-        color: '#F59E0B',
-      }}
-      aria-label="Switch language"
-    >
-      <span className="text-base leading-none">{flag}</span>
-      <span className="text-xs font-bold tracking-wide">{shortLabel}</span>
-      {showFull && nativeLabel && (
-        <span className="ml-1 text-xs font-medium hidden sm:inline">{nativeLabel}</span>
-      )}
-    </button>
-  )
-);
-LangTriggerButton.displayName = 'LangTriggerButton';
-
-export function LanguageSwitcher({ variant = 'compact', className }: LanguageSwitcherProps) {
+export function LanguageSwitcher({ variant = 'compact' }: { variant?: 'compact' | 'full'; className?: string }) {
   const { lang, setLang } = useI18n();
-  const current = LANGUAGES.find((l) => l.code === lang) ?? LANGUAGES[0];
+  const [open, setOpen] = useState(false);
+  const [arHover, setArHover] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const items = [
+    { code: 'fr' as const, flag: '🇫🇷', label: 'Français', active: true },
+    { code: 'ar' as const, flag: '🇲🇦', label: 'العربية', active: false, badge: 'Bientôt', tooltip: 'Support RTL arabe — disponible Q2 2026' },
+  ];
+
+  const current = items.find(i => i.code === lang) ?? items[0];
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <LangTriggerButton
-          flag={current.flag}
-          shortLabel={current.shortLabel}
-          nativeLabel={current.nativeLabel}
-          showFull={variant === 'full'}
-        />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[180px]">
-        {LANGUAGES.map((language) => (
-          <DropdownMenuItem
-            key={language.code}
-            onClick={() => setLang(language.code)}
-            className={`gap-3 py-2.5 ${lang === language.code ? 'bg-primary/10 text-primary font-semibold' : ''}`}
-          >
-            <span className="text-lg">{language.flag}</span>
-            <span className="flex-1">{language.nativeLabel}</span>
-            <span className="text-[10px] font-bold tracking-widest text-muted-foreground">{language.shortLabel}</span>
-            {lang === language.code && (
-              <span className="h-2 w-2 rounded-full bg-primary" />
-            )}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div ref={ref} style={{ position: 'relative' }}>
+      <button
+        onClick={() => setOpen(!open)}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 6, height: 32, padding: '0 10px',
+          background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.15)',
+          borderRadius: 6, color: '#F59E0B', cursor: 'pointer', fontFamily: MONO, fontSize: 12, fontWeight: 600,
+        }}
+        aria-label="Switch language"
+      >
+        <span style={{ fontSize: 14, lineHeight: 1 }}>{current.flag}</span>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.5px' }}>{current.code.toUpperCase()}</span>
+      </button>
+
+      {open && (
+        <div style={{
+          position: 'absolute', top: '100%', right: 0, marginTop: 6, zIndex: 200,
+          background: '#1A2332', border: '1px solid rgba(212, 168, 67, 0.15)',
+          borderRadius: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.3)', padding: 4,
+          minWidth: 200,
+        }}>
+          {items.map(item => (
+            <div
+              key={item.code}
+              style={{ position: 'relative' }}
+              onMouseEnter={() => item.code === 'ar' && setArHover(true)}
+              onMouseLeave={() => item.code === 'ar' && setArHover(false)}
+            >
+              <button
+                onClick={() => { if (item.active) { setLang(item.code); setOpen(false); } }}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 10, width: '100%',
+                  padding: '8px 16px', fontFamily: MONO, fontSize: 12, borderRadius: 6,
+                  background: 'transparent', border: 'none', cursor: item.active ? 'pointer' : 'default',
+                  color: item.active ? '#FFFFFF' : 'rgba(255,255,255,0.5)',
+                  transition: 'background 150ms',
+                }}
+                onMouseEnter={e => { (e.currentTarget).style.background = 'rgba(212, 168, 67, 0.08)'; }}
+                onMouseLeave={e => { (e.currentTarget).style.background = 'transparent'; }}
+              >
+                <span style={{ fontSize: 16 }}>{item.flag}</span>
+                <span style={{ flex: 1, textAlign: 'left' }}>{item.label}</span>
+                {item.active && lang === item.code && (
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#D4A843', flexShrink: 0 }} />
+                )}
+                {item.badge && (
+                  <span style={{
+                    background: 'rgba(212, 168, 67, 0.15)', color: '#D4A843',
+                    fontSize: 9, fontFamily: MONO, borderRadius: 4, padding: '2px 6px', fontWeight: 600,
+                  }}>
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+
+              {/* Tooltip for Arabic */}
+              {item.tooltip && arHover && (
+                <div style={{
+                  position: 'absolute', bottom: '100%', right: 0, marginBottom: 6,
+                  background: '#1A2332', color: '#FFFFFF', fontFamily: MONO, fontSize: 11,
+                  padding: '6px 10px', borderRadius: 6, border: '1px solid rgba(212, 168, 67, 0.15)',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.3)', whiteSpace: 'nowrap', zIndex: 210,
+                }}>
+                  {item.tooltip}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
