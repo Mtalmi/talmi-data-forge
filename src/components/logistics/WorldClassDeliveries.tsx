@@ -1491,7 +1491,7 @@ export default function WorldClassDeliveries() {
                         <td style={tblCell}>—</td>
                         <td style={{ ...monoCell, fontWeight: 700 }}>{PROFIT_TOTALS.livraisons}</td>
                         <td style={{ ...monoCell, fontWeight: 700 }}>{PROFIT_TOTALS.km} km</td>
-                        <td style={{ ...monoCell, fontWeight: 700 }}>{PROFIT_TOTALS.revenu.toLocaleString('fr-MA')} DH</td>
+                        <td style={{ ...monoCell, fontWeight: 700, color: T.gold }}>{PROFIT_TOTALS.revenu.toLocaleString('fr-MA')} DH</td>
                         <td style={{ ...monoCell, color: T.danger, fontWeight: 700 }}>{PROFIT_TOTALS.carburant.toLocaleString('fr-MA')} DH</td>
                         <td style={{ ...monoCell, color: T.danger, fontWeight: 700 }}>{PROFIT_TOTALS.maintenance.toLocaleString('fr-MA')} DH</td>
                         <td style={monoCell}>—</td>
