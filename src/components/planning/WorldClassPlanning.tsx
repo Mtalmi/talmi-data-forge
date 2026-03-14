@@ -554,15 +554,16 @@ function ZoneHeader({ icon, label, right }: { icon: string; label: string; right
 // COLLAPSIBLE CHRONOLOGIQUE TABLE
 // ─────────────────────────────────────────────────────
 function CollapsibleChronologique() {
-  const [chronoOpen, setChronoOpen] = useState(true);
+  const [chronoOpen, setChronoOpen] = useState(false);
   return (
-    <div style={{ borderBottom: chronoOpen ? 'none' : '1px solid rgba(212, 168, 67, 0.2)' }}>
+    <div style={{ overflow: 'hidden' }}>
       <button
         onClick={() => setChronoOpen(!chronoOpen)}
         style={{
-          width: '100%', display: 'flex', alignItems: 'center', gap: 10,
-          padding: '12px 0', background: 'transparent', border: 'none',
-          cursor: 'pointer', textAlign: 'left',
+          width: '100%', height: 48, display: 'flex', alignItems: 'center', gap: 10,
+          padding: '0 16px', background: 'rgba(15,23,41,0.6)', border: '1px solid rgba(255,255,255,0.06)', borderTop: '2px solid #D4A843',
+          borderRadius: chronoOpen ? '12px 12px 0 0' : 12,
+          cursor: 'pointer', textAlign: 'left', flexShrink: 0,
         }}
       >
         <Clock size={14} color={T.gold} />
