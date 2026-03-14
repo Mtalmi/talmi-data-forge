@@ -466,10 +466,10 @@ function CarteGPSTab() {
   ];
   
   const fleetSidebar = [
-    { truck: 'T-04', driver: 'Youssef Benali', status: 'En route', location: 'A3 Casablanca → Maarif', eta: '14 min', speed: '45 km/h', color: T.gold },
-    { truck: 'T-07', driver: 'Karim Idrissi', status: 'Livré', location: 'Rabat Center', eta: '—', speed: '0 km/h', color: T.success },
-    { truck: 'T-12', driver: 'Mehdi Tazi', status: 'Planifié', location: 'Centrale BPE', eta: 'Départ 13:45', speed: '0 km/h', color: T.textDim },
-    { truck: 'T-09', driver: '—', status: 'Maintenance', location: 'Garage', eta: '—', speed: '—', color: T.danger },
+    { truck: 'T-04', driver: 'Youssef Benali', status: 'En route', location: 'A3 Casablanca → Maarif', eta: '10:44', speed: '45 km/h', color: T.gold, distLeft: '12 km', tripPct: 72, etaColor: T.danger },
+    { truck: 'T-07', driver: 'Karim Idrissi', status: 'Livré', location: 'Rabat Center', eta: '—', speed: '0 km/h', color: T.success, distLeft: '—', tripPct: 100, etaColor: T.success },
+    { truck: 'T-12', driver: 'Mehdi Tazi', status: 'Planifié', location: 'Centrale BPE', eta: 'Départ 13:45', speed: '0 km/h', color: T.textDim, distLeft: '45 km', tripPct: 0, etaColor: T.textDim },
+    { truck: 'T-09', driver: '—', status: 'Maintenance', location: 'Garage', eta: '—', speed: '—', color: T.danger, distLeft: '—', tripPct: 0, etaColor: T.danger },
   ];
   
   return (
