@@ -330,9 +330,12 @@ export function FacturesTable({
                 <TableRow
                   key={facture.id}
                   className={cn(
-                    "hover:bg-white/[0.03] transition-colors duration-150 cursor-pointer",
+                    "cursor-pointer",
                     isSelected && "bg-primary/5"
                   )}
+                  style={{ transition: 'background 200ms' }}
+                  onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = 'rgba(212,168,67,0.03)'; }}
+                  onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = ''; }}
                   onClick={() => handleOpenDetail(facture)}
                 >
                   {onSelectionChange && (
