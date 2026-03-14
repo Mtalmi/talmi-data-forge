@@ -773,6 +773,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700;800&display=swap');
         @keyframes tbos-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:0.85} }
+        @keyframes liveDotPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.3);opacity:0.5} }
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
       `}</style>
 
@@ -1038,12 +1039,12 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                     {/* Header row */}
                     <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 24 }}>
                       <div>
-                        <p style={{ color: '#D4A843', fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 2 }}>CAPACITÉ</p>
-                        <p style={{ color: '#9CA3AF', fontSize: 11, fontStyle: 'italic', letterSpacing: '0.3px' }}>Production hebdomadaire · Semaine 11</p>
+                        <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontSize: 13, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 2 }}>CAPACITÉ</p>
+                        <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#9CA3AF', fontSize: 11, letterSpacing: '0.3px' }}>Production hebdomadaire · Semaine 11</p>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E', animation: 'tbos-pulse 2.5s infinite' }} />
-                        <span style={{ fontSize: 9, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#22C55E', letterSpacing: '0.5px' }}>LIVE</span>
+                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E', animation: 'liveDotPulse 2s infinite' }} />
+                        <span style={{ fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#22C55E', letterSpacing: '0.5px' }}>LIVE</span>
                       </div>
                     </div>
 
@@ -1078,7 +1079,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                               72%
                             </text>
                             <text x={105} y={128} textAnchor="middle"
-                              style={{ fontSize: 9, fill: '#9CA3AF', letterSpacing: '2px', textTransform: 'uppercase' }}>
+                              style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 10, fill: '#9CA3AF', letterSpacing: '2px', textTransform: 'uppercase' }}>
                               UTILISÉE
                             </text>
                           </svg>
@@ -1089,18 +1090,18 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0 }}>
                         {/* Three metrics — editorial style */}
                         {[
-                          { label: 'Capacité Max', value: '1 740', unit: 'm³', color: 'rgba(255,255,255,0.85)' },
+                          { label: 'Capacité Max', value: '1 740', unit: 'm³', color: '#FFFFFF' },
                           { label: 'Planifié', value: '1 250', unit: 'm³', color: '#D4A843' },
                           { label: 'Disponible', value: '490', unit: 'm³', color: '#22C55E' },
                         ].map((m, i) => (
                           <div key={m.label} style={{
                             display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
                             padding: '10px 0',
-                            borderBottom: i < 2 ? '1px solid rgba(212,168,67,0.06)' : 'none',
+                            borderBottom: i < 2 ? '1px solid rgba(212,168,67,0.08)' : 'none',
                           }}>
-                            <span style={{ color: '#64748B', fontSize: 11, fontStyle: 'italic' }}>{m.label}</span>
+                            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#9CA3AF', fontSize: 11 }}>{m.label}</span>
                             <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-                              <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 200, fontSize: 22, color: m.color, letterSpacing: '-0.5px' }}>{m.value}</span>
+                              <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 200, fontSize: 24, color: m.color, letterSpacing: '-0.5px' }}>{m.value}</span>
                               <span style={{ fontSize: 10, color: '#4A5568' }}>{m.unit}</span>
                             </div>
                           </div>
@@ -1108,9 +1109,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
 
                         {/* Weather impact — editorial callout */}
                         <div style={{ borderTop: '1px solid rgba(212,168,67,0.12)', marginTop: 14, paddingTop: 14 }}>
-                          <p style={{ color: '#64748B', fontSize: 9, fontWeight: 600, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 8 }}>MÉTÉO IMPACT</p>
+                          <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontSize: 10, fontWeight: 600, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 8 }}>MÉTÉO IMPACT</p>
                           <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 8 }}>
-                            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 38, fontWeight: 100, color: '#F59E0B', lineHeight: 1 }}>58%</span>
+                            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 40, fontWeight: 100, color: '#F59E0B', lineHeight: 1, textShadow: '0 0 15px rgba(245,158,11,0.15)' }}>58%</span>
                             <span style={{ fontSize: 13, color: '#EF4444', fontWeight: 500, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace' }}>↓ 14%</span>
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -1126,9 +1127,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
 
                     {/* Bottom editorial quote */}
                     <div style={{ marginTop: 20, paddingTop: 14, borderTop: '1px solid rgba(212,168,67,0.06)', display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <div style={{ width: 2, height: 24, background: 'linear-gradient(to bottom, #D4A843, transparent)', borderRadius: 1, flexShrink: 0 }} />
+                      <div style={{ width: 3, height: 24, borderLeft: '3px solid #D4A843', borderRadius: 1, flexShrink: 0 }} />
                       <p style={{ color: '#4A5568', fontSize: 10, fontStyle: 'italic', lineHeight: 1.5 }}>
-                        Capacité optimale entre <span style={{ color: '#9CA3AF' }}>65–80%</span> — au-delà, risque de saturation et retards cascade.
+                        Capacité optimale entre <span style={{ color: '#D4A843', fontWeight: 600 }}>65–80%</span> — au-delà, risque de saturation et retards cascade.
                       </p>
                     </div>
                   </Card>
