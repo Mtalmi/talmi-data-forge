@@ -17,6 +17,7 @@ import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck
 import { IntelligenceBriefingCard } from '@/components/dashboard/IntelligenceBriefingCard';
 import { ResumeIABar } from '@/components/dashboard/ResumeIABar';
 import { DailyScoreGauge } from '@/components/dashboard/DailyScoreGauge';
+import { MultiMarketCalendar } from '@/components/dashboard/MultiMarketCalendar';
 
 // Lazy-loaded heavy widgets
 const WorldClassDashboard = lazy(() => import('@/components/dashboard/WorldClassDashboard').then(m => ({ default: m.WorldClassDashboard })));
@@ -872,64 +873,8 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* ── CONTEXTE SAISONNIER STRIP ── */}
-              <div className="mb-3 rounded-lg" style={{
-                borderLeft: '4px solid #D4A843',
-                background: 'rgba(212, 168, 67, 0.03)',
-                padding: '10px 20px',
-              }}>
-                <div className="flex flex-wrap items-center gap-x-6 gap-y-1" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 11 }}>
-                  <span>
-                    <span style={{ color: '#D4A843' }}>☪ Ramadan début: <strong>21 mars</strong> (7 jours)</span>
-                    <span style={{ color: '#9CA3AF' }}> — Prévoir ralentissement −30% production, horaires adaptés</span>
-                  </span>
-                  <span>
-                    <span style={{ color: '#F59E0B' }}>🌡 Pic chaleur: <strong>Sam 14 mars 38°C</strong></span>
-                    <span style={{ color: '#9CA3AF' }}> — Adjuvant retardateur recommandé, fenêtre béton réduite</span>
-                  </span>
-                  <span style={{ color: '#9CA3AF' }}>
-                    📅 Prochain jour férié: <span style={{ color: '#D4A843', fontWeight: 600 }}>Fête du Travail 1er mai</span> (48 jours)
-                  </span>
-                </div>
-              </div>
-
-              {/* ── IMPACT PRÉVISIONNEL ── */}
-              <div className="grid grid-cols-3 gap-3 mb-3">
-                {[
-                  {
-                    title: 'IMPACT RAMADAN',
-                    borderColor: '#F59E0B',
-                    content: 'Volume prévu: −30% · Revenu impact: −120K DH/mois · Horaires: 06h-14h uniquement · Livraisons: planifier avant 12h (chaleur + jeûne)',
-                  },
-                  {
-                    title: 'IMPACT MÉTÉO SEMAINE',
-                    borderColor: '#F59E0B',
-                    content: 'Sam 38°C — 3 chantiers à risque · Dim 26°C retour normal · Lun 22°C + pluie — reporter bétonnage extérieur',
-                  },
-                  {
-                    title: 'OPPORTUNITÉS',
-                    borderColor: '#22C55E',
-                    content: 'Pic construction post-Ramadan (mi-avril): +40% volume historique · Préparer stocks ciment +20% · 3 devis en attente pourraient se convertir',
-                  },
-                ].map((card) => (
-                  <div key={card.title} className="rounded-lg" style={{
-                    background: 'rgba(255,255,255,0.02)',
-                    border: '1px solid rgba(255,255,255,0.06)',
-                    borderTop: `2px solid ${card.borderColor}`,
-                    padding: '12px 14px',
-                  }}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 10, fontWeight: 600, letterSpacing: '1px', color: card.borderColor }}>{card.title}</span>
-                    </div>
-                    <p style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 11, color: '#9CA3AF', lineHeight: 1.6, margin: 0 }}>{card.content}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="flex justify-end mb-2">
-                <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 9, color: '#D4A843', background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: 20, padding: '3px 10px' }}>
-                  ✨ Généré par IA · Claude Opus
-                </span>
-              </div>
+              {/* ── CALENDRIER OPÉRATIONNEL MULTI-MARCHÉS ── */}
+              <MultiMarketCalendar />
 
               {/* ── ROW 2: STATS BAR (the hero — Production Live format) ── */}
               <div className="tbos-stats-bar flex items-center gap-8 py-3 bg-gradient-to-r from-[#D4A843]/[0.03] via-transparent to-transparent rounded-lg">
