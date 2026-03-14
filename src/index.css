@@ -366,6 +366,37 @@ html {
   scrollbar-width: none;
 }
 
+/* ─── Tab content minimum height ─── */
+.tbos-tab-content {
+  min-height: calc(100vh - 140px);
+  animation: tbosTabFadeIn 200ms ease forwards;
+}
+
+/* ─── Content wrapper centering on ultrawide ─── */
+.tbos-content-wrapper {
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+@media (min-width: 1800px) {
+  .tbos-content-wrapper {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+/* ─── Responsive KPI grid ─── */
+@media (max-width: 1199px) {
+  .tbos-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 767px) {
+  .tbos-kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 /* ─── Gold-Tinted Selection ─── */
 ::selection {
   background: rgba(253, 185, 19, 0.25);
