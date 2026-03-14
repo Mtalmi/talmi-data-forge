@@ -16,6 +16,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio, Sparkles, PhoneCall, FileText, PlusCircle, BarChart3, CheckCircle2, Bell, ChevronRight, AlertTriangle, Camera, Settings } from 'lucide-react';
 import { IntelligenceBriefingCard } from '@/components/dashboard/IntelligenceBriefingCard';
 import { ResumeIABar } from '@/components/dashboard/ResumeIABar';
+import { DailyScoreGauge } from '@/components/dashboard/DailyScoreGauge';
 
 // Lazy-loaded heavy widgets
 const WorldClassDashboard = lazy(() => import('@/components/dashboard/WorldClassDashboard').then(m => ({ default: m.WorldClassDashboard })));
