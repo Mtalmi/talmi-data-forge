@@ -423,6 +423,18 @@ function DeliveryCard({ d, delay = 0, routeData, weatherIndex = 0 }: { d: typeof
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
             <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 13, color: T.textPri }}>{d.client}</p>
+            {(() => {
+              const ratings: Record<string, { score: string; color: string }> = {
+                'Ciments du Maroc': { score: '4.8', color: '#10B981' },
+                'ONCF': { score: '4.2', color: '#10B981' },
+                'Addoha Group': { score: '4.5', color: '#10B981' },
+                'TGCC': { score: '3.8', color: '#F59E0B' },
+                'Alliances': { score: '4.6', color: '#10B981' },
+                'Jet Contractors': { score: '4.1', color: '#10B981' },
+              };
+              const r = ratings[d.client];
+              return r ? <span style={{ fontSize: 10, fontWeight: 700, color: r.color }}>★ {r.score}</span> : null;
+            })()}
             <span style={{ padding: '1px 7px', borderRadius: 999, fontSize: 10, fontWeight: 700, background: `${PRODUCT_COLORS[d.product] || T.gold}18`, color: PRODUCT_COLORS[d.product] || T.gold, border: `1px solid ${PRODUCT_COLORS[d.product] || T.gold}40` }}>{d.product}</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
