@@ -243,7 +243,7 @@ export default function RecentDeliveries() {
         const latePct = (lateCount / total) * 100;
         return (
           <div className="mt-3 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-            <div className="h-1.5 rounded-full overflow-hidden flex gap-px" style={{ background: 'rgba(255,255,255,0.06)' }}>
+            <div className="h-1.5 overflow-hidden flex gap-px" style={{ background: 'rgba(255,255,255,0.06)', borderRadius: '4px' }}>
               {livrePct > 0 && (
                 <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${livrePct}%`, background: '#22c55e' }} />
               )}
