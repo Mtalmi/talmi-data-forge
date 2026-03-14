@@ -1,4 +1,5 @@
 import { ReactNode, useState, useEffect } from 'react';
+import { useUnits } from '@/i18n/UnitContext';
 import { TopNavBar } from './TopNavBar';
 import { QuickActionFAB } from './QuickActionFAB';
 import { BackToTop } from './BackToTop';
@@ -18,6 +19,16 @@ import { Menu, X } from 'lucide-react';
 interface MainLayoutProps {
   children: ReactNode;
   hideBottomNav?: boolean;
+}
+
+function ConversionNote() {
+  const { isConverted } = useUnits();
+  if (!isConverted) return null;
+  return (
+    <div style={{ textAlign: 'center', padding: '8px 0', fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 9, color: 'rgba(156,163,175,0.4)' }}>
+      Valeurs converties — données sources en unités métriques MENA
+    </div>
+  );
 }
 
 export default function MainLayout({ children, hideBottomNav = false }: MainLayoutProps) {
@@ -108,6 +119,8 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
           </div>
         </main>
 
+        {/* Conversion disclaimer */}
+        <ConversionNote />
         {/* Back to top */}
         <BackToTop />
         {/* Quick Action FAB */}
