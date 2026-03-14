@@ -61,6 +61,15 @@ function getDemoData(): PlanningDay[] {
   ];
 }
 
+const FORMULE_COLORS: Record<string, { bg: string; color: string }> = {
+  'F-B25': { bg: 'rgba(212,168,67,0.2)', color: '#D4A843' },
+  'F-B30': { bg: 'rgba(59,130,246,0.2)', color: '#60A5FA' },
+  'F-B35': { bg: 'rgba(168,85,247,0.2)', color: '#A855F7' },
+  'F-B20': { bg: 'rgba(34,197,94,0.2)', color: '#22C55E' },
+  'F-B40': { bg: 'rgba(239,68,68,0.2)', color: '#EF4444' },
+  'Spécial': { bg: 'rgba(236,72,153,0.2)', color: '#EC4899' },
+};
+
 function chipStyle(status: PlanningChip['status']) {
   switch (status) {
     case 'completed': return { bg: 'rgba(16,185,129,0.10)', border: T.success };
