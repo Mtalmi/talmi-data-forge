@@ -68,10 +68,10 @@ export const ResumeIABar = () => {
           </span>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <button className="border border-[#D4A843]/40 text-[#D4A843] hover:bg-[#D4A843]/10 rounded px-3 py-1 text-xs transition-colors duration-200">
+          <button className="rounded px-3 py-1 text-xs transition-colors duration-200 hover:bg-[#D4A843]/10" style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent' }}>
             Voir Rapport
           </button>
-          <button className="border border-[#D4A843] text-[#D4A843] hover:bg-[#D4A843]/10 rounded px-3 py-1 text-xs transition-colors duration-200">
+          <button className="rounded px-3 py-1 text-xs transition-colors duration-200 hover:bg-[#D4A843]/10" style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent' }}>
             Ignorer
           </button>
         </div>
