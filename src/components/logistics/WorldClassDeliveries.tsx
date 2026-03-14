@@ -255,7 +255,7 @@ function FreshnessRing({ min, max, done, planned }: { min: number; max: number; 
   const pct = Math.min(min / max, 1);
   const remaining = max - min;
   const ringColor = done ? T.success : planned ? T.textDim : remaining > 45 ? T.success : remaining > 20 ? T.warning : T.danger;
-  const pulseAnim = !done && !planned && remaining < 10 ? 'tbos-pulse 1s ease-in-out infinite' : 'none';
+  const pulseAnim = !done && !planned && (remaining < 10 || (remaining <= 45 && remaining > 20)) ? 'tbos-pulse 1.5s ease-in-out infinite' : 'none';
   const r = 16, circ = 2 * Math.PI * r;
   return (
     <div style={{ position: 'relative', width: 40, height: 40, flexShrink: 0, animation: pulseAnim }}>
