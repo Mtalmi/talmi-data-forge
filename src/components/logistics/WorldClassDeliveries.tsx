@@ -235,9 +235,9 @@ function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; del
 // SEEDED DELIVERIES
 // ─────────────────────────────────────────────────────
 const SEEDED_DELIVERIES = [
-  { bl_id: 'BL-2024-A8F3', client_id: 'Résidences Atlas', formule_id: 'B30', volume_m3: 12, camion_assigne: 'T-04', chauffeur_nom: 'Youssef Benali', workflow_status: 'production', heure_prevue: '10:30', _destination: 'Chantier Maarif — Casablanca', _eta: '≈ 14 min', _delay: '+14 min' },
-  { bl_id: 'BL-2024-C1D7', client_id: 'Groupe Addoha', formule_id: 'B25', volume_m3: 8, camion_assigne: 'T-07', chauffeur_nom: 'Karim Idrissi', workflow_status: 'validation_technique', heure_prevue: '08:15', _destination: 'Résidence Rabat Center', _eta: 'Livré à 09:02' },
-  { bl_id: 'BL-2024-E5B2', client_id: 'Saham Immobilier', formule_id: 'B35', volume_m3: 10, camion_assigne: 'T-12', chauffeur_nom: 'Mehdi Tazi', workflow_status: 'planification', heure_prevue: '14:00', _destination: 'Marina Kénitra — Lot 7', _eta: 'Départ prévu 13:45' },
+  { bl_id: 'BL-2024-A8F3', client_id: 'Résidences Atlas', formule_id: 'B30', volume_m3: 12, camion_assigne: 'T-04', chauffeur_nom: 'Youssef Benali', workflow_status: 'production', heure_prevue: '10:30', _destination: 'Chantier Maarif — Casablanca', _eta: '≈ 14 min', _delay: '+14 min', _freshness: { min: 47, max: 90, mixTime: '09:15', label: '⏱ 47 min' }, _weather: { text: '☀ 34°C', color: T.warning }, _freshAlert: '⚠ Chaleur + retard — risque qualité béton' },
+  { bl_id: 'BL-2024-C1D7', client_id: 'Groupe Addoha', formule_id: 'B25', volume_m3: 8, camion_assigne: 'T-07', chauffeur_nom: 'Karim Idrissi', workflow_status: 'validation_technique', heure_prevue: '08:15', _destination: 'Résidence Rabat Center', _eta: 'Livré à 09:02', _freshness: { min: 52, max: 90, mixTime: '', label: '✓ Livré à 52 min', done: true }, _weather: { text: '☀ 30°C', color: T.textSec }, _feedback: { stars: 4, attente: '12 min', conforme: true } },
+  { bl_id: 'BL-2024-E5B2', client_id: 'Saham Immobilier', formule_id: 'B35', volume_m3: 10, camion_assigne: 'T-12', chauffeur_nom: 'Mehdi Tazi', workflow_status: 'planification', heure_prevue: '14:00', _destination: 'Marina Kénitra — Lot 7', _eta: 'Départ prévu 13:45', _freshness: { min: 90, max: 90, mixTime: '13:30', label: '⏱ 90 min', planned: true }, _weather: { text: '☀ 38°C', color: T.danger, tooltip: 'Température élevée — temps de prise réduit. Adjuvant retardateur recommandé.' } },
 ];
 
 function getStatusDisplay(ws: string | null) {
@@ -247,13 +247,34 @@ function getStatusDisplay(ws: string | null) {
   return { label: ws || 'N/A', color: T.textDim, style: 'outline' as const };
 }
 
+function FreshnessRing({ min, max, done, planned }: { min: number; max: number; done?: boolean; planned?: boolean }) {
+  const pct = Math.min(min / max, 1);
+  const remaining = max - min;
+  const ringColor = done ? T.success : planned ? T.textDim : remaining > 45 ? T.success : remaining > 20 ? T.warning : T.danger;
+  const pulseAnim = !done && !planned && remaining < 10 ? 'tbos-pulse 1s ease-in-out infinite' : 'none';
+  const r = 16, circ = 2 * Math.PI * r;
+  return (
+    <div style={{ position: 'relative', width: 40, height: 40, flexShrink: 0, animation: pulseAnim }}>
+      <svg width={40} height={40} viewBox="0 0 40 40">
+        <circle cx={20} cy={20} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={3} />
+        <circle cx={20} cy={20} r={r} fill="none" stroke={ringColor} strokeWidth={3}
+          strokeDasharray={circ} strokeDashoffset={circ * (1 - pct)} strokeLinecap="round"
+          transform="rotate(-90 20 20)" style={{ transition: 'stroke-dashoffset 0.8s ease' }} />
+      </svg>
+      {done && <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.success, fontSize: 14 }}>✓</span>}
+    </div>
+  );
+}
+
 function DeliveryCard({ d, index }: { d: any; index: number }) {
   const [hov, setHov] = useState(false);
   const status = getStatusDisplay(d.workflow_status);
   const isOdd = index % 2 !== 0;
-
   const formulaColor: Record<string, string> = { B25: T.gold, B30: '#3B82F6', B35: T.success, B40: '#8B5CF6' };
   const fColor = formulaColor[d.formule_id] || T.gold;
+  const fr = d._freshness;
+  const wx = d._weather;
+  const fb = d._feedback;
 
   return (
     <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
@@ -275,8 +296,32 @@ function DeliveryCard({ d, index }: { d: any; index: number }) {
         {d.camion_assigne && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, fontFamily: MONO, fontWeight: 700, background: 'transparent', border: `1px solid ${T.gold}40`, color: T.gold }}>{d.camion_assigne}</span>}
         {d.chauffeur_nom && <span style={{ color: T.textDim, fontSize: 11 }}>{d.chauffeur_nom}</span>}
         {d.heure_prevue && <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} color={T.textDim} /><span style={{ color: T.textDim, fontSize: 11 }}>{d.heure_prevue}</span></div>}
+        {/* Weather */}
+        {wx && (
+          <span style={{ fontFamily: MONO, fontSize: 11, color: wx.color }} title={wx.tooltip || ''}>
+            {wx.text}
+          </span>
+        )}
         {d._delay && <span style={{ fontFamily: MONO, fontSize: 10, padding: '2px 6px', borderRadius: 4, background: 'rgba(239,68,68,0.15)', color: T.danger, border: `1px solid ${T.danger}40` }}>{d._delay}</span>}
-        <div style={{ marginLeft: 'auto' }}>
+
+        {/* Freshness countdown */}
+        {fr && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto', marginRight: 12 }}>
+            <FreshnessRing min={fr.min} max={fr.max} done={fr.done} planned={fr.planned} />
+            <div>
+              <p style={{ fontFamily: MONO, fontWeight: 200, fontSize: 14, color: fr.done ? T.success : fr.planned ? T.textDim : (fr.max - fr.min) > 45 ? T.success : (fr.max - fr.min) > 20 ? T.warning : T.danger, margin: 0 }}>{fr.label}</p>
+              <p style={{ fontFamily: MONO, fontSize: 10, color: T.textDim, margin: 0 }}>
+                {fr.done ? 'Dans les temps' : fr.mixTime ? `Mélangé à ${fr.mixTime}` : ''}
+                {fr.planned && fr.mixTime ? `Mélange prévu ${fr.mixTime}` : ''}
+              </p>
+              {/* Freshness + weather alert */}
+              {d._freshAlert && <p style={{ fontFamily: MONO, fontSize: 10, color: T.danger, margin: '2px 0 0' }}>{d._freshAlert}</p>}
+            </div>
+          </div>
+        )}
+
+        {!fr && <div style={{ marginLeft: 'auto' }} />}
+        <div>
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 4,
             background: status.style === 'pulse' ? `${status.color}18` : 'transparent',
@@ -288,6 +333,16 @@ function DeliveryCard({ d, index }: { d: any; index: number }) {
           </span>
         </div>
       </div>
+      {/* Client feedback row for delivered */}
+      {fb && (
+        <div style={{ marginTop: 10, paddingTop: 8, borderTop: `1px solid ${T.cardBorder}`, display: 'flex', alignItems: 'center', gap: 12, fontFamily: MONO, fontSize: 11, color: T.textDim }}>
+          <span>Réception chantier: {Array.from({ length: 5 }, (_, i) => <span key={i} style={{ color: i < fb.stars ? T.gold : T.textDim }}>★</span>)}</span>
+          <span>·</span>
+          <span>Temps d'attente: {fb.attente}</span>
+          <span>·</span>
+          <span>Conformité béton: {fb.conforme ? <span style={{ color: T.success }}>✓</span> : <span style={{ color: T.danger }}>✗</span>}</span>
+        </div>
+      )}
     </div>
   );
 }
@@ -320,12 +375,12 @@ function PipelineCard({ label, count, color, aiRisk, delay = 0 }: { label: strin
 // PROFIT DATA
 // ─────────────────────────────────────────────────────
 const PROFIT_DATA = [
-  { toupie: 'T-04', chauffeur: 'Youssef Benali', livraisons: 3, km: 127, revenu: 18200, carburant: -2400, maintenance: -800, tempsMort: '15 min', profit: 15000, dhKm: 118, badge: 'TOP', badgeColor: T.success },
-  { toupie: 'T-07', chauffeur: 'Karim Idrissi', livraisons: 2, km: 98, revenu: 12460, carburant: -1850, maintenance: -600, tempsMort: '22 min', profit: 10010, dhKm: 102, badge: '', badgeColor: T.success },
-  { toupie: 'T-12', chauffeur: 'Mehdi Tazi', livraisons: 1, km: 45, revenu: 8300, carburant: -950, maintenance: -400, tempsMort: '0 min', profit: 6950, dhKm: 154, badge: 'EFFICACE', badgeColor: T.gold },
-  { toupie: 'T-09', chauffeur: '—', livraisons: 0, km: 0, revenu: 0, carburant: 0, maintenance: -1200, tempsMort: 'MAINTENANCE', profit: -1200, dhKm: 0, badge: 'ARRÊT', badgeColor: T.danger },
+  { toupie: 'T-04', chauffeur: 'Youssef Benali', livraisons: 3, km: 127, revenu: 18200, carburant: -2400, maintenance: -800, tempsMort: '15 min', profit: 15000, dhKm: 118, badge: 'TOP', badgeColor: T.success, retourVide: '48%', retourVideColor: T.warning },
+  { toupie: 'T-07', chauffeur: 'Karim Idrissi', livraisons: 2, km: 98, revenu: 12460, carburant: -1850, maintenance: -600, tempsMort: '22 min', profit: 10010, dhKm: 102, badge: '', badgeColor: T.success, retourVide: '31%', retourVideColor: T.warning },
+  { toupie: 'T-12', chauffeur: 'Mehdi Tazi', livraisons: 1, km: 45, revenu: 8300, carburant: -950, maintenance: -400, tempsMort: '0 min', profit: 6950, dhKm: 154, badge: 'EFFICACE', badgeColor: T.gold, retourVide: '0%', retourVideColor: T.success },
+  { toupie: 'T-09', chauffeur: '—', livraisons: 0, km: 0, revenu: 0, carburant: 0, maintenance: -1200, tempsMort: 'MAINTENANCE', profit: -1200, dhKm: 0, badge: 'ARRÊT', badgeColor: T.danger, retourVide: '—', retourVideColor: T.textDim },
 ];
-const PROFIT_TOTALS = { toupie: 'TOTAL FLOTTE', chauffeur: '—', livraisons: 6, km: 270, revenu: 38960, carburant: -5200, maintenance: -3000, tempsMort: '—', profit: 30760, dhKm: 114 };
+const PROFIT_TOTALS = { toupie: 'TOTAL FLOTTE', chauffeur: '—', livraisons: 6, km: 270, revenu: 38960, carburant: -5200, maintenance: -3000, tempsMort: '—', profit: 30760, dhKm: 114, retourVide: '38%', retourVideColor: T.warning };
 
 // ─────────────────────────────────────────────────────
 // WEEKLY PERFORMANCE DATA
@@ -891,6 +946,32 @@ function AnalytiqueTab() {
         </div>
       </section>
 
+      {/* Freshness Indicator — 30 days */}
+      <Card style={{ borderTop: `2px solid ${T.warning}` }}>
+        <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: '1.5px', marginBottom: 16, textTransform: 'uppercase' as const }}>✦ INDICATEUR FRAÎCHEUR — 30 JOURS</p>
+        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 16 }}>
+          {[
+            { label: 'LIVRAISONS <60min:', value: '82%', color: T.success },
+            { label: 'LIVRAISONS 60-80min:', value: '14%', color: T.warning },
+            { label: 'LIVRAISONS >80min:', value: '4%', color: T.danger },
+          ].map(m => (
+            <div key={m.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontFamily: MONO, fontSize: 12, color: T.textDim }}>{m.label}</span>
+              <span style={{ fontFamily: MONO, fontSize: 16, fontWeight: 700, color: m.color }}>{m.value}</span>
+            </div>
+          ))}
+        </div>
+        <p style={{ fontFamily: MONO, fontSize: 13, color: T.gold, margin: '0 0 8px' }}>Temps moyen mélange→livraison: <strong>54 min</strong></p>
+        <p style={{ fontFamily: MONO, fontSize: 12, color: T.success, margin: '0 0 12px' }}>0 livraisons hors délai 90 min ce mois ✓</p>
+        {/* Mini sparkline */}
+        <svg width="100%" height={40} viewBox="0 0 300 40" preserveAspectRatio="none" style={{ display: 'block' }}>
+          <polyline
+            fill="none" stroke={T.gold} strokeWidth={1.5}
+            points={[58,55,52,56,54,50,53,57,54,51,49,53,56,54,52,55,53,50,54,56,58,55,52,51,53,54,55,52,54,53].map((v, i) => `${i * 10},${40 - ((v - 45) / 15) * 36}`).join(' ')}
+          />
+        </svg>
+      </Card>
+
       {/* ROW 4 — ACTION */}
       <section>
         <SectionHeader icon={Brain} label="✦ Insight IA — Analyse Flotte" right={<IABadge />} />
@@ -1030,8 +1111,8 @@ function IntelligenceIATab() {
         </div>
 
         <RecommendationBox borderColor={T.success} text={
-          <>En regroupant les livraisons par zone géographique (Casablanca Est le matin, axe Rabat l'après-midi), réduction estimée de <strong style={{ color: T.success }}>22% des km parcourus</strong>. Économie carburant : <strong style={{ color: T.gold }}>52,000 MAD/an</strong>. Bonus : réduction temps d'attente de 35% en évitant les créneaux de trafic 10h-12h sur l'axe A3.</>
-        } />
+           <>En regroupant les livraisons par zone géographique (Casablanca Est le matin, axe Rabat l'après-midi), réduction estimée de <strong style={{ color: T.success }}>22% des km parcourus</strong>. Économie carburant : <strong style={{ color: T.gold }}>52,000 MAD/an</strong>. Bonus : réduction temps d'attente de 35% en évitant les créneaux de trafic 10h-12h sur l'axe A3. Opportunité retour chargé : T-04 peut récupérer <strong style={{ color: T.gold }}>20T de gravette</strong> chez Carrières du Sud (à 8 km du chantier Résidences Atlas) sur le trajet retour. Élimination complète du retour à vide + économie transport matière première de <strong style={{ color: T.gold }}>1,200 DH</strong>.</>
+         } />
       </Card>
 
       {/* ─── AGENT 3: SURVEILLANCE CARBURANT ─── */}
@@ -1347,6 +1428,11 @@ export default function WorldClassDeliveries() {
               <SectionHeader icon={Package} label="Livraisons Aujourd'hui" right={
                 <Bdg label="● LIVE" color={T.success} bg="rgba(34,197,94,0.12)" pulse />
               } />
+              {/* Fraîcheur béton label */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '1.5px', color: T.textDim, textTransform: 'uppercase' as const }}>FRAÎCHEUR BÉTON</span>
+                <span title="Le béton doit être livré dans les 90 minutes suivant le mélange pour garantir la conformité NM." style={{ cursor: 'help', fontFamily: MONO, fontSize: 10, color: T.textDim, border: `1px solid ${T.textDim}40`, borderRadius: '50%', width: 14, height: 14, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>?</span>
+              </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {(todayBons.length > 0 ? todayBons : SEEDED_DELIVERIES).map((d: any, i: number) => (
                   <DeliveryCard key={d.bl_id} d={d} index={i} />
@@ -1361,7 +1447,7 @@ export default function WorldClassDeliveries() {
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead><tr>
-                      {['TOUPIE','CHAUFFEUR','LIVRAISONS','KM','REVENU','CARBURANT','MAINTENANCE','TEMPS MORT','PROFIT NET','DH/KM',''].map(h => <th key={h} style={tblHdr}>{h}</th>)}
+                      {['TOUPIE','CHAUFFEUR','LIVRAISONS','KM','REVENU','CARBURANT','MAINTENANCE','TEMPS MORT','PROFIT NET','DH/KM','RETOUR VIDE',''].map(h => <th key={h} style={tblHdr}>{h}</th>)}
                     </tr></thead>
                     <tbody>
                       {PROFIT_DATA.map((r, i) => (
@@ -1376,6 +1462,7 @@ export default function WorldClassDeliveries() {
                           <td style={{ ...monoCell, color: r.tempsMort === 'MAINTENANCE' ? T.danger : T.textDim }}>{r.tempsMort}</td>
                           <td style={{ ...monoCell, color: r.profit >= 0 ? T.success : T.danger, fontWeight: 700 }}>{r.profit.toLocaleString('fr-MA')} DH</td>
                           <td style={{ ...monoCell, color: T.gold, fontWeight: 700 }}>{r.dhKm > 0 ? `${r.dhKm} DH/km` : '—'}</td>
+                          <td style={{ ...monoCell, color: r.retourVideColor }}>{r.retourVide}</td>
                           <td style={tblCell}>
                             {r.badge && <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: `${r.badgeColor}18`, color: r.badgeColor, border: `1px solid ${r.badgeColor}40` }}>{r.badge}</span>}
                           </td>
@@ -1392,17 +1479,18 @@ export default function WorldClassDeliveries() {
                         <td style={{ ...monoCell, color: T.danger, fontWeight: 700 }}>{PROFIT_TOTALS.maintenance.toLocaleString('fr-MA')} DH</td>
                         <td style={monoCell}>—</td>
                         <td style={{ ...monoCell, color: T.success, fontWeight: 700 }}>{PROFIT_TOTALS.profit.toLocaleString('fr-MA')} DH</td>
-                        <td style={{ ...monoCell, color: T.gold, fontWeight: 700 }}>{PROFIT_TOTALS.dhKm} DH/km</td>
-                        <td style={tblCell}></td>
+                         <td style={{ ...monoCell, color: T.gold, fontWeight: 700 }}>{PROFIT_TOTALS.dhKm} DH/km</td>
+                         <td style={{ ...monoCell, color: PROFIT_TOTALS.retourVideColor }}>{PROFIT_TOTALS.retourVide}</td>
+                         <td style={tblCell}></td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
                 {/* AI insight */}
                 <div style={{ borderLeft: '4px solid #D4A843', background: 'rgba(212,168,67,0.03)', padding: '14px 18px', borderRadius: '0 8px 8px 0', marginTop: 16 }}>
-                  <p style={{ fontFamily: MONO, fontSize: 12, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
-                    T-12 affiche le meilleur ratio profit/km (<strong style={{ color: T.gold }}>154 DH/km</strong>) grâce à zéro temps mort. T-04 génère le plus de revenu brut mais perd 15 min en attente chantier. T-09 en maintenance coûte <strong style={{ color: T.danger }}>1,200 DH/jour</strong> — planifier retour en service demain matin. Recommandation : affecter les livraisons longue distance à T-12 pour maximiser la rentabilité.
-                  </p>
+                   <p style={{ fontFamily: MONO, fontSize: 12, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
+                     T-12 affiche le meilleur ratio profit/km (<strong style={{ color: T.gold }}>154 DH/km</strong>) grâce à zéro temps mort. T-04 génère le plus de revenu brut mais perd 15 min en attente chantier. T-09 en maintenance coûte <strong style={{ color: T.danger }}>1,200 DH/jour</strong> — planifier retour en service demain matin. Recommandation : affecter les livraisons longue distance à T-12 pour maximiser la rentabilité. Taux retour à vide flotte : <strong style={{ color: T.warning }}>38%</strong> (objectif &lt;25%). En combinant livraison Résidences Atlas + chargement retour matériaux Saham Im, élimination de <strong style={{ color: T.success }}>23 km à vide</strong>. Économie estimée : <strong style={{ color: T.gold }}>8,400 MAD/mois</strong>.
+                   </p>
                 </div>
               </Card>
             </section>
@@ -1469,12 +1557,13 @@ export default function WorldClassDeliveries() {
               <SectionHeader icon={ClipboardCheck} label="✦ Passation Logistique — Fin de Journée" />
               <Card style={{ borderTop: `2px solid ${T.gold}` }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  {[
-                    { color: T.success, text: '1 livraison complétée — Groupe A, 8 m³ F-B25, livré à 09:02 ✓', pulse: false },
-                    { color: T.gold, text: '1 livraison en cours — Résidences Atlas, 12 m³ F-B30, T-04 en route (ETA 10:44, +14 min retard trafic)', pulse: true },
-                    { color: T.warning, text: '1 livraison planifiée — Saham Im, 10 m³ F-B35, T-12 départ prévu 14:00', pulse: false },
-                    { color: T.danger, text: 'T-09 en maintenance — pneus à remplacer. Retour prévu demain 08:00. 3 livraisons T-09 réaffectées.', pulse: false },
-                    { color: T.success, text: 'Carburant flotte : T-04 34% (ravitaillement ce soir), T-07 62% ✓, T-12 78% ✓', pulse: false },
+                   {[
+                     { color: T.success, text: '1 livraison complétée — Groupe A, 8 m³ F-B25, livré à 09:02 ✓', pulse: false },
+                     { color: T.gold, text: '1 livraison en cours — Résidences Atlas, 12 m³ F-B30, T-04 en route (ETA 10:44, +14 min retard trafic)', pulse: true },
+                     { color: T.warning, text: '1 livraison planifiée — Saham Im, 10 m³ F-B35, T-12 départ prévu 14:00', pulse: false },
+                     { color: T.warning, text: 'Fraîcheur béton: livraison Résidences Atlas à 47 min/90 min — surveiller. Si retard dépasse 25 min supplémentaires, préparer batch de remplacement.', pulse: false },
+                     { color: T.danger, text: 'T-09 en maintenance — pneus à remplacer. Retour prévu demain 08:00. 3 livraisons T-09 réaffectées.', pulse: false },
+                     { color: T.success, text: 'Carburant flotte : T-04 34% (ravitaillement ce soir), T-07 62% ✓, T-12 78% ✓', pulse: false },
                   ].map((item, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
                       <div style={{ width: 8, height: 8, borderRadius: '50%', background: item.color, marginTop: 4, flexShrink: 0, animation: item.pulse ? 'tbos-pulse 1.5s ease-in-out infinite' : 'none' }} />
