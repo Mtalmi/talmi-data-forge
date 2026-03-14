@@ -29,7 +29,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
   const initials = user?.email?.charAt(0).toUpperCase() || 'U';
 
   return (
-    <header className="w-full tbos-top-navbar">
+    <header className="w-full tbos-top-navbar" style={{ background: '#0F1629', borderBottom: '1px solid rgba(212, 168, 67, 0.1)' }}>
       <div className="tbos-top-navbar-inner flex items-center justify-between h-14 px-6">
         {/* Left — Search */}
         <div className="relative hidden md:block flex-shrink-0">
@@ -50,7 +50,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
           </div>
 
           {/* Divider */}
-          <div className="w-px h-5" style={{ background: 'rgba(255,255,255,0.05)' }} />
+          <div className="w-px h-5" style={{ background: 'rgba(212,168,67,0.1)' }} />
 
           {/* Role Preview Switcher - CEO Only */}
           {onPreviewRoleChange && (
@@ -66,14 +66,14 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
-                className="relative w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold cursor-pointer transition-all duration-200"
+                className="relative w-8 h-8 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200"
                 style={{
-                  background: 'rgba(245, 158, 11, 0.15)',
-                  color: '#F59E0B',
-                  border: '1px solid rgba(245, 158, 11, 0.25)',
+                  background: '#D4A843',
+                  color: '#0F1629',
+                  fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                  fontSize: 13,
+                  fontWeight: 700,
                 }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.4)')}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.25)')}
               >
                 {initials}
               </button>
@@ -83,13 +83,13 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
               className="w-56"
               style={{
                 background: '#1a1f2e',
-                border: '1px solid rgba(245, 158, 11, 0.15)',
+                border: '1px solid rgba(212, 168, 67, 0.15)',
                 borderRadius: 8,
               }}
             >
               <DropdownMenuLabel className="font-normal">
-                <p className="text-sm font-medium truncate text-white/80">{user?.email}</p>
-                <p className="text-[10px] uppercase tracking-[0.2em] mt-0.5 text-amber-500/50">
+                <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.8)' }} className="truncate">{user?.email}</p>
+                <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '2px', marginTop: 2, color: 'rgba(212,168,67,0.5)', textTransform: 'uppercase' as const }}>
                   {effectiveRole?.replace('_', ' ')}
                 </p>
               </DropdownMenuLabel>

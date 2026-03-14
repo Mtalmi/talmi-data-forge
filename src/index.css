@@ -205,7 +205,7 @@
   --transition-slow: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ─── Premium Scrollbar — nearly invisible, golden on hover ─── */
+/* ─── Premium Scrollbar — gold thumb on dark track ─── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -214,15 +214,76 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(212, 168, 67, 0.3);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(253, 185, 19, 0.2);
+  background: rgba(212, 168, 67, 0.5);
 }
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.06) transparent;
+  scrollbar-color: rgba(212, 168, 67, 0.3) transparent;
+}
+
+/* ─── TBOS Top Navbar ─── */
+.tbos-top-navbar {
+  border-bottom: 1px solid rgba(212, 168, 67, 0.1);
+}
+
+/* ─── Global Table System ─── */
+.tbos-table tbody tr:nth-child(odd) {
+  background: rgba(212, 168, 67, 0.03);
+}
+.tbos-table tbody tr:hover {
+  background: rgba(212, 168, 67, 0.06) !important;
+}
+.tbos-table thead th {
+  font-family: ui-monospace, SFMono-Regular, monospace !important;
+  font-size: 11px !important;
+  letter-spacing: 1.5px !important;
+  font-weight: 400 !important;
+  color: #9CA3AF !important;
+  text-transform: uppercase !important;
+  border-bottom: none !important;
+}
+.tbos-table tbody td {
+  border-bottom: none !important;
+}
+
+/* ─── Global Tab Bar System ─── */
+.tbos-tab-bar {
+  display: flex;
+  gap: 32px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.tbos-tab-bar button {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  font-weight: 400;
+  color: #9CA3AF;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: all 200ms;
+}
+.tbos-tab-bar button:hover {
+  color: #FFFFFF;
+}
+.tbos-tab-bar button.active,
+.tbos-tab-bar button[data-active="true"] {
+  color: #D4A843;
+  border-bottom-color: #D4A843;
+}
+
+/* ─── Sidebar gold scrollbar ─── */
+.tbos-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(212, 168, 67, 0.3) !important;
+}
+.tbos-sidebar-scroll::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.2) !important;
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;

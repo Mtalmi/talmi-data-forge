@@ -1,7 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-// Enforced card radius — single source of truth
 const CARD_RADIUS = 8;
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -13,10 +12,10 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
     <div
       ref={ref}
       className={cn(
-        "bg-card text-card-foreground border border-white/[0.08] relative overflow-hidden",
+        "bg-[rgba(255,255,255,0.02)] text-card-foreground relative overflow-hidden transition-colors duration-200 hover:border-[rgba(212,168,67,0.15)]",
         className
       )}
-      style={{ borderRadius: CARD_RADIUS, ...style }}
+      style={{ borderRadius: CARD_RADIUS, border: '1px solid rgba(212, 168, 67, 0.08)', ...style }}
       {...props}
     />
   )
