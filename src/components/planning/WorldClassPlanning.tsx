@@ -1066,7 +1066,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
               </div>
             </section>
           </div>
-        </section>
+        </div>
 
         {/* ── FOOTER ── */}
         <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
