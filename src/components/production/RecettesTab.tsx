@@ -162,7 +162,7 @@ function CompositionChart({ formulas }: { formulas: Formula[] }) {
   }), [formulas]);
 
   return (
-    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 20 }}>
+    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, padding: 20 }}>
       <div style={{ width: '100%', height: 280 }}>
         <ResponsiveContainer>
           <BarChart data={data} layout="vertical" margin={{ left: 10, right: 30, top: 0, bottom: 0 }} barCategoryGap="22%">
