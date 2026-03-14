@@ -500,6 +500,49 @@ export default function Creances() {
           </div>
         </div>
 
+        {/* TAB BAR */}
+        <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid rgba(255,255,255,0.08)', marginBottom: 4 }}>
+          {[
+            { id: 'overview', label: "VUE D'ENSEMBLE" },
+            { id: 'aging', label: 'ANALYSE AGING' },
+            { id: 'analytique', label: 'ANALYTIQUE' },
+            { id: 'ia', label: 'INTELLIGENCE IA', badge: '4' },
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setCreancesTab(tab.id)}
+              style={{
+                fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                fontSize: 12,
+                letterSpacing: '1.5px',
+                padding: '10px 18px',
+                color: creancesTab === tab.id ? '#D4A843' : '#9CA3AF',
+                background: 'transparent',
+                border: 'none',
+                borderBottom: creancesTab === tab.id ? '2px solid #D4A843' : '2px solid transparent',
+                cursor: 'pointer',
+                transition: 'all 200ms',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
+              {tab.label}
+              {tab.badge && (
+                <span style={{
+                  fontFamily: 'ui-monospace, monospace',
+                  fontSize: 10,
+                  padding: '1px 6px',
+                  borderRadius: 4,
+                  background: creancesTab === tab.id ? 'rgba(212,168,67,0.2)' : 'rgba(255,255,255,0.08)',
+                  color: creancesTab === tab.id ? '#D4A843' : '#9CA3AF',
+                }}>{tab.badge}</span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {creancesTab === 'overview' && (<>
         {/* AI EARLY WARNING BANNER */}
         {(() => {
           // Detect risk patterns
