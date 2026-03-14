@@ -687,12 +687,12 @@ export default function Ventes() {
               />
 
               <AgentGrid>
-                <MarginOverviewCard index={1} />
-                <PipelineAnalysisCard index={2} />
+                <MarginOverviewCard />
+                <PipelineAnalysisCard />
                 <ConversionPredictorCard index={3} />
-                <RelanceIntelligenteCard index={4} />
+                <RelanceIntelligenteCard />
                 <ScoringDynamiquePrixCard index={5} />
-                <ConcentrationClientCard index={6} />
+                <ConcentrationClientCard />
               </AgentGrid>
             </div>
           )}
