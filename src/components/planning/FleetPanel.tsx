@@ -242,18 +242,18 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
       </div>
 
       {/* Summary Stats */}
-      <div className="p-2 border-b border-white/[0.06] grid grid-cols-3 gap-1 text-center text-xs">
-        <div className="p-1.5 rounded" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
-          <p className="font-mono font-normal text-emerald-400 text-lg">{availableCount}</p>
-          <p className="text-white/40 text-[10px]">{fp.available}</p>
-        </div>
-        <div className="p-1.5 rounded" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
-          <p className="font-mono font-normal text-blue-400 text-lg">{onMissionCount}</p>
-          <p className="text-white/40 text-[10px]">{fp.mission}</p>
-        </div>
-        <div className="p-1.5 rounded" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
-          <p className="font-mono font-normal text-[#D4A843] text-lg">{maintenanceCount}</p>
-          <p className="text-white/40 text-[10px]">{fp.stopped}</p>
+        <div className="p-2 border-b border-white/[0.06] grid grid-cols-3 gap-1 text-center text-xs">
+          <div className="p-1.5 rounded" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+            <p style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 400, fontSize: 20, color: '#22C55E' }}>{availableCount}</p>
+            <p className="text-white/40 text-[10px]">{fp.available}</p>
+          </div>
+          <div className="p-1.5 rounded" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+            <p style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 400, fontSize: 20, color: '#D4A843' }}>{onMissionCount}</p>
+            <p className="text-white/40 text-[10px]">{fp.mission}</p>
+          </div>
+          <div className="p-1.5 rounded" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+            <p style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 400, fontSize: 20, color: '#9CA3AF' }}>{maintenanceCount}</p>
+            <p className="text-white/40 text-[10px]">{fp.stopped}</p>
         </div>
       </div>
 
