@@ -292,24 +292,29 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
         <div className="flex-1">
           <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, overflow: 'hidden' }}>
             <div className="grid grid-cols-7" style={{ borderBottom: `1px solid ${T.cardBorder}` }}>
-              {weekDays.map(day => (
-                <div key={day.toISOString()} style={{
-                  padding: '12px 8px', textAlign: 'center',
-                  background: isToday(day) ? `${T.gold}0D` : isWeekend(day) ? 'rgba(255,255,255,0.01)' : 'transparent',
-                  borderBottom: isToday(day) ? `2px solid ${T.gold}` : '2px solid transparent',
-                }}>
-                  <p style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>
-                    {format(day, 'EEE', { locale: fr })}
-                  </p>
-                  <p style={{
-                    fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 400,
-                    color: isToday(day) ? T.gold : isBefore(day, startOfDay(new Date())) ? 'rgba(255,255,255,0.3)' : '#fff',
-                    marginTop: 2,
+              {weekDays.map(day => {
+                const isSunday = day.getDay() === 0;
+                return (
+                  <div key={day.toISOString()} style={{
+                    padding: '12px 8px', textAlign: 'center',
+                    background: isSunday
+                      ? 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(75,85,99,0.1) 10px, rgba(75,85,99,0.1) 11px)'
+                      : isToday(day) ? `${T.gold}0D` : isWeekend(day) ? 'rgba(255,255,255,0.01)' : 'transparent',
+                    borderBottom: isToday(day) ? `2px solid ${T.gold}` : '2px solid transparent',
                   }}>
-                    {format(day, 'dd')}
-                  </p>
-                </div>
-              ))}
+                    <p style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>
+                      {format(day, 'EEE', { locale: fr })}
+                    </p>
+                    <p style={{
+                      fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 400,
+                      color: isToday(day) ? T.gold : isBefore(day, startOfDay(new Date())) ? 'rgba(255,255,255,0.3)' : '#fff',
+                      marginTop: 2,
+                    }}>
+                      {format(day, 'dd')}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
 
             <div className="grid grid-cols-7" style={{ minHeight: 280 }}>
