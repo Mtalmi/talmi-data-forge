@@ -962,7 +962,7 @@ export default function WorldClassProduction() {
                       <Pie data={productData} dataKey="volume" nameKey="name" innerRadius={60} outerRadius={90} animationBegin={200} animationDuration={800} label={false}>
                         {productData.map((p, i) => <Cell key={i} fill={p.color} />)}
                       </Pie>
-                      <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 22, fontWeight: 400, fill: '#fff' }}>{totalProductVolume}</text>
+                      <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 24, fontWeight: 200, fill: '#D4A843' }}>{totalProductVolume}</text>
                       <text x="50%" y="58%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 10, fill: 'rgba(255,255,255,0.35)' }}>m³ Total</text>
                       <Tooltip content={({ active, payload }) => {
                         if (!active || !payload?.length) return null;
