@@ -289,7 +289,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
               <div
                 className="overflow-hidden transition-all duration-250 ease-in-out"
                 style={{
-                  maxHeight: isOpen ? `${section.items.length * 38 + 8}px` : '0px',
+                  maxHeight: isOpen ? `${section.items.length * 42 + 8}px` : '0px',
                   opacity: isOpen ? 1 : 0,
                 }}
               >
