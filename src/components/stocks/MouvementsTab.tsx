@@ -61,16 +61,16 @@ function SectionHeader({ icon: Icon, label, right }: { icon: any; label: string;
 }
 
 // ── KPI Card ──
-function MouvKPI({ label, value, suffix, color }: { label: string; value: number; suffix?: string; color: string }) {
+function MouvKPI({ label, value, suffix, color, borderColor }: { label: string; value: number; suffix?: string; color: string; borderColor?: string }) {
   const animated = useCountUp(value);
   return (
     <div style={{
-      flex: 1, background: 'rgba(255,255,255,0.04)', borderTop: '2px solid #D4A843',
+      flex: 1, background: 'rgba(255,255,255,0.04)',
       borderRadius: 9, border: '1px solid rgba(245,158,11,0.15)',
-      borderTopWidth: 2, borderTopColor: '#D4A843', padding: '20px 16px',
+      borderTop: `2px solid ${borderColor || '#D4A843'}`, padding: '20px 16px',
     }}>
-      <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</p>
-      <p style={{ fontFamily: MONO, fontSize: 32, fontWeight: 200, color, lineHeight: 1 }}>
+      <p style={{ fontFamily: MONO, color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 8 }}>{label}</p>
+      <p style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color, lineHeight: 1 }}>
         {animated.toLocaleString('fr-FR')}
         {suffix && <span style={{ fontSize: 14, fontWeight: 400, color: '#9CA3AF', marginLeft: 4, fontFamily: MONO }}>{suffix}</span>}
       </p>
@@ -78,15 +78,15 @@ function MouvKPI({ label, value, suffix, color }: { label: string; value: number
   );
 }
 
-function MouvKPIText({ label, text, color }: { label: string; text: string; color: string }) {
+function MouvKPIText({ label, text, color, borderColor }: { label: string; text: string; color: string; borderColor?: string }) {
   return (
     <div style={{
-      flex: 1, background: 'rgba(255,255,255,0.04)', borderTop: '2px solid #D4A843',
+      flex: 1, background: 'rgba(255,255,255,0.04)',
       borderRadius: 9, border: '1px solid rgba(245,158,11,0.15)',
-      borderTopWidth: 2, borderTopColor: '#D4A843', padding: '20px 16px',
+      borderTop: `2px solid ${borderColor || '#D4A843'}`, padding: '20px 16px',
     }}>
-      <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</p>
-      <p style={{ fontFamily: MONO, fontSize: 32, fontWeight: 200, color, lineHeight: 1 }}>{text}</p>
+      <p style={{ fontFamily: MONO, color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 8 }}>{label}</p>
+      <p style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color, lineHeight: 1 }}>{text}</p>
     </div>
   );
 }
