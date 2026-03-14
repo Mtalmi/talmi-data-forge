@@ -320,7 +320,7 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
               })()}
             </div>
             {/* STATUT */}
-            <div style={{ padding: '12px 16px', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+            <div style={{ padding: '12px 16px', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 8 }}>
               <span style={{
                 display: 'inline-flex', alignItems: 'center', gap: 6,
                 padding: '3px 10px', borderRadius: 999, minWidth: 100, justifyContent: 'center',
@@ -332,6 +332,14 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
                   {s.label}{row.statusExtra ? ` ${row.statusExtra}` : ''}
                 </span>
               </span>
+              {row.bl === '2602-013' && (
+                <span
+                  onClick={(e) => { e.stopPropagation(); setImpactModalOpen(true); }}
+                  style={{ fontSize: 11, color: '#D4A843', cursor: 'pointer', whiteSpace: 'nowrap', fontWeight: 500 }}
+                >
+                  Voir impact →
+                </span>
+              )}
             </div>
           </div>
         );
