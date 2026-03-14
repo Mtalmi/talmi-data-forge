@@ -10,6 +10,7 @@ import {
   Handshake, Wrench, PackageSearch, Clock,
   Bot, BarChart3, Bell, Shield, BookOpen, CheckSquare,
   Search, User, Settings, LogOut, TrendingUp, ChevronRight,
+  Sparkles, Brain, FileBarChart, Plug, UserRound, Calculator,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
