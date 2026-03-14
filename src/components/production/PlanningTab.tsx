@@ -378,7 +378,7 @@ function DetailItem({ item, index }: { item: { id: string; formule: string; clie
           </span>
         </div>
         <span style={{
-          fontFamily: 'ui-monospace, monospace', fontSize: 11, color: 'rgba(255,255,255,0.3)',
+          fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#D4A843',
           background: 'rgba(255,255,255,0.03)', padding: '2px 8px', borderRadius: 4,
         }}>
           {item.heure}
