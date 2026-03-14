@@ -1231,8 +1231,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                 <span style={{
                   display: 'inline-flex', alignItems: 'center', gap: 5,
                   padding: '4px 12px', borderRadius: 999,
-                  background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.25)',
+                  background: 'rgba(212,168,67,0.06)', border: '1px solid #D4A843',
                   fontSize: 11, fontWeight: 600, color: '#D4A843',
+                  fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
                 }}>
                   5 agents actifs
                 </span>
