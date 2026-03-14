@@ -1,5 +1,4 @@
 import { ReactNode, useState, useEffect } from 'react';
-import { Bell } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 /* ── Live clock (monospace, gray) ── */
@@ -93,7 +92,7 @@ export function PageHeader({
 
         {/* ── Tabs (centered) ── */}
         {tabs && tabs.length > 0 ? (
-          <div className="flex gap-8 flex-1 justify-center overflow-x-auto scrollbar-hide" style={{ minWidth: 0 }}>
+          <div className="flex flex-1 justify-center overflow-x-auto scrollbar-hide" style={{ minWidth: 0, gap: 32 }}>
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -125,37 +124,23 @@ export function PageHeader({
 
         {/* ── Actions slot ── */}
         {actions && (
-          <div className="hidden sm:flex items-center gap-8 flex-shrink-0">
+          <div className="hidden sm:flex items-center gap-4 flex-shrink-0">
             {actions}
           </div>
         )}
 
-        {/* ── Utilities: clock, bell, spinner ── */}
-        <div className="hidden sm:flex items-center gap-16 flex-shrink-0">
+        {/* ── Utilities: clock + spinner ── */}
+        <div className="hidden sm:flex items-center gap-4 flex-shrink-0">
           <span
             style={{
               fontFamily: MONO,
               fontSize: 11,
               color: '#9CA3AF',
-              letterSpacing: '0.02em',
+              letterSpacing: '0.5px',
             }}
           >
             <LiveClock />
           </span>
-          <div style={{ position: 'relative', cursor: 'pointer' }}>
-            <Bell size={18} color="#9CA3AF" />
-            <div
-              style={{
-                position: 'absolute',
-                top: -4,
-                right: -4,
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                background: '#EF4444',
-              }}
-            />
-          </div>
           {loading && (
             <div
               style={{

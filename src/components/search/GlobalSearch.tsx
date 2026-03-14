@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { supabase } from '@/integrations/supabase/client';
-import { Search, Users, Truck, FileText, Loader2, X, Sparkles } from 'lucide-react';
+import { Search, Users, Truck, FileText, Loader2, X } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nContext';
+
+const MONO = 'ui-monospace, SFMono-Regular, monospace';
 
 interface SearchResult {
   type: 'client' | 'bl' | 'facture';
@@ -36,86 +36,34 @@ export function GlobalSearch() {
   }, []);
 
   useEffect(() => {
-    if (!query || query.length < 2) {
-      setResults([]);
-      return;
-    }
-
+    if (!query || query.length < 2) { setResults([]); return; }
     const searchTimeout = setTimeout(async () => {
       setLoading(true);
       const searchResults: SearchResult[] = [];
-
       try {
         const { data: clients } = await supabase
-          .from('clients')
-          .select('client_id, nom_client, telephone')
-          .or(`nom_client.ilike.%${query}%,client_id.ilike.%${query}%,telephone.ilike.%${query}%`)
-          .limit(5);
-
-        if (clients) {
-          clients.forEach(c => {
-            searchResults.push({
-              type: 'client',
-              id: c.client_id,
-              title: c.nom_client,
-              subtitle: c.client_id,
-              url: '/clients',
-            });
-          });
-        }
+          .from('clients').select('client_id, nom_client, telephone')
+          .or(`nom_client.ilike.%${query}%,client_id.ilike.%${query}%,telephone.ilike.%${query}%`).limit(5);
+        if (clients) clients.forEach(c => searchResults.push({ type: 'client', id: c.client_id, title: c.nom_client, subtitle: c.client_id, url: '/clients' }));
 
         const { data: bls } = await supabase
-          .from('bons_livraison_reels')
-          .select('bl_id, client_id, formule_id, date_livraison')
-          .or(`bl_id.ilike.%${query}%,client_id.ilike.%${query}%`)
-          .limit(5);
-
-        if (bls) {
-          bls.forEach(bl => {
-            searchResults.push({
-              type: 'bl',
-              id: bl.bl_id,
-              title: bl.bl_id,
-              subtitle: `${bl.client_id} - ${new Date(bl.date_livraison).toLocaleDateString('fr-FR')}`,
-              url: '/bons',
-            });
-          });
-        }
+          .from('bons_livraison_reels').select('bl_id, client_id, formule_id, date_livraison')
+          .or(`bl_id.ilike.%${query}%,client_id.ilike.%${query}%`).limit(5);
+        if (bls) bls.forEach(bl => searchResults.push({ type: 'bl', id: bl.bl_id, title: bl.bl_id, subtitle: `${bl.client_id} - ${new Date(bl.date_livraison).toLocaleDateString('fr-FR')}`, url: '/bons' }));
 
         const { data: factures } = await supabase
-          .from('factures')
-          .select('facture_id, client_id, date_facture, total_ttc')
-          .or(`facture_id.ilike.%${query}%,client_id.ilike.%${query}%`)
-          .limit(5);
-
-        if (factures) {
-          factures.forEach(f => {
-            searchResults.push({
-              type: 'facture',
-              id: f.facture_id,
-              title: f.facture_id,
-              subtitle: `${f.client_id} - ${f.total_ttc.toLocaleString('fr-FR')} DH`,
-              url: '/bons',
-            });
-          });
-        }
+          .from('factures').select('facture_id, client_id, date_facture, total_ttc')
+          .or(`facture_id.ilike.%${query}%,client_id.ilike.%${query}%`).limit(5);
+        if (factures) factures.forEach(f => searchResults.push({ type: 'facture', id: f.facture_id, title: f.facture_id, subtitle: `${f.client_id} - ${f.total_ttc.toLocaleString('fr-FR')} DH`, url: '/bons' }));
 
         setResults(searchResults);
-      } catch (error) {
-        console.error('Search error:', error);
-      } finally {
-        setLoading(false);
-      }
+      } catch (error) { console.error('Search error:', error); }
+      finally { setLoading(false); }
     }, 300);
-
     return () => clearTimeout(searchTimeout);
   }, [query]);
 
-  const handleSelect = (result: SearchResult) => {
-    setOpen(false);
-    setQuery('');
-    navigate(result.url);
-  };
+  const handleSelect = (result: SearchResult) => { setOpen(false); setQuery(''); navigate(result.url); };
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -156,46 +104,57 @@ export function GlobalSearch() {
         role="combobox"
         aria-expanded={open}
         onClick={() => setOpen(true)}
-        className="tbos-search-trigger group flex items-center gap-2.5 w-full md:w-[340px] h-10 px-4 rounded-lg cursor-pointer transition-all duration-250"
+        className="tbos-search-trigger group flex items-center gap-2.5 h-9 px-3.5 cursor-pointer transition-all duration-200"
         style={{
-          background: 'rgba(0,0,0,0.45)',
-          border: '1.5px solid rgba(255, 215, 0, 0.15)',
+          minWidth: 320,
+          background: 'rgba(255, 255, 255, 0.05)',
+          border: '1px solid rgba(212, 168, 67, 0.15)',
           borderRadius: 8,
         }}
         onMouseEnter={e => {
-          (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255, 215, 0, 0.4)';
-          (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.6)';
+          (e.currentTarget as HTMLElement).style.borderColor = 'rgba(212, 168, 67, 0.3)';
+          (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.07)';
         }}
         onMouseLeave={e => {
-          (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255, 215, 0, 0.15)';
-          (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.45)';
+          (e.currentTarget as HTMLElement).style.borderColor = 'rgba(212, 168, 67, 0.15)';
+          (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.05)';
         }}
       >
         <Search
-          className="h-[18px] w-[18px] flex-shrink-0 transition-all duration-200 group-hover:scale-110"
-          style={{ color: '#FFD700' }}
-          strokeWidth={1.8}
+          className="flex-shrink-0"
+          size={16}
+          style={{ color: '#9CA3AF' }}
+          strokeWidth={1.5}
         />
         <span
-          className="hidden sm:inline text-[14px] flex-1 text-left truncate"
+          className="hidden sm:inline flex-1 text-left truncate"
           style={{
-            fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
-            fontWeight: 400,
-            color: 'rgba(160, 160, 160, 0.7)',
-            letterSpacing: '0.01em',
+            fontFamily: MONO,
+            fontSize: 13,
+            color: '#9CA3AF',
           }}
         >
-          Search metrics, KPIs, reports...
+          Rechercher métriques, KPIs, rapports...
         </span>
         <span
-          className="sm:hidden text-[14px]"
-          style={{ color: 'rgba(160, 160, 160, 0.7)' }}
+          className="sm:hidden"
+          style={{ fontFamily: MONO, fontSize: 13, color: '#9CA3AF' }}
         >
           {gs.search}
         </span>
-        <div className="flex items-center gap-0.5 flex-shrink-0">
-          <kbd className="text-[10px] px-1.5 py-0.5 rounded font-mono" style={{ color: 'rgba(255, 215, 0, 0.4)', background: 'rgba(255, 215, 0, 0.06)', border: '1px solid rgba(255, 215, 0, 0.1)' }}>⌘</kbd>
-          <kbd className="text-[10px] px-1.5 py-0.5 rounded font-mono" style={{ color: 'rgba(255, 215, 0, 0.4)', background: 'rgba(255, 215, 0, 0.06)', border: '1px solid rgba(255, 215, 0, 0.1)' }}>K</kbd>
+        <div className="flex items-center flex-shrink-0" style={{ gap: 4 }}>
+          <kbd style={{
+            fontFamily: MONO, fontSize: 10, color: '#9CA3AF',
+            background: 'rgba(255, 255, 255, 0.08)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: 4, padding: '2px 5px',
+          }}>⌘</kbd>
+          <kbd style={{
+            fontFamily: MONO, fontSize: 10, color: '#9CA3AF',
+            background: 'rgba(255, 255, 255, 0.08)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: 4, padding: '2px 5px',
+          }}>K</kbd>
         </div>
       </button>
 
@@ -208,25 +167,25 @@ export function GlobalSearch() {
             style={{
               width: '100%',
               maxWidth: 520,
-              background: '#0d1220',
-              border: '1.5px solid rgba(255, 215, 0, 0.2)',
+              background: '#0F1629',
+              border: '1px solid rgba(212, 168, 67, 0.15)',
               borderRadius: 12,
-              boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(255,215,0,0.05)',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
               overflow: 'hidden',
             }}
           >
             {/* Search input */}
-            <div className="flex items-center px-4" style={{ borderBottom: '1px solid rgba(255, 215, 0, 0.08)' }}>
-              <Search className="mr-3 h-[18px] w-[18px] shrink-0" style={{ color: '#FFD700' }} strokeWidth={1.8} />
+            <div className="flex items-center px-4" style={{ borderBottom: '1px solid rgba(212, 168, 67, 0.08)' }}>
+              <Search className="mr-3 shrink-0" size={16} style={{ color: '#9CA3AF' }} strokeWidth={1.5} />
               <input
                 ref={inputRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Escape') { setOpen(false); setQuery(''); } }}
-                placeholder="Rechercher clients, devis, livraisons, KPIs..."
+                placeholder="Rechercher métriques, KPIs, rapports..."
                 autoFocus
-                className="flex h-12 w-full bg-transparent py-3 text-sm outline-none"
-                style={{ fontFamily: "'Inter', 'Helvetica Neue', sans-serif", fontSize: 14, color: 'rgba(255,255,255,0.9)' }}
+                className="flex h-12 w-full bg-transparent py-3 outline-none"
+                style={{ fontFamily: MONO, fontSize: 13, color: '#FFFFFF' }}
               />
               {query && (
                 <button onClick={() => setQuery('')} className="h-7 w-7 flex items-center justify-center rounded-md" style={{ color: 'rgba(255,255,255,0.4)' }}>
@@ -238,17 +197,17 @@ export function GlobalSearch() {
             <div style={{ maxHeight: 400, overflowY: 'auto' }}>
               {loading && (
                 <div className="flex items-center justify-center py-6">
-                  <Loader2 className="h-5 w-5 animate-spin" style={{ color: '#FFD700' }} />
+                  <Loader2 className="h-5 w-5 animate-spin" style={{ color: '#D4A843' }} />
                 </div>
               )}
 
               {!loading && query.length >= 2 && results.length === 0 && (
-                <div className="px-4 py-6 text-center text-sm" style={{ color: 'rgba(148,163,184,0.6)' }}>Aucun résultat trouvé</div>
+                <div className="px-4 py-6 text-center" style={{ fontFamily: MONO, fontSize: 13, color: '#9CA3AF' }}>Aucun résultat trouvé</div>
               )}
 
               {!loading && query.length >= 2 && Object.entries(groupedResults).map(([type, items]) => (
                 <div key={type} className="px-2 py-2">
-                  <div className="px-3 py-1.5 text-[10px] font-bold uppercase" style={{ color: 'rgba(148,163,184,0.5)', letterSpacing: '0.1em' }}>{getTypeLabel(type)}</div>
+                  <div className="px-3 py-1.5" style={{ fontFamily: MONO, fontSize: 10, fontWeight: 600, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' as const }}>{getTypeLabel(type)}</div>
                   {items.map((result) => (
                     <button
                       key={`${result.type}-${result.id}`}
@@ -260,8 +219,8 @@ export function GlobalSearch() {
                     >
                       {getIcon(result.type)}
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium truncate">{result.title}</div>
-                        <div className="text-xs truncate" style={{ color: 'rgba(148,163,184,0.6)' }}>{result.subtitle}</div>
+                        <div className="truncate" style={{ fontFamily: MONO, fontSize: 13, fontWeight: 500 }}>{result.title}</div>
+                        <div className="truncate" style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF' }}>{result.subtitle}</div>
                       </div>
                     </button>
                   ))}
@@ -270,13 +229,13 @@ export function GlobalSearch() {
 
               {!loading && query.length < 2 && (
                 <div className="px-2 py-2">
-                  <div className="px-3 py-1.5 text-[10px] font-bold uppercase" style={{ color: 'rgba(148,163,184,0.5)', letterSpacing: '0.15em' }}>ACCÈS RAPIDE</div>
+                  <div className="px-3 py-1.5" style={{ fontFamily: MONO, fontSize: 10, fontWeight: 600, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' as const }}>ACCÈS RAPIDE</div>
                   {quickLinks.map(link => (
                     <button
                       key={link.path}
                       onClick={() => { setOpen(false); setQuery(''); navigate(link.path); }}
-                      className="w-full flex items-center gap-3 text-left text-sm"
-                      style={{ padding: '10px 16px', borderRadius: 6, cursor: 'pointer', color: 'rgba(255,255,255,0.8)', transition: 'all 0.15s ease' }}
+                      className="w-full flex items-center gap-3 text-left"
+                      style={{ padding: '10px 16px', borderRadius: 6, cursor: 'pointer', color: 'rgba(255,255,255,0.8)', fontFamily: MONO, fontSize: 13, transition: 'all 0.15s ease' }}
                       onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }}
                       onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                     >
