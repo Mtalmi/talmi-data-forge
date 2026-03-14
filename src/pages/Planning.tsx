@@ -1576,7 +1576,7 @@ export default function Planning() {
         }
         dispatchMain={
           <div className="space-y-6">
-            <DispatchTable bons={displayCommandCenterBons} onRowClick={(bon) => { setSelectedBonId(bon.bl_id); setDetailOpen(true); }} />
+            <DispatchTable bons={displayCommandCenterBons} />
             {aFacturer.length > 0 && (
               <Card className="border-2 border-warning/50 bg-warning/5">
                 <CardHeader className="pb-3">
