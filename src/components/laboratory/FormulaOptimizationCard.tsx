@@ -2,11 +2,12 @@ import React from 'react';
 import { FlaskConical, Sparkles, TestTube, BarChart3 } from 'lucide-react';
 
 const T = {
-  gold: '#FFD700', goldDim: 'rgba(255,215,0,0.15)',
-  success: '#10B981', warning: '#F59E0B', danger: '#EF4444',
-  textPri: '#F1F5F9', textSec: '#94A3B8', textDim: '#64748B',
+  gold: '#D4A843', goldDim: 'rgba(212,168,67,0.15)',
+  success: '#22C55E', warning: '#F59E0B', danger: '#EF4444',
+  textPri: '#F1F5F9', textSec: '#94A3B8', textDim: '#9CA3AF',
   cardBorder: '#1E2D4A',
 };
+const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
 
 const formulas = [
   { name: 'B25', ciment: '350 kg/m³', resistance: '31.2 MPa', requis: '25 MPa', surdosage: 24.8, economie: '14 MAD/m³' },
@@ -27,44 +28,42 @@ export function FormulaOptimizationCard() {
   return (
     <div style={{
       background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
-      border: '1px solid rgba(16,185,129,0.15)',
-      borderTop: '2px solid',
-      borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
+      border: `1px solid rgba(212,168,67,0.15)`,
+      borderTop: '2px solid #D4A843',
       borderRadius: 12,
       overflow: 'hidden',
     }}>
       {/* Header */}
-      <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{
-          width: 30, height: 30, borderRadius: 8,
-          background: T.goldDim,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-        }}>
-          <FlaskConical size={14} color={T.gold} />
+      <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <FlaskConical size={14} color={T.gold} style={{ opacity: 0.7 }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}>
+            <Sparkles size={12} color={T.gold} />
+            <span style={{ color: T.gold, fontFamily: MONO, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px' }}>
+              Agent IA: Optimisation Formules
+            </span>
+            <div style={{ width: 60, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}>
-          <Sparkles size={12} color={T.gold} />
-          <span style={{ color: T.gold, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
-            Agent IA: Optimisation Formules
-          </span>
-          <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
-        </div>
+        <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', padding: '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4 }}>
+          Généré par IA · Claude Opus
+        </span>
       </div>
 
       <div style={{ padding: '0 20px 20px' }}>
         {/* Savings Summary Bar */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3" style={{ marginBottom: 20 }}>
           <div style={{ background: `${T.cardBorder}40`, borderRadius: 10, padding: '10px 14px', border: `1px solid ${T.cardBorder}`, textAlign: 'center' }}>
-            <p style={{ color: T.textDim, fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Économie Totale Identifiée</p>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 15, fontWeight: 700, color: T.gold }}>36 MAD/m³</p>
+            <p style={{ color: T.textDim, fontFamily: MONO, fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 4 }}>Économie Totale Identifiée</p>
+            <p style={{ fontFamily: MONO, fontSize: 20, fontWeight: 200, color: T.gold }}>36 MAD/m³</p>
           </div>
           <div style={{ background: `${T.cardBorder}40`, borderRadius: 10, padding: '10px 14px', border: `1px solid ${T.cardBorder}`, textAlign: 'center' }}>
-            <p style={{ color: T.textDim, fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Impact Annuel Estimé</p>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 20, fontWeight: 800, color: T.success }}>374,400 MAD</p>
+            <p style={{ color: T.textDim, fontFamily: MONO, fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 4 }}>Impact Annuel Estimé</p>
+            <p style={{ fontFamily: MONO, fontSize: 20, fontWeight: 200, color: T.success }}>374,400 MAD</p>
           </div>
           <div style={{ background: `${T.cardBorder}40`, borderRadius: 10, padding: '10px 14px', border: `1px solid ${T.cardBorder}`, textAlign: 'center' }}>
-            <p style={{ color: T.textDim, fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Formules Analysées</p>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 15, fontWeight: 700, color: T.textPri }}>4 <span style={{ color: T.textDim, fontSize: 12 }}>|</span> <span style={{ color: T.warning }}>3 optimisables</span></p>
+            <p style={{ color: T.textDim, fontFamily: MONO, fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 4 }}>Formules Analysées</p>
+            <p style={{ fontFamily: MONO, fontSize: 20, fontWeight: 200, color: T.textPri }}>4 <span style={{ color: T.textDim, fontSize: 12 }}>|</span> <span style={{ color: T.warning }}>3 optimisables</span></p>
           </div>
         </div>
 
@@ -77,8 +76,8 @@ export function FormulaOptimizationCard() {
                   <th key={h} style={{
                     padding: '12px 16px',
                     textAlign: i >= 2 ? 'center' : 'left',
-                    color: T.textDim, fontSize: 10, fontWeight: 600,
-                    textTransform: 'uppercase', letterSpacing: '0.15em',
+                    color: '#9CA3AF', fontFamily: MONO, fontSize: 11, fontWeight: 600,
+                    textTransform: 'uppercase', letterSpacing: '1.5px',
                     borderBottom: `1px solid ${T.cardBorder}`,
                   }}>{h}</th>
                 ))}
@@ -89,24 +88,28 @@ export function FormulaOptimizationCard() {
                 const sc = getSurdosageColor(f.surdosage);
                 return (
                   <tr key={i}
-                    style={{ borderBottom: i < formulas.length - 1 ? `1px solid ${T.cardBorder}60` : 'none', transition: 'background 150ms' }}
-                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,215,0,0.04)')}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                    style={{
+                      borderBottom: i < formulas.length - 1 ? `1px solid ${T.cardBorder}60` : 'none',
+                      background: i % 2 === 0 ? 'rgba(212,168,67,0.03)' : 'transparent',
+                      transition: 'background 150ms',
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.06)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = i % 2 === 0 ? 'rgba(212,168,67,0.03)' : 'transparent')}
                   >
                     <td style={{ padding: '12px 16px', fontSize: 13, fontWeight: 700, color: T.gold }}>{f.name}</td>
-                    <td style={{ padding: '12px 16px', fontSize: 12, color: T.textPri, fontFamily: 'JetBrains Mono, monospace' }}>{f.ciment}</td>
-                    <td style={{ padding: '12px 16px', fontSize: 12, color: T.textPri, fontFamily: 'JetBrains Mono, monospace', textAlign: 'center' }}>{f.resistance}</td>
-                    <td style={{ padding: '12px 16px', fontSize: 12, color: T.textSec, fontFamily: 'JetBrains Mono, monospace', textAlign: 'center' }}>{f.requis}</td>
+                    <td style={{ padding: '12px 16px', fontSize: 12, color: T.textPri, fontFamily: MONO }}>{f.ciment}</td>
+                    <td style={{ padding: '12px 16px', fontSize: 12, color: T.textPri, fontFamily: MONO, textAlign: 'center' }}>{f.resistance}</td>
+                    <td style={{ padding: '12px 16px', fontSize: 12, color: T.textSec, fontFamily: MONO, textAlign: 'center' }}>{f.requis}</td>
                     <td style={{ padding: '12px 16px', textAlign: 'center' }}>
                       <span style={{
                         display: 'inline-flex', alignItems: 'center', gap: 4,
                         padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700,
-                        background: `${sc}18`, color: sc, border: `1px solid ${sc}30`,
+                        color: '#EF4444', fontFamily: MONO,
                       }}>
                         +{f.surdosage}%
                       </span>
                     </td>
-                    <td style={{ padding: '12px 16px', fontSize: 12, fontWeight: 700, color: T.success, fontFamily: 'JetBrains Mono, monospace', textAlign: 'center' }}>{f.economie}</td>
+                    <td style={{ padding: '12px 16px', fontSize: 12, fontWeight: 200, color: '#22C55E', fontFamily: MONO, textAlign: 'center' }}>{f.economie}</td>
                   </tr>
                 );
               })}
