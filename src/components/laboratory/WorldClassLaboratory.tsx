@@ -16,13 +16,13 @@ import { PageHeader } from '@/components/layout/PageHeader';
 // DESIGN TOKENS
 // ─────────────────────────────────────────────────────
 const T = {
-  gold:       '#FFD700',
-  goldGlow:   'rgba(255,215,0,0.16)',
-  goldBorder: 'rgba(255,215,0,0.28)',
+  gold:       '#D4A843',
+  goldGlow:   'rgba(212,168,67,0.16)',
+  goldBorder: 'rgba(212,168,67,0.28)',
   navy:       '#0B1120',
   cardBg:     'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
   cardBorder: '#1E2D4A',
-  success:    '#10B981',
+  success:    '#22C55E',
   warning:    '#F59E0B',
   danger:     '#EF4444',
   info:       '#3B82F6',
@@ -31,8 +31,10 @@ const T = {
   orange:     '#F97316',
   textPri:    '#F1F5F9',
   textSec:    '#94A3B8',
-  textDim:    '#64748B',
+  textDim:    '#9CA3AF',
 };
+
+const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
 
 // ─────────────────────────────────────────────────────
 // HOOKS
@@ -82,12 +84,7 @@ function useLaboratoryLiveData() {
         const conformes = batches.filter(b => b.quality_status === 'conforme').length;
         const nonConformes = batches.filter(b => b.quality_status === 'non_conforme').length;
         const enAttente = batches.filter(b => !b.quality_status || b.quality_status === 'pending').length;
-        setKpis({
-          testsToday: batches.length,
-          conformes,
-          nonConformes,
-          enAttente,
-        });
+        setKpis({ testsToday: batches.length, conformes, nonConformes, enAttente });
       }
     } catch (err) { console.error('Laboratory live data error:', err); }
   }, []);
@@ -127,9 +124,9 @@ function Card({ children, style = {}, className = '' }: { children: React.ReactN
   );
 }
 
-function Bdg({ label, color, bg, pulse, icon: Icon }: { label: string; color: string; bg: string; pulse?: boolean; icon?: React.ElementType }) {
+function Bdg({ label, color, bg, pulse, icon: Icon, border: borderOverride }: { label: string; color: string; bg: string; pulse?: boolean; icon?: React.ElementType; border?: string }) {
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 999, background: bg, border: `1px solid ${color}40`, color, fontSize: 10, fontWeight: 700, letterSpacing: '0.04em', flexShrink: 0 }}>
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 4, background: bg, border: borderOverride || `1px solid ${color}40`, color, fontSize: 11, fontFamily: MONO, fontWeight: 700, letterSpacing: '0.04em', flexShrink: 0 }}>
       {Icon ? <Icon size={9} /> : <span style={{ width: 5, height: 5, borderRadius: '50%', background: color, flexShrink: 0, animation: pulse ? 'tbos-pulse 1.5s ease-in-out infinite' : 'none' }} />}
       {label}
     </span>
@@ -141,7 +138,7 @@ function SectionHeader({ icon: Icon, label, right, sub }: { icon: React.ElementT
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
       <Icon size={16} color={T.gold} />
       <div>
-        <span style={{ color: T.gold, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>{label}</span>
+        <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>{label}</span>
         {sub && <span style={{ color: T.textDim, fontSize: 10, marginLeft: 8 }}>{sub}</span>}
       </div>
       <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
@@ -164,18 +161,12 @@ const WEEKLY = [
 ];
 
 const TEST_TYPE_ICON: Record<string, React.ElementType> = {
-  'Slump': Droplets,
-  'Résistance 7j': Zap,
-  'Résistance 28j': Zap,
-  'Température': Activity,
-  'Air occlus': CloudRain,
+  'Slump': Droplets, 'Résistance 7j': Zap, 'Résistance 28j': Zap,
+  'Température': Activity, 'Air occlus': CloudRain,
 };
 const TEST_TYPE_COLOR: Record<string, string> = {
-  'Slump': '#D4A843',
-  'Résistance 7j': '#F0C060',
-  'Résistance 28j': '#B8902E',
-  'Température': '#FFD700',
-  'Air occlus': 'rgba(212,168,67,0.5)',
+  'Slump': '#D4A843', 'Résistance 7j': '#C49A3C', 'Résistance 28j': '#E8C96A',
+  'Température': '#A07C2E', 'Air occlus': '#8B6914',
 };
 
 const RESULTS = [
@@ -191,10 +182,10 @@ const RESULTS = [
 
 const TYPE_DIST = [
   { name: 'Slump',          count: 3, color: '#D4A843' },
-  { name: 'Résistance 7j',  count: 2, color: '#C49A35' },
-  { name: 'Résistance 28j', count: 1, color: '#A07820' },
-  { name: 'Température',    count: 1, color: '#7A5C18' },
-  { name: 'Air occlus',     count: 1, color: '#4A3810' },
+  { name: 'Résistance 7j',  count: 2, color: '#C49A3C' },
+  { name: 'Résistance 28j', count: 1, color: '#E8C96A' },
+  { name: 'Température',    count: 1, color: '#A07C2E' },
+  { name: 'Air occlus',     count: 1, color: '#8B6914' },
 ];
 
 const BATCH_DIST = [
@@ -226,7 +217,7 @@ const NORMS = [
 ];
 
 // ─────────────────────────────────────────────────────
-// CONFORMITY GAUGE (SVG)
+// CONFORMITY GAUGE (SVG) — #2
 // ─────────────────────────────────────────────────────
 function ConformityGauge({ value }: { value: number }) {
   const r = 80, cx = 110, cy = 110;
@@ -241,18 +232,20 @@ function ConformityGauge({ value }: { value: number }) {
     const large = end - start > 180 ? 1 : 0;
     return `M ${x1} ${y1} A ${radius} ${radius} 0 ${large} 1 ${x2} ${y2}`;
   };
-  const color = value >= 80 ? T.success : value >= 60 ? T.warning : T.danger;
 
   return (
     <svg width={220} height={160} viewBox="0 0 220 175">
-      {/* Track */}
-      <path d={arcPath(startAngle, endAngle, r)} fill="none" stroke={`${color}20`} strokeWidth={14} strokeLinecap="round" />
-      {/* Fill */}
-      <path d={arcPath(startAngle, startAngle + filledArc, r)} fill="none" stroke={color} strokeWidth={14} strokeLinecap="round"
-        style={{ filter: `drop-shadow(0 0 8px ${color}80)` }} />
-      {/* Center text */}
-      <text x={cx} y={cy + 8} textAnchor="middle" fill={color} fontFamily="JetBrains Mono, monospace" fontSize={26} fontWeight={800}>{value}%</text>
-      <text x={cx} y={cy + 28} textAnchor="middle" fill={T.textDim} fontFamily="DM Sans, sans-serif" fontSize={10}>conformité</text>
+      <defs>
+        <linearGradient id="gaugeGoldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#C49A3C" />
+          <stop offset="100%" stopColor="#D4A843" />
+        </linearGradient>
+      </defs>
+      <path d={arcPath(startAngle, endAngle, r)} fill="none" stroke="rgba(212,168,67,0.12)" strokeWidth={14} strokeLinecap="round" />
+      <path d={arcPath(startAngle, startAngle + filledArc, r)} fill="none" stroke="url(#gaugeGoldGrad)" strokeWidth={14} strokeLinecap="round"
+        style={{ filter: 'drop-shadow(0 0 8px rgba(212,168,67,0.5))' }} />
+      <text x={cx} y={cy + 8} textAnchor="middle" fill="#D4A843" fontFamily={MONO} fontSize={36} fontWeight={200}>{value}%</text>
+      <text x={cx} y={cy + 28} textAnchor="middle" fill="#9CA3AF" fontFamily={MONO} fontSize={10}>conformité</text>
     </svg>
   );
 }
@@ -295,27 +288,59 @@ function BatchTooltip({ active, payload, label }: any) {
 }
 
 // ─────────────────────────────────────────────────────
-// TEST RESULT ROW
+// CUSTOM DOT FOR TAUX LINE — pulse on last point
 // ─────────────────────────────────────────────────────
-function TestRow({ r, delay = 0 }: { r: typeof RESULTS[0]; delay?: number }) {
+function TauxDot(props: any) {
+  const { cx, cy, index, payload } = props;
+  if (payload.taux === 0) return null;
+  const isLast = index === WEEKLY.filter(w => w.taux > 0).length - 1;
+  if (isLast) {
+    return (
+      <g>
+        <circle cx={cx} cy={cy} r={6} fill="rgba(212,168,67,0.2)">
+          <animate attributeName="r" values="6;10;6" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.6;0.1;0.6" dur="2s" repeatCount="indefinite" />
+        </circle>
+        <circle cx={cx} cy={cy} r={4} fill="#D4A843" stroke="#D4A843" strokeWidth={2} />
+      </g>
+    );
+  }
+  return <circle cx={cx} cy={cy} r={3} fill="#D4A843" stroke="#D4A843" strokeWidth={1.5} />;
+}
+
+// ─────────────────────────────────────────────────────
+// TEST RESULT ROW — #4
+// ─────────────────────────────────────────────────────
+function TestRow({ r, delay = 0, index = 0 }: { r: typeof RESULTS[0]; delay?: number; index?: number }) {
   const vis = useFadeIn(delay);
   const [hov, setHov] = useState(false);
   const sColor = r.status === 'Conforme' ? T.success : r.status === 'Non-conforme' ? T.danger : T.warning;
   const TypeIcon = TEST_TYPE_ICON[r.type] ?? FlaskConical;
   const typeColor = TEST_TYPE_COLOR[r.type] ?? T.textSec;
-  const resultColor = r.status === 'Conforme' ? T.success : r.status === 'Non-conforme' ? T.danger : T.textDim;
 
   const ecartEl = (() => {
     if (r.ecartType === 'ok') return <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, color: T.success, fontWeight: 700, fontSize: 12 }}><CheckCircle size={11} /> OK</span>;
-    if (r.ecartType === 'plus') return <span style={{ color: T.success, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 12 }}>{r.ecart}</span>;
+    if (r.ecartType === 'plus') return <span style={{ color: T.success, fontFamily: MONO, fontWeight: 700, fontSize: 12 }}>{r.ecart}</span>;
     if (r.ecartType === 'bad') return <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, color: T.danger, fontWeight: 700, fontSize: 11 }}><AlertTriangle size={11} /> {r.ecart}</span>;
     return <span style={{ color: T.textDim, fontSize: 12 }}>—</span>;
   })();
 
-  const statusEl = (() => {
-    if (r.status === 'Conforme')     return <Bdg label="Conforme"     color={T.success} bg={`${T.success}15`} icon={CheckCircle} />;
-    if (r.status === 'Non-conforme') return <Bdg label="Non-conforme" color={T.danger}  bg={`${T.danger}15`}  pulse icon={AlertTriangle} />;
-    return <Bdg label="En attente" color={T.warning} bg={`${T.warning}15`} pulse icon={Clock} />;
+  const statusBadge = (() => {
+    if (r.status === 'Conforme') return (
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 4, background: 'rgba(34,197,94,0.15)', color: '#22C55E', border: '1px solid rgba(34,197,94,0.3)', fontSize: 11, fontFamily: MONO, fontWeight: 700 }}>
+        <CheckCircle size={9} /> Conforme
+      </span>
+    );
+    if (r.status === 'Non-conforme') return (
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 4, background: 'rgba(239,68,68,0.15)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)', fontSize: 11, fontFamily: MONO, fontWeight: 700 }}>
+        <AlertTriangle size={9} /> Non-conforme
+      </span>
+    );
+    return (
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 4, background: 'rgba(245,158,11,0.15)', color: '#F59E0B', border: '1px solid rgba(245,158,11,0.3)', fontSize: 11, fontFamily: MONO, fontWeight: 700 }}>
+        <Clock size={9} /> En attente
+      </span>
+    );
   })();
 
   return (
@@ -326,29 +351,29 @@ function TestRow({ r, delay = 0 }: { r: typeof RESULTS[0]; delay?: number }) {
         alignItems: 'center', gap: 8,
         borderLeft: `4px solid ${sColor}`,
         borderRadius: 10, padding: '12px 14px',
-        background: hov ? '#1A2B45' : 'transparent',
+        background: hov ? 'rgba(212,168,67,0.06)' : (index % 2 === 0 ? 'rgba(212,168,67,0.03)' : 'transparent'),
         borderBottom: `1px solid ${T.cardBorder}`,
         opacity: vis ? 1 : 0,
         transform: vis ? (hov ? 'translateX(4px)' : 'translateX(0)') : 'translateY(14px)',
         transition: 'all 300ms ease-out', cursor: 'default',
       }}
     >
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: T.textDim, margin: 0 }}>{r.id}</p>
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: T.gold, fontWeight: 700, margin: 0 }}>{r.batch}</p>
+      <p style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF', margin: 0 }}>{r.id}</p>
+      <p style={{ fontFamily: MONO, fontSize: 12, color: '#D4A843', fontWeight: 700, margin: 0 }}>{r.batch}</p>
       <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
         <TypeIcon size={13} color={typeColor} />
         <span style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{r.type}</span>
       </div>
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 15, fontWeight: 800, color: resultColor, margin: 0 }}>{r.result}</p>
+      <p style={{ fontFamily: MONO, fontSize: 15, fontWeight: 200, color: '#D4A843', margin: 0 }}>{r.result}</p>
       <p style={{ fontSize: 12, color: T.textDim, margin: 0 }}>{r.norme}</p>
       <div>{ecartEl}</div>
-      <div>{statusEl}</div>
+      <div>{statusBadge}</div>
     </div>
   );
 }
 
 // ─────────────────────────────────────────────────────
-// KPI CARD
+// KPI CARD — #1
 // ─────────────────────────────────────────────────────
 function KPICard({ label, value, color, icon: Icon, trend, delay = 0 }: {
   label: string; value: number; color: string; icon: React.ElementType; trend?: string; delay?: number;
@@ -357,16 +382,14 @@ function KPICard({ label, value, color, icon: Icon, trend, delay = 0 }: {
   const vis = useFadeIn(delay);
   return (
     <div style={{ opacity: vis ? 1 : 0, transform: vis ? 'none' : 'translateY(20px)', transition: 'all 550ms ease-out', height: '100%' }}>
-      <Card style={{ height: '100%' }}>
+      <Card style={{ height: '100%', borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.15em', margin: 0, marginBottom: 8 }}>{label}</p>
-            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 36, fontWeight: 700, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em', margin: 0 }}>{animated}</p>
-            {trend && <p style={{ fontSize: 12, fontWeight: 500, marginTop: 6, color: '#10B981', margin: '6px 0 0' }}>↑ {trend}</p>}
+            <p style={{ color: '#9CA3AF', fontFamily: MONO, fontSize: 11, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '1.5px', margin: 0, marginBottom: 8 }}>{label}</p>
+            <p style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color, lineHeight: 1, letterSpacing: '-0.02em', margin: 0 }}>{animated}</p>
+            {trend && <p style={{ fontSize: 12, fontWeight: 500, marginTop: 6, color: T.success, margin: '6px 0 0' }}>↑ {trend}</p>}
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon size={18} color="#F59E0B" />
-          </div>
+          <Icon size={18} color="#D4A843" style={{ opacity: 0.5 }} />
         </div>
       </Card>
     </div>
@@ -374,36 +397,35 @@ function KPICard({ label, value, color, icon: Icon, trend, delay = 0 }: {
 }
 
 // ─────────────────────────────────────────────────────
-// PENDING CARD
+// PENDING CARD — #9
 // ─────────────────────────────────────────────────────
 function PendingCard({ p, delay = 0 }: { p: typeof PENDING[0]; delay?: number }) {
   const vis = useFadeIn(delay);
   const barW = useBarWidth(p.progress, delay);
   const isNear = p.progress >= 90;
-  const barColor = isNear ? T.success : T.warning;
   return (
     <div style={{ opacity: vis ? 1 : 0, transform: vis ? 'none' : 'translateY(20px)', transition: 'all 500ms ease-out' }}>
-      <Card style={{ borderLeft: `4px solid ${T.warning}`, background: 'linear-gradient(145deg, #141E2F 0%, #1A2640 100%)' }}>
+      <Card style={{ borderLeft: `4px solid ${T.warning}`, borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#F59E0B', background: 'linear-gradient(145deg, #141E2F 0%, #1A2640 100%)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 14, color: T.gold }}>{p.id}</span>
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: T.textSec }}>{p.batch}</span>
+              <span style={{ fontFamily: MONO, fontWeight: 700, fontSize: 14, color: T.gold }}>{p.id}</span>
+              <span style={{ fontFamily: MONO, fontSize: 12, color: T.textSec }}>{p.batch}</span>
             </div>
             <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, margin: 0 }}>{p.type}</p>
           </div>
           {isNear
-            ? <Bdg label="Résultat imminent" color={T.success} bg={`${T.success}15`} icon={CheckCircle} />
-            : <Bdg label="En cours" color={T.warning} bg={`${T.warning}15`} pulse />
+            ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 4, background: 'transparent', color: '#D4A843', border: '1px solid rgba(212,168,67,0.3)', fontSize: 11, fontFamily: MONO, fontWeight: 700 }}><CheckCircle size={9} /> Résultat imminent</span>
+            : <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 4, background: 'transparent', color: '#F59E0B', border: '1px solid rgba(245,158,11,0.3)', fontSize: 11, fontFamily: MONO, fontWeight: 700 }}><Clock size={9} /> En cours</span>
           }
         </div>
         <p style={{ fontSize: 11, color: T.textDim, marginBottom: 12 }}>{p.started} → {p.expected}</p>
-        <div style={{ height: 7, borderRadius: 99, background: `${barColor}18`, overflow: 'hidden', marginBottom: 6 }}>
-          <div style={{ height: '100%', width: `${barW}%`, background: `linear-gradient(90deg, ${barColor}99, ${barColor})`, borderRadius: 99, transition: 'width 900ms cubic-bezier(0.4,0,0.2,1)', boxShadow: `0 0 8px ${barColor}60` }} />
+        <div style={{ height: 7, borderRadius: 99, background: 'rgba(212,168,67,0.12)', overflow: 'hidden', marginBottom: 6 }}>
+          <div style={{ height: '100%', width: `${barW}%`, background: 'linear-gradient(90deg, #C49A3C, #D4A843)', borderRadius: 99, transition: 'width 900ms cubic-bezier(0.4,0,0.2,1)', boxShadow: '0 0 8px rgba(212,168,67,0.4)' }} />
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <p style={{ fontSize: 10, color: T.textDim, margin: 0 }}>Jour {p.jour} sur {p.total} jours</p>
-          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, color: barColor, margin: 0 }}>{p.progress}%</p>
+          <p style={{ fontFamily: MONO, fontSize: 12, fontWeight: 200, color: '#D4A843', margin: 0 }}>{p.progress}%</p>
         </div>
       </Card>
     </div>
@@ -419,14 +441,14 @@ function renderActiveShape(props: any) {
 }
 
 // ─────────────────────────────────────────────────────
-// STAT BOX
+// STAT BOX — #2
 // ─────────────────────────────────────────────────────
-function StatBox({ label, value, color }: { label: string; value: number; color: string }) {
+function StatBox({ label, value, color, borderColor }: { label: string; value: number; color: string; borderColor: string }) {
   const animated = useAnimatedCounter(value);
   return (
-    <div style={{ flex: 1, background: '#0D1627', borderRadius: 10, padding: '10px 14px', border: `1px solid ${color}25` }}>
+    <div style={{ flex: 1, background: '#0D1627', borderRadius: 10, padding: '10px 14px', border: `1px solid ${color}25`, borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: borderColor }}>
       <p style={{ fontSize: 9, color: T.textDim, margin: '0 0 4px', textTransform: 'uppercase' as const, letterSpacing: '0.08em', fontWeight: 700 }}>{label}</p>
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 20, fontWeight: 800, color, margin: 0 }}>{animated}</p>
+      <p style={{ fontFamily: MONO, fontSize: 20, fontWeight: 200, color, margin: 0 }}>{animated}</p>
     </div>
   );
 }
@@ -469,7 +491,7 @@ export default function WorldClassLaboratory() {
             onMouseEnter={() => setHoverNew(true)} onMouseLeave={() => setHoverNew(false)}
             style={{
               display: 'flex', alignItems: 'center', gap: 7, padding: '7px 16px',
-              background: '#F59E0B', color: '#000',
+              background: '#D4A843', color: '#0F1629',
               border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12,
               cursor: 'pointer', transition: 'all 150ms', fontFamily: 'DM Sans, sans-serif',
             }}
@@ -486,10 +508,10 @@ export default function WorldClassLaboratory() {
         <section>
           <SectionHeader icon={TrendingUp} label="Indicateurs du Jour" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, alignItems: 'stretch' }}>
-            <KPICard label="Tests Aujourd'hui"      value={labKpis.testsToday} color={T.gold}    icon={FlaskConical}   trend="+3 vs hier"       delay={0}   />
-            <KPICard label="Conformes"               value={labKpis.conformes} color={T.success} icon={CheckCircle}    trend={`${labKpis.testsToday > 0 ? Math.round((labKpis.conformes / labKpis.testsToday) * 100) : 0}% taux`}       delay={80}  />
-            <KPICard label="Non-Conformes"           value={labKpis.nonConformes} color={T.danger}  icon={AlertTriangle}  trend="-1 vs hier"       delay={160} />
-            <KPICard label="En Attente Résultat"     value={labKpis.enAttente} color={T.warning} icon={Clock}                                   delay={240} />
+            <KPICard label="Tests Aujourd'hui"      value={labKpis.testsToday}    color="#FFFFFF"  icon={FlaskConical}   trend="+3 vs hier"       delay={0}   />
+            <KPICard label="Conformes"               value={labKpis.conformes}    color="#22C55E"  icon={CheckCircle}    trend={`${labKpis.testsToday > 0 ? Math.round((labKpis.conformes / labKpis.testsToday) * 100) : 0}% taux`}       delay={80}  />
+            <KPICard label="Non-Conformes"           value={labKpis.nonConformes} color="#EF4444"  icon={AlertTriangle}  trend="-1 vs hier"       delay={160} />
+            <KPICard label="En Attente Résultat"     value={labKpis.enAttente}    color="#F59E0B"  icon={Clock}                                   delay={240} />
           </div>
         </section>
 
@@ -498,40 +520,44 @@ export default function WorldClassLaboratory() {
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 3fr', gap: 20 }}>
 
             {/* Gauge left */}
-            <Card className="tbos-card-stagger" style={{ borderTop: '2px solid', borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1' }}>
+            <Card className="tbos-card-stagger" style={{ borderTop: '2px solid #D4A843' }}>
               <SectionHeader icon={CheckCircle} label="Conformité" sub="aujourd'hui" />
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <ConformityGauge value={87.5} />
               </div>
-              <p style={{ textAlign: 'center' as const, color: T.textDim, fontSize: 11, marginBottom: 16, marginTop: 0 }}>Taux de Conformité Aujourd'hui</p>
+              <p style={{ textAlign: 'center' as const, color: '#9CA3AF', fontSize: 11, marginBottom: 16, marginTop: 0 }}>Taux de Conformité Aujourd'hui</p>
               <div style={{ display: 'flex', gap: 10 }}>
-                <StatBox label="Total" value={8} color={T.textPri} />
-                <StatBox label="Conformes" value={7} color={T.success} />
-                <StatBox label="Non-conf." value={1} color={T.danger} />
+                <StatBox label="Total" value={8} color={T.textPri} borderColor="#D4A843" />
+                <StatBox label="Conformes" value={7} color={T.success} borderColor="#22C55E" />
+                <StatBox label="Non-conf." value={1} color={T.danger} borderColor="#EF4444" />
               </div>
             </Card>
 
-            {/* Weekly trend right */}
-            <div style={{ ...chartStyle, borderTop: '2px solid', borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1' }}>
+            {/* Weekly trend right — #3 */}
+            <div style={{ ...chartStyle, borderTop: '2px solid #D4A843' }}>
               <SectionHeader icon={TrendingUp} label="Tendance Conformité" sub="cette semaine" />
               <div style={{ display: 'flex', gap: 16, marginBottom: 12 }}>
-                {[[T.success, 'Conformes'], [T.danger, 'Non-conf.'], [T.gold, 'Taux %']].map(([c, l], i) => (
+                {[['#D4A843', 'Conformes', false], ['#EF4444', 'Non-conf.', false], ['#D4A843', 'Taux %', true]].map(([c, l, isLine], i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <div style={{ width: i === 2 ? 14 : 10, height: i === 2 ? 2 : 10, borderRadius: i === 2 ? 0 : 3, background: c, borderTop: i === 2 ? `2px dashed ${c}` : undefined }} />
-                    <span style={{ fontSize: 11, color: T.textSec }}>{l}</span>
+                    <div style={{ width: isLine ? 14 : 10, height: isLine ? 2 : 10, borderRadius: isLine ? 0 : 3, background: c as string, borderTop: isLine ? `2px solid ${c}` : undefined }} />
+                    <span style={{ fontSize: 11, color: T.textSec }}>{l as string}</span>
                   </div>
                 ))}
               </div>
               <ResponsiveContainer width="100%" height={220}>
                 <AreaChart data={WEEKLY} margin={{ top: 4, right: 50, left: 0, bottom: 0 }}>
                   <defs>
-                    <linearGradient id="gradConf" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={T.success} stopOpacity={0.15} />
-                      <stop offset="95%" stopColor={T.success} stopOpacity={0.02} />
+                    <linearGradient id="gradConfGold" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#C49A3C" stopOpacity={0.3} />
+                      <stop offset="100%" stopColor="#D4A843" stopOpacity={0.02} />
                     </linearGradient>
                     <linearGradient id="gradNon" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor={T.danger} stopOpacity={0.45} />
                       <stop offset="95%" stopColor={T.danger} stopOpacity={0.05} />
+                    </linearGradient>
+                    <linearGradient id="gradTaux" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#D4A843" stopOpacity={0.1} />
+                      <stop offset="95%" stopColor="#D4A843" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} />
@@ -539,77 +565,80 @@ export default function WorldClassLaboratory() {
                   <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 15]} />
                   <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 110]} tickFormatter={(v: number) => `${v}%`} />
                   <RechartsTooltip content={<WeeklyTooltip />} />
-                  <Area yAxisId="left" type="monotone" dataKey="conformes" name="Conformes" stroke={T.success} fill="none" fillOpacity={0} strokeWidth={2} isAnimationActive animationDuration={1200} />
-                  <Area yAxisId="left" type="monotone" dataKey="non" name="Non-conf." stroke={T.danger} fill="url(#gradNon)" strokeWidth={2} isAnimationActive animationDuration={1200} />
-                  <Area yAxisId="right" type="monotone" dataKey="taux" name="Taux %" stroke="#FFD700" fill="none" strokeWidth={3} strokeDasharray="4 3" dot={{ fill: '#FFD700', r: 4, strokeWidth: 2, stroke: '#FFD700' }} isAnimationActive animationDuration={1200} />
+                  <Bar yAxisId="left" dataKey="conformes" name="Conformes" radius={[4,4,0,0]} isAnimationActive animationDuration={1200}>
+                    {WEEKLY.map((_, i) => <Cell key={i} fill="url(#gradConfGold)" stroke="#D4A843" strokeWidth={0.5} />)}
+                  </Bar>
+                  <Bar yAxisId="left" dataKey="non" name="Non-conf." radius={[4,4,0,0]} isAnimationActive animationDuration={1200}>
+                    {WEEKLY.map((_, i) => <Cell key={i} fill="#EF4444" />)}
+                  </Bar>
+                  <Area yAxisId="right" type="monotone" dataKey="taux" name="Taux %" stroke="#D4A843" fill="url(#gradTaux)" strokeWidth={3} dot={<TauxDot />} isAnimationActive animationDuration={1200} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
         </section>
 
-        {/* ══════ SECTION 3 — TEST RESULTS TABLE ══════ */}
+        {/* ══════ SECTION 3 — TEST RESULTS TABLE — #4 ══════ */}
         <section>
-          <div style={{ ...chartStyle, borderTop: '2px solid', borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1' }}>
+          <div style={{ ...chartStyle, borderTop: '2px solid #D4A843' }}>
             <SectionHeader
               icon={FlaskConical}
               label="Résultats du Jour"
               right={
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <Bdg label="7 conformes"    color={T.success} bg={`${T.success}15`} icon={CheckCircle} />
-                  <Bdg label="1 non-conforme" color={T.danger}  bg={`${T.danger}15`}  pulse icon={AlertTriangle} />
+                  <Bdg label="7 conformes"    color={T.success} bg="rgba(34,197,94,0.15)" border="1px solid rgba(34,197,94,0.3)" icon={CheckCircle} />
+                  <Bdg label="1 non-conforme" color={T.danger}  bg="rgba(239,68,68,0.15)" border="1px solid rgba(239,68,68,0.3)" pulse icon={AlertTriangle} />
                 </div>
               }
             />
             {/* Column headers */}
             <div style={{ display: 'grid', gridTemplateColumns: '0.6fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.9fr', padding: '0 14px 10px', gap: 8, borderBottom: `1px solid ${T.cardBorder}` }}>
               {['Test ID', 'Batch', 'Type', 'Résultat', 'Norme', 'Écart', 'Statut'].map((h, i) => (
-                <p key={i} style={{ fontSize: 9, fontWeight: 700, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '0.08em', margin: 0 }}>{h}</p>
+                <p key={i} style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', margin: 0 }}>{h}</p>
               ))}
             </div>
             <div style={{ marginTop: 4 }}>
-              {RESULTS.map((r, i) => <TestRow key={r.id} r={r} delay={i * 60} />)}
+              {RESULTS.map((r, i) => <TestRow key={r.id} r={r} delay={i * 60} index={i} />)}
             </div>
           </div>
         </section>
 
-        {/* ══════ AI RISK PREDICTION CARD ══════ */}
+        {/* ══════ AI RISK PREDICTION CARD — #5 ══════ */}
         <section>
-          <Card style={{ borderLeft: `4px solid ${T.gold}`, background: 'rgba(255,255,255,0.04)', borderTop: '2px solid', borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1' }}>
+          <Card style={{ borderLeft: `4px solid ${T.gold}`, background: 'rgba(255,255,255,0.04)', borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#F59E0B' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Zap size={14} color={T.gold} />
-                <span style={{ color: T.gold, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+                <span style={{ color: T.gold, fontFamily: MONO, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px' }}>
                   Agent IA: Risque Prochain Batch
                 </span>
               </div>
+              <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', padding: '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4 }}>
+                Généré par IA · Claude Opus
+              </span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
               <div style={{ textAlign: 'center', flexShrink: 0 }}>
                 <div style={{ fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>
                   Score Risque
                 </div>
-                <span style={{
-                  fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
-                  fontSize: 48, fontWeight: 200, lineHeight: 1, letterSpacing: '-0.02em',
-                  color: '#F59E0B',
-                }}>
+                <span style={{ fontFamily: MONO, fontSize: 48, fontWeight: 200, lineHeight: 1, letterSpacing: '-0.02em', color: '#F59E0B' }}>
                   34
                 </span>
                 <div style={{ fontSize: 10, color: T.textDim, marginTop: 4 }}>/100</div>
               </div>
               <div style={{ flex: 1, borderLeft: '1px solid rgba(255,255,255,0.06)', paddingLeft: 20 }}>
                 <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, margin: 0 }}>
-                  <strong style={{ color: T.gold }}>Formule B35</strong> — variance élevée détectée sur les 5 derniers tests. Probabilité de non-conformité : <strong style={{ fontFamily: 'ui-monospace, monospace', color: '#F59E0B' }}>34%</strong>. Recommandation : <span style={{ color: T.success }}>réduire E/C de 0.02</span>.
+                  <strong style={{ color: T.gold }}>Formule B35</strong> — variance élevée détectée sur les 5 derniers tests. Probabilité de non-conformité : <strong style={{ fontFamily: MONO, color: '#F59E0B' }}>34%</strong>. Recommandation : <span style={{ color: T.success }}>réduire E/C de 0.02</span>.
                 </p>
                 <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 6, background: `${T.warning}20`, border: `1px solid ${T.warning}40`, color: T.warning, fontSize: 10, fontWeight: 600 }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', fontSize: 10, fontFamily: MONO, fontWeight: 600 }}>
                     Variance: ±4.2 MPa
                   </span>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 6, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: T.textSec, fontSize: 10, fontWeight: 600 }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', fontSize: 10, fontFamily: MONO, fontWeight: 600 }}>
                     5 tests analysés
                   </span>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 6, background: `${T.gold}15`, border: `1px solid ${T.gold}30`, color: T.gold, fontSize: 10, fontWeight: 600 }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', fontSize: 10, fontFamily: MONO, fontWeight: 600 }}>
                     E/C actuel: 0.48
                   </span>
                 </div>
@@ -618,27 +647,28 @@ export default function WorldClassLaboratory() {
           </Card>
         </section>
 
-        {/* ══════ SECTION 4 — NON-CONFORMITY DETAIL ══════ */}
+        {/* ══════ SECTION 4 — NON-CONFORMITY DETAIL — #6 ══════ */}
         <section>
-          <Card style={{ borderLeft: `4px solid ${T.danger}`, background: 'linear-gradient(145deg, #1C0F0F 0%, #201520 100%)', borderTop: '2px solid', borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1' }}>
+          <Card style={{ borderLeft: `4px solid ${T.danger}`, background: 'linear-gradient(145deg, #1C0F0F 0%, #201520 100%)', borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#EF4444' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <AlertTriangle size={18} color={T.danger} />
-                <span style={{ fontWeight: 800, fontSize: 16, color: T.textPri }}>Non-Conformité Détectée</span>
+                <span style={{ fontFamily: MONO, fontWeight: 700, fontSize: 13, color: T.textPri, textTransform: 'uppercase', letterSpacing: '2px' }}>Non-Conformité Détectée</span>
               </div>
-              <Bdg label="Action Requise" color={T.danger} bg={`${T.danger}20`} pulse icon={AlertTriangle} />
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 4, background: 'rgba(239,68,68,0.15)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)', fontSize: 11, fontFamily: MONO, fontWeight: 700 }}>
+                <AlertTriangle size={9} /> Action Requise
+              </span>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28, marginBottom: 20 }}>
-              {/* Left */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                   <span style={{ fontSize: 10, color: T.textDim, width: 70 }}>Test</span>
-                  <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: T.gold, fontSize: 13 }}>LAB-140</span>
+                  <span style={{ fontFamily: MONO, fontWeight: 700, color: T.gold, fontSize: 13 }}>LAB-140</span>
                 </div>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                   <span style={{ fontSize: 10, color: T.textDim, width: 70 }}>Batch</span>
-                  <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, color: T.textSec }}>BN-0140</span>
+                  <span style={{ fontFamily: MONO, fontSize: 13, color: T.textSec }}>BN-0140</span>
                 </div>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                   <span style={{ fontSize: 10, color: T.textDim, width: 70 }}>Type</span>
@@ -646,12 +676,11 @@ export default function WorldClassLaboratory() {
                 </div>
                 <div>
                   <p style={{ fontSize: 10, color: T.textDim, margin: '0 0 4px' }}>Résultat mesuré</p>
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, color: T.danger, margin: 0 }}>22 cm</p>
+                  <p style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color: T.danger, margin: 0 }}>22 cm</p>
                   <p style={{ fontSize: 11, color: T.textDim, margin: '4px 0 0' }}>Norme: 15-20 cm</p>
                   <p style={{ fontSize: 12, fontWeight: 700, color: T.danger, marginTop: 4 }}>+10% hors tolérance</p>
                 </div>
               </div>
-              {/* Right */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                   <span style={{ fontSize: 10, color: T.textDim, width: 110 }}>Cause probable</span>
@@ -667,25 +696,24 @@ export default function WorldClassLaboratory() {
                 </div>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                   <span style={{ fontSize: 10, color: T.textDim, width: 110 }}>Heure</span>
-                  <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, color: T.textSec }}>11:48</span>
+                  <span style={{ fontFamily: MONO, fontSize: 13, color: T.textSec }}>11:48</span>
                 </div>
               </div>
             </div>
 
-            {/* Action buttons */}
             <div style={{ display: 'flex', gap: 10, paddingTop: 16, borderTop: `1px solid ${T.danger}30` }}>
               <ActionBtn label="Créer Rapport NC"     icon={FileText}     bg={T.danger}   textCol="#fff"    fill />
-              <ActionBtn label="Ajuster Formule"      icon={FlaskConical} outline={T.gold}                        />
-              <ActionBtn label="Notifier Responsable" icon={Bell}         outline={T.info}                        />
+              <ActionBtn label="Ajuster Formule"      icon={FlaskConical} outline="#D4A843" />
+              <ActionBtn label="Notifier Responsable" icon={Bell}         outline="#D4A843" />
             </div>
           </Card>
         </section>
 
-        {/* ══════ SECTION 5 — DISTRIBUTION ══════ */}
+        {/* ══════ SECTION 5 — DISTRIBUTION — #7 & #8 ══════ */}
         <section>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
 
-            {/* Donut by type */}
+            {/* Donut by type — #7 */}
             <div style={chartStyle}>
               <SectionHeader icon={FlaskConical} label="Par Type de Test" />
               <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
@@ -703,8 +731,8 @@ export default function WorldClassLaboratory() {
                   </PieChart>
                 </ResponsiveContainer>
                 <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -56%)', textAlign: 'center', pointerEvents: 'none' }}>
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 26, fontWeight: 800, color: T.gold, lineHeight: 1, margin: 0 }}>8</p>
-                  <p style={{ fontSize: 9, color: T.textDim, margin: 0 }}>tests</p>
+                  <p style={{ fontFamily: MONO, fontSize: 26, fontWeight: 200, color: T.gold, lineHeight: 1, margin: 0 }}>8</p>
+                  <p style={{ fontFamily: MONO, fontSize: 9, color: T.textDim, margin: 0 }}>tests</p>
                 </div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
@@ -714,36 +742,34 @@ export default function WorldClassLaboratory() {
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <Icon size={12} color={d.color} />
                       <span style={{ flex: 1, fontSize: 12, color: T.textSec }}>{d.name}</span>
-                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: d.color, fontWeight: 700 }}>{d.count}</span>
+                      <span style={{ fontFamily: MONO, fontSize: 11, color: d.color, fontWeight: 700 }}>{d.count}</span>
                     </div>
                   );
                 })}
               </div>
             </div>
 
-            {/* Stacked bar by batch */}
+            {/* Stacked bar by batch — #8 */}
             <div style={chartStyle}>
               <SectionHeader icon={TrendingUp} label="Par Batch" />
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={BATCH_DIST} layout="vertical" margin={{ top: 2, right: 30, left: 10, bottom: 2 }}>
+                  <defs>
+                    <linearGradient id="batchGoldGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#C49A3C" />
+                      <stop offset="100%" stopColor="#D4A843" />
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} horizontal={false} />
                   <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 1]} />
-                  <YAxis type="category" dataKey="batch" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} width={80} />
+                  <YAxis type="category" dataKey="batch" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 11, fontFamily: MONO }} width={80} />
                   <RechartsTooltip content={<BatchTooltip />} cursor={{ fill: `${T.gold}08` }} />
-                  <Bar dataKey="conf" name="Conformes" radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000}>
-                    {BATCH_DIST.map((d, i) => {
-                      const batchGoldMap: Record<string, string> = {
-                        'BN-0142': '#D4A843', 'BN-0141': '#D4A843',
-                        'BN-0139': '#C49A35', 'BN-0138': '#C49A35', 'BN-0137': '#C49A35', 'BN-0136': '#C49A35',
-                      };
-                      return <Cell key={i} fill={batchGoldMap[d.batch] || '#D4A843'} />;
-                    })}
-                  </Bar>
+                  <Bar dataKey="conf" name="Conformes" radius={[0,4,4,0]} stackId="a" fill="url(#batchGoldGrad)" isAnimationActive animationDuration={1000} />
                   <Bar dataKey="nonConf" name="Non-conf." radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000}>
-                    {BATCH_DIST.map((d, i) => <Cell key={i} fill="#EF4444" />)}
+                    {BATCH_DIST.map((_, i) => <Cell key={i} fill="#EF4444" />)}
                   </Bar>
                   <Bar dataKey="enAttente" name="En attente" radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000}>
-                    {BATCH_DIST.map((d, i) => <Cell key={i} fill="rgba(212,168,67,0.4)" />)}
+                    {BATCH_DIST.map((_, i) => <Cell key={i} fill="rgba(212,168,67,0.4)" />)}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
@@ -751,7 +777,7 @@ export default function WorldClassLaboratory() {
           </div>
         </section>
 
-        {/* ══════ SECTION 6 — PENDING RESULTS ══════ */}
+        {/* ══════ SECTION 6 — PENDING RESULTS — #9 ══════ */}
         <section>
           <SectionHeader
             icon={Clock}
@@ -763,41 +789,45 @@ export default function WorldClassLaboratory() {
           </div>
         </section>
 
-        {/* ══════ SECTION 7 — NORMS REFERENCE ══════ */}
+        {/* ══════ SECTION 7 — NORMS REFERENCE — #10 ══════ */}
         <section>
           <Card>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <BookOpen size={16} color={T.gold} />
-                <span style={{ color: T.gold, fontWeight: 700, fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>Référentiel Normes</span>
+                <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>Référentiel Normes</span>
                 <span style={{ fontSize: 10, color: T.textDim, padding: '2px 6px', background: '#0D1627', borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>NM 10.1.008</span>
               </div>
             </div>
             {/* Table header */}
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 0.8fr 0.6fr 0.8fr', padding: '8px 12px', borderBottom: `1px solid ${T.cardBorder}`, marginBottom: 4 }}>
               {['Test', 'Norme', 'Unité', 'Tolérance'].map((h, i) => (
-                <p key={i} style={{ fontSize: 9, fontWeight: 700, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '0.08em', margin: 0 }}>{h}</p>
+                <p key={i} style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', margin: 0 }}>{h}</p>
               ))}
             </div>
             {visibleNorms.map((n, i) => (
               <div key={i} style={{
                 display: 'grid', gridTemplateColumns: '2fr 0.8fr 0.6fr 0.8fr', padding: '9px 12px', borderRadius: 8,
-                background: i % 2 === 0 ? '#0D162708' : 'transparent',
+                background: i % 2 === 0 ? 'rgba(212,168,67,0.03)' : 'transparent',
                 borderBottom: i < visibleNorms.length - 1 ? `1px solid ${T.cardBorder}40` : 'none',
-              }}>
+                transition: 'background 150ms',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = i % 2 === 0 ? 'rgba(212,168,67,0.03)' : 'transparent'; }}
+              >
                 <span style={{ fontSize: 12, color: T.textSec }}>{n.test}</span>
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: T.textPri, fontWeight: 700 }}>{n.norme}</span>
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: T.textDim }}>{n.unite}</span>
-                <span style={{ fontSize: 11, color: T.textDim }}>{n.tolerance}</span>
+                <span style={{ fontFamily: MONO, fontSize: 12, color: T.textPri, fontWeight: 200 }}>{n.norme}</span>
+                <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>{n.unite}</span>
+                <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>{n.tolerance}</span>
               </div>
             ))}
             <button
               onClick={() => setNormsExpanded(e => !e)}
               style={{
                 marginTop: 12, display: 'flex', alignItems: 'center', gap: 5,
-                background: 'transparent', border: 'none', color: T.gold,
+                background: 'transparent', border: 'none', color: '#D4A843',
                 fontSize: 12, fontWeight: 700, cursor: 'pointer', padding: '4px 0',
-                fontFamily: 'DM Sans, sans-serif',
+                fontFamily: MONO,
               }}
             >
               {normsExpanded ? <><ChevronUp size={14} /> Réduire</> : <><ChevronDown size={14} /> Voir tout ({NORMS.length - 4} de plus)</>}
@@ -821,8 +851,8 @@ function ActionBtn({ label, icon: Icon, bg, textCol, fill, outline }: { label: s
       onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
       style={{
         display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px',
-        background: fill ? (hov ? `${bg}CC` : bg) : (hov ? `${outline}18` : 'transparent'),
-        border: fill ? 'none' : `1px solid ${outline}50`,
+        background: fill ? (hov ? `${bg}CC` : bg) : (hov ? 'rgba(212,168,67,0.1)' : 'transparent'),
+        border: fill ? 'none' : `1px solid ${outline}`,
         borderRadius: 9, color, fontWeight: 700, fontSize: 12, cursor: 'pointer',
         transition: 'all 160ms', fontFamily: 'DM Sans, sans-serif',
         transform: hov ? 'scale(1.03)' : 'scale(1)',
