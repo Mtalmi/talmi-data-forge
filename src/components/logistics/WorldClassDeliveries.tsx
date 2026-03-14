@@ -1182,9 +1182,9 @@ function IntelligenceIATab() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
-          <IAKPICard label="DEMANDE PRÉVUE J+7" value="42 livraisons" color={T.gold} />
-          <IAKPICard label="CAPACITÉ DISPONIBLE" value="89%" color={T.success} borderColor={T.success} />
-          <IAKPICard label="RISQUE SATURATION" value="Mardi 18/03" color={T.warning} subtitle="pic 12 livraisons" borderColor={T.warning} />
+          <IAKPICard label="DEMANDE PRÉVUE J+7" value="42 livraisons" color={T.gold} borderColor={T.gold} />
+          <IAKPICard label="CAPACITÉ DISPONIBLE" value="89%" color={T.success} borderColor={T.gold} />
+          <IAKPICard label="RISQUE SATURATION" value="Mardi 18/03" color={T.warning} subtitle="pic 12 livraisons" borderColor={T.gold} />
         </div>
 
         <ResponsiveContainer width="100%" height={280}>
