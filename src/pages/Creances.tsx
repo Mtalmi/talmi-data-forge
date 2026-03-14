@@ -1157,9 +1157,10 @@ export default function Creances() {
                   <Target className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#f59e0b' }} />
                   <div>
                     <p style={{ fontSize: 12, fontWeight: 600, color: '#f59e0b', marginBottom: 2 }}>Client à risque max</p>
-                    <p style={{ fontSize: 14, fontWeight: 600, color: '#FFFFFF' }}>{topRisk.name}</p>
+                    <p style={{ fontSize: 14, fontWeight: 600, color: '#FFFFFF', display: 'inline-flex', alignItems: 'center' }}>{topRisk.name.includes('Sigma') && <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#EF4444', marginRight: 5, boxShadow: '0 0 4px rgba(239,68,68,0.4)' }} />}{topRisk.name}</p>
                     <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>
                       Probabilité défaut: <span style={{ color: topRisk.probability > 70 ? '#ef4444' : '#f59e0b', fontWeight: 600 }}>{topRisk.probability}%</span> · {topRisk.total.toLocaleString('fr-MA')} DH
+                      <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: 'rgba(212,168,67,0.4)', marginLeft: 4 }}>→ Clients</span>
                     </p>
                   </div>
                 </div>

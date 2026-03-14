@@ -1256,7 +1256,7 @@ export default function Bons() {
 
                   <div style={{ borderLeft: `3px solid ${T.warning}`, background: 'rgba(245,158,11,0.04)', padding: '12px 16px', borderRadius: '0 8px 8px 0' }}>
                     <p style={{ fontFamily: MONO, fontSize: 12, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
-                      Taux de paiement critique à <strong style={{ color: T.danger }}>{tauxPaiement}%</strong>. Sigma Bâtiment : 2 bons livrés, <strong style={{ color: T.danger }}>13,200 DH impayés</strong>, 0 paiements reçus. Score 12/100 — cohérent avec le pattern de défaut. Recommandation : (1) <strong style={{ color: T.gold }}>Aucune nouvelle livraison sans paiement anticipé</strong>. (2) Relance formelle cette semaine. (3) Pour les autres clients, rappel automatique à J+7 après livraison.
+                      Taux de paiement critique à <strong style={{ color: T.danger }}>{tauxPaiement}%</strong>. Sigma Bâtiment : 2 bons livrés, <strong style={{ color: T.danger }}>13,200 DH impayés</strong>, 0 paiements reçus. Score 12/100 <span style={{ fontFamily: MONO, fontSize: 10, color: 'rgba(212,168,67,0.5)' }}>(Créances)</span> — cohérent avec le pattern de défaut. Score santé 23/100 <span style={{ fontFamily: MONO, fontSize: 10, color: 'rgba(212,168,67,0.5)' }}>(Clients)</span>. Recommandation : (1) <strong style={{ color: T.gold }}>Aucune nouvelle livraison sans paiement anticipé</strong>. (2) Relance formelle cette semaine. (3) Pour les autres clients, rappel automatique à J+7 après livraison.
                     </p>
                   </div>
                 </div>
