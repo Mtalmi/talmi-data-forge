@@ -1768,7 +1768,7 @@ function IntelligenceIATab() {
                   <td style={{ fontSize: 11, color: T.textSec, padding: '8px 8px' }}>{r.cat}</td>
                   <td style={{ fontFamily: MONO, fontSize: 11, fontWeight: 200, color: r.hasAmount ? T.danger : T.success, padding: '8px 8px' }}>{r.montant}</td>
                   <td style={{ fontSize: 11, color: T.textPri, padding: '8px 8px', fontWeight: 200 }}>{r.occ}</td>
-                  <td style={{ fontSize: 11, color: T.textSec, padding: '8px 8px' }}>{r.client}</td>
+                  <td style={{ fontSize: 11, color: T.textSec, padding: '8px 8px' }}><FlaggedClientName name={r.client.replace(' (45%)', '')} />{r.client.includes('(') ? ' (45%)' : ''}</td>
                   <td style={{ padding: '8px 8px' }}>
                     {r.hasAmount ? (
                       <button className="gold-outline-btn" style={{ fontFamily: MONO, fontSize: 10, fontWeight: 600, padding: '3px 10px', borderRadius: 4, background: T.gold, color: '#0F1629', border: 'none', cursor: 'pointer' }}>Facturer</button>
