@@ -342,7 +342,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                     <div style={{ height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.06)', width: 80 }}>
                       <div style={{
                         width: `${row.progress}%`, height: '100%', borderRadius: 3,
-                        background: row.progress === 100 ? T.success : row.progress > 0 ? T.info : 'transparent',
+                        background: row.progress === 100 ? 'linear-gradient(90deg, #D4A843, #E8C96A)' : row.progress > 0 ? 'linear-gradient(90deg, #D4A843, #E8C96A)' : 'transparent',
                         transition: 'width 300ms ease',
                       }} />
                     </div>
