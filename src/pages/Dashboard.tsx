@@ -1036,8 +1036,9 @@ export default function Dashboard() {
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,24 20,20 40,22 60,18 80,16 100,14 120,10',
-              secondaryLabel: 'Matières',
-              secondaryValue: '28.1% du CA',
+              secondaryLabel: 'P&L',
+              secondaryValue: 'Net: 24.2K DH',
+              plBreakdown: true,
             },
             {
               label: 'TRÉSORERIE',
