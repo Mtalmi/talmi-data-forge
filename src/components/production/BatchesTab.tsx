@@ -149,8 +149,8 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
           {[{ icon: Download, label: 'Exporter' }, { icon: RefreshCw, label: 'Actualiser' }].map(b => (
             <button key={b.label} className="flex items-center gap-2 cursor-pointer" style={{
               padding: '10px 14px', borderRadius: 8, background: 'transparent',
-              color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: 13,
-              border: '1px solid rgba(255,255,255,0.12)', fontFamily: 'DM Sans, sans-serif',
+              color: '#D4A843', fontWeight: 500, fontSize: 13,
+              border: '1px solid #D4A843', fontFamily: 'DM Sans, sans-serif',
             }}>
               <b.icon size={16} strokeWidth={1.5} /> {b.label}
             </button>
@@ -193,7 +193,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
           { label: 'SYNC MACHINE', icon: Wifi, value: '98', suffix: '%' },
           { label: 'ALERTES', icon: AlertTriangle, value: '1', suffix: '1 écart' },
         ].map(k => (
-          <div key={k.label} style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 16 }}>
+          <div key={k.label} style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, padding: 16 }}>
             <k.icon size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.20)', marginBottom: 8 }} />
             <p style={{ fontFamily: mono, fontSize: 24, fontWeight: 400, color: '#fff', lineHeight: 1 }}>
               {k.value}
@@ -236,7 +236,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
 
         {/* ── TABLE ── */}
         <div className="flex-1 min-w-0 flex flex-col">
-          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: '12px 12px 0 0', overflow: 'hidden' }}>
+          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: '12px 12px 0 0', overflow: 'hidden' }}>
             {/* Headers */}
             <div className="grid items-center" style={{
               gridTemplateColumns: '120px 1fr 100px 80px 70px 130px 110px 90px',
@@ -360,6 +360,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
         <div style={{ width: 320, flexShrink: 0 }}>
           <div style={{
             background: 'rgba(255,255,255,0.02)', border: `1px solid ${T.cardBorder}`,
+            borderTop: '2px solid #D4A843',
             borderRadius: 12, height: '100%', display: 'flex', flexDirection: 'column',
           }}>
             {/* Header */}

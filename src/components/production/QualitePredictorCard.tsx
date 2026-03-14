@@ -22,7 +22,6 @@ export function QualitePredictorCard() {
       const todayStart = startOfDay(today).toISOString();
       const todayEnd = endOfDay(today).toISOString();
 
-      // Get today's batches with their BL's formule_id
       const { data: batches } = await supabase
         .from('production_batches')
         .select('id, quality_status, has_critical_variance, bl_id, bons_livraison_reels!inner(formule_id)')
@@ -35,7 +34,6 @@ export function QualitePredictorCard() {
         return;
       }
 
-      // Group by formule
       const grouped: Record<string, { total: number; valide: number; ecart: number }> = {};
       batches.forEach((b: any) => {
         const formule = b.bons_livraison_reels?.formule_id || 'Inconnu';
@@ -58,7 +56,6 @@ export function QualitePredictorCard() {
         return { formule, totalBatches: g.total, valideBatches: g.valide, ecartBatches: g.ecart, conformitePct, risque };
       });
 
-      // Sort: Élevé first, then Modéré, then Faible
       const order = { 'Élevé': 0, 'Modéré': 1, 'Faible': 2 };
       result.sort((a, b) => order[a.risque] - order[b.risque]);
 
@@ -122,8 +119,10 @@ export function QualitePredictorCard() {
 
       {/* Table card */}
       <div style={{
-        background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
+        background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
         border: '1px solid rgba(255,255,255,0.05)',
+        borderLeft: '3px solid #D4A843',
+        borderTop: '2px solid #D4A843',
         borderRadius: 12,
         overflow: 'hidden',
       }}>

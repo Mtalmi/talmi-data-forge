@@ -115,7 +115,7 @@ function FormulaCard({ f }: { f: Formula }) {
   ];
 
   return (
-    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, overflow: 'hidden' }}>
+    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, overflow: 'hidden' }}>
       {/* Header */}
       <div className="flex items-start justify-between" style={{ background: T.cardBg, padding: '16px 24px', borderBottom: `1px solid ${T.cardBorder}` }}>
         <div>
@@ -162,7 +162,7 @@ function CompositionChart({ formulas }: { formulas: Formula[] }) {
   }), [formulas]);
 
   return (
-    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 20 }}>
+    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, padding: 20 }}>
       <div style={{ width: '100%', height: 280 }}>
         <ResponsiveContainer>
           <BarChart data={data} layout="vertical" margin={{ left: 10, right: 30, top: 0, bottom: 0 }} barCategoryGap="22%">
@@ -242,7 +242,7 @@ export default function RecettesTab() {
         <SectionHeader label="Normes & Certifications" />
         <div className="grid grid-cols-4 gap-4">
           {NORMES.map(n => (
-            <div key={n.label} style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 16 }}>
+            <div key={n.label} style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, padding: 16 }}>
               <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.35)', marginBottom: 6 }}>{n.label}</p>
               <div className="flex items-center gap-2">
                 {n.check && <CheckCircle size={14} style={{ color: '#10B981' }} />}

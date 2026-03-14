@@ -229,8 +229,8 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
           <button style={{
             display: 'flex', alignItems: 'center', gap: 6,
             padding: '8px 16px', borderRadius: 8, cursor: 'pointer',
-            background: 'transparent', border: `1px solid ${T.cardBorder}`,
-            color: T.textSec, fontWeight: 500, fontSize: 12,
+            background: 'transparent', border: '1px solid #D4A843',
+            color: '#D4A843', fontWeight: 500, fontSize: 12,
           }}>
             <Upload size={14} /> Importer BC
           </button>
@@ -272,7 +272,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
           { label: 'Volume Semaine', value: `${weekVolume.toLocaleString('fr-FR')} m³`, icon: Factory },
           { label: 'Moyenne/Jour', value: `${avgDay} m³`, icon: Clock },
         ].map(k => (
-          <div key={k.label} style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '14px 16px' }}>
+          <div key={k.label} style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 10, padding: '14px 16px' }}>
             <div className="flex items-center justify-between mb-1">
               <span style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>{k.label}</span>
               <k.icon size={14} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.15)' }} />
