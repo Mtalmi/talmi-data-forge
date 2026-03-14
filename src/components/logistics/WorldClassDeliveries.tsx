@@ -915,9 +915,9 @@ function AnalytiqueTab() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
               {[
                 { label: 'Carburant', pct: 42, color: T.danger },
-                { label: 'Chauffeur', pct: 35, color: T.info },
+                { label: 'Chauffeur', pct: 35, color: T.gold },
                 { label: 'Maintenance', pct: 15, color: T.warning },
-                { label: 'Autre', pct: 8, color: '#6B7280' },
+                { label: 'Autre', pct: 8, color: '#9CA3AF' },
               ].map(b => (
                 <div key={b.label}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
