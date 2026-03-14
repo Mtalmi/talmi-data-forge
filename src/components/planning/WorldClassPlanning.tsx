@@ -988,8 +988,8 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                         padding: '4px 12px', borderRadius: 6, cursor: 'pointer',
                         fontSize: 11, fontWeight: 600,
                         background: scheduleViewMode === mode ? 'rgba(212,168,67,0.1)' : 'transparent',
-                        color: scheduleViewMode === mode ? '#D4A843' : '#64748B',
-                        border: scheduleViewMode === mode ? '1px solid #D4A843' : '1px solid transparent',
+                        color: scheduleViewMode === mode ? '#D4A843' : '#9CA3AF',
+                        border: scheduleViewMode === mode ? '1px solid #D4A843' : '1px solid #4A5568',
                         transition: 'all 150ms',
                       }}>
                         {mode === 'standard' ? 'Standard' : 'Rentabilité'}
