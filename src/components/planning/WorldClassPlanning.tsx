@@ -713,6 +713,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dispatch');
   const [scheduleViewMode, setScheduleViewMode] = useState<'standard' | 'rentabilite'>('standard');
+  const [deliverySort, setDeliverySort] = useState<'heure' | 'revenu' | 'satisfaction'>('heure');
   const dispatchRef = useRef<HTMLDivElement | null>(null);
   const kpisRef = useRef<HTMLDivElement | null>(null);
   const semaineRef = useRef<HTMLDivElement | null>(null);
