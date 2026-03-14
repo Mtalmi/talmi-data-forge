@@ -256,6 +256,7 @@ export default function Creances() {
   const [actionType, setActionType] = useState<'reminder' | 'dispute' | 'writeoff' | 'paid'>('reminder');
   const [actionNotes, setActionNotes] = useState('');
   const [processingAction, setProcessingAction] = useState(false);
+  const [creancesTab, setCreancesTab] = useState('overview');
 
   const canManageReceivables = isCeo || role === 'agent_administratif' || role === 'superviseur';
 
