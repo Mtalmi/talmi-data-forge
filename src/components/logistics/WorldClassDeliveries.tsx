@@ -1709,7 +1709,7 @@ function IntelligenceIATab() {
                 <tr key={r.client} style={{ borderLeft: r.border ? `3px solid ${T.danger}` : 'none', background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)' }}
                   onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.06)')}
                   onMouseLeave={e => (e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)')}>
-                  <td style={{ fontSize: 11, color: T.textPri, padding: '8px 8px', fontWeight: 600 }}>{r.client}</td>
+                  <td style={{ fontSize: 11, color: T.textPri, padding: '8px 8px', fontWeight: 600 }}><FlaggedClientName name={r.client} /></td>
                   <td style={{ fontSize: 11, color: T.textSec, padding: '8px 8px' }}>{r.chantier}</td>
                   <td style={{ fontSize: 11, color: T.textPri, padding: '8px 8px', fontWeight: 200 }}>{r.livr}</td>
                   <td style={{ fontSize: 11, color: r.onTime === '100%' ? T.success : r.onTime >= '80%' ? T.warning : T.danger, padding: '8px 8px', fontWeight: 200 }}>{r.onTime}</td>
