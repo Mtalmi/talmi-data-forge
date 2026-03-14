@@ -467,6 +467,17 @@ export default function WorldClassProduction() {
 
   const hasQualityData = qualityData.some(d => d.ok > 0 || d.variances > 0 || d.critical > 0);
 
+  // Demo quality data when no live data
+  const demoQualityData = [
+    { day: 'Lun', ok: 97, variances: 3, critical: 0 },
+    { day: 'Mar', ok: 97, variances: 3, critical: 0 },
+    { day: 'Mer', ok: 98, variances: 2, critical: 0 },
+    { day: 'Jeu', ok: 96, variances: 4, critical: 0 },
+    { day: 'Ven', ok: 97, variances: 3, critical: 0 },
+    { day: 'Sam', ok: 98, variances: 2, critical: 0 },
+  ];
+  const displayQualityData = hasQualityData ? qualityData : demoQualityData;
+
   // ── Batch display list ──
   const batchDisplayList: BatchDisplay[] = useMemo(() => {
     return batches.slice(0, 8).map((b) => {
@@ -545,9 +556,9 @@ export default function WorldClassProduction() {
               style={{
                 padding: '6px 16px',
                 borderRadius: 8,
-                background: 'linear-gradient(135deg, #C4933B, #FDB913)',
-                border: '1px solid rgba(245, 158, 11, 0.25)',
-                color: '#0F172A',
+                background: 'transparent',
+                border: '1px solid #D4A843',
+                color: '#D4A843',
                 fontFamily: 'DM Sans, sans-serif',
                 fontWeight: 600,
                 fontSize: 13,
@@ -753,23 +764,23 @@ export default function WorldClassProduction() {
               borderRadius: 12, padding: 20,
             }}>
               <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 16 }}>Qualité Hebdomadaire</p>
-              {hasQualityData ? (
+              {true ? (
                 <>
                   <ResponsiveContainer width="100%" height={220}>
-                    <BarChart data={qualityData} barSize={24}>
+                    <BarChart data={displayQualityData} barSize={24}>
                       <XAxis dataKey="day" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
                       <YAxis tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} width={25} />
                       <Tooltip cursor={{ fill: 'rgba(255,255,255,0.03)' }} content={({ active, payload, label }) => {
                         if (!active || !payload?.length) return null;
                         return <GoldTooltip active={active} payload={payload} label={label} />;
                       }} />
-                      <Bar dataKey="ok" stackId="q" fill={T.success} name="OK" radius={[0, 0, 0, 0]} animationDuration={1000} />
+                      <Bar dataKey="ok" stackId="q" fill="#D4A843" name="Conforme" radius={[4, 4, 0, 0]} animationDuration={1000} />
                       <Bar dataKey="variances" stackId="q" fill={T.warning} name="Variances" animationDuration={1000} />
                       <Bar dataKey="critical" stackId="q" fill={T.danger} name="Critique" radius={[4, 4, 0, 0]} animationDuration={1000} />
                     </BarChart>
                   </ResponsiveContainer>
                   <div className="flex gap-4 mt-3">
-                    {[['OK', T.success], ['Variances', T.warning], ['Critique', T.danger]].map(([label, color]) => (
+                    {[['Conforme', '#D4A843'], ['Variances', T.warning], ['Critique', T.danger]].map(([label, color]) => (
                       <div key={label} className="flex items-center gap-1.5">
                         <div style={{ width: 8, height: 8, borderRadius: 2, background: color }} />
                         <span style={{ color: T.textSec, fontSize: 11 }}>{label}</span>
@@ -777,9 +788,7 @@ export default function WorldClassProduction() {
                     ))}
                   </div>
                 </>
-              ) : (
-                <EmptyState icon={BarChart3} message="Aucune donnée de qualité" sub="Les résultats qualité hebdomadaires apparaîtront ici" />
-              )}
+              ) : null}
             </div>
 
             {/* Conformity cards */}
