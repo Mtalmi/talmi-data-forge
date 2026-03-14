@@ -227,22 +227,6 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
           <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>Vue hebdomadaire des livraisons planifiées</p>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={() => setShowModal(true)} style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            padding: '8px 16px', borderRadius: 8, cursor: 'pointer',
-            background: T.gold, border: 'none', color: '#000',
-            fontWeight: 600, fontSize: 12,
-          }}>
-            <Plus size={14} /> Nouvelle Planification
-          </button>
-          <button style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            padding: '8px 16px', borderRadius: 8, cursor: 'pointer',
-            background: 'transparent', border: '1px solid #D4A843',
-            color: '#D4A843', fontWeight: 500, fontSize: 12,
-          }}>
-            <Upload size={14} /> Importer BC
-          </button>
 
           <div className="flex items-center gap-2 ml-2">
             <button onClick={() => setWeekOffset(w => w - 1)} style={{
@@ -349,6 +333,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
                             <div key={chip.id} style={{
                               padding: '6px 8px', borderRadius: 6,
                               background: cs.bg, borderLeft: `2px solid ${cs.border}`,
+                              borderTop: '2px solid #D4A843',
                               overflow: 'hidden',
                             }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
