@@ -1341,8 +1341,8 @@ export default function Dashboard() {
 
               {/* Performance / Camera panel */}
               <div className="flex-[3.5] border-l border-white/[0.04] pl-3 ml-2 min-w-0 flex flex-col">
-                <div className="flex-1 rounded-lg p-4 flex flex-col relative overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(15,20,35,0.95) 0%, rgba(10,15,25,0.98) 100%)', border: '1px solid rgba(255,255,255,0.04)', minHeight: '200px' }}>
-                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 50 }} />
+                <div className="flex-1 rounded-lg p-4 flex flex-col relative overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(15,20,35,0.95) 0%, rgba(10,15,25,0.98) 100%)', border: '1px solid rgba(255,255,255,0.04)', borderTop: '2px solid #D4A843', minHeight: '200px' }}>
+                  <div style={{ position: 'absolute', top: 2, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 50 }} />
                   {/* Header with toggle */}
                   <div className="flex items-center justify-between mb-1">
                     <div className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
