@@ -674,42 +674,23 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
       />
 
       {/* ── PAGE CONTENT ── */}
-      <div style={{ width: '100%', padding: '24px 16px', display: 'flex', flexDirection: 'column', gap: 0 }} className="sm:!px-6">
+      <div style={{ width: '100%', padding: '24px 16px', display: 'flex', flexDirection: 'column', gap: 24 }} className="sm:!px-6">
 
         {/* ═══════════════════════════════════════════════════
-            ZONE 1: DISPATCH EN DIRECT
+            TAB 1: DISPATCH
             ═══════════════════════════════════════════════════ */}
-        <div ref={dispatchRef}>
-          <ZoneHeader
-            icon="⚡"
-            label="DISPATCH EN DIRECT"
-            right={
-              <span style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
-                padding: '4px 12px', borderRadius: 999,
-                background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.3)',
-                fontSize: 11, fontWeight: 600, color: T.success,
-              }}>
-                <span style={{ width: 7, height: 7, borderRadius: '50%', background: T.success, animation: 'tbos-pulse 2.5s infinite' }} />
-                Temps réel
-              </span>
-            }
-          />
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            {/* 0. DISPATCH SCORE HERO */}
+        {activeTab === 'dispatch' && (
+          <div ref={dispatchRef}>
+            {/* DISPATCH SCORE HERO */}
             <div style={{
               background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
               border: '1px solid rgba(245, 158, 11, 0.15)',
               borderTop: '2px solid #D4A843',
-              borderRadius: 12, padding: '20px 24px',
+              borderRadius: 12, padding: '20px 24px', marginBottom: 24,
               display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap',
               position: 'relative', overflow: 'hidden',
             }}>
-              {/* Shimmer top border */}
               <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, transparent, #D4A843, transparent)', backgroundSize: '200% 100%', animation: 'shimmer 4s linear infinite' }} />
-
-              {/* Left: Score */}
               <div style={{ flex: '1 1 200px' }}>
                 <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6 }}>SCORE DISPATCH DU JOUR</p>
                 <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 42, fontWeight: 200, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em' }}>9.2<span style={{ fontSize: 20, color: '#9CA3AF' }}>/10</span></p>
@@ -724,16 +705,12 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                   ))}
                 </div>
               </div>
-
-              {/* Center: Revenue */}
               <div style={{ flex: '1 1 200px', textAlign: 'center' }}>
                 <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6 }}>REVENU JOURNÉE</p>
                 <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 32, fontWeight: 200, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>153,250 <span style={{ fontSize: 16, color: '#9CA3AF' }}>DH</span></p>
                 <p style={{ fontSize: 11, color: T.textSec, marginTop: 6 }}>5 livraisons · 225 m³</p>
                 <p style={{ fontSize: 11, color: T.success, fontWeight: 600, marginTop: 2 }}>Marge moyenne: 36%</p>
               </div>
-
-              {/* Right: Mini capacity donut */}
               <div style={{ flex: '0 0 auto' }}>
                 <svg width={80} height={80} viewBox="0 0 80 80">
                   <circle cx={40} cy={40} r={32} fill="none" stroke={T.cardBorder} strokeWidth={6} />
@@ -748,314 +725,60 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
               </div>
             </div>
 
-            {/* 1. Alerte Météo IA */}
-            <WeatherAlertBanner />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              {/* 1. Alerte Météo IA */}
+              <WeatherAlertBanner />
 
-            {/* 2. 5-Day Weather Strip */}
-            <div style={{
-              display: 'flex', gap: 0, borderRadius: 12, overflow: 'hidden',
-              border: '1px solid rgba(245, 158, 11, 0.15)',
-              borderTop: '2px solid #D4A843',
-              background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
-            }}>
-              {[
-                { day: 'Jeu 12', icon: '☀', temp: '28°C', label: 'Normal', color: '#10B981' },
-                { day: 'Ven 13', icon: '☀', temp: '30°C', label: 'Normal', color: '#10B981' },
-                { day: 'Sam 14', icon: '🔥', temp: '38°C', label: 'Risque', color: '#EF4444' },
-                { day: 'Dim 15', icon: '☀', temp: '26°C', label: 'Normal', color: '#10B981' },
-                { day: 'Lun 16', icon: '🌧', temp: '22°C', label: 'Pluie', color: '#F59E0B' },
-              ].map((w, i) => (
-                <div key={i} style={{
-                  flex: 1, padding: '10px 12px', textAlign: 'center',
-                  borderLeft: i > 0 ? `1px solid ${T.cardBorder}` : 'none',
-                  background: w.color === '#EF4444' ? 'rgba(239,68,68,0.06)' : 'transparent',
-                }}>
-                  <p style={{ fontSize: 10, fontWeight: 700, color: T.textDim, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{w.day}</p>
-                  <p style={{ fontSize: 16, marginBottom: 2 }}>{w.icon} <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: w.color === '#EF4444' ? '#EF4444' : T.textPri }}>{w.temp}</span></p>
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, color: w.color }}>
-                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: w.color }} />
-                    {w.label === 'Risque' ? '⚠ ' : '● '}{w.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Dispatch header content (calendar, KPIs) */}
-            {dispatchHeader}
-
-            {/* Main dispatch area + fleet sidebar */}
-            <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 24 }}>
-                {dispatchMain}
-
-                {/* Planning Chronologique Table — Collapsible */}
-                {(() => {
-                  const [chronoOpen, setChronoOpen] = React.useState(false);
-                  return (
-                    <div>
-                      <button
-                        onClick={() => setChronoOpen(!chronoOpen)}
-                        style={{
-                          width: '100%', display: 'flex', alignItems: 'center', gap: 10,
-                          padding: '0 0 12px 0', background: 'transparent', border: 'none',
-                          cursor: 'pointer', textAlign: 'left',
-                        }}
-                      >
-                        <Clock size={16} color={T.gold} />
-                        <span style={{ color: T.gold, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>
-                          PLANNING CHRONOLOGIQUE — Vendredi 13 Mars 2026
-                        </span>
-                        <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
-                        {!chronoOpen && (
-                          <span style={{ fontSize: 11, color: T.textSec, fontWeight: 500, whiteSpace: 'nowrap' }}>
-                            5 livraisons · 225 m³ · 153 250 DH · Marge: 36%
-                          </span>
-                        )}
-                        {chronoOpen ? <ChevronUp size={16} color={T.textSec} /> : <ChevronDown size={16} color={T.textSec} />}
-                      </button>
-                      {chronoOpen && (
-              <Card style={{ padding: 0, overflow: 'hidden' }}>
-                <div style={{
-                  display: 'grid', gridTemplateColumns: '1.2fr 1.2fr 1fr 1fr 0.8fr 0.8fr 0.8fr 0.8fr',
-                  borderBottom: `1px solid ${T.cardBorder}`, background: `${T.cardBorder}40`,
-                }}>
-                  {['BL', 'Client', 'Formule', 'Montant', 'Volume', 'Heure', 'Camion', 'Statut'].map(h => (
-                    <div key={h} style={{
-                      padding: '10px 14px',
-                      color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em',
-                      borderLeft: h !== 'BL' ? `1px solid ${T.cardBorder}` : 'none',
-                      textAlign: ['Montant', 'Volume'].includes(h) ? 'right' : ['Heure', 'Statut'].includes(h) ? 'center' : 'left',
-                    }}>{h}</div>
-                  ))}
-                </div>
-                {[
-                  { bl: 'BL-2602-011', client: 'Ciments du Maroc', formule: 'B25', montant: '38 250 DH', volume: '45 m³', heure: '07:00', camion: 'TOU-01', statut: 'En route', statutColor: T.success },
-                  { bl: 'BL-2602-012', client: 'ONCF', formule: 'B30', montant: '19 500 DH', volume: '30 m³', heure: '08:00', camion: 'TOU-02', statut: 'En Chargement', statutColor: T.info },
-                  { bl: 'BL-2602-013', client: 'Constructions Modernes', formule: 'B20', montant: '40 000 DH', volume: '80 m³', heure: '09:30', camion: 'TOU-01', statut: 'Planifié', statutColor: T.textDim },
-                  { bl: 'BL-2602-014', client: 'Saudi Readymix', formule: 'B25', montant: '42 500 DH', volume: '50 m³', heure: '13:00', camion: 'TOU-03', statut: 'Planifié', statutColor: T.textDim },
-                  { bl: 'BL-2602-015', client: 'BTP Maroc', formule: 'B25', montant: '13 000 DH', volume: '20 m³', heure: '15:00', camion: 'TOU-02', statut: 'Planifié', statutColor: T.textDim },
-                ].map((row, i) => (
-                  <div key={i} style={{
-                    display: 'grid', gridTemplateColumns: '1.2fr 1.2fr 1fr 1fr 0.8fr 0.8fr 0.8fr 0.8fr',
-                    borderTop: i > 0 ? `1px solid ${T.cardBorder}60` : 'none',
-                    transition: 'background 150ms',
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255, 215, 0, 0.04)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                  >
-                    <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: T.gold }}>{row.bl}</div>
-                    <div style={{ padding: '10px 14px', fontSize: 12, color: T.textPri, fontWeight: 600, borderLeft: `1px solid ${T.cardBorder}60` }}>{row.client}</div>
-                    <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: PRODUCT_COLORS[row.formule] || T.gold, borderLeft: `1px solid ${T.cardBorder}60` }}>{row.formule}</div>
-                    <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: T.textPri, textAlign: 'right', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.montant}</div>
-                    <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: T.textPri, textAlign: 'right', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.volume}</div>
-                    <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: T.textSec, textAlign: 'center', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.heure}</div>
-                    <div style={{ padding: '10px 14px', fontSize: 11, textAlign: 'center', borderLeft: `1px solid ${T.cardBorder}60` }}>
-                      <span style={{ padding: '2px 8px', borderRadius: 999, background: `${T.info}18`, color: T.info, fontSize: 10, fontWeight: 600 }}>{row.camion}</span>
-                    </div>
-                    <div style={{ padding: '10px 14px', fontSize: 11, textAlign: 'center', borderLeft: `1px solid ${T.cardBorder}60` }}>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: row.statutColor }} />
-                        <span style={{ fontSize: 10, fontWeight: 600, color: row.statutColor }}>{row.statut}</span>
-                      </span>
-                    </div>
-                  </div>
-                ))}
-                <div style={{
-                  padding: '12px 14px', borderTop: `1px solid ${T.cardBorder}`,
-                  background: `${T.cardBorder}40`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                }}>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: T.gold }}>Total journée:</span>
-                  <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-                    <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: T.textPri }}>153 250 DH</span>
-                    <span style={{ fontSize: 11, color: T.textSec }}>5 livraisons</span>
-                    <span style={{ fontSize: 11, color: T.textSec }}>225 m³</span>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: T.success }}>Marge moyenne: 36%</span>
-                  </div>
-                </div>
-              </Card>
-                      )}
-                    </div>
-                  );
-                })()}
-              </div>
-              {fleetPanel}
-            </div>
-          </div>
-        </div>
-
-        {/* Zone separator */}
-        <div style={{ height: 1, background: 'rgba(212, 168, 67, 0.15)', margin: '40px 0' }} />
-
-        {/* ═══════════════════════════════════════════════════
-            ZONE 2: PLANNING & CAPACITÉ
-            ═══════════════════════════════════════════════════ */}
-        <div ref={semaineRef}>
-          <ZoneHeader
-            icon="📅"
-            label="PLANNING & CAPACITÉ"
-            right={
-              <span style={{ fontSize: 11, color: T.textSec, fontWeight: 600 }}>
-                Semaine du 09 mars
-              </span>
-            }
-          />
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
-            {/* 1. Planning KPIs */}
-            <div ref={kpisRef}>
-              <SectionHeader icon={BarChart3} label="Planning KPIs" />
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" style={{ alignItems: 'stretch' }}>
-                <KPICard label="Commandes Semaine" value={pKpis.commandes} suffix="" color={T.gold} icon={FileText} trend="+3 vs sem. dern." trendPositive delay={0} />
-                <KPICard label="Volume Planifié" value={pKpis.volumePlanifie} suffix="m³" color={T.gold} icon={BarChart3} trend="+8% vs sem. dern." trendPositive delay={80} />
-                <KPICard label="Capacité Utilisée" value={pKpis.capaciteUsed} suffix="%" color={T.gold} icon={BarChart3} trend="+5% vs sem. dern." trendPositive delay={160} />
-                <KPICard label="Livraisons Prévues" value={pKpis.livraisons} suffix="" color={T.gold} icon={Truck} trend="stable" trendPositive delay={240} />
-              </div>
-            </div>
-
-            {/* 2. Weekly Schedule */}
-            <div>
-              <SectionHeader icon={CalendarDays} label="Planning Hebdomadaire" />
-              <Card style={{ padding: 0, overflow: 'hidden', overflowX: 'auto' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '80px repeat(6, minmax(120px, 1fr))', gap: 0, minWidth: 800 }}>
-                  <div style={{ padding: '10px 14px', background: `${T.cardBorder}40`, borderBottom: `1px solid ${T.cardBorder}` }} />
-                  {weekDays.map(d => (
-                    <div key={d} style={{
-                      padding: '10px 12px', textAlign: 'center',
-                      background: `${T.cardBorder}40`, borderBottom: `1px solid ${T.cardBorder}`, borderLeft: `1px solid ${T.cardBorder}`,
-                      color: T.gold, fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em',
-                    }}>{d}</div>
-                  ))}
-                </div>
-                {schedule.map((row, ri) => (
-                  <div key={row.time} style={{ display: 'grid', gridTemplateColumns: '80px repeat(6, minmax(120px, 1fr))', gap: 0, borderTop: `1px solid ${T.cardBorder}`, minWidth: 800 }}>
-                    <div style={{
-                      padding: '12px 8px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      borderRight: `1px solid ${T.cardBorder}`,
-                    }}>
-                      <span style={{ color: T.textDim, fontSize: 10, fontFamily: 'JetBrains Mono, monospace', writingMode: 'horizontal-tb' }}>{row.time}</span>
-                    </div>
-                    {row.slots.map((slot, si) => (
-                      <div key={si} style={{ padding: 8, borderLeft: `1px solid ${T.cardBorder}` }}>
-                        <ScheduleBlock slot={slot} delay={ri * 80 + si * 30} riskyClients={riskyClients} />
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </Card>
-            </div>
-
-            {/* 3. Capacité & Livraisons */}
-            <div ref={capaciteRef}>
-              <SectionHeader icon={Truck} label="Capacité & Livraisons" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Capacity Gauge */}
-                <Card className="tbos-card-stagger" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', borderRadius: '12px', padding: '20px', position: 'relative', overflow: 'hidden', boxShadow: 'none' }}>
-                  <p style={{ color: T.textSec, fontSize: 12, marginBottom: 16 }}>Capacité de Production</p>
-                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-                    <Gauge pct={72} />
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-                    {[
-                      { label: 'Capacité Max', value: '1 740 m³', color: T.textSec },
-                      { label: 'Planifié', value: '1 250 m³', color: T.warning },
-                      { label: 'Disponible', value: '490 m³', color: T.success },
-                    ].map(box => (
-                      <div key={box.label} style={{
-                        background: `${T.cardBorder}40`, borderRadius: 10, padding: '10px 12px', textAlign: 'center',
-                        border: `1px solid ${T.cardBorder}`,
-                      }}>
-                        <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>{box.label}</p>
-                        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: box.color }}>{box.value}</p>
-                      </div>
-                    ))}
-                  </div>
-                </Card>
-
-                {/* Deliveries */}
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-                    <Clock size={14} color={T.gold} />
-                    <span style={{ color: T.textSec, fontSize: 12, fontWeight: 600 }}>Prochaines Livraisons</span>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 400, overflowY: 'auto' }}>
-                    {(liveDeliveries.length > 0 ? liveDeliveries : deliveries).map((d, i) => (
-                      <DeliveryCard key={i} d={d} delay={i * 70} routeData={routeDataMap[(d as any).bl_id || '']} weatherIndex={i} />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Zone separator */}
-        <div style={{ height: 1, background: 'rgba(212, 168, 67, 0.15)', margin: '40px 0' }} />
-
-        {/* ═══════════════════════════════════════════════════
-            ZONE 3: INTELLIGENCE IA
-            ═══════════════════════════════════════════════════ */}
-        <div ref={iaRef}>
-          <ZoneHeader
-            icon="✦"
-            label="INTELLIGENCE IA"
-            right={
-              <span style={{
-                display: 'inline-flex', alignItems: 'center', gap: 5,
-                padding: '4px 12px', borderRadius: 999,
-                background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.25)',
-                fontSize: 11, fontWeight: 600, color: '#D4A843',
+              {/* 2. 5-Day Weather Strip */}
+              <div style={{
+                display: 'flex', gap: 0, borderRadius: 12, overflow: 'hidden',
+                border: '1px solid rgba(245, 158, 11, 0.15)',
+                borderTop: '2px solid #D4A843',
+                background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
               }}>
-                5 agents actifs
-              </span>
-            }
-          />
+                {[
+                  { day: 'Jeu 12', icon: '☀', temp: '28°C', label: 'Normal', color: '#10B981' },
+                  { day: 'Ven 13', icon: '☀', temp: '30°C', label: 'Normal', color: '#10B981' },
+                  { day: 'Sam 14', icon: '🔥', temp: '38°C', label: 'Risque', color: '#EF4444' },
+                  { day: 'Dim 15', icon: '☀', temp: '26°C', label: 'Normal', color: '#10B981' },
+                  { day: 'Lun 16', icon: '🌧', temp: '22°C', label: 'Pluie', color: '#F59E0B' },
+                ].map((w, i) => (
+                  <div key={i} style={{
+                    flex: 1, padding: '10px 12px', textAlign: 'center',
+                    borderLeft: i > 0 ? `1px solid ${T.cardBorder}` : 'none',
+                    background: w.color === '#EF4444' ? 'rgba(239,68,68,0.06)' : 'transparent',
+                  }}>
+                    <p style={{ fontSize: 10, fontWeight: 700, color: T.textDim, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{w.day}</p>
+                    <p style={{ fontSize: 16, marginBottom: 2 }}>{w.icon} <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: w.color === '#EF4444' ? '#EF4444' : T.textPri }}>{w.temp}</span></p>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, color: w.color }}>
+                      <span style={{ width: 6, height: 6, borderRadius: '50%', background: w.color }} />
+                      {w.label === 'Risque' ? '⚠ ' : '● '}{w.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-          {/* Single compact insight list */}
-          {(() => {
-            const [expandedInsight, setExpandedInsight] = React.useState<string | null>(null);
+              {/* 3. Dispatch header content (calendar, KPIs) */}
+              {dispatchHeader}
 
-            const insights = [
-              {
-                id: 'orchestration',
-                dot: '#34d399',
-                summary: 'Orchestration: 3 livraisons regroupées Casa Nord — Économie 180 DH, 45 min gagné',
-                detail: 'Routes optimisées ce matin. Toupie TOU-03 en surcharge (6 rotations/jour vs recommandé 5). Recommandation: basculer 2 livraisons sur TOU-01 demain. BL-2602-014 Saudi Readymix (50m³): volume élevé nécessite 2 rotations, prévoir TOU-03 en backup.',
-              },
-              {
-                id: 'meteo',
-                dot: '#EF4444',
-                summary: 'Météo: Samedi 14 — 38°C, risque fissuration. Retardateur requis sur B25/B30',
-                detail: 'Impact béton: temps de prise réduit de 20%, risque fissuration élevé. Recommandations: (1) Ajouter retardateur de prise aux formules B25/B30, (2) Planifier livraisons avant 11h, (3) Alerter 3 chantiers identifiés à risque. Dimanche 15: conditions normales.',
-              },
-              {
-                id: 'retards',
-                dot: '#F59E0B',
-                summary: 'Retards: BL-2602-014 Saudi Readymix probabilité retard 35% — avancer départ 15 min',
-                detail: 'Distance 20km, trafic historique créneau 13h élevé, temps chargement F-B25. BL-2602-015 BTP Maroc: probabilité retard 8%, client proche (4km), créneau fluide. BL-2602-013 Constructions Modernes (80m³): 2 rotations nécessaires, rotation 2 risque retard si rotation 1 dépasse 45 min.',
-              },
-              {
-                id: 'flotte',
-                dot: '#34d399',
-                summary: 'Flotte: Coût carburant 4,200 DH (↘ -8%). TOU-02 sous-utilisée, réaffecter lundi',
-                detail: 'TOU-02 sous-utilisée (3 rotations/jour vs capacité 5). TOU-01 en surutilisation (5.2 rotations/jour). Recommandation: réaffecter livraison Alliances (Lundi 13h) de TOU-01 à TOU-02. Gain: 2h disponibilité TOU-01 pour maintenance préventive courroie.',
-              },
-              {
-                id: 'maintenance',
-                dot: '#F59E0B',
-                summary: 'Maintenance: Courroie malaxeur 73% usure — planifier remplacement avant lundi',
-                detail: 'Courroie malaxeur principal à 73% d\'usure. Si non remplacée, risque d\'arrêt non planifié estimé à 15% cette semaine. Pièce en stock (réf. CM-4502). Temps d\'intervention: 2h. Créneau recommandé: dimanche matin (aucune production planifiée).',
-              },
-            ];
+              {/* 4. Main dispatch area + fleet sidebar */}
+              <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+                <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 24 }}>
+                  {dispatchMain}
 
-            return (
+                  {/* Planning Chronologique — Collapsible */}
+                  <CollapsibleChronologique />
+                </div>
+                {fleetPanel}
+              </div>
+
+              {/* 5. Compact AI Insight Strip */}
               <div style={{
                 background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.06) 0%, rgba(212, 168, 67, 0.01) 100%)',
                 border: `1px solid ${T.cardBorder}`,
                 borderTop: '2px solid #D4A843',
                 borderRadius: 12, overflow: 'hidden',
               }}>
-                {/* IA branding bar */}
                 <div style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   padding: '10px 18px',
@@ -1064,62 +787,266 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ color: '#D4A843', fontSize: 14, animation: 'tbos-pulse 3s ease-in-out infinite' }}>✦</span>
-                    <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em' }}>Résumé Agents IA</span>
+                    <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em' }}>INTELLIGENCE IA</span>
                   </div>
                   <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>Généré par IA · Claude Opus</span>
                 </div>
-
-                {/* Insight rows */}
-                {insights.map((ins, i) => (
-                  <div key={ins.id}>
-                    <button
-                      onClick={() => setExpandedInsight(expandedInsight === ins.id ? null : ins.id)}
-                      style={{
-                        width: '100%', display: 'flex', alignItems: 'center', gap: 12,
-                        padding: '12px 18px', background: 'transparent', border: 'none',
-                        borderTop: i > 0 ? `1px solid ${T.cardBorder}60` : 'none',
-                        cursor: 'pointer', textAlign: 'left',
-                        transition: 'background 150ms',
-                      }}
-                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212, 168, 67, 0.04)')}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                    >
-                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: ins.dot, flexShrink: 0 }} />
-                      <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, lineHeight: 1.5, flex: 1 }}>{ins.summary}</span>
-                      {expandedInsight === ins.id
-                        ? <ChevronUp size={14} color={T.textDim} style={{ flexShrink: 0 }} />
-                        : <ChevronDown size={14} color={T.textDim} style={{ flexShrink: 0 }} />
-                      }
-                    </button>
-                    {expandedInsight === ins.id && (
-                      <div style={{
-                        padding: '0 18px 14px 38px',
-                        borderTop: `1px solid ${T.cardBorder}40`,
-                      }}>
-                        <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 12, lineHeight: 1.7, paddingTop: 10 }}>{ins.detail}</p>
-                      </div>
-                    )}
+                {[
+                  { dot: '#EF4444', text: 'Météo: Samedi 14 — 38°C risque fissuration. Retardateur requis B25/B30' },
+                  { dot: '#F59E0B', text: 'Retards: BL-2602-014 Saudi Readymix probabilité retard 35%' },
+                  { dot: '#34d399', text: 'Routes: 3 livraisons regroupées Casa Nord — Économie 180 DH' },
+                ].map((ins, i) => (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    padding: '10px 18px',
+                    borderTop: i > 0 ? `1px solid ${T.cardBorder}60` : 'none',
+                  }}>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: ins.dot, flexShrink: 0 }} />
+                    <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, lineHeight: 1.4, flex: 1 }}>{ins.text}</span>
                   </div>
                 ))}
-
-                {/* Footer badges */}
-                <div style={{
-                  display: 'flex', gap: 8, padding: '10px 18px',
-                  borderTop: `1px solid ${T.cardBorder}`,
-                  background: `${T.cardBorder}20`,
-                }}>
-                  <span style={{ padding: '3px 8px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'rgba(16,185,129,0.12)', color: '#34d399' }}>2 optimisations actives</span>
-                  <span style={{ padding: '3px 8px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>2 actions requises</span>
-                  <span style={{ padding: '3px 8px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'rgba(239,68,68,0.12)', color: '#EF4444' }}>1 risque élevé</span>
-                  <span style={{ fontFamily: 'monospace', fontSize: 9, color: 'rgba(212, 168, 67, 0.6)', marginLeft: 'auto' }}>Dernière analyse: {new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
+                <div style={{ padding: '8px 18px', borderTop: `1px solid ${T.cardBorder}`, background: `${T.cardBorder}20` }}>
+                  <button
+                    onClick={() => setActiveTab('ia')}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#D4A843', fontSize: 11, fontWeight: 600, padding: 0 }}
+                  >
+                    Voir toute l'intelligence →
+                  </button>
                 </div>
               </div>
-            );
-          })()}
-        </div>
+            </div>
+          </div>
+        )}
 
-        {/* ── FOOTER ── */}
-        <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {/* ═══════════════════════════════════════════════════
+            TAB 2: PLANNING
+            ═══════════════════════════════════════════════════ */}
+        {activeTab === 'planning' && (
+          <div ref={semaineRef}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+              {/* 1. Planning KPIs */}
+              <div ref={kpisRef}>
+                <SectionHeader icon={BarChart3} label="Planning KPIs" />
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" style={{ alignItems: 'stretch' }}>
+                  <KPICard label="Commandes Semaine" value={pKpis.commandes} suffix="" color={T.gold} icon={FileText} trend="+3 vs sem. dern." trendPositive delay={0} />
+                  <KPICard label="Volume Planifié" value={pKpis.volumePlanifie} suffix="m³" color={T.gold} icon={BarChart3} trend="+8% vs sem. dern." trendPositive delay={80} />
+                  <KPICard label="Capacité Utilisée" value={pKpis.capaciteUsed} suffix="%" color={T.gold} icon={BarChart3} trend="+5% vs sem. dern." trendPositive delay={160} />
+                  <KPICard label="Livraisons Prévues" value={pKpis.livraisons} suffix="" color={T.gold} icon={Truck} trend="stable" trendPositive delay={240} />
+                </div>
+              </div>
+
+              {/* 2. Weekly Schedule */}
+              <div>
+                <SectionHeader icon={CalendarDays} label="Planning Hebdomadaire" />
+                <Card style={{ padding: 0, overflow: 'hidden', overflowX: 'auto' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '80px repeat(6, minmax(120px, 1fr))', gap: 0, minWidth: 800 }}>
+                    <div style={{ padding: '10px 14px', background: `${T.cardBorder}40`, borderBottom: `1px solid ${T.cardBorder}` }} />
+                    {weekDays.map(d => (
+                      <div key={d} style={{
+                        padding: '10px 12px', textAlign: 'center',
+                        background: `${T.cardBorder}40`, borderBottom: `1px solid ${T.cardBorder}`, borderLeft: `1px solid ${T.cardBorder}`,
+                        color: T.gold, fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em',
+                      }}>{d}</div>
+                    ))}
+                  </div>
+                  {schedule.map((row, ri) => (
+                    <div key={row.time} style={{ display: 'grid', gridTemplateColumns: '80px repeat(6, minmax(120px, 1fr))', gap: 0, borderTop: `1px solid ${T.cardBorder}`, minWidth: 800 }}>
+                      <div style={{
+                        padding: '12px 8px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        borderRight: `1px solid ${T.cardBorder}`,
+                      }}>
+                        <span style={{ color: T.textDim, fontSize: 10, fontFamily: 'JetBrains Mono, monospace', writingMode: 'horizontal-tb' }}>{row.time}</span>
+                      </div>
+                      {row.slots.map((slot, si) => (
+                        <div key={si} style={{ padding: 8, borderLeft: `1px solid ${T.cardBorder}` }}>
+                          <ScheduleBlock slot={slot} delay={ri * 80 + si * 30} riskyClients={riskyClients} />
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </Card>
+              </div>
+
+              {/* 3. Capacité & Livraisons */}
+              <div ref={capaciteRef}>
+                <SectionHeader icon={Truck} label="Capacité & Livraisons" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card className="tbos-card-stagger" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', borderRadius: '12px', padding: '20px', position: 'relative', overflow: 'hidden', boxShadow: 'none' }}>
+                    <p style={{ color: T.textSec, fontSize: 12, marginBottom: 16 }}>Capacité de Production</p>
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+                      <Gauge pct={72} />
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+                      {[
+                        { label: 'Capacité Max', value: '1 740 m³', color: T.textSec },
+                        { label: 'Planifié', value: '1 250 m³', color: T.warning },
+                        { label: 'Disponible', value: '490 m³', color: T.success },
+                      ].map(box => (
+                        <div key={box.label} style={{
+                          background: `${T.cardBorder}40`, borderRadius: 10, padding: '10px 12px', textAlign: 'center',
+                          border: `1px solid ${T.cardBorder}`,
+                        }}>
+                          <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>{box.label}</p>
+                          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: box.color }}>{box.value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+                      <Clock size={14} color={T.gold} />
+                      <span style={{ color: T.textSec, fontSize: 12, fontWeight: 600 }}>Prochaines Livraisons</span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 400, overflowY: 'auto' }}>
+                      {(liveDeliveries.length > 0 ? liveDeliveries : deliveries).map((d, i) => (
+                        <DeliveryCard key={i} d={d} delay={i * 70} routeData={routeDataMap[(d as any).bl_id || '']} weatherIndex={i} />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ═══════════════════════════════════════════════════
+            TAB 3: INTELLIGENCE IA
+            ═══════════════════════════════════════════════════ */}
+        {activeTab === 'ia' && (
+          <div ref={iaRef}>
+            <ZoneHeader
+              icon="✦"
+              label="INTELLIGENCE IA"
+              right={
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 5,
+                  padding: '4px 12px', borderRadius: 999,
+                  background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.25)',
+                  fontSize: 11, fontWeight: 600, color: '#D4A843',
+                }}>
+                  5 agents actifs
+                </span>
+              }
+            />
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+              {/* 1. Orchestration Livraisons */}
+              <IAAgentSection
+                name="ORCHESTRATION LIVRAISONS"
+                content={
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-start gap-3">
+                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
+                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                        Routes optimisées: <span style={{ color: '#fff', fontWeight: 600 }}>3 livraisons regroupées secteur Casa Nord</span> ce matin. Économie carburant estimée: <span style={{ color: '#34d399', fontWeight: 600 }}>180 DH</span>. Temps gagné: <span style={{ color: '#34d399', fontWeight: 600 }}>45 min</span>.
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
+                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                        Toupie <span style={{ color: '#fff', fontWeight: 600 }}>TOU-03</span> en surcharge cette semaine (<span style={{ color: '#F59E0B', fontWeight: 600 }}>6 rotations/jour vs recommandé 5</span>). Recommandation: basculer 2 livraisons sur TOU-01 demain.
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444' }} />
+                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                        Livraison <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-014 Saudi Readymix (50m³)</span>: volume élevé nécessite 2 rotations. Prévoir TOU-03 en backup si retard TOU-01.
+                      </p>
+                    </div>
+                    <div className="flex gap-2 mt-2">
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(16,185,129,0.12)', color: '#34d399' }}>Économie: 180 DH</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>3 optimisations</span>
+                    </div>
+                  </div>
+                }
+              />
+
+              {/* 2. Météo */}
+              <IAAgentSection
+                name="MÉTÉO"
+                content={
+                  <div>
+                    <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.8 }}>
+                      Prévisions 48h: <span style={{ color: '#fff', fontWeight: 600 }}>Samedi 14 mars</span> — température <span style={{ color: '#EF4444', fontWeight: 600 }}>38°C</span> prévue à 14h. Impact béton: temps de prise réduit de <span style={{ color: '#F59E0B', fontWeight: 600 }}>20%</span>, risque fissuration élevé. Recommandations: (1) Ajouter retardateur de prise aux formules B25/B30, (2) Planifier livraisons avant 11h, (3) Alerter 3 chantiers identifiés à risque. <span style={{ color: '#fff', fontWeight: 600 }}>Dimanche 15</span>: conditions normales, aucun ajustement nécessaire.
+                    </p>
+                    <div className="flex gap-2 mt-4">
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(239,68,68,0.12)', color: '#EF4444' }}>Risque: Élevé samedi</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 92%</span>
+                    </div>
+                  </div>
+                }
+              />
+
+              {/* 3. Prédiction Retards */}
+              <IAAgentSection
+                name="PRÉDICTION RETARDS"
+                content={
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-start gap-3">
+                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
+                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-014 Saudi Readymix</span>: probabilité retard <span style={{ color: '#F59E0B', fontWeight: 600 }}>35%</span> — distance 20km, trafic historique créneau 13h élevé, temps chargement F-B25. Recommandation: <span style={{ color: '#F59E0B', fontWeight: 600 }}>avancer départ de 15 min</span>.
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
+                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-015 BTP Maroc</span>: probabilité retard <span style={{ color: '#34d399', fontWeight: 600 }}>8%</span> — client proche (4km), créneau 15h fluide. Aucune action requise.
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444' }} />
+                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-013 Constructions Modernes (80m³)</span>: 2 rotations nécessaires. Rotation 2 risque retard si Rotation 1 dépasse <span style={{ color: '#EF4444', fontWeight: 600 }}>45 min sur site</span>. Pré-alerter le chantier.
+                      </p>
+                    </div>
+                    <div className="flex gap-2 mt-2">
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>1 action requise</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 89%</span>
+                    </div>
+                  </div>
+                }
+              />
+
+              {/* 4. Optimisation Flotte */}
+              <IAAgentSection
+                name="OPTIMISATION FLOTTE"
+                content={
+                  <div>
+                    <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.8 }}>
+                      Analyse hebdomadaire flotte: <span style={{ color: '#fff', fontWeight: 600 }}>TOU-02 sous-utilisée</span> (3 rotations/jour vs capacité 5). <span style={{ color: '#F59E0B', fontWeight: 600 }}>TOU-01 en surutilisation</span> (5.2 rotations/jour moyenne). Recommandation: réaffecter livraison Alliances (Lundi 13h) de TOU-01 à TOU-02. Gain: <span style={{ color: '#34d399', fontWeight: 600 }}>2h disponibilité TOU-01</span> pour maintenance préventive courroie (alerte maintenance active). Coût carburant flotte cette semaine: <span style={{ color: '#fff', fontWeight: 600 }}>4,200 DH</span> (<span style={{ color: '#34d399', fontWeight: 600 }}>↘ -8% vs sem. dern.</span>).
+                    </p>
+                    <div className="flex gap-2 mt-4">
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(16,185,129,0.12)', color: '#34d399' }}>Économie flotte: 340 DH/sem</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>Maintenance: 1 alerte</span>
+                    </div>
+                  </div>
+                }
+              />
+
+              {/* 5. Placeholder — Satisfaction Client */}
+              <section style={{ opacity: 0.45 }}>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <span style={{ color: '#D4A843', fontSize: 14 }}>✦</span>
+                    <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>AGENT IA: SATISFACTION CLIENT</span>
+                  </div>
+                  <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(148,163,184,0.12)', color: T.textDim, border: '1px solid rgba(148,163,184,0.2)' }}>Prochainement</span>
+                </div>
+                <div style={{
+                  background: `${T.cardBorder}20`,
+                  border: `1px dashed ${T.cardBorder}`,
+                  borderRadius: 12, padding: 24, textAlign: 'center',
+                }}>
+                  <p style={{ color: T.textDim, fontSize: 12 }}>Analyse automatique de la satisfaction client basée sur les retards, réclamations et scores NPS. Disponible prochainement.</p>
+                </div>
+              </section>
+            </div>
+          </div>
+        )}
+
+        {/* ── FOOTER (all tabs) ── */}
+        <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', flexDirection: 'column', gap: 16, marginTop: 16 }}>
           {footerActions}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ color: T.textDim, fontSize: 11 }}>TBOS Planning & Expédition v2.0 — Dernière mise à jour: {new Date().toLocaleString('fr-FR')}</span>
