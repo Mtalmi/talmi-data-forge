@@ -277,81 +277,78 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
           borderStyle: 'solid',
           borderColor: `${hov ? T.cardBorder : 'transparent'} ${hov ? T.cardBorder : 'transparent'} ${hov ? T.cardBorder : 'transparent'} ${borderColor}`,
           borderRadius: 10,
-          padding: 16,
-          display: 'flex',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr 1fr 1fr',
           alignItems: 'center',
-          gap: 16,
           cursor: 'pointer',
         }}>
-        {/* Avatar */}
-        <div style={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0, background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: 16, color: '#D4A843' }}>{initial}</div>
-
-        {/* Name + badges */}
-        <div style={{ flex: '2 1 180px', minWidth: 180 }}>
-          <p style={{ fontWeight: 500, fontSize: 15, color: T.textPri, marginBottom: 3 }}>{client.name}</p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-            <Badge label={client.segment} color={segColor} bg={`${segColor}18`} />
-            {(() => {
-              const RISK_DATA: Record<string, { level: 'high' | 'moderate' | 'low'; label: string; detail: string }> = {
-                'Atlas Construction': { level: 'high', label: 'Risque Élevé', detail: 'Retard moyen: 17j | 3 impayés' },
-                'Nexus BTP': { level: 'low', label: 'Fiable', detail: 'Retard moyen: 2j | 0 impayés' },
-                'Omega Immobilier': { level: 'moderate', label: 'Risque Modéré', detail: 'Retard moyen: 8j | 1 impayé' },
-                'Delta Construct': { level: 'low', label: 'Fiable', detail: 'Retard moyen: 0j | 0 impayés' },
-                'Sigma Bâtiment': { level: 'high', label: 'Risque Élevé', detail: 'Retard moyen: 23j | 4 impayés' },
-                'Alpha Travaux': { level: 'moderate', label: 'Risque Modéré', detail: 'Retard moyen: 11j | 1 impayé' },
-              };
-              const risk = RISK_DATA[client.name];
-              if (!risk) return null;
-              const rc = risk.level === 'high' ? T.danger : risk.level === 'moderate' ? T.warning : T.success;
-              const emoji = risk.level === 'high' ? '🔴' : risk.level === 'moderate' ? '🟠' : '🟢';
-              return (
-                <span title={risk.detail} onClick={(e) => { e.stopPropagation(); if (isSigma) toast.info('Sigma Bâtiment — IA: Réunion direction pour négocier un plan de paiement et relancer les commandes.'); }}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 700, background: `${rc}15`, color: rc, border: `1px solid ${rc}30`, cursor: isSigma ? 'pointer' : 'help' }}>
-                  {emoji} {risk.label}
-                </span>
-              );
-            })()}
-            {(() => {
-              const CHURN_DATA: Record<string, { icon: string; label: string; color: string; detail: string }> = {
-                'Atlas Construction': { icon: '📉', label: 'Risque Perte', color: T.danger, detail: 'volume ↓40% sur 3 mois' },
-                'Nexus BTP': { icon: '📈', label: 'Fidèle', color: T.success, detail: 'volume stable, commandes régulières' },
-                'Omega Immobilier': { icon: '⚠️', label: 'À Surveiller', color: T.warning, detail: 'volume ↓15% sur 2 mois' },
-                'Delta Construct': { icon: '📈', label: 'Croissance', color: T.info, detail: 'volume ↑22% sur 3 mois' },
-                'Sigma Bâtiment': { icon: '📉', label: 'Risque Perte', color: T.danger, detail: 'aucune commande depuis 28j' },
-                'Alpha Travaux': { icon: '📈', label: 'Fidèle', color: T.success, detail: 'commandes hebdomadaires stables' },
-              };
-              const churn = CHURN_DATA[client.name];
-              if (!churn) return null;
-              return (
-                <span title={churn.detail} onClick={(e) => { e.stopPropagation(); if (isSigma) toast.info('Sigma Bâtiment — IA: Aucune commande depuis 28 jours, 4 impayés (189,000 MAD). Recommandation: réunion de direction immédiate.'); }}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '2px 7px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'transparent', color: churn.color, border: `1.5px dashed ${churn.color}50`, cursor: isSigma ? 'pointer' : 'help' }}>
-                  {churn.icon} {churn.label}
-                </span>
-              );
-            })()}
+        {/* Col 1: Avatar + Name + badges */}
+        <div style={{ paddingLeft: 16, paddingTop: 12, paddingBottom: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0, background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: 16, color: '#D4A843' }}>{initial}</div>
+          <div style={{ minWidth: 0 }}>
+            <p style={{ fontWeight: 500, fontSize: 15, color: T.textPri, marginBottom: 3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{client.name}</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+              <Badge label={client.segment} color={segColor} bg={`${segColor}18`} />
+              {(() => {
+                const RISK_DATA: Record<string, { level: 'high' | 'moderate' | 'low'; label: string; detail: string }> = {
+                  'Atlas Construction': { level: 'high', label: 'Risque Élevé', detail: 'Retard moyen: 17j | 3 impayés' },
+                  'Nexus BTP': { level: 'low', label: 'Fiable', detail: 'Retard moyen: 2j | 0 impayés' },
+                  'Omega Immobilier': { level: 'moderate', label: 'Risque Modéré', detail: 'Retard moyen: 8j | 1 impayé' },
+                  'Delta Construct': { level: 'low', label: 'Fiable', detail: 'Retard moyen: 0j | 0 impayés' },
+                  'Sigma Bâtiment': { level: 'high', label: 'Risque Élevé', detail: 'Retard moyen: 23j | 4 impayés' },
+                  'Alpha Travaux': { level: 'moderate', label: 'Risque Modéré', detail: 'Retard moyen: 11j | 1 impayé' },
+                };
+                const risk = RISK_DATA[client.name];
+                if (!risk) return null;
+                const rc = risk.level === 'high' ? T.danger : risk.level === 'moderate' ? T.warning : T.success;
+                const emoji = risk.level === 'high' ? '🔴' : risk.level === 'moderate' ? '🟠' : '🟢';
+                return (
+                  <span title={risk.detail} onClick={(e) => { e.stopPropagation(); if (isSigma) toast.info('Sigma Bâtiment — IA: Réunion direction pour négocier un plan de paiement et relancer les commandes.'); }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 700, background: `${rc}15`, color: rc, border: `1px solid ${rc}30`, cursor: isSigma ? 'pointer' : 'help' }}>
+                    {emoji} {risk.label}
+                  </span>
+                );
+              })()}
+              {(() => {
+                const CHURN_DATA: Record<string, { icon: string; label: string; color: string; detail: string }> = {
+                  'Atlas Construction': { icon: '📉', label: 'Risque Perte', color: T.danger, detail: 'volume ↓40% sur 3 mois' },
+                  'Nexus BTP': { icon: '📈', label: 'Fidèle', color: T.success, detail: 'volume stable, commandes régulières' },
+                  'Omega Immobilier': { icon: '⚠️', label: 'À Surveiller', color: T.warning, detail: 'volume ↓15% sur 2 mois' },
+                  'Delta Construct': { icon: '📈', label: 'Croissance', color: T.info, detail: 'volume ↑22% sur 3 mois' },
+                  'Sigma Bâtiment': { icon: '📉', label: 'Risque Perte', color: T.danger, detail: 'aucune commande depuis 28j' },
+                  'Alpha Travaux': { icon: '📈', label: 'Fidèle', color: T.success, detail: 'commandes hebdomadaires stables' },
+                };
+                const churn = CHURN_DATA[client.name];
+                if (!churn) return null;
+                return (
+                  <span title={churn.detail} onClick={(e) => { e.stopPropagation(); if (isSigma) toast.info('Sigma Bâtiment — IA: Aucune commande depuis 28 jours, 4 impayés (189,000 MAD). Recommandation: réunion de direction immédiate.'); }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '2px 7px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'transparent', color: churn.color, border: `1.5px dashed ${churn.color}50`, cursor: isSigma ? 'pointer' : 'help' }}>
+                    {churn.icon} {churn.label}
+                  </span>
+                );
+              })()}
+            </div>
           </div>
         </div>
 
-        {/* CA YTD */}
-        <div style={{ flex: '1 1 90px', minWidth: 90 }}>
-          <p style={{ color: '#9CA3AF', fontSize: 9, fontFamily: MONO, letterSpacing: '1px', marginBottom: 3 }}>CA YTD</p>
+        {/* Col 2: CA YTD */}
+        <div style={{ textAlign: 'center', padding: '12px 8px' }}>
+          <p style={{ color: '#9CA3AF', fontSize: 9, fontFamily: MONO, letterSpacing: '1.5px', marginBottom: 4 }}>CA YTD</p>
           <p style={{ fontFamily: MONO, fontSize: 18, fontWeight: 300, color: '#D4A843' }}>{client.ca}</p>
         </div>
 
-        {/* Dernière cmd */}
-        <div style={{ flex: '1 1 90px', minWidth: 90 }}>
-          <p style={{ color: '#9CA3AF', fontSize: 9, fontFamily: MONO, letterSpacing: '1px', marginBottom: 3 }}>DERNIÈRE CMD</p>
+        {/* Col 3: Dernière CMD */}
+        <div style={{ textAlign: 'center', padding: '12px 8px' }}>
+          <p style={{ color: '#9CA3AF', fontSize: 9, fontFamily: MONO, letterSpacing: '1.5px', marginBottom: 4 }}>DERNIÈRE CMD</p>
           <p style={{ color: T.textPri, fontSize: 13, fontFamily: MONO }}>{client.lastOrder}</p>
         </div>
 
-        {/* Health Gauge */}
-        <div style={{ flex: '0 0 60px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-          <p style={{ color: '#9CA3AF', fontSize: 8, fontFamily: MONO, letterSpacing: '1px' }}>SCORE SANTÉ</p>
-          <HealthGauge score={healthScore} />
-        </div>
-
-        {/* Status + Solde + Trend */}
-        <div style={{ flex: '0 0 80px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+        {/* Col 4: Score + Status + Solde + Trend + Chevron */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 12, paddingRight: 16, padding: '12px 16px 12px 8px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+            <p style={{ color: '#9CA3AF', fontSize: 9, fontFamily: MONO, letterSpacing: '1.5px', marginBottom: 4 }}>SCORE SANTÉ</p>
+            <HealthGauge score={healthScore} />
+          </div>
           <Badge label={client.status} color={isInactif ? T.warning : T.success} bg={isInactif ? `${T.warning}18` : `${T.success}18`} pulse={isInactif} />
           <p style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: client.solde === 0 ? T.success : T.danger }}>
             {client.solde === 0 ? '0 DH' : `${(client.solde / 1000).toFixed(0)}K DH`}
@@ -359,9 +356,8 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
           {trend && (
             <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: trend.color }}>{trend.arrow}</span>
           )}
+          <ChevronRight size={18} color={T.textDim} style={{ transition: 'transform 200ms', transform: expanded ? 'rotate(90deg)' : hov ? 'translateX(4px)' : 'none', flexShrink: 0 }} />
         </div>
-
-        <ChevronRight size={18} color={T.textDim} style={{ transition: 'transform 200ms', transform: expanded ? 'rotate(90deg)' : hov ? 'translateX(4px)' : 'none', flexShrink: 0 }} />
       </div>
 
       {/* AI Intelligence Brief */}
