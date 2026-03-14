@@ -71,7 +71,7 @@ export const ResumeIABar = () => {
           <button className="border border-[#D4A843]/40 text-[#D4A843] hover:bg-[#D4A843]/10 rounded px-3 py-1 text-xs transition-colors duration-200">
             Voir Rapport
           </button>
-          <button className="border border-white/10 text-white/40 hover:text-white/60 rounded px-3 py-1 text-xs transition-colors duration-200">
+          <button className="border border-[#D4A843] text-[#D4A843] hover:bg-[#D4A843]/10 rounded px-3 py-1 text-xs transition-colors duration-200">
             Ignorer
           </button>
         </div>
