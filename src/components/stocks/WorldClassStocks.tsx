@@ -661,7 +661,7 @@ function CritiqueCountdown({ daysRemaining }: { daysRemaining: number }) {
         }} />
         <span style={{
           fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
-          fontWeight: 200, fontSize: 24, lineHeight: 1, color: '#ef4444',
+          fontWeight: 600, fontSize: 16, lineHeight: 1, color: '#ef4444',
           WebkitFontSmoothing: 'antialiased' as any,
         }}>
           Rupture dans {d}j {h}h {m}m
@@ -674,6 +674,22 @@ function CritiqueCountdown({ daysRemaining }: { daysRemaining: number }) {
         Commande urgente requise
       </p>
     </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
+// HERO SCORE COUNTER — count-up with easeOutExpo
+// ─────────────────────────────────────────────────────
+function HeroScoreCounter({ target }: { target: number }) {
+  const value = useAnimatedCounter(target, 2000);
+  return (
+    <span style={{
+      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+      fontSize: 64, fontWeight: 100, lineHeight: 1, letterSpacing: '-0.02em', color: '#D4A843',
+      textShadow: '0 0 20px rgba(212,168,67,0.2)',
+    }}>
+      {value}
+    </span>
   );
 }
 
