@@ -790,6 +790,7 @@ export default function WorldClassProduction() {
               </div>
             </div>
           </div>
+        </section>
 
         {/* ── CHARTS: Production du Jour ── */}
         <section>
