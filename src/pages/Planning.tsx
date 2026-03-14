@@ -1544,30 +1544,30 @@ export default function Planning() {
             )}
             <div className="grid grid-cols-4 gap-2">
               <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
-                <div className="p-1.5 rounded-lg bg-blue-400/10 shrink-0"><Calendar className="h-4 w-4 text-blue-400" /></div>
+                <div className="p-1.5 rounded-lg bg-[#D4A843]/10 shrink-0"><Calendar className="h-4 w-4" style={{ color: '#D4A843' }} /></div>
                 <div className="min-w-0">
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayTotalBonsToday}</p>
+                  <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 36, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#D4A843' }}>{displayTotalBonsToday}</p>
                   <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.deliveriesToday}</p>
                 </div>
               </div>
               <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
-                <div className="p-1.5 rounded-lg bg-[#D4A843]/10 shrink-0"><Clock className="h-4 w-4 text-[#D4A843]" /></div>
+                <div className="p-1.5 rounded-lg bg-[#D4A843]/10 shrink-0"><Clock className="h-4 w-4" style={{ color: '#D4A843' }} /></div>
                 <div className="min-w-0">
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayPendingBons}</p>
+                  <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 36, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#D4A843' }}>{displayPendingBons}</p>
                   <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.waitingLabel}</p>
                 </div>
               </div>
               <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
-                <div className="p-1.5 rounded-lg bg-emerald-400/10 shrink-0"><Truck className="h-4 w-4 text-emerald-400" /></div>
+                <div className="p-1.5 rounded-lg bg-[#D4A843]/10 shrink-0"><Truck className="h-4 w-4" style={{ color: '#D4A843' }} /></div>
                 <div className="min-w-0">
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayAvailableCamions}/{displayTotalCamions}</p>
+                  <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 36, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#D4A843' }}>{displayAvailableCamions}/{displayTotalCamions}</p>
                   <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.trucksAvailable}</p>
                 </div>
               </div>
               <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
-                <div className="p-1.5 rounded-lg bg-blue-400/10 shrink-0"><Navigation className="h-4 w-4 text-blue-400" /></div>
+                <div className="p-1.5 rounded-lg bg-[#D4A843]/10 shrink-0"><Navigation className="h-4 w-4" style={{ color: '#D4A843' }} /></div>
                 <div className="min-w-0">
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayEnLivraison.length}</p>
+                  <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 36, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#D4A843' }}>{displayEnLivraison.length}</p>
                   <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.onRoute}</p>
                 </div>
               </div>
