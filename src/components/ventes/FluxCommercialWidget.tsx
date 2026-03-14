@@ -196,9 +196,7 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
         padding: '24px 16px',
         background: 'rgba(255,255,255,0.02)',
         border: '1px solid rgba(255,255,255,0.08)',
-        borderTop: '2px solid transparent',
-        borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
-        borderImageSlice: '1 1 0 1',
+        borderTop: '2px solid #D4A843',
         borderRadius: 16,
         overflow: 'hidden',
       }}>
