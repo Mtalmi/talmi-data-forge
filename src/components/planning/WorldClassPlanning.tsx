@@ -552,11 +552,11 @@ function ZoneHeader({ icon, label, right }: { icon: string; label: string; right
 export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPanelOpen?: boolean }) {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dispatch');
-  const dispatchRef = useRef<HTMLElement | null>(null);
-  const kpisRef = useRef<HTMLElement | null>(null);
-  const semaineRef = useRef<HTMLElement | null>(null);
-  const capaciteRef = useRef<HTMLElement | null>(null);
-  const iaRef = useRef<HTMLElement | null>(null);
+  const dispatchRef = useRef<HTMLDivElement | null>(null);
+  const kpisRef = useRef<HTMLDivElement | null>(null);
+  const semaineRef = useRef<HTMLDivElement | null>(null);
+  const capaciteRef = useRef<HTMLDivElement | null>(null);
+  const iaRef = useRef<HTMLDivElement | null>(null);
   const { kpis: pKpis, liveDeliveries } = usePlanningLiveData();
   const { results: n8nResults, triggerWorkflow, isSubmitting: isOptimizing } = useN8nWorkflow();
 
