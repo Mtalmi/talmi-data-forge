@@ -241,15 +241,59 @@ html {
   border-bottom: 1px solid rgba(212, 168, 67, 0.06);
 }
 
-/* ─── Global Card Hover System ─── */
-[data-slot="card"],
-.tbos-card {
+/* ─── Depth Hierarchy System ─── */
+/* Level 1 — Content cards, tables, chart containers */
+[data-slot="card"] {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(212, 168, 67, 0.06) !important;
   transition: border-color 200ms ease, box-shadow 200ms ease;
 }
-[data-slot="card"]:hover,
-.tbos-card:hover {
+[data-slot="card"]:hover {
   border-color: rgba(212, 168, 67, 0.15);
   box-shadow: 0 2px 12px rgba(212, 168, 67, 0.05);
+}
+
+/* Level 2 — KPI cards, agent KPI triplets */
+.tbos-card,
+.kpi-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(212, 168, 67, 0.08);
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+.tbos-card:hover,
+.kpi-card:hover {
+  border-color: rgba(212, 168, 67, 0.15);
+  box-shadow: 0 2px 12px rgba(212, 168, 67, 0.05);
+}
+
+/* Level 3 — Alert cards, recommendation boxes, active elements */
+.tbos-depth-3 {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(212, 168, 67, 0.12) !important;
+}
+
+/* Level Overlay — Tooltips, dropdowns, modals, drawers */
+.tbos-depth-overlay {
+  background: #1A2332 !important;
+  border: 1px solid rgba(212, 168, 67, 0.15) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Glassmorphism — AI briefing / hero sections */
+.tbos-glass {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(15, 22, 41, 0.7) !important;
+}
+
+/* Gold borderTop glow */
+.tbos-gold-border-glow {
+  box-shadow: 0 -1px 8px rgba(212, 168, 67, 0.08);
+}
+
+/* Chart container inset depth */
+.tbos-chart-inset {
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* ─── Global Table System ─── */
