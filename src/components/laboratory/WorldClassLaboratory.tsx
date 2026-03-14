@@ -653,7 +653,8 @@ function EssaisDuJourTab({ labKpis }: { labKpis: { testsToday: number; conformes
             icon={FlaskConical}
             label="Résultats du Jour"
             right={
-              <div style={{ display: 'flex', gap: 8 }}>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <Bdg label="● LIVE" color={T.success} bg="rgba(34,197,94,0.12)" pulse />
                 <Bdg label="7 conformes"    color={T.success} bg="rgba(34,197,94,0.15)" border="1px solid rgba(34,197,94,0.3)" icon={CheckCircle} />
                 <Bdg label="1 non-conforme" color={T.danger}  bg="rgba(239,68,68,0.15)" border="1px solid rgba(239,68,68,0.3)" pulse icon={AlertTriangle} />
               </div>
