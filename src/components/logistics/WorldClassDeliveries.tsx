@@ -226,6 +226,10 @@ function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; del
           <p style={{ fontFamily: MONO, fontSize: 12, color: T.textPri, textAlign: 'center', margin: '0 0 2px' }}>{v.driver}</p>
           <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textAlign: 'center', margin: 0 }}>{v.driverStats}</p>
         </div>
+        {/* Maintenance prédictive */}
+        {(v as any).maintenance && (
+          <p style={{ fontFamily: MONO, fontSize: 10, color: (v as any).maintenance.color, textAlign: 'center', margin: '6px 0 0', lineHeight: 1.4 }}>{(v as any).maintenance.text}</p>
+        )}
       </div>
     </div>
   );
