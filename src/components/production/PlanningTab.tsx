@@ -323,6 +323,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
                 const isSelected = selectedDate && isSameDay(day, selectedDate);
                 const isPast = isBefore(day, startOfDay(new Date()));
 
+                const isSunday = day.getDay() === 0;
                 return (
                   <div
                     key={day.toISOString()}
