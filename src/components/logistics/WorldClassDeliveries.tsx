@@ -1090,27 +1090,39 @@ function AnalytiqueTab() {
           {/* Card 1: Revenu par Toupie */}
           <Card style={{ borderTop: `2px solid ${T.gold}` }}>
             <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: '1.5px', marginBottom: 16, textTransform: 'uppercase' as const }}>REVENU PAR TOUPIE</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {[
-                { name: 'T-04', rev: 285000, maint: 0 },
-                { name: 'T-07', rev: 198000, maint: 0 },
-                { name: 'T-12', rev: 142000, maint: 0 },
-                { name: 'T-09', rev: 89000, maint: 36000 },
+                { name: 'T-04', rev: 285000, maint: 0, detail: '42 livraisons · 127 km/jour moy. · 118 DH/km', highlight: null },
+                { name: 'T-07', rev: 198000, maint: 0, detail: '35 livraisons · 98 km/jour moy. · 102 DH/km', highlight: null },
+                { name: 'T-12', rev: 142000, maint: 0, detail: '28 livraisons · 82 km/jour moy. · 154 DH/km', highlight: { text: ' · ★ meilleur ratio', color: T.gold } },
+                { name: 'T-09', rev: 89000, maint: 36000, detail: '18 livraisons · 12 jours maintenance', highlight: { text: ' · −34% disponibilité', color: T.danger } },
               ].map(t => {
                 const maxRev = 285000;
                 return (
                   <div key={t.name}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
                       <span style={{ fontFamily: MONO, fontSize: 11, color: T.textPri }}>{t.name}</span>
-                      <span style={{ fontFamily: MONO, fontSize: 11, color: T.gold }}>{t.rev.toLocaleString('fr-MA')} DH</span>
+                      <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 200, color: T.gold }}>{t.rev.toLocaleString('fr-MA')} DH</span>
                     </div>
-                    <div style={{ display: 'flex', height: 14, borderRadius: 3, overflow: 'hidden', background: 'rgba(255,255,255,0.03)' }}>
-                      <div style={{ width: `${((t.rev - t.maint) / maxRev) * 100}%`, background: `linear-gradient(90deg, #C49A3C, #D4A843)`, transition: 'width 0.8s ease' }} />
-                      {t.maint > 0 && <div style={{ width: `${(t.maint / maxRev) * 100}%`, background: T.danger, transition: 'width 0.8s ease' }} />}
+                    <div style={{ display: 'flex', height: 14, borderRadius: 3, overflow: 'hidden', background: 'rgba(255,255,255,0.03)', position: 'relative' }}>
+                      <div style={{ width: `${((t.rev - t.maint) / maxRev) * 100}%`, background: 'linear-gradient(90deg, #C49A3C, #D4A843)', transition: 'width 0.8s ease' }} />
+                      {t.maint > 0 && (
+                        <div style={{ width: `${(t.maint / maxRev) * 100}%`, background: T.danger, transition: 'width 0.8s ease', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <span style={{ fontSize: 10, color: '#FFFFFF', whiteSpace: 'nowrap' as const, lineHeight: 1 }}>12j maintenance</span>
+                        </div>
+                      )}
                     </div>
+                    <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, margin: '3px 0 0' }}>
+                      {t.detail}
+                      {t.highlight && <span style={{ color: t.highlight.color, fontWeight: 600 }}>{t.highlight.text}</span>}
+                    </p>
                   </div>
                 );
               })}
+            </div>
+            {/* Total footer */}
+            <div style={{ borderTop: `1px solid ${T.gold}40`, marginTop: 14, paddingTop: 10 }}>
+              <p style={{ fontFamily: MONO, fontSize: 12, color: T.gold, margin: 0 }}>TOTAL FLOTTE: 714,000 DH · 123 livraisons · 114 DH/km moy.</p>
             </div>
           </Card>
 
@@ -1158,6 +1170,35 @@ function AnalytiqueTab() {
                 </div>
               ))}
             </div>
+            {/* Mini ranked table */}
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: MONO, marginTop: 14 }}>
+              <thead>
+                <tr>
+                  {['CLIENT', 'LIVR.', 'VOLUME', 'CA', 'TENDANCE'].map(h => (
+                    <th key={h} style={{ fontSize: 9, fontWeight: 600, color: T.textDim, letterSpacing: '0.1em', padding: '4px 4px', textAlign: h === 'CLIENT' ? 'left' : 'right' }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { client: 'Résidences Atlas', livr: 12, vol: '144 m³', ca: '250K DH', trend: '↗ +15%', tColor: T.success },
+                  { client: 'Groupe A', livr: 9, vol: '72 m³', ca: '180K DH', trend: '→ stable', tColor: T.textDim },
+                  { client: 'Saham Im', livr: 7, vol: '70 m³', ca: '142K DH', trend: '↗ +8%', tColor: T.success },
+                  { client: 'Autres', livr: 7, vol: '63 m³', ca: '142K DH', trend: '↘ −5%', tColor: T.danger },
+                ].map(r => (
+                  <tr key={r.client}>
+                    <td style={{ fontSize: 11, color: T.textSec, padding: '4px 4px' }}>{r.client}</td>
+                    <td style={{ fontSize: 11, fontWeight: 200, color: T.textPri, padding: '4px 4px', textAlign: 'right' }}>{r.livr}</td>
+                    <td style={{ fontSize: 11, fontWeight: 200, color: T.textPri, padding: '4px 4px', textAlign: 'right' }}>{r.vol}</td>
+                    <td style={{ fontSize: 11, fontWeight: 200, color: T.gold, padding: '4px 4px', textAlign: 'right' }}>{r.ca}</td>
+                    <td style={{ fontSize: 11, fontWeight: 600, color: r.tColor, padding: '4px 4px', textAlign: 'right' }}>{r.trend}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, marginTop: 10, lineHeight: 1.6 }}>
+              Résidences Atlas génère 35% du CA flotte. Croissance +15% — proposer <span style={{ color: T.gold, fontWeight: 700 }}>contrat volume</span>.
+            </p>
           </Card>
 
           {/* Card 3: Performance Chauffeurs */}
