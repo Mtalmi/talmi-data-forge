@@ -856,7 +856,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
               <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, transparent, #D4A843, transparent)', backgroundSize: '200% 100%', animation: 'shimmer 4s linear infinite' }} />
               <div style={{ flex: '1 1 200px' }}>
                 <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6 }}>SCORE DISPATCH DU JOUR</p>
-                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 42, fontWeight: 200, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em' }}>9.2<span style={{ fontSize: 20, color: '#9CA3AF' }}>/10</span></p>
+                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 52, fontWeight: 100, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em', textShadow: '0 0 20px rgba(212,168,67,0.2)' }}>9.2<span style={{ fontSize: 20, color: '#9CA3AF' }}>/10</span></p>
                 <p style={{ fontSize: 12, color: T.success, marginTop: 4, fontWeight: 500 }}>↗ +0.3 pts vs hier</p>
                 <div style={{ display: 'flex', gap: 6, marginTop: 10, flexWrap: 'wrap' }}>
                   {[
