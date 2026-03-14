@@ -3319,10 +3319,10 @@ html {
    TBOS UNIVERSAL CARD POLISH + MICRO-INTERACTIONS
    ════════════════════════════════════════════════════════════ */
 
-/* ─── Universal Card ─── */
+/* ─── Universal Card (Depth Level 2) ─── */
 .tbos-card {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(212, 168, 67, 0.08);
   border-radius: 8px !important;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
   transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease, background 200ms ease;
@@ -3331,15 +3331,15 @@ html {
 }
 .tbos-card:hover {
   background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(212, 168, 67, 0.2);
+  border-color: rgba(212, 168, 67, 0.15);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* ─── Hero Card ─── */
+/* ─── Hero Card (Depth Level 3) ─── */
 .tbos-card-hero {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(212, 168, 67, 0.12);
   border-radius: 8px !important;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -3352,10 +3352,10 @@ html {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* ─── Recessed Card ─── */
+/* ─── Recessed Card (Depth Level 1) ─── */
 .tbos-card-recessed {
-  background: rgba(255, 255, 255, 0.015);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(212, 168, 67, 0.06);
   border-radius: 8px !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -3363,7 +3363,7 @@ html {
 }
 .tbos-card-recessed:hover {
   background: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(212, 168, 67, 0.1);
 }
 
 /* ─── Section Header — receding organizer ─── */

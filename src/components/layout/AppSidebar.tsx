@@ -193,6 +193,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
         width: 200,
         background: '#0B1120',
         borderRight: '1px solid rgba(212, 168, 67, 0.08)',
+        boxShadow: '2px 0 16px rgba(0, 0, 0, 0.2)',
       }}
     >
       {/* Gold edge highlight */}
