@@ -1004,7 +1004,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                       <div key={d} style={{
                         padding: '10px 12px', textAlign: 'center',
                         background: `${T.cardBorder}40`, borderBottom: `1px solid ${T.cardBorder}`, borderLeft: `1px solid ${T.cardBorder}`,
-                        color: T.gold, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '1px',
+                        color: '#D4A843', fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '2px',
                       }}>{d}</div>
                     ))}
                   </div>
@@ -1014,7 +1014,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                         padding: '12px 8px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                         borderRight: `1px solid ${T.cardBorder}`,
                       }}>
-                        <span style={{ color: '#D4A843', fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', writingMode: 'horizontal-tb' }}>{row.time}</span>
+                        <span style={{ color: 'rgba(212,168,67,0.5)', fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', writingMode: 'horizontal-tb' }}>{row.time}</span>
                       </div>
                       {row.slots.map((slot, si) => (
                         <div key={si} style={{ padding: 8, borderLeft: `1px solid ${T.cardBorder}` }}>
