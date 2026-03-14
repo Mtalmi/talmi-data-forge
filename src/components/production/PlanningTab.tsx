@@ -527,9 +527,9 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
             </button>
             <button onClick={() => setWeekOffset(0)} style={{
               padding: '8px 14px', borderRadius: 8, cursor: 'pointer',
-              background: weekOffset === 0 ? `${T.gold}18` : 'transparent',
-              border: `1px solid ${weekOffset === 0 ? T.gold + '50' : T.cardBorder}`,
-              color: weekOffset === 0 ? T.gold : T.textSec, fontWeight: 600, fontSize: 13,
+              background: 'transparent',
+              border: '1px solid #D4A843',
+              color: '#D4A843', fontWeight: 600, fontSize: 13,
               transition: 'all 200ms',
             }}>
               Aujourd'hui
