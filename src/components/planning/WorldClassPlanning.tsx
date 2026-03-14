@@ -937,7 +937,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                     <Clock size={14} color={T.gold} />
                     <span style={{ color: T.textSec, fontSize: 12, fontWeight: 600 }}>Prochaines Livraisons</span>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 400, overflowY: 'auto' }}>
                     {(liveDeliveries.length > 0 ? liveDeliveries : deliveries).map((d, i) => (
                       <DeliveryCard key={i} d={d} delay={i * 70} routeData={routeDataMap[(d as any).bl_id || '']} weatherIndex={i} />
                     ))}
