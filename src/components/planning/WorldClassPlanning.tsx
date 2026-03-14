@@ -344,7 +344,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
 // ─────────────────────────────────────────────────────
 // SCHEDULE BLOCK
 // ─────────────────────────────────────────────────────
-function ScheduleBlock({ slot, delay = 0, riskyClients }: { slot: { product: string; volume: number; client: string } | null; delay?: number; riskyClients?: Set<string> }) {
+function ScheduleBlock({ slot, delay = 0, riskyClients, onClick }: { slot: { product: string; volume: number; client: string } | null; delay?: number; riskyClients?: Set<string>; onClick?: () => void }) {
   const [visible, setVisible] = useState(false);
   const [hov, setHov] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
@@ -369,6 +369,7 @@ function ScheduleBlock({ slot, delay = 0, riskyClients }: { slot: { product: str
     <div
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
+      onClick={onClick}
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(12px)',
@@ -377,7 +378,7 @@ function ScheduleBlock({ slot, delay = 0, riskyClients }: { slot: { product: str
         border: `1px solid ${hov ? 'rgba(245, 158, 11, 0.3)' : 'rgba(245, 158, 11, 0.15)'}`,
         borderLeft: `3px solid ${color}`,
         borderRadius: 8, padding: '8px 10px',
-        cursor: 'default', minHeight: 58,
+        cursor: 'pointer', minHeight: 58,
         position: 'relative',
       }}
     >
