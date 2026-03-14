@@ -840,7 +840,7 @@ export default function Dashboard() {
                 padding: '24px 32px',
               }}
             >
-              {/* ── ROW 1: GREETING (compact, understated) ── */}
+              {/* ── ROW 1: GREETING + DAILY SCORE ── */}
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h1 className="text-lg font-semibold text-white tracking-tight" style={{ lineHeight: 1.2 }}>
@@ -864,6 +864,10 @@ export default function Dashboard() {
                       <span className="text-sm">☀️</span> 22°C Ensoleillé · 45% · <span className="text-emerald-400/80 font-semibold">● Optimal</span>
                     </span>
                   </div>
+                </div>
+                {/* DAILY SCORE GAUGE */}
+                <div className="hidden md:block">
+                  <DailyScoreGauge score={87} deltaVsYesterday={3} streak={12} weeklyRecord={{ score: 94, day: 'jeudi' }} />
                 </div>
               </div>
 
