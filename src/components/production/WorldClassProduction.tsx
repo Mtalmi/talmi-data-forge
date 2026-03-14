@@ -316,22 +316,27 @@ function WorkflowStep({ count, label, color, statusLabel, delay = 0 }: {
   const [visible, setVisible] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
 
+  const isActif = statusLabel === 'Actif';
+  const isTermine = statusLabel === 'Terminé';
+  const statusColor = isActif ? '#22C55E' : isTermine ? '#22C55E' : '#9CA3AF';
+
   return (
     <div className="flex flex-col items-center gap-2" style={{
       opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(10px)',
       transition: 'all 500ms ease-out', cursor: 'pointer',
     }}>
       <p style={{
-        fontFamily: 'JetBrains Mono, monospace', fontSize: 42, fontWeight: 400,
-        color: '#fff', lineHeight: 1, letterSpacing: '-0.02em',
+        fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 36, fontWeight: 200,
+        color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em',
       }}>{animated}</p>
       <p style={{
         fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.2em',
         color: 'rgba(255,255,255,0.45)', fontWeight: 500,
       }}>{label}</p>
       <span style={{
-        fontSize: 11, fontWeight: 500, color,
+        fontSize: 11, fontWeight: 500, color: statusColor,
         textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 2,
+        ...(isActif ? { animation: 'wfActifPulse 2s infinite' } : {}),
       }}>{statusLabel}</span>
     </div>
   );
