@@ -906,7 +906,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
               </div>
             </div>
           </div>
-        </section>
+        </div>
 
         {/* ═══════════════════════════════════════════════════
             ZONE 3: INTELLIGENCE IA
