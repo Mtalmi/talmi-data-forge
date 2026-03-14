@@ -1,5 +1,5 @@
-import React from 'react';
-import { Users, Sparkles, TrendingDown, TrendingUp } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Users, Sparkles } from 'lucide-react';
 
 const T = {
   gold: '#FFD700', goldDim: 'rgba(255,215,0,0.15)',
@@ -9,26 +9,45 @@ const T = {
   cardBg: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
 };
 
+const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
+
+function useCountUp(target: number, duration = 1200, decimals = 0) {
+  const [value, setValue] = useState(0);
+  const rafRef = useRef<number>();
+  useEffect(() => {
+    const start = performance.now();
+    const run = (now: number) => {
+      const p = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setValue(parseFloat((eased * target).toFixed(decimals)));
+      if (p < 1) rafRef.current = requestAnimationFrame(run);
+    };
+    rafRef.current = requestAnimationFrame(run);
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [target, duration, decimals]);
+  return value;
+}
+
 const alerts = [
   {
-    severity: 'high',
+    severity: 'high' as const,
     text: '🔴 Atlas Construction — Volume commandé en baisse de 40% sur 3 mois (de 120m³/mois à 72m³/mois). Dernier contact commercial: il y a 35 jours. Concurrent identifié: BétonPlus propose -5% sur B25. Recommandation: appeler cette semaine, proposer remise fidélité 3%.',
   },
   {
-    severity: 'high',
+    severity: 'high' as const,
     text: '🔴 Sigma Bâtiment — Aucune commande depuis 28 jours (fréquence habituelle: hebdomadaire). 4 factures impayées totalisant 189,000 MAD. Possible lien entre retards de paiement et arrêt des commandes. Recommandation: réunion direction pour négocier plan de paiement.',
   },
   {
-    severity: 'medium',
+    severity: 'medium' as const,
     text: '⚠️ Omega Immobilier — Volume en baisse progressive de 15% sur 2 mois. Nouveau projet démarré mais pas de commande associée. Recommandation: contacter chef de projet pour le nouveau chantier Hay Hassani.',
   },
 ];
 
 const kpis = [
-  { label: 'Clients Actifs', value: '4/6', trend: '↓1 ce mois', trendColor: T.warning },
-  { label: 'Risque Perte', value: '2 clients', valueColor: T.danger },
-  { label: 'Revenue à Risque', value: '312,000 MAD/an', valueColor: T.danger },
-  { label: 'Taux Rétention 12M', value: '83%', valueColor: T.warning },
+  { label: 'Clients Actifs', numValue: 4, displaySuffix: '/6', trend: '↓1 ce mois', trendColor: T.warning },
+  { label: 'Risque Perte', numValue: 2, displaySuffix: ' clients', valueColor: T.danger },
+  { label: 'Revenue à Risque', numValue: 312000, displaySuffix: '', valueColor: T.danger, isCurrency: true },
+  { label: 'Taux Rétention 12M', numValue: 83, displaySuffix: '%', valueColor: T.warning },
 ];
 
 export function ClientChurnPredictorCard() {
@@ -36,7 +55,7 @@ export function ClientChurnPredictorCard() {
     <div style={{
       background: T.cardBg,
       border: `1px solid ${T.cardBorder}`,
-      borderTop: '2px solid #D4A843',
+      borderTop: '2px solid #EF4444',
       borderRadius: 12,
       overflow: 'hidden',
       position: 'relative',
@@ -65,7 +84,6 @@ export function ClientChurnPredictorCard() {
           </span>
           <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
         </div>
-        {/* AI pill badge */}
         <span style={{
           background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843',
           fontSize: 11, borderRadius: 9999, padding: '2px 10px', fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0,
@@ -76,16 +94,7 @@ export function ClientChurnPredictorCard() {
         {/* KPIs */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 20 }}>
           {kpis.map((k, i) => (
-            <div key={i} style={{
-              background: 'rgba(0,0,0,0.2)', borderRadius: 8,
-              border: `1px solid ${T.cardBorder}`, padding: '10px 12px',
-            }}>
-              <p style={{ fontSize: 9, fontWeight: 600, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 5 }}>{k.label}</p>
-              <span style={{ fontSize: 15, fontWeight: 800, color: k.valueColor || T.textPri, fontFamily: 'JetBrains Mono, monospace' }}>{k.value}</span>
-              {k.trend && (
-                <span style={{ fontSize: 9, fontWeight: 600, color: k.trendColor, marginLeft: 6 }}>{k.trend}</span>
-              )}
-            </div>
+            <KPIBox key={i} {...k} />
           ))}
         </div>
 
@@ -93,21 +102,78 @@ export function ClientChurnPredictorCard() {
         <p style={{ fontSize: 13, fontWeight: 700, color: T.textPri, marginBottom: 12 }}>Clients à Risque de Perte — Prédiction IA</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {alerts.map((a, i) => {
-            const bc = a.severity === 'high' ? T.danger : T.warning;
+            const isHigh = a.severity === 'high';
+            const bc = isHigh ? T.danger : T.warning;
             return (
-              <div key={i} style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderLeft: `3px solid ${bc}`,
-                borderRadius: 8,
-                padding: '12px 16px',
-              }}>
-                <p style={{ fontSize: 11, lineHeight: 1.7, color: T.textSec }}>{a.text}</p>
-              </div>
+              <AlertRow key={i} text={a.text} borderColor={bc} isHigh={isHigh} />
             );
           })}
         </div>
+
+        {/* Recommandation box */}
+        <div style={{
+          marginTop: 16,
+          borderLeft: '3px solid #D4A843',
+          background: 'rgba(212,168,67,0.04)',
+          borderRadius: '0 8px 8px 0',
+          padding: '12px 16px',
+        }}>
+          <p style={{ fontSize: 13, lineHeight: 1.7, color: T.textSec }}>
+            <span style={{ color: '#D4A843', fontWeight: 600 }}>Action prioritaire : </span>
+            Sigma Bâtiment — <span style={{ fontFamily: MONO, color: '#D4A843' }}>4</span> factures impayées totalisant{' '}
+            <span style={{ fontFamily: MONO, color: '#D4A843' }}>189,000</span> MAD. Risque de perte imminent. Recommandation : réunion direction cette semaine pour négocier plan de paiement échelonné.
+          </p>
+        </div>
       </div>
+    </div>
+  );
+}
+
+function KPIBox({ label, numValue, displaySuffix, trend, trendColor, valueColor, isCurrency }: {
+  label: string; numValue: number; displaySuffix: string; trend?: string; trendColor?: string; valueColor?: string; isCurrency?: boolean;
+}) {
+  const animated = useCountUp(isCurrency ? numValue / 1000 : numValue, 1200, 0);
+  const color = valueColor || '#D4A843';
+
+  return (
+    <div style={{
+      background: 'rgba(0,0,0,0.2)', borderRadius: 8,
+      border: `1px solid ${T.cardBorder}`, padding: '10px 12px',
+    }}>
+      <p style={{ fontSize: 9, fontWeight: 600, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 5, fontFamily: MONO }}>{label}</p>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
+        <span style={{ fontFamily: MONO, fontWeight: 100, fontSize: 36, color, lineHeight: 1 }}>
+          {isCurrency ? `${animated.toLocaleString('fr-FR')}` : animated}
+        </span>
+        {isCurrency ? (
+          <span style={{ fontFamily: MONO, fontSize: 16, color: '#9CA3AF', marginLeft: 4 }}>K MAD/an</span>
+        ) : (
+          <span style={{ fontFamily: MONO, fontSize: 16, color: '#9CA3AF' }}>{displaySuffix}</span>
+        )}
+      </div>
+      {trend && (
+        <span style={{ fontSize: 9, fontWeight: 600, color: trendColor, fontFamily: MONO }}>{trend}</span>
+      )}
+    </div>
+  );
+}
+
+function AlertRow({ text, borderColor, isHigh }: { text: string; borderColor: string; isHigh: boolean }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <div
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        background: hov ? 'rgba(212,168,67,0.04)' : isHigh ? 'rgba(239,68,68,0.03)' : 'rgba(245,158,11,0.03)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderLeft: `3px solid ${borderColor}`,
+        borderRadius: 8,
+        padding: '12px 16px',
+        transition: 'background 200ms',
+      }}
+    >
+      <p style={{ fontSize: 11, lineHeight: 1.7, color: T.textSec }}>{text}</p>
     </div>
   );
 }
