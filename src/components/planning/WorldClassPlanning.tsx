@@ -435,7 +435,7 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = f
           </div>
         )}
       </div>
-      <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: slot.product === 'Spécial' ? 9 : 11, fontWeight: 800, color: slot.product === 'Spécial' ? '#F59E0B' : '#D4A843', marginBottom: 2, display: 'inline-block', padding: '1px 6px', borderRadius: 4, background: slot.product === 'Spécial' ? 'rgba(245,158,11,0.06)' : 'rgba(212,168,67,0.2)', border: slot.product === 'Spécial' ? '1px solid #F59E0B' : '1px solid rgba(212,168,67,0.5)' }}>{slot.product}</p>
+      <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: slot.product === 'Spécial' ? 9 : 11, fontWeight: 800, color: '#D4A843', marginBottom: 2, display: 'inline-block', padding: '1px 6px', borderRadius: 4, background: 'transparent', border: '1px solid #D4A843' }}>{slot.product}</p>
       <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 13, fontWeight: 500, color: '#fff' }}>{slot.volume} m³</p>
       <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>{slot.client}</p>
     </div>
