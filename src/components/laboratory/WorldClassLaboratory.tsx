@@ -1695,7 +1695,7 @@ function IntelligenceIATab() {
   // Certification data
   const certRows = [
     { norme: 'NM 10.1.008', desc: 'Béton — Spécification, performances, production', statut: 'Conforme', expire: '2026-06-15' },
-    { norme: 'NM 10.1.271', desc: 'Essais pour béton frais — Affaissement', statut: 'À renouveler', expire: '2025-04-01' },
+    { norme: 'NM 10.1.271', desc: 'Essais pour béton frais — Affaissement', statut: 'À renouveler', expire: '2026-04-01' },
     { norme: 'NM 10.1.012', desc: 'Essais pour béton durci — Résistance compression', statut: 'Conforme', expire: '2026-09-30' },
   ];
 
