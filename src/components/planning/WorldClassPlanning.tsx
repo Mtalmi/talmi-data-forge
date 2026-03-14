@@ -887,7 +887,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                   {dispatchMain}
 
                   {/* Planning Chronologique — Collapsible */}
-                  <CollapsibleChronologique />
+                  <div style={{ flexShrink: 0, flexGrow: 0 }}>
+                    <CollapsibleChronologique />
+                  </div>
                 </div>
                 {fleetPanel}
               </div>
