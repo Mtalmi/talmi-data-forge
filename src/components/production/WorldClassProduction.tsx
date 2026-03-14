@@ -562,6 +562,7 @@ export default function WorldClassProduction() {
   ];
 
   const totalProductVolume = productData.reduce((s, p) => s + p.volume, 0);
+  const animatedTotalVolume = useAnimatedCounter(Math.round(kpis.totalVolume), 1500);
 
   // Sparkline data for KPIs (7 days trending)
   const sparkVolume = [320, 410, 380, 520, 490, 580, kpis.totalVolume];
