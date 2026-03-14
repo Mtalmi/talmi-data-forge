@@ -162,10 +162,10 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
             document.body.appendChild(toast);
             setTimeout(() => { toast.style.opacity = '0'; }, 2700);
             setTimeout(() => { document.body.removeChild(toast); }, 3000);
-          }} className="flex items-center gap-2 cursor-pointer" style={{
-            padding: '10px 20px', borderRadius: 8, background: 'linear-gradient(135deg, #D4A843, #B8922E)', color: '#0F1629',
-            fontWeight: 600, fontSize: 13, border: 'none', fontFamily: 'DM Sans, sans-serif',
-            boxShadow: '0 2px 8px rgba(212,168,67,0.3)',
+          }} style={{
+            background: '#D4A843', color: '#0F1629', border: 'none', borderRadius: '8px',
+            padding: '8px 20px', cursor: 'pointer', fontSize: '14px', fontWeight: 600,
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
           }}>
             <Play size={16} strokeWidth={1.5} /> Lancer Production
           </button>
