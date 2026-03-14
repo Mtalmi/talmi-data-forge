@@ -545,9 +545,9 @@ export default function WorldClassProduction() {
               style={{
                 padding: '6px 16px',
                 borderRadius: 8,
-                background: 'linear-gradient(135deg, #C4933B, #FDB913)',
-                border: '1px solid rgba(245, 158, 11, 0.25)',
-                color: '#0F172A',
+                background: 'transparent',
+                border: '1px solid #D4A843',
+                color: '#D4A843',
                 fontFamily: 'DM Sans, sans-serif',
                 fontWeight: 600,
                 fontSize: 13,
