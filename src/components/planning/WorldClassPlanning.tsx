@@ -1052,7 +1052,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                           border: `1px solid ${T.cardBorder}`,
                         }}>
                           <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>{box.label}</p>
-                          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: box.color }}>{box.value}</p>
+                          <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 13, fontWeight: 700, color: '#D4A843' }}>{box.value}</p>
                         </div>
                       ))}
                     </div>
