@@ -179,10 +179,10 @@ function ScoreRing({ score, size = 72 }: { score: number; size?: number }) {
 // FLEET HEALTH DATA
 // ─────────────────────────────────────────────────────
 const FLEET_HEALTH_DATA = [
-  { name: 'T-04 Toupie 8m³', score: 92, insight: 'RAS — véhicule optimal', fullDiag: 'Moteur: optimal · Pneus: 85% · Vidange: OK (il y a 12j) · Batterie: 98% · Freins: 90%', revenue: '18,200 DH' },
-  { name: 'T-07 Toupie 10m³', score: 74, insight: 'Vidange recommandée dans 5j', fullDiag: 'Moteur: bon · Pneus: 72% · Vidange: URGENT (dans 5j / 800km) · Batterie: 91% · Freins: 78%', revenue: '12,460 DH' },
-  { name: 'T-09 Toupie 8m³', score: 58, insight: '⚠ Pneus à vérifier — usure détectée', fullDiag: 'Moteur: attention · Pneus: 35% CRITIQUE · Vidange: OK · Batterie: 84% · Freins: 65% — vibrations détectées', revenue: '0 DH' },
-  { name: 'T-12 Toupie 8m³', score: 86, insight: 'Visite technique dans 3 semaines', fullDiag: 'Moteur: optimal · Pneus: 80% · Vidange: OK · Batterie: 95% · Freins: 88% · VT prévue 28/03', revenue: '8,300 DH' },
+  { name: 'T-04 Toupie 8m³', score: 92, insight: 'RAS — véhicule optimal', fullDiag: 'Moteur: optimal · Pneus: 85% · Vidange: OK (il y a 12j) · Batterie: 98% · Freins: 90%', revenue: '18,200 DH', driver: 'Youssef Benali', driverStats: '3 livr. · 127 km · score 92' },
+  { name: 'T-07 Toupie 10m³', score: 74, insight: 'Vidange recommandée dans 5j', fullDiag: 'Moteur: bon · Pneus: 72% · Vidange: URGENT (dans 5j / 800km) · Batterie: 91% · Freins: 78%', revenue: '12,460 DH', driver: 'Karim Idrissi', driverStats: '2 livr. · 98 km · score 87' },
+  { name: 'T-09 Toupie 8m³', score: 58, insight: '⚠ Pneus à vérifier — usure détectée', fullDiag: 'Moteur: attention · Pneus: 35% CRITIQUE · Vidange: OK · Batterie: 84% · Freins: 65% — vibrations détectées', revenue: '0 DH', driver: '—', driverStats: 'En maintenance depuis 10/03' },
+  { name: 'T-12 Toupie 8m³', score: 86, insight: 'Visite technique dans 3 semaines', fullDiag: 'Moteur: optimal · Pneus: 80% · Vidange: OK · Batterie: 95% · Freins: 88% · VT prévue 28/03', revenue: '8,300 DH', driver: 'Mehdi Tazi', driverStats: '1 livr. · 45 km · score 94' },
 ];
 
 function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; delay?: number }) {
@@ -221,6 +221,11 @@ function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; del
         </div>
         <IABadge />
         <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textAlign: 'center', margin: 0 }}>Revenu/jour: {v.revenue}</p>
+        {/* Driver info */}
+        <div style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 8, marginTop: 4 }}>
+          <p style={{ fontFamily: MONO, fontSize: 12, color: T.textPri, textAlign: 'center', margin: '0 0 2px' }}>{v.driver}</p>
+          <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textAlign: 'center', margin: 0 }}>{v.driverStats}</p>
+        </div>
       </div>
     </div>
   );
@@ -461,10 +466,10 @@ function CarteGPSTab() {
   ];
   
   const fleetSidebar = [
-    { truck: 'T-04', driver: 'Youssef Benali', status: 'En route', location: 'A3 Casablanca → Maarif', eta: '14 min', speed: '45 km/h', color: T.gold },
-    { truck: 'T-07', driver: 'Karim Idrissi', status: 'Livré', location: 'Rabat Center', eta: '—', speed: '0 km/h', color: T.success },
-    { truck: 'T-12', driver: 'Mehdi Tazi', status: 'Planifié', location: 'Centrale BPE', eta: 'Départ 13:45', speed: '0 km/h', color: T.textDim },
-    { truck: 'T-09', driver: '—', status: 'Maintenance', location: 'Garage', eta: '—', speed: '—', color: T.danger },
+    { truck: 'T-04', driver: 'Youssef Benali', status: 'En route', location: 'A3 Casablanca → Maarif', eta: '10:44', speed: '45 km/h', color: T.gold, distLeft: '12 km', tripPct: 72, etaColor: T.danger },
+    { truck: 'T-07', driver: 'Karim Idrissi', status: 'Livré', location: 'Rabat Center', eta: '—', speed: '0 km/h', color: T.success, distLeft: '—', tripPct: 100, etaColor: T.success },
+    { truck: 'T-12', driver: 'Mehdi Tazi', status: 'Planifié', location: 'Centrale BPE', eta: 'Départ 13:45', speed: '0 km/h', color: T.textDim, distLeft: '45 km', tripPct: 0, etaColor: T.textDim },
+    { truck: 'T-09', driver: '—', status: 'Maintenance', location: 'Garage', eta: '—', speed: '—', color: T.danger, distLeft: '—', tripPct: 0, etaColor: T.danger },
   ];
   
   return (
@@ -484,8 +489,20 @@ function CarteGPSTab() {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20 }}>
         {/* Map */}
-        <div>
-          {subTab === 'carte' && <FleetPredatorPage />}
+        <div style={{ position: 'relative' }}>
+          {subTab === 'carte' && (
+            <>
+              <FleetPredatorPage />
+              {/* Bottom map overlay strip */}
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(15,22,41,0.92)', backdropFilter: 'blur(8px)', padding: '10px 16px', borderTop: `1px solid ${T.cardBorder}`, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontFamily: MONO, fontSize: 11, color: T.gold }}>3 véhicules actifs</span>
+                <span style={{ color: `${T.gold}40` }}>·</span>
+                <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>Distance totale: <span style={{ color: T.gold }}>270 km</span></span>
+                <span style={{ color: `${T.gold}40` }}>·</span>
+                <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>Prochain arrêt: <span style={{ color: T.gold }}>T-04 à Résidences Atlas</span> (ETA <span style={{ color: T.danger }}>10:44</span>)</span>
+              </div>
+            </>
+          )}
           {subTab === 'historique' && <div style={{ padding: 60, textAlign: 'center', color: T.textDim }}>Historique des trajets — Contenu en cours de déploiement...</div>}
           {subTab === 'zones' && <div style={{ padding: 60, textAlign: 'center', color: T.textDim }}>Zones & Performance — Contenu en cours de déploiement...</div>}
         </div>
@@ -504,8 +521,13 @@ function CarteGPSTab() {
                   <p style={{ fontFamily: MONO, fontSize: 11, color: T.textSec, margin: '0 0 2px' }}>{f.driver}</p>
                   <p style={{ fontSize: 10, color: T.textDim, margin: '0 0 2px' }}><MapPin size={9} style={{ display: 'inline', marginRight: 4 }} />{f.location}</p>
                   <div style={{ display: 'flex', gap: 12, marginTop: 4 }}>
-                    <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>ETA: <span style={{ color: T.textPri }}>{f.eta}</span></span>
                     <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>Vit: <span style={{ color: T.textPri }}>{f.speed}</span></span>
+                    <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>ETA: <span style={{ color: f.etaColor }}>{f.eta}</span></span>
+                    <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>Dist: <span style={{ color: T.textPri }}>{f.distLeft}</span></span>
+                  </div>
+                  {/* Trip progress bar */}
+                  <div style={{ marginTop: 6, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                    <div style={{ width: `${f.tripPct}%`, height: '100%', background: f.color, borderRadius: 2, transition: 'width 0.8s ease' }} />
                   </div>
                 </div>
               ))}
@@ -1277,6 +1299,28 @@ export default function WorldClassDeliveries() {
               </div>
             </section>
 
+            {/* FLEET STATUS STRIP */}
+            <div style={{ background: 'rgba(212,168,67,0.03)', borderRadius: 8, padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 0, fontFamily: MONO, fontSize: 11 }}>
+                {[
+                  { label: 'DISPONIBLES: 1', color: T.success, pulse: false },
+                  { label: 'EN LIVRAISON: 2', color: T.gold, pulse: true },
+                  { label: 'EN RETOUR: 1', color: T.textDim, pulse: false },
+                  { label: 'MAINTENANCE: 1', color: T.danger, pulse: false },
+                ].map((s, i) => (
+                  <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: s.color }}>
+                    {i > 0 && <span style={{ margin: '0 10px', color: `${T.gold}40` }}>·</span>}
+                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: s.color, flexShrink: 0, animation: s.pulse ? 'tbos-pulse 1.5s ease-in-out infinite' : 'none' }} />
+                    {s.label}
+                  </span>
+                ))}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: MONO, fontSize: 11 }}>
+                <span style={{ color: T.textDim }}>🍃 ÉMISSIONS CO₂: <span style={{ color: T.textPri }}>0.8 T</span></span>
+                <span style={{ color: T.success }}>↓ −15% vs mois dernier grâce à l'optimisation IA</span>
+              </div>
+            </div>
+
             {/* 3c. SANTÉ FLOTTE */}
             <section>
               <SectionHeader icon={Truck} label="Santé Flotte IA" />
@@ -1406,9 +1450,55 @@ export default function WorldClassDeliveries() {
                     </div>
                   ))}
                 </div>
+                {/* Summary strip */}
+                <div style={{ display: 'flex', gap: 20, marginTop: 16, paddingTop: 14, borderTop: `1px solid ${T.cardBorder}`, flexWrap: 'wrap' }}>
+                  {[
+                    { label: 'DEMANDE J+7:', value: '42 livr.', color: T.gold },
+                    { label: 'PIC PRÉVU:', value: 'Mar 18 (12 livr.)', color: T.warning },
+                    { label: 'CAPACITÉ:', value: '10/jour', color: T.textPri },
+                    { label: 'RISQUE:', value: '⚠ Saturation mardi', color: T.warning },
+                  ].map((s, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ fontFamily: MONO, fontSize: 12, color: T.textDim }}>{s.label}</span>
+                      <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: s.color }}>{s.value}</span>
+                    </div>
+                  ))}
+                </div>
               </Card>
             </section>
 
+            {/* PASSATION LOGISTIQUE */}
+            <section>
+              <SectionHeader icon={ClipboardCheck} label="✦ Passation Logistique — Fin de Journée" />
+              <Card style={{ borderTop: `2px solid ${T.gold}` }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {[
+                    { color: T.success, text: '1 livraison complétée — Groupe A, 8 m³ F-B25, livré à 09:02 ✓', pulse: false },
+                    { color: T.gold, text: '1 livraison en cours — Résidences Atlas, 12 m³ F-B30, T-04 en route (ETA 10:44, +14 min retard trafic)', pulse: true },
+                    { color: T.warning, text: '1 livraison planifiée — Saham Im, 10 m³ F-B35, T-12 départ prévu 14:00', pulse: false },
+                    { color: T.danger, text: 'T-09 en maintenance — pneus à remplacer. Retour prévu demain 08:00. 3 livraisons T-09 réaffectées.', pulse: false },
+                    { color: T.success, text: 'Carburant flotte : T-04 34% (ravitaillement ce soir), T-07 62% ✓, T-12 78% ✓', pulse: false },
+                  ].map((item, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: item.color, marginTop: 4, flexShrink: 0, animation: item.pulse ? 'tbos-pulse 1.5s ease-in-out infinite' : 'none' }} />
+                      <span style={{ fontFamily: MONO, fontSize: 13, color: item.color === T.danger ? T.danger : T.textSec, lineHeight: 1.5 }}>{item.text}</span>
+                    </div>
+                  ))}
+                </div>
+                <p style={{ fontFamily: MONO, fontSize: 12, color: T.textDim, marginTop: 16, lineHeight: 1.6 }}>
+                  Demain: 5 livraisons planifiées · 891 DH revenu prévu · T-09 retour maintenance 08:00 · Pic mardi 18/03 (12 livr.)
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 16 }}>
+                  <button style={{ padding: '9px 20px', background: T.gold, border: 'none', borderRadius: 8, color: '#0F1629', fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: MONO }}>
+                    Valider Passation
+                  </button>
+                  <IABadge />
+                </div>
+                <p style={{ fontFamily: MONO, fontSize: 12, color: T.textDim, marginTop: 12 }}>
+                  Prochain shift: demain 06:00 — Youssef B., Mehdi T., + T-09 si maintenance terminée
+                </p>
+              </Card>
+            </section>
             {/* 3i. PRÉVISION DEMANDE IA */}
             <section>
               <SectionHeader icon={TrendingUp} label="Prévision Demande IA — 14 Jours" right={
