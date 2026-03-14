@@ -1350,7 +1350,7 @@ export default function Dashboard() {
                     </div>
                     <div className="flex items-center gap-2">
                       {midPanelView === 'data' && (
-                        <span className="text-[9px] text-emerald-400 font-medium" style={{ boxShadow: '0 0 12px rgba(34,197,94,0.3)', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: '4px', padding: '2px 8px' }}>
+                        <span className="text-[9px] text-emerald-400 font-medium" style={{ boxShadow: '0 0 10px rgba(34,197,94,0.25)', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: '4px', padding: '2px 8px' }}>
                           EN AVANCE
                         </span>
                       )}
