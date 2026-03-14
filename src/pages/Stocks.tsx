@@ -14,6 +14,8 @@ import { StockAdjustmentDialog } from '@/components/stocks/StockAdjustmentDialog
 import { RecentReceptionsCard } from '@/components/stocks/RecentReceptionsCard';
 import { QualityStockEntryDialog } from '@/components/stocks/QualityStockEntryDialog';
 import { PendingReceptionsWidget } from '@/components/stocks/PendingReceptionsWidget';
+import { StockoutCountdownTimeline } from '@/components/stocks/StockoutCountdownTimeline';
+import { SupplyChainMap } from '@/components/stocks/SupplyChainMap';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Warehouse,
