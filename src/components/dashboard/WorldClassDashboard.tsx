@@ -882,20 +882,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                             <span
                               role="button"
                               tabIndex={0}
-                              style={{
-                                display: 'inline-block',
-                                borderWidth: '1px',
-                                borderStyle: 'solid',
-                                borderColor: '#D4A843',
-                                color: '#D4A843',
-                                background: 'transparent',
-                                borderRadius: '6px',
-                                fontSize: '13px',
-                                fontWeight: 500,
-                                padding: '4px 12px',
-                                cursor: 'pointer',
-                                lineHeight: '1.4',
-                              }}
+                              className="gold-outline-btn"
                               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(212,168,67,0.08)'; }}
                               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
                               onClick={() => fireCommanderToast(item.name, item.daysLeft)}
@@ -1125,20 +1112,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                             <span
                               role="button"
                               tabIndex={0}
-                              style={{
-                                display: 'inline-block',
-                                borderWidth: '1px',
-                                borderStyle: 'solid',
-                                borderColor: '#D4A843',
-                                color: '#D4A843',
-                                background: 'transparent',
-                                borderRadius: '6px',
-                                fontSize: '13px',
-                                fontWeight: 500,
-                                padding: '4px 12px',
-                                cursor: 'pointer',
-                                lineHeight: '1.4',
-                              }}
+                              className="gold-outline-btn"
                               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(212,168,67,0.08)'; }}
                               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
                               onClick={() => fireCommanderToast(item.name, item.daysLeft)}

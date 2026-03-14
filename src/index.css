@@ -271,6 +271,25 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
 }
 
+/* ─── Gold outline button — nuclear override ─── */
+.gold-outline-btn {
+  display: inline-block !important;
+  border: 1px solid #D4A843 !important;
+  border-color: #D4A843 !important;
+  color: #D4A843 !important;
+  background: transparent !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  padding: 4px 12px !important;
+  cursor: pointer !important;
+  line-height: 1.4 !important;
+  transition: background 0.2s ease !important;
+}
+.gold-outline-btn:hover {
+  background: rgba(212, 168, 67, 0.08) !important;
+}
+
 /* ─── Link hover — gold underline animation ─── */
 .link-gold {
   position: relative;
