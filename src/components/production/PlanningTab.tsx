@@ -227,6 +227,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
 
   return (
     <div className="flex flex-col gap-6">
+      <style>{`@keyframes urgent-pulse { 0%, 100% { background: rgba(248,113,113,0.15); } 50% { background: rgba(248,113,113,0.3); } }`}</style>
       {showModal && <PlanningModal onClose={() => setShowModal(false)} />}
 
       {/* Header + Actions */}
