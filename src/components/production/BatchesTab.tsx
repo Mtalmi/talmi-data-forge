@@ -170,10 +170,10 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
             <Play size={16} strokeWidth={1.5} /> Lancer Production
           </button>
           {[{ icon: Download, label: 'Exporter' }, { icon: RefreshCw, label: 'Actualiser' }].map(b => (
-            <button key={b.label} className="flex items-center gap-2 cursor-pointer" style={{
-              padding: '10px 14px', borderRadius: 8, background: 'transparent',
-              color: '#D4A843', fontWeight: 500, fontSize: 13,
-              border: '1px solid #D4A843', fontFamily: 'DM Sans, sans-serif',
+            <button key={b.label} style={{
+              border: '1px solid #D4A843', color: '#D4A843', background: 'transparent',
+              borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', fontSize: '14px',
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
             }}>
               <b.icon size={16} strokeWidth={1.5} /> {b.label}
             </button>
