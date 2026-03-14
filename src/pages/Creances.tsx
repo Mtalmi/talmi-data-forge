@@ -156,12 +156,24 @@ function AIEarlyWarningBanner({ warnings }: { warnings: { message: string; clien
   );
 }
 
+function IABadgeCreances() {
+  return (
+    <span style={{
+      fontFamily: 'ui-monospace, monospace', fontSize: 10, padding: '2px 8px',
+      borderRadius: 12, background: 'rgba(15,22,41,0.8)', border: '1px solid #D4A843', color: '#D4A843',
+    }}>
+      ✨ Généré par IA · Claude Opus
+    </span>
+  );
+}
+
 function RelancesPipeline({ stages }: { stages: { label: string; range: string; color: string; bgAlpha: string; borderAlpha: string; clients: number; amount: number; lastAction: string; pulse: boolean }[] }) {
   const [open, setOpen] = useState(true);
   return (
     <div style={{
       background: 'rgba(212, 168, 67, 0.04)',
       border: '1px solid rgba(212, 168, 67, 0.15)',
+      borderTop: '2px solid #D4A843',
       borderLeft: '4px solid #D4A843',
       borderRadius: 12, overflow: 'hidden',
     }}>
@@ -169,14 +181,15 @@ function RelancesPipeline({ stages }: { stages: { label: string; range: string; 
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-white/[0.02] transition-colors"
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Sparkles className="h-4 w-4" style={{ color: '#FFD700' }} />
-          <span style={{ fontSize: 11, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+          <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
             Agent IA: Relances Automatiques
           </span>
           <Badge variant="outline" className="border-[#D4A843]/30 text-[#D4A843] text-[10px] ml-1">
             {stages.reduce((s, st) => s + st.clients, 0)} clients
           </Badge>
+          <IABadgeCreances />
         </div>
         <ChevronDown className="h-4 w-4 transition-transform" style={{ color: '#D4A843', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </button>
@@ -187,10 +200,10 @@ function RelancesPipeline({ stages }: { stages: { label: string; range: string; 
               <div key={i} style={{
                 background: `${stage.color}${stage.bgAlpha.replace('0.', '0')}`,
                 border: `1px solid ${stage.color}${stage.borderAlpha.replace('0.', '')}`,
+                borderTop: `2px solid ${stage.color}`,
                 borderRadius: 10, padding: '16px 18px',
                 animation: stage.pulse ? 'pulse 3s ease-in-out infinite' : 'none',
               }}>
-                {/* Stage header */}
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <div style={{ width: 8, height: 8, borderRadius: '50%', background: stage.color }} />
@@ -198,7 +211,6 @@ function RelancesPipeline({ stages }: { stages: { label: string; range: string; 
                   </div>
                   <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontFamily: 'ui-monospace, monospace' }}>{stage.range}</span>
                 </div>
-                {/* Metrics */}
                 <div className="flex items-baseline gap-3 mb-3">
                   <span style={{
                     fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
@@ -208,24 +220,22 @@ function RelancesPipeline({ stages }: { stages: { label: string; range: string; 
                 </div>
                 <p style={{
                   fontFamily: 'ui-monospace, SFMono-Regular, monospace',
-                  fontSize: 14, fontWeight: 500, color: stage.color, marginBottom: 12,
+                  fontSize: 14, fontWeight: 200, color: stage.color, marginBottom: 12,
                 }}>{stage.amount.toLocaleString('fr-MA')} DH</p>
-                {/* Last action */}
                 <div className="flex items-center gap-1.5 mb-3">
                   <Clock className="h-3 w-3" style={{ color: 'rgba(255,255,255,0.3)' }} />
-                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>Dernière relance: {stage.lastAction}</span>
+                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontFamily: 'ui-monospace, monospace' }}>Dernière relance: {stage.lastAction}</span>
                 </div>
-                {/* Action button */}
                 <button
                   onClick={() => toast.success(`Relances ${stage.label} lancées pour ${stage.clients} clients`)}
                   style={{
                     width: '100%', padding: '8px 0', borderRadius: 8,
-                    background: 'rgba(212, 168, 67, 0.15)', border: '1px solid rgba(212, 168, 67, 0.3)',
-                    color: '#D4A843', fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                    background: '#D4A843', border: 'none',
+                    color: '#0F1629', fontSize: 11, fontWeight: 700, cursor: 'pointer',
                     transition: 'all 150ms',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.25)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#E8C96A'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#D4A843'; }}
                 >
                   ⚡ Lancer Relances
                 </button>
