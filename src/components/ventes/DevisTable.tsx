@@ -537,9 +537,8 @@ export function DevisTable({
                       background: 'rgba(255,255,255,0.05)',
                       fontSize: '11px',
                       fontFamily: 'ui-monospace',
-                      fontWeight: 200
                     }}>
-                      {devis.score_ia} {devis.niveau_score}
+                      <span style={{ fontWeight: 700 }}>{devis.score_ia}</span> {devis.niveau_score}
                     </span>
                   ) : <span style={{color: 'rgba(255,255,255,0.3)'}}>—</span>}
                 </TableCell>
