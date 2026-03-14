@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -398,7 +398,7 @@ function KPICard({ label, value, color, icon: Icon, trend, delay = 0 }: {
             <p style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color, lineHeight: 1, letterSpacing: '-0.02em', margin: 0 }}>{animated}</p>
             {trend && <p style={{ fontSize: 12, fontWeight: 500, marginTop: 6, color: T.success, margin: '6px 0 0' }}>↑ {trend}</p>}
           </div>
-          <Icon size={18} color="#D4A843" style={{ opacity: 0.5 }} />
+          <Icon size={14} color="#9CA3AF" />
         </div>
       </Card>
     </div>
@@ -1153,9 +1153,9 @@ function HistoriqueNormesTab() {
           <Card style={{ borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
             <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 20 }}>Conformité par Formule</p>
             {[
-              { label: 'F-B20', pct: 97, color: T.success, barW: conformBar },
+              { label: 'F-B20', pct: 97, color: '#D4A843', barW: conformBar },
               { label: 'F-B25', pct: 95, color: '#D4A843', barW: conformBar2 },
-              { label: 'F-B30', pct: 98, color: T.success, barW: conformBar3 },
+              { label: 'F-B30', pct: 98, color: '#D4A843', barW: conformBar3 },
             ].map((f, i) => (
               <div key={i} style={{ marginBottom: 14 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
@@ -1163,7 +1163,7 @@ function HistoriqueNormesTab() {
                   <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 200, color: f.color }}>{f.pct}%</span>
                 </div>
                 <div style={{ height: 6, borderRadius: 99, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${f.barW}%`, background: f.color, borderRadius: 99, transition: 'width 900ms cubic-bezier(0.4,0,0.2,1)' }} />
+                  <div style={{ height: '100%', width: `${f.barW}%`, background: 'linear-gradient(90deg, #C49A3C, #D4A843)', borderRadius: 99, transition: 'width 900ms cubic-bezier(0.4,0,0.2,1)' }} />
                 </div>
               </div>
             ))}
@@ -1445,6 +1445,7 @@ function AnalytiqueTab() {
             <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 20 }}>Conformité par Opérateur</p>
             {OPERATORS_A.map((op, i) => {
               const isLow = op.pct < 85;
+              const barColor = isLow ? T.warning : 'linear-gradient(90deg, #C49A3C, #D4A843)';
               const scoreColor = op.score >= 85 ? T.success : op.score >= 70 ? T.warning : T.danger;
               return (
                 <div key={i} style={{ marginBottom: 16 }}>
@@ -1452,11 +1453,11 @@ function AnalytiqueTab() {
                     <span style={{ fontSize: 12, color: T.textSec }}>{op.name}</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                       <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 200, color: isLow ? T.warning : T.textPri }}>{op.pct}%</span>
-                      <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 200, color: scoreColor, padding: '1px 6px', border: `1px solid ${scoreColor}40`, borderRadius: 4 }}>IA {op.score}</span>
+                      <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 200, color: isLow ? T.warning : scoreColor, padding: '1px 6px', border: `1px solid ${(isLow ? T.warning : scoreColor)}40`, borderRadius: 4 }}>IA {op.score}</span>
                     </div>
                   </div>
                   <div style={{ height: 6, borderRadius: 99, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: `${opBarWidths[i]}%`, background: isLow ? T.warning : 'linear-gradient(90deg, #C49A3C, #D4A843)', borderRadius: 99, transition: 'width 900ms cubic-bezier(0.4,0,0.2,1)' }} />
+                    <div style={{ height: '100%', width: `${opBarWidths[i]}%`, background: barColor, borderRadius: 99, transition: 'width 900ms cubic-bezier(0.4,0,0.2,1)' }} />
                   </div>
                 </div>
               );
@@ -1509,7 +1510,7 @@ function AnalytiqueTab() {
               ].map((b, i) => (
                 <div key={i} style={{ padding: '8px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: `1px solid ${T.cardBorder}` }}>
                   <p style={{ fontSize: 10, color: T.textDim, margin: '0 0 4px' }}>{b.label}</p>
-                  <p style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: b.color, margin: 0 }}>{b.value}</p>
+                  <p style={{ fontFamily: MONO, fontSize: 14, fontWeight: 200, color: b.color, margin: 0 }}>{b.value}</p>
                 </div>
               ))}
             </div>
@@ -1582,7 +1583,7 @@ function AnalytiqueTab() {
             </span>
           </div>
           <p style={{ fontFamily: MONO, fontSize: 13, color: '#9CA3AF', lineHeight: 1.8, margin: 0 }}>
-            Analyse 90 jours : Le taux de conformité global est de 96.2%, au-dessus de l'objectif NM de 95%. Cependant, 3 tendances nécessitent attention : (1) Les non-conformités affaissement se concentrent sur le shift de nuit (67% des cas) — formation opérateurs recommandée. (2) La formule B25 montre un sur-dosage ciment systématique de <strong style={{ color: '#D4A843' }}>+24.8%</strong> vs requis — réduction de 350→330 kg/m³ économiserait <strong style={{ color: '#D4A843' }}>374,400 MAD/an</strong> sans risque qualité. (3) L'opérateur Karim B. a un taux de conformité de <strong style={{ color: '#D4A843' }}>84%</strong> vs moyenne équipe 92% — accompagnement technique recommandé cette semaine.
+            Analyse 90 jours : Le taux de conformité global est de <strong style={{ color: '#D4A843' }}>96.2%</strong>, au-dessus de l'objectif NM de 95%. Cependant, 3 tendances nécessitent attention : (1) Les non-conformités affaissement se concentrent sur le shift de nuit (67% des cas) — <strong style={{ color: '#D4A843' }}>formation</strong> opérateurs recommandée. (2) La formule B25 montre un sur-dosage ciment systématique de <strong style={{ color: '#D4A843' }}>+24.8%</strong> vs requis — réduction de 350→330 kg/m³ économiserait <strong style={{ color: '#D4A843' }}>374,400 MAD/an</strong> sans risque qualité. (3) L'opérateur Karim B. a un taux de conformité de <strong style={{ color: '#D4A843' }}>84%</strong> vs moyenne équipe <strong style={{ color: '#D4A843' }}>92%</strong> — <strong style={{ color: '#D4A843' }}>accompagnement technique</strong> recommandé cette semaine.
           </p>
         </div>
       </section>
@@ -1644,9 +1645,9 @@ function IABadge() {
 // ─────────────────────────────────────────────────────
 function IntelligenceIATab() {
   const tblHdr: React.CSSProperties = { fontFamily: MONO, fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.15em', padding: '10px 14px', borderBottom: `1px solid ${T.cardBorder}`, textAlign: 'left' };
-  const tblCell: React.CSSProperties = { padding: '10px 14px', fontSize: 12, borderBottom: `1px solid rgba(30,45,74,0.5)` };
+  const tblCell: React.CSSProperties = { padding: '10px 14px', fontSize: 12, borderBottom: `1px solid rgba(30,45,74,0.5)`, transition: 'background 150ms' };
   const monoCell: React.CSSProperties = { ...tblCell, fontFamily: MONO, fontWeight: 200 };
-  const altRow = (i: number): React.CSSProperties => ({ background: i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)' });
+  const altRow = (i: number): React.CSSProperties => ({ background: i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)', transition: 'background 150ms' });
 
   const recoBox = (text: string, borderColor: string = T.gold): React.ReactNode => (
     <div style={{ borderLeft: `4px solid ${borderColor}`, background: borderColor === T.danger ? 'rgba(239,68,68,0.05)' : 'rgba(212,168,67,0.03)', padding: '14px 18px', borderRadius: '0 8px 8px 0', marginTop: 16 }}>
@@ -1694,7 +1695,7 @@ function IntelligenceIATab() {
   // Certification data
   const certRows = [
     { norme: 'NM 10.1.008', desc: 'Béton — Spécification, performances, production', statut: 'Conforme', expire: '2026-06-15' },
-    { norme: 'NM 10.1.271', desc: 'Essais pour béton frais — Affaissement', statut: 'À renouveler', expire: '2025-04-01' },
+    { norme: 'NM 10.1.271', desc: 'Essais pour béton frais — Affaissement', statut: 'À renouveler', expire: '2026-04-01' },
     { norme: 'NM 10.1.012', desc: 'Essais pour béton durci — Résistance compression', statut: 'Conforme', expire: '2026-09-30' },
   ];
 
@@ -1752,7 +1753,7 @@ function IntelligenceIATab() {
             </tr></thead>
             <tbody>
               {nmRows.map((r, i) => (
-                <tr key={i} style={{ ...altRow(i), borderLeft: r.check === 'bloqué' ? '3px solid #EF4444' : 'none' }}>
+                <tr key={i} style={{ ...altRow(i), borderLeft: r.check === 'bloqué' ? '3px solid #EF4444' : 'none' }} onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }} onMouseLeave={e => { e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)'; }}>
                   <td style={{ ...monoCell, color: T.gold }}>{r.batch}</td>
                   <td style={tblCell}><span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, fontFamily: MONO, fontWeight: 700, background: r.formule.includes('B25') ? 'rgba(212,168,67,0.15)' : r.formule.includes('B30') ? 'rgba(196,154,60,0.15)' : 'rgba(232,201,106,0.15)', color: r.formule.includes('B25') ? '#D4A843' : r.formule.includes('B30') ? '#C49A3C' : '#E8C96A' }}>{r.formule}</span></td>
                   <td style={monoCell}>{r.aff}</td>
@@ -1794,7 +1795,7 @@ function IntelligenceIATab() {
               {predRows.map((r, i) => {
                 const isHigh = r.risk === 'ÉLEVÉ';
                 return (
-                  <tr key={i} style={{ ...altRow(i), borderLeft: isHigh ? '3px solid #EF4444' : 'none' }}>
+                  <tr key={i} style={{ ...altRow(i), borderLeft: isHigh ? '3px solid #EF4444' : 'none' }} onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }} onMouseLeave={e => { e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)'; }}>
                     <td style={{ ...monoCell, color: T.gold }}>{r.batch}</td>
                     <td style={tblCell}><span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, fontFamily: MONO, fontWeight: 700, background: r.formule.includes('B25') ? 'rgba(212,168,67,0.15)' : r.formule.includes('B30') ? 'rgba(196,154,60,0.15)' : 'rgba(232,201,106,0.15)', color: r.formule.includes('B25') ? '#D4A843' : r.formule.includes('B30') ? '#C49A3C' : '#E8C96A' }}>{r.formule}</span></td>
                     <td style={monoCell}>{r.r7j}</td>
@@ -1843,10 +1844,13 @@ function IntelligenceIATab() {
             <p style={{ fontSize: 10, color: T.textDim, margin: '0 0 8px' }}>F-B25 Théorique</p>
             <p style={{ fontFamily: MONO, fontSize: 24, fontWeight: 200, color: T.gold, margin: 0 }}>E/C: 0.500</p>
           </div>
-          {/* Arrow */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 6px' }}>
-            <span style={{ fontFamily: MONO, fontSize: 10, color: T.warning }}>+4%</span>
-            <span style={{ color: T.textDim, fontSize: 16 }}>→</span>
+          {/* Arrow 1 */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 10px', position: 'relative' }}>
+            <svg width={60} height={24} viewBox="0 0 60 24">
+              <line x1={0} y1={12} x2={48} y2={12} stroke={T.warning} strokeWidth={2} strokeDasharray="6 4" />
+              <polygon points="48,6 60,12 48,18" fill={T.warning} />
+            </svg>
+            <span style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, padding: '2px 10px', borderRadius: 4, background: 'rgba(245,158,11,0.15)', color: T.warning, border: `1px solid ${T.warning}40`, marginTop: 4 }}>+4.0%</span>
           </div>
           {/* Card: Production */}
           <div style={{ flex: 1, padding: '16px 18px', background: 'linear-gradient(145deg, #111B2E, #162036)', border: `1px solid ${T.cardBorder}`, borderRadius: 10, borderTop: `2px solid ${T.warning}` }}>
@@ -1855,10 +1859,13 @@ function IntelligenceIATab() {
             <p style={{ fontFamily: MONO, fontSize: 24, fontWeight: 200, color: T.warning, margin: 0 }}>E/C: 0.520</p>
             <span style={{ fontFamily: MONO, fontSize: 10, padding: '2px 6px', borderRadius: 3, background: 'rgba(245,158,11,0.12)', color: T.warning, border: `1px solid ${T.warning}40` }}>+4.0%</span>
           </div>
-          {/* Arrow */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 6px' }}>
-            <span style={{ fontFamily: MONO, fontSize: 10, color: T.danger }}>+4%</span>
-            <span style={{ color: T.textDim, fontSize: 16 }}>→</span>
+          {/* Arrow 2 */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 10px', position: 'relative' }}>
+            <svg width={60} height={24} viewBox="0 0 60 24">
+              <line x1={0} y1={12} x2={48} y2={12} stroke={T.danger} strokeWidth={2} strokeDasharray="6 4" />
+              <polygon points="48,6 60,12 48,18" fill={T.danger} />
+            </svg>
+            <span style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, padding: '2px 10px', borderRadius: 4, background: 'rgba(239,68,68,0.15)', color: T.danger, border: `1px solid ${T.danger}40`, marginTop: 4 }}>+4.0%</span>
           </div>
           {/* Card: Laboratoire */}
           <div style={{ flex: 1, padding: '16px 18px', background: 'linear-gradient(145deg, #111B2E, #162036)', border: `1px solid ${T.cardBorder}`, borderRadius: 10, borderTop: `2px solid ${T.danger}` }}>
@@ -1916,7 +1923,7 @@ function IntelligenceIATab() {
             </tr></thead>
             <tbody>
               {formulaRows.map((r, i) => (
-                <tr key={i} style={altRow(i)}>
+                <tr key={i} style={altRow(i)} onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }} onMouseLeave={e => { e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)'; }}>
                   <td style={{ ...monoCell, color: T.gold }}>{r.formule}</td>
                   <td style={monoCell}>{r.cimentActuel}</td>
                   <td style={{ ...monoCell, color: T.success }}>{r.cimentOpti}</td>
@@ -1959,7 +1966,7 @@ function IntelligenceIATab() {
               {certRows.map((r, i) => {
                 const isWarning = r.statut === 'À renouveler';
                 return (
-                  <tr key={i} style={{ ...altRow(i), borderLeft: isWarning ? '3px solid #F59E0B' : 'none' }}>
+                  <tr key={i} style={{ ...altRow(i), borderLeft: isWarning ? '3px solid #F59E0B' : 'none' }} onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }} onMouseLeave={e => { e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)'; }}>
                     <td style={{ ...monoCell, color: T.gold }}>{r.norme}</td>
                     <td style={{ ...tblCell, color: T.textSec }}>{r.desc}</td>
                     <td style={tblCell}>
@@ -1979,12 +1986,12 @@ function IntelligenceIATab() {
 
         <div style={{ borderLeft: `4px solid ${T.warning}`, background: 'rgba(245,158,11,0.05)', padding: '14px 18px', borderRadius: '0 8px 8px 0', marginTop: 16 }}>
           <p style={{ fontFamily: MONO, fontSize: 12, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
-            ⚠ Alerte prioritaire : La certification NM 10.1.271 (Essais affaissement) expire le 1er avril 2025. Planifier le renouvellement immédiatement pour éviter un blocage réglementaire.
+            ⚠ Alerte prioritaire : La certification NM 10.1.271 (Essais affaissement) expire le 1er avril 2026. Planifier le renouvellement immédiatement pour éviter un blocage réglementaire.
           </p>
         </div>
 
         <div style={{ marginTop: 12 }}>
-          <button style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px', background: 'transparent', border: `1px solid ${T.gold}`, borderRadius: 9, color: T.gold, fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+          <button style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px', background: '#D4A843', border: 'none', borderRadius: 9, color: '#0F1629', fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
             <FileText size={13} /> Planifier Test
           </button>
         </div>
@@ -2003,24 +2010,33 @@ function IntelligenceIATab() {
             </tr></thead>
             <tbody>
               {operators.map((op, i) => {
-                const confColor = op.conf >= 90 ? T.success : op.conf >= 85 ? T.warning : T.danger;
-                const scoreColor = op.scoreIA >= 85 ? T.success : op.scoreIA >= 70 ? T.warning : T.danger;
+                const isKarim = op.name === 'Karim B.';
+                const confColor = isKarim ? T.danger : op.conf >= 90 ? T.success : op.conf >= 85 ? T.warning : T.danger;
+                const scoreColor = isKarim ? T.warning : op.scoreIA >= 85 ? T.success : op.scoreIA >= 70 ? T.warning : T.danger;
                 return (
-                  <tr key={i} style={{ ...altRow(i), borderLeft: op.conf < 85 ? `3px solid ${T.danger}` : 'none' }}>
-                    <td style={{ ...tblCell, color: T.textPri, fontWeight: 600 }}>{op.name}</td>
-                    <td style={monoCell}>{op.tests}</td>
-                    <td style={tblCell}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div style={{ flex: 1, height: 6, borderRadius: 99, background: 'rgba(255,255,255,0.06)', overflow: 'hidden', maxWidth: 120 }}>
-                          <div style={{ height: '100%', width: `${op.conf}%`, background: confColor, borderRadius: 99, transition: 'width 800ms ease-out' }} />
+                  <React.Fragment key={i}>
+                    <tr style={{ ...altRow(i), borderLeft: isKarim ? `3px solid ${T.danger}` : 'none', transition: 'background 150ms' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)'; }}
+                    >
+                      <td style={{ ...tblCell, color: T.textPri, fontWeight: 600 }}>{op.name}</td>
+                      <td style={monoCell}>{op.tests}</td>
+                      <td style={tblCell}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div style={{ flex: 1, height: 6, borderRadius: 99, background: 'rgba(255,255,255,0.06)', overflow: 'hidden', maxWidth: 120 }}>
+                            <div style={{ height: '100%', width: `${op.conf}%`, background: confColor, borderRadius: 99, transition: 'width 800ms ease-out' }} />
+                          </div>
+                          <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 200, color: confColor }}>{op.conf}%</span>
                         </div>
-                        <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 200, color: confColor }}>{op.conf}%</span>
-                      </div>
-                    </td>
-                    <td style={tblCell}>
-                      <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 200, color: scoreColor, padding: '2px 8px', border: `1px solid ${scoreColor}40`, borderRadius: 4 }}>{op.scoreIA}</span>
-                    </td>
-                  </tr>
+                      </td>
+                      <td style={tblCell}>
+                        <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 200, color: scoreColor, padding: '2px 8px', border: `1px solid ${scoreColor}40`, borderRadius: 4 }}>{op.scoreIA}</span>
+                      </td>
+                    </tr>
+                    {isKarim && (
+                      <tr><td colSpan={4} style={{ padding: '4px 14px 10px', fontSize: 11, fontFamily: MONO, color: T.warning }}>⚠ Accompagnement recommandé</td></tr>
+                    )}
+                  </React.Fragment>
                 );
               })}
             </tbody>
@@ -2078,53 +2094,7 @@ export default function WorldClassLaboratory() {
         }
       />
 
-      {/* CUSTOM TAB BAR (override PageHeader tabs for exact styling) */}
-      <div style={{ padding: '0 32px', borderBottom: `1px solid ${T.cardBorder}`, marginBottom: 0 }}>
-        <div style={{ display: 'flex', gap: 0 }}>
-          {TABS.map(tab => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                style={{
-                  fontFamily: MONO,
-                  fontSize: 12,
-                  letterSpacing: '1.5px',
-                  fontWeight: 600,
-                  color: isActive ? '#D4A843' : '#9CA3AF',
-                  background: 'transparent',
-                  border: 'none',
-                  borderBottom: isActive ? '2px solid #D4A843' : '2px solid transparent',
-                  padding: '14px 24px',
-                  cursor: 'pointer',
-                  transition: 'all 200ms ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  textTransform: 'uppercase',
-                }}
-              >
-                {tab.label}
-                {tab.badge && (
-                  <span style={{
-                    fontFamily: MONO,
-                    fontSize: 10,
-                    fontWeight: 700,
-                    color: '#0F1629',
-                    background: '#D4A843',
-                    borderRadius: 999,
-                    padding: '1px 7px',
-                    lineHeight: '16px',
-                  }}>
-                    {tab.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      {/* Duplicate tab bar removed — using PageHeader tabs only */}
 
       {/* TAB CONTENT */}
       <div style={{ padding: '32px 32px 0', animation: 'lab-tab-fade 0.35s ease-out' }} key={activeTab}>
