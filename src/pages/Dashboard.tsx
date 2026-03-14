@@ -1001,6 +1001,7 @@ export default function Dashboard() {
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
+                borderTop: '2px solid #D4A843',
                 animation: `ccSectionIn 300ms ease-out ${200 + i * 50}ms both`,
                 ...(kpi.healthyGlow ? {
                   boxShadow: '0 0 20px rgba(34,197,94,0.06), inset 0 1px 0 rgba(34,197,94,0.08), 0 1px 3px rgba(0,0,0,0.12), 0 8px 32px rgba(0,0,0,0.15)',
