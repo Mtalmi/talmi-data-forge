@@ -176,14 +176,14 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
                       <Cell key={i} fill={PRODUCT_COLORS[i % PRODUCT_COLORS.length]} stroke="transparent" />
                     ))}
                   </Pie>
-                  <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle"
-                    fill="white" style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 200, fontSize: 14 }}>
+                  <text x="50%" y="48%" textAnchor="middle" dominantBaseline="middle"
+                    fill="#D4A843" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200, fontSize: 24 }}>
                     {totalProductRevenue >= 1000
                       ? `${(totalProductRevenue / 1000).toFixed(0)}K`
                       : totalProductRevenue.toFixed(0)}
                   </text>
-                  <text x="50%" y="50%" dy={14} textAnchor="middle" dominantBaseline="middle"
-                    fill="rgba(148,163,184,0.4)" style={{ fontSize: 8 }}>
+                  <text x="50%" y="48%" dy={18} textAnchor="middle" dominantBaseline="middle"
+                    fill="#9CA3AF" style={{ fontSize: 9, fontFamily: "ui-monospace, monospace" }}>
                     DH Total
                   </text>
                   <Tooltip content={<GoldTooltip />} />
