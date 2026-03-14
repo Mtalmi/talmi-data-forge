@@ -931,7 +931,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
             <div className="flex items-start gap-3">
               <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444' }} />
               <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                <span style={{ color: '#fff', fontWeight: 600 }}>Mercredi 11 Mars</span>: Livraison BC-2602-2373 F-B20 · 80m³ pour Constructions Modernes représente <span style={{ color: '#EF4444', fontWeight: 600 }}>40% de la capacité journalière</span>. Pré-positionner stocks gravette et sable la veille.
+                <span style={{ color: '#D4A843', fontWeight: 600 }}>Mercredi 11 Mars</span>: Livraison BC-2602-2373 F-B20 · 80m³ pour Constructions Modernes représente <span style={{ color: '#EF4444', fontWeight: 600 }}>40% de la capacité journalière</span>. Pré-positionner stocks gravette et sable la veille.
               </p>
             </div>
           </div>
