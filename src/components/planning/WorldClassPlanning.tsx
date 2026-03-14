@@ -218,10 +218,10 @@ function Gauge({ pct }: { pct: number }) {
       <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
         fill="none" stroke={gaugeColor} strokeWidth={16} strokeLinecap="round"
         strokeDasharray={`${pathLength} ${circumference}`}
-        style={{ filter: `drop-shadow(0 0 6px ${gaugeColor}80)`, transition: 'stroke-dasharray 1s ease-out' }}
+        style={{ filter: `drop-shadow(0 0 8px rgba(212,168,67,0.2))`, transition: 'stroke-dasharray 1s ease-out' }}
       />
       <text x={cx} y={cy - 10} textAnchor="middle"
-        style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, fill: gaugeColor }}>
+        style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 36, fontWeight: 200, fill: '#D4A843' }}>
         {pct}%
       </text>
       <text x={cx} y={cy + 14} textAnchor="middle"
@@ -314,7 +314,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   label: string; value: number; suffix: string; color: string;
   icon: any; trend: string; trendPositive: boolean; delay?: number;
 }) {
-  const animated = useAnimatedCounter(value, 1200);
+  const animated = useAnimatedCounter(value, 1500);
   const [visible, setVisible] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
 
@@ -324,16 +324,16 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6, whiteSpace: 'nowrap' }}>{label}</p>
-            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 30, fontWeight: 200, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>
+            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 36, fontWeight: 200, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em' }}>
               {animated.toLocaleString('fr-FR')}
               {suffix && <span style={{ fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>{suffix}</span>}
             </p>
-            <p style={{ fontSize: 12, color: trendPositive ? '#10B981' : '#EF4444', marginTop: 5, fontWeight: 500, whiteSpace: 'nowrap' }}>
-              {trendPositive ? '↑' : '↓'} {trend}
+            <p style={{ fontSize: 12, color: trend.toLowerCase() === 'stable' ? '#9CA3AF' : (trendPositive ? '#22C55E' : '#EF4444'), marginTop: 5, fontWeight: trend.toLowerCase() === 'stable' ? 400 : 500, whiteSpace: 'nowrap' }}>
+              {trend.toLowerCase() === 'stable' ? '—' : (trendPositive ? '↑' : '↓')} {trend}
             </p>
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon size={18} color="#F59E0B" />
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(212, 168, 67, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Icon size={18} color="#D4A843" />
           </div>
         </div>
       </Card>
@@ -361,8 +361,8 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = f
         onMouseEnter={() => setHov(true)}
         onMouseLeave={() => setHov(false)}
       >
-        <span style={{ color: 'rgba(212, 168, 67, 0.5)', fontSize: 20, lineHeight: 1, opacity: hov ? 1 : 0, transition: 'opacity 200ms' }}>+</span>
-        <span style={{ color: 'rgba(212, 168, 67, 0.4)', fontSize: 10, marginTop: hov ? 2 : 0 }}>Disponible</span>
+        <span style={{ color: hov ? 'rgba(212, 168, 67, 0.6)' : 'rgba(212, 168, 67, 0.3)', fontSize: 20, lineHeight: 1, transition: 'color 200ms' }}>+</span>
+        <span style={{ color: 'rgba(212, 168, 67, 0.4)', fontSize: 10, marginTop: 2 }}>Disponible</span>
       </div>
     );
   }
@@ -396,14 +396,15 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = f
       onClick={onClick}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(12px)',
-        transition: 'opacity 500ms ease-out, transform 500ms ease-out, box-shadow 200ms, border-color 200ms',
+        transform: visible ? (hov ? 'translateY(-1px)' : 'translateY(0)') : 'translateY(12px)',
+        transition: 'opacity 500ms ease-out, transform 200ms ease-out, box-shadow 200ms, border-color 200ms',
         background: rentabilite ? rentaBg : 'rgba(245, 158, 11, 0.08)',
         border: `1px solid ${hov ? 'rgba(245, 158, 11, 0.3)' : 'rgba(245, 158, 11, 0.15)'}`,
         borderLeft: `3px solid ${rentabilite ? rentaBorder : color}`,
         borderRadius: 8, padding: '8px 10px',
         cursor: 'pointer', minHeight: 58,
         position: 'relative',
+        boxShadow: hov ? '0 0 12px rgba(212,168,67,0.1)' : 'none',
       }}
     >
       {/* Payment status dot */}
@@ -413,8 +414,8 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = f
         background: dotColor,
         boxShadow: `0 0 4px ${dotColor}60`,
       }} />
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 800, color: '#D4A843', marginBottom: 2, display: 'inline-block', padding: '1px 6px', borderRadius: 4, background: 'rgba(212,168,67,0.2)', border: '1px solid rgba(212,168,67,0.5)' }}>{slot.product}</p>
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: T.textPri }}>{slot.volume} m³</p>
+      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: slot.product === 'Spécial' ? 10 : 11, fontWeight: 800, color: slot.product === 'Spécial' ? '#F59E0B' : '#D4A843', marginBottom: 2, display: 'inline-block', padding: '1px 6px', borderRadius: 4, background: slot.product === 'Spécial' ? 'rgba(245,158,11,0.15)' : 'rgba(212,168,67,0.2)', border: slot.product === 'Spécial' ? '1px solid #F59E0B' : '1px solid rgba(212,168,67,0.5)' }}>{slot.product}</p>
+      <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 13, fontWeight: 500, color: T.textPri }}>{slot.volume} m³</p>
       <p style={{ fontSize: 10, color: T.textDim, marginTop: 2 }}>{slot.client}</p>
     </div>
   );
@@ -436,8 +437,8 @@ function DeliveryCard({ d, delay = 0, routeData, weatherIndex = 0 }: { d: typeof
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? (hov ? 'translateX(4px)' : 'translateY(0)') : 'translateY(20px)',
-        transition: 'all 400ms ease-out',
-        background: T.cardBg,
+        transition: 'all 200ms ease-out',
+        background: hov ? 'rgba(212,168,67,0.03)' : 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
         border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`,
         borderTop: '2px solid #D4A843',
         borderLeft: `4px solid ${d.statusColor}`,
@@ -448,15 +449,15 @@ function DeliveryCard({ d, delay = 0, routeData, weatherIndex = 0 }: { d: typeof
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 13, color: T.textPri }}>{d.client}</p>
+            <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: 15, color: T.textPri }}>{d.client}</p>
             {(() => {
               const ratings: Record<string, { score: string; color: string }> = {
-                'Ciments du Maroc': { score: '4.8', color: '#10B981' },
-                'ONCF': { score: '4.2', color: '#10B981' },
-                'Addoha Group': { score: '4.5', color: '#10B981' },
+                'Ciments du Maroc': { score: '4.8', color: '#D4A843' },
+                'ONCF': { score: '4.2', color: '#D4A843' },
+                'Addoha Group': { score: '4.5', color: '#D4A843' },
                 'TGCC': { score: '3.8', color: '#F59E0B' },
-                'Alliances': { score: '4.6', color: '#10B981' },
-                'Jet Contractors': { score: '4.1', color: '#10B981' },
+                'Alliances': { score: '4.6', color: '#D4A843' },
+                'Jet Contractors': { score: '4.1', color: '#D4A843' },
               };
               const r = ratings[d.client];
               return r ? <span style={{ fontSize: 10, fontWeight: 700, color: r.color }}>★ {r.score}</span> : null;
@@ -465,7 +466,7 @@ function DeliveryCard({ d, delay = 0, routeData, weatherIndex = 0 }: { d: typeof
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <span style={{ color: T.textDim, fontSize: 11 }}>{d.date}</span>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: T.gold }}>{d.volume} m³</span>
+            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 13, fontWeight: 600, color: '#D4A843' }}>{d.volume} m³</span>
             <span style={{ padding: '1px 7px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: `${T.info}18`, color: T.info, border: `1px solid ${T.info}30` }}>{d.truck}</span>
             {(() => {
               const mockRoutes: Record<string, { km: number; min: number }> = {
@@ -515,7 +516,7 @@ function DeliveryCard({ d, delay = 0, routeData, weatherIndex = 0 }: { d: typeof
               'Alliances': '95,000 DH YTD · 6 livraisons',
             };
             const ytd = ytdData[d.client];
-            return ytd ? <p style={{ color: '#9CA3AF', fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', marginTop: 4 }}>{ytd}</p> : null;
+            return ytd ? <p style={{ color: '#D4A843', fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', marginTop: 4 }}>{ytd}</p> : null;
           })()}
         </div>
         <Badge label={d.status} color={d.statusColor} bg={`${d.statusColor}18`} pulse={isEnRoute} />
@@ -990,10 +991,11 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                   <div style={{ display: 'flex', alignItems: 'center', gap: 2, background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: 2 }}>
                     {(['standard', 'rentabilite'] as const).map(mode => (
                       <button key={mode} onClick={() => setScheduleViewMode(mode)} style={{
-                        padding: '4px 12px', borderRadius: 6, border: 'none', cursor: 'pointer',
+                        padding: '4px 12px', borderRadius: 6, cursor: 'pointer',
                         fontSize: 11, fontWeight: 600,
-                        background: scheduleViewMode === mode ? 'rgba(212,168,67,0.15)' : 'transparent',
+                        background: scheduleViewMode === mode ? 'rgba(212,168,67,0.1)' : 'transparent',
                         color: scheduleViewMode === mode ? '#D4A843' : '#64748B',
+                        border: scheduleViewMode === mode ? '1px solid #D4A843' : '1px solid transparent',
                         transition: 'all 150ms',
                       }}>
                         {mode === 'standard' ? 'Standard' : 'Rentabilité'}
@@ -1008,7 +1010,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                       <div key={d} style={{
                         padding: '10px 12px', textAlign: 'center',
                         background: `${T.cardBorder}40`, borderBottom: `1px solid ${T.cardBorder}`, borderLeft: `1px solid ${T.cardBorder}`,
-                        color: T.gold, fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em',
+                        color: T.gold, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '1px',
                       }}>{d}</div>
                     ))}
                   </div>
@@ -1018,7 +1020,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                         padding: '12px 8px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                         borderRight: `1px solid ${T.cardBorder}`,
                       }}>
-                        <span style={{ color: T.textDim, fontSize: 10, fontFamily: 'JetBrains Mono, monospace', writingMode: 'horizontal-tb' }}>{row.time}</span>
+                        <span style={{ color: '#D4A843', fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', writingMode: 'horizontal-tb' }}>{row.time}</span>
                       </div>
                       {row.slots.map((slot, si) => (
                         <div key={si} style={{ padding: 8, borderLeft: `1px solid ${T.cardBorder}` }}>
@@ -1050,14 +1052,14 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                           border: `1px solid ${T.cardBorder}`,
                         }}>
                           <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>{box.label}</p>
-                          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: box.color }}>{box.value}</p>
+                          <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 13, fontWeight: 700, color: '#D4A843' }}>{box.value}</p>
                         </div>
                       ))}
                     </div>
                     {/* Weather-adjusted capacity */}
                     <div style={{ borderTop: '1px solid rgba(212,168,67,0.15)', marginTop: 12, paddingTop: 12 }}>
                       <p style={{ color: '#9CA3AF', fontSize: 12, marginBottom: 6 }}>Capacité ajustée météo</p>
-                      <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 32, fontWeight: 200, color: '#F59E0B', lineHeight: 1, marginBottom: 8 }}>58%</p>
+                      <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 36, fontWeight: 200, color: '#F59E0B', lineHeight: 1, marginBottom: 8, textShadow: '0 0 12px rgba(245,158,11,0.2)' }}>58%</p>
                       <p style={{ color: '#F59E0B', fontSize: 12, marginBottom: 4 }}>⚠ Samedi 38°C — capacité réduite estimée 20%</p>
                       <p style={{ color: '#22C55E', fontSize: 12 }}>Dimanche: 72% (conditions normales)</p>
                     </div>
@@ -1076,7 +1078,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                             style={{
                               fontSize: 11, cursor: 'pointer', paddingBottom: 2,
                               color: deliverySort === s ? '#D4A843' : '#9CA3AF',
-                              borderBottom: deliverySort === s ? '1px solid #D4A843' : '1px solid transparent',
+                              borderBottom: deliverySort === s ? '2px solid #D4A843' : '2px solid transparent',
                               fontWeight: deliverySort === s ? 600 : 400,
                               transition: 'all 150ms',
                             }}
@@ -1112,11 +1114,11 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                     <span style={{ color: '#D4A843', fontSize: 14, animation: 'tbos-pulse 3s ease-in-out infinite' }}>✦</span>
                     <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em' }}>INTELLIGENCE IA</span>
                   </div>
-                  <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>Généré par IA · Claude Opus</span>
+                  <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843' }}>Généré par IA · Claude Opus</span>
                 </div>
                 {[
-                  { dot: '#F59E0B', text: 'Capacité: Mercredi 11 — 4 livraisons, 202 m³ (capacité 96%). Risque saturation.' },
-                  { dot: '#34d399', text: 'Tendance: Volume semaine +8% vs sem. dern. Pic prévu jeudi (193 m³).' },
+                  { dot: '#F59E0B', text: <><span style={{ color: '#D4A843', fontWeight: 700 }}>Mercredi 11</span> — 4 livraisons, 202 m³ (capacité 96%). Risque saturation.</> },
+                  { dot: '#34d399', text: <><span style={{ color: '#D4A843', fontWeight: 700 }}>Tendance:</span> Volume semaine +8% vs sem. dern. Pic prévu jeudi (193 m³).</> },
                 ].map((ins, i) => (
                   <div key={i} style={{
                     display: 'flex', alignItems: 'center', gap: 12,
@@ -1124,7 +1126,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                     borderTop: i > 0 ? `1px solid ${T.cardBorder}60` : 'none',
                   }}>
                     <span style={{ width: 8, height: 8, borderRadius: '50%', background: ins.dot, flexShrink: 0 }} />
-                    <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, lineHeight: 1.4, flex: 1 }}>{ins.text}</span>
+                    <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, lineHeight: 1.4, flex: 1 }}>{ins.text as any}</span>
                   </div>
                 ))}
                 <div style={{ padding: '8px 18px', borderTop: `1px solid ${T.cardBorder}`, background: `${T.cardBorder}20` }}>
