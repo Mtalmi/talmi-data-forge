@@ -207,7 +207,7 @@ export function RendementOptimizerCard() {
             <div>
               <p style={{
                 fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
-                fontSize: 30, fontWeight: 200, color: '#fff',
+                fontSize: 32, fontWeight: 200, color: '#D4A843',
                 WebkitFontSmoothing: 'antialiased', letterSpacing: '-0.02em', lineHeight: 1,
               }}>
                 {d.avgBatchMinutes} min
@@ -215,13 +215,13 @@ export function RendementOptimizerCard() {
               {d.yesterdayAvgBatchMinutes !== null && (
                 <div className="flex items-center gap-2 mt-3">
                   {(d.avgBatchMinutes! - d.yesterdayAvgBatchMinutes) <= 0 ? (
-                    <TrendingDown size={14} style={{ color: '#34d399' }} />
+                    <TrendingDown size={14} style={{ color: '#22C55E' }} />
                   ) : (
                     <TrendingUp size={14} style={{ color: '#f87171' }} />
                   )}
                   <span style={{
                     fontSize: 12, fontWeight: 500,
-                    color: (d.avgBatchMinutes! - d.yesterdayAvgBatchMinutes) <= 0 ? '#34d399' : '#f87171',
+                    color: (d.avgBatchMinutes! - d.yesterdayAvgBatchMinutes) <= 0 ? '#22C55E' : '#f87171',
                   }}>
                     {(d.avgBatchMinutes! - d.yesterdayAvgBatchMinutes) <= 0 ? '↓' : '↑'} {Math.abs(d.avgBatchMinutes! - d.yesterdayAvgBatchMinutes)} min vs hier
                   </span>
@@ -232,10 +232,10 @@ export function RendementOptimizerCard() {
             <div>
               <p style={{
                 fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
-                fontSize: 30, fontWeight: 200, color: '#fff',
+                fontSize: 32, fontWeight: 200, color: '#D4A843',
                 WebkitFontSmoothing: 'antialiased', letterSpacing: '-0.02em', lineHeight: 1,
               }}>12 min</p>
-              <p style={{ color: '#34d399', fontSize: 12, fontWeight: 500, marginTop: 8 }}>↘ -1.5 min vs hier</p>
+              <p style={{ color: '#22C55E', fontSize: 12, fontWeight: 500, marginTop: 8 }}>↘ -1.5 min vs hier</p>
             </div>
           )}
         </MetricCard>
