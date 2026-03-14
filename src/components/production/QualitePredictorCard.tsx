@@ -122,7 +122,7 @@ export function QualitePredictorCard() {
         background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
         border: '1px solid rgba(255,255,255,0.05)',
         borderLeft: '3px solid #D4A843',
-        borderTop: '2px solid #D4A843',
+        borderTop: '2px solid #22C55E',
         borderRadius: 12,
         overflow: 'hidden',
       }}>
