@@ -24,6 +24,8 @@ interface NavItem {
   url: string;
   icon: LucideIcon;
   badge?: string | number;
+  badgeStyle?: 'red' | 'gold' | 'green';
+  subtitle?: string;
 }
 
 interface NavSection {
