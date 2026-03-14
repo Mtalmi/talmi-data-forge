@@ -302,10 +302,10 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                 >
                   <span style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 500 }}>{row.bl_id}</span>
                   <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.client}</span>
-                  <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.60)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.formule}</span>
-                  <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 400, color: '#fff', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.volume}</span>
-                  <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.45)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.heure}</span>
-                  <span style={{ fontFamily: mono, fontSize: 12, color: 'rgba(255,255,255,0.60)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.cout}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: 'rgba(255,255,255,0.60)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.formule}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 400, color: '#fff', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.volume}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: 'rgba(255,255,255,0.45)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.heure}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: 'rgba(255,255,255,0.60)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.cout}</span>
                   <span style={{ fontFamily: mono, fontSize: 12, fontWeight: 500, display: 'flex', width: '100%', justifyContent: 'center', color: row.marge >= 35 ? '#34d399' : row.marge >= 30 ? '#F59E0B' : '#EF4444' }}>{row.marge}%</span>
                   {/* Client satisfaction */}
                   {(() => {
