@@ -909,6 +909,7 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
         {activeTab === 'overview' && (<>
         {/* ── SECTION 1: KPIs ── */}
         {(() => {
+          const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
           const hsWeights: Record<string, number> = { ciment: 0.30, gravette: 0.25, sable: 0.20, eau: 0.15, adjuvant: 0.10 };
           const hsTierScore = (d: number) => d >= 7 ? 100 : d >= 5 ? 75 : d >= 3 ? 50 : d >= 1 ? 25 : 0;
           let hsTotalW = 0, hsWSum = 0;
@@ -922,36 +923,10 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
             <section>
               <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
-                <div className="kpi-shimmer"><KPICard label="Valeur Totale Stock"      value={2.4}  suffix="M DH" color={T.amber}   icon={Package}      trend="+5% vs mois dernier" trendPositive decimals={1} delay={0} /></div>
-                <div className="kpi-shimmer"><KPICard label="Articles en Alerte"       value={3}    suffix=""     color={T.danger}  icon={AlertTriangle} trend=""                    trendPositive={false} delay={80} isAlert /></div>
-                <div className="kpi-shimmer"><KPICard label="Mouvements Aujourd'hui"   value={12}   suffix=""     color={T.amber}   icon={ArrowUpDown}  trend="+4 vs hier"          trendPositive delay={160} /></div>
-                {/* 4th KPI — Santé Stock IA */}
-                <div className="kpi-shimmer">
-                  <div style={{
-                    background: 'rgba(255,255,255,0.04)',
-                    borderTop: '2px solid #D4A843',
-                    borderRadius: 9,
-                    padding: '20px 16px',
-                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                    gap: 4, height: '100%',
-                    opacity: 0, animation: 'fadeSlideIn 500ms 240ms forwards',
-                  }}>
-                    <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF' }}>
-                      SANTÉ STOCK IA
-                    </span>
-                    <span style={{
-                      fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
-                      fontWeight: 200,
-                      fontSize: 36,
-                      lineHeight: 1,
-                      letterSpacing: '-0.02em',
-                      color: hsColor,
-                    }}>
-                      {hsScore}
-                    </span>
-                    <span style={{ fontSize: 11, color: '#64748B' }}>Score IA temps réel</span>
-                  </div>
-                </div>
+                <div className="kpi-shimmer"><KPICard label="Valeur Totale Stock" value={2.4} suffix="M DH" color={T.amber} icon={Package} trend="+5% vs mois dernier" trendPositive decimals={1} delay={0} /></div>
+                <div className="kpi-shimmer"><KPICard label="Articles en Alerte" value={3} suffix="" color={T.danger} icon={AlertTriangle} trend="" trendPositive={false} delay={80} isAlert /></div>
+                <div className="kpi-shimmer"><KPICard label="Mouvements Aujourd'hui" value={12} suffix="" color={T.amber} icon={ArrowUpDown} trend="+4 vs hier" trendPositive delay={160} /></div>
+                <div className="kpi-shimmer"><KPICard label="Santé Stock IA" value={hsScore} suffix="" color={T.amber} icon={Zap} trend="Score IA temps réel" trendPositive={false} delay={240} /></div>
               </div>
             </section>
           );
@@ -959,7 +934,7 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
 
         {/* ── INTELLIGENCE COMMAND CARD ── */}
         {(() => {
-          // Santé Stock score
+          const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
           const weights: Record<string, number> = { ciment: 0.30, gravette: 0.25, sable: 0.20, eau: 0.15, adjuvant: 0.10 };
           const tierScore = (d: number) => d >= 7 ? 100 : d >= 5 ? 75 : d >= 3 ? 50 : d >= 1 ? 25 : 0;
           let totalWeight = 0;
@@ -974,7 +949,6 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
           const score = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0;
           const scoreColor = score >= 80 ? '#D4A843' : score >= 50 ? '#f59e0b' : '#ef4444';
 
-          // Top alert
           const severityRank: Record<string, number> = { critical: 3, warning: 2, info: 1 };
           const topAlert = [...STOCK_ALERTS_DB].sort((a, b) => (severityRank[b.severity] || 0) - (severityRank[a.severity] || 0))[0] || null;
           const alertColor = topAlert?.severity === 'critical' ? '#ef4444' : topAlert?.severity === 'warning' ? '#f59e0b' : '#22c55e';
@@ -984,8 +958,10 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
           return (
             <div style={{
               background: 'rgba(212,168,67,0.06)',
+              borderTop: '2px solid #D4A843',
               border: '1px solid rgba(212,168,67,0.15)',
-              borderLeft: '4px solid #D4A843',
+              borderTopWidth: 2,
+              borderTopColor: '#D4A843',
               borderRadius: 12,
               padding: '28px 32px',
               marginBottom: 24,
@@ -995,18 +971,38 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
             }}>
               {/* LEFT — Intelligence IA */}
               <div style={{ paddingRight: 24 }}>
-                <p style={{ color: '#D4A843', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12 }}>INTELLIGENCE IA</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {REORDER_RECS.slice(0, 3).map((rec) => (
-                    <div key={rec.id} style={{ fontSize: 13, lineHeight: 1.5, color: 'rgba(255,255,255,0.55)' }}>
-                      <span style={{ color: '#D4A843' }}>⚡</span>{' '}
-                      <span style={{ color: '#fff', fontWeight: 600 }}>{rec.materiau}</span>{' '}
-                      — commander {Number(rec.recommended_qty).toLocaleString('fr-FR')} {rec.unite} ({rec.urgency})
-                    </div>
-                  ))}
+                <p style={{ fontFamily: MONO, color: '#D4A843', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12 }}>✦ INTELLIGENCE IA</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {REORDER_RECS.slice(0, 3).map((rec) => {
+                    const urgColor = (rec.urgency === 'critique' || rec.urgency === 'urgent') ? '#EF4444' : '#F59E0B';
+                    return (
+                      <div key={rec.id} style={{
+                        borderLeft: '3px solid #F59E0B',
+                        padding: '8px 12px',
+                        background: 'rgba(245,158,11,0.03)',
+                        marginBottom: 0,
+                        fontSize: 13, lineHeight: 1.5, color: 'rgba(255,255,255,0.55)',
+                      }}>
+                        <span style={{ color: '#D4A843' }}>⚡</span>{' '}
+                        <span style={{ color: '#fff', fontWeight: 500 }}>{rec.materiau}</span>{' '}
+                        — commander{' '}
+                        <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>{Number(rec.recommended_qty).toLocaleString('fr-FR')} {rec.unite}</span>{' '}
+                        <span style={{ color: urgColor }}>({rec.urgency})</span>
+                      </div>
+                    );
+                  })}
                   {REORDER_RECS.length === 0 && (
                     <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>Aucune recommandation active</p>
                   )}
+                </div>
+                <div style={{ marginTop: 12 }}>
+                  <span style={{
+                    fontFamily: MONO, fontSize: 10, color: '#D4A843',
+                    padding: '3px 10px', borderRadius: 999,
+                    border: '1px solid rgba(212,168,67,0.3)', background: 'rgba(212,168,67,0.06)',
+                  }}>
+                    Généré par IA · Claude Opus
+                  </span>
                 </div>
               </div>
 
@@ -1014,46 +1010,57 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
 
               {/* CENTER — Tendance Santé Stock Sparkline */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 24px' }}>
-                <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 10 }}>TENDANCE SANTÉ STOCK</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <p style={{ fontFamily: MONO, color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 10 }}>TENDANCE SANTÉ STOCK</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14, width: '100%' }}>
                   {(() => {
                     const trendData = [72, 75, 78, 81, 85, 87, score];
-                    const w = 100, h = 36;
+                    const w = 160, h = 120;
+                    const pad = 10;
                     const minV = Math.min(...trendData) - 5;
                     const maxV = Math.max(...trendData) + 5;
-                    const pts = trendData.map((v, i) => {
-                      const x = (i / (trendData.length - 1)) * w;
-                      const y = h - ((v - minV) / (maxV - minV)) * h;
-                      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-                    }).join(' ');
+                    const pts = trendData.map((v, i) => ({
+                      x: pad + (i / (trendData.length - 1)) * (w - pad * 2),
+                      y: pad + (1 - (v - minV) / (maxV - minV)) * (h - pad * 2),
+                    }));
+                    const linePath = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+                    const areaPath = `${linePath} L${pts[pts.length - 1].x} ${h} L${pts[0].x} ${h} Z`;
+                    const lastPt = pts[pts.length - 1];
                     return (
-                      <svg width={w} height={h} style={{ flexShrink: 0 }}>
-                        <path d={pts} fill="none" stroke="#D4A843" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      <svg width={w} height={h} style={{ flexShrink: 0, minHeight: 120 }}>
+                        <defs>
+                          <linearGradient id="trendAreaFill" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#D4A843" stopOpacity={0.1} />
+                            <stop offset="100%" stopColor="#D4A843" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <path d={areaPath} fill="url(#trendAreaFill)" />
+                        <path d={linePath} fill="none" stroke="#D4A843" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <circle cx={lastPt.x} cy={lastPt.y} r={3} fill="#D4A843" style={{ animation: 'sparkPulse 2s infinite' }} />
                       </svg>
                     );
                   })()}
                   <p style={{
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
-                    fontSize: 28, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1, color: scoreColor,
+                    fontFamily: MONO,
+                    fontSize: 24, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1, color: scoreColor,
                   }}>
                     {score}
                   </p>
                 </div>
-                <span style={{ fontSize: 11, color: '#9CA3AF', marginTop: 6 }}>7 derniers jours</span>
+                <span style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF', marginTop: 6 }}>7 derniers jours</span>
               </div>
 
               <div style={dividerStyle} />
 
               {/* RIGHT — Alerte Prioritaire */}
-              <div style={{ paddingLeft: 24, display: 'flex', flexDirection: 'column' }}>
-                <p style={{ color: topAlert ? alertColor : '#9CA3AF', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12 }}>ALERTE PRIORITAIRE</p>
+              <div style={{ paddingLeft: 24, display: 'flex', flexDirection: 'column', borderTop: topAlert ? '2px solid #EF4444' : undefined, background: topAlert ? 'rgba(239,68,68,0.03)' : undefined, borderRadius: 8, padding: topAlert ? '16px 24px' : '0 0 0 24px' }}>
+                <p style={{ fontFamily: MONO, color: topAlert ? alertColor : '#9CA3AF', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12 }}>ALERTE PRIORITAIRE</p>
                 {topAlert ? (
                   <>
-                    <p style={{ fontSize: 18, fontWeight: 600, color: '#fff', marginBottom: 4 }}>{topAlert.materiau}</p>
+                    <p style={{ fontFamily: MONO, fontSize: 20, fontWeight: 500, color: '#fff', marginBottom: 4 }}>{topAlert.materiau}</p>
                     <span style={{
-                      display: 'inline-block', width: 'fit-content',
+                      display: 'inline-block', width: 'fit-content', fontFamily: MONO,
                       padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
-                      background: `${alertColor}22`, color: alertColor, border: `1px solid ${alertColor}55`,
+                      background: 'rgba(239,68,68,0.08)', color: '#EF4444', border: '1px solid #EF4444',
                       marginBottom: 8,
                     }}>
                       {topAlert.alert_type}
@@ -1065,12 +1072,11 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                       onClick={() => setActiveTab('alertes')}
                       style={{
                         marginTop: 'auto', padding: '10px 0', borderRadius: 8, width: '100%',
-                        background: 'transparent', border: '1px solid rgba(212,168,67,0.4)',
-                        color: '#D4A843', fontWeight: 700, fontSize: 12, cursor: 'pointer',
-                        transition: 'all 200ms',
+                        background: '#D4A843', border: 'none',
+                        color: '#0F1629', fontWeight: 600, fontSize: 12, cursor: 'pointer',
+                        fontFamily: MONO,
+                        animation: 'goldBtnGlow 2s ease-in-out infinite',
                       }}
-                      onMouseEnter={e => { e.currentTarget.style.background = '#D4A843'; e.currentTarget.style.color = '#0F1629'; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#D4A843'; }}
                     >
                       → Agir maintenant
                     </button>
@@ -1083,15 +1089,23 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
           );
         })()}
 
-
-
         {/* ── PLAN DE RÉAPPROVISIONNEMENT + ALERTES — Two-column layout ── */}
         <div style={{ display: 'flex', gap: 24 }}>
           {/* LEFT — 60% Plan de Réapprovisionnement IA */}
           <div style={{ flex: '0 0 60%', minWidth: 0 }}>
-            <SectionHeader icon={ShoppingCart} label="Plan de Réapprovisionnement IA" />
+            {/* Section title with gold monospace */}
+            <div style={{ borderTop: '2px solid #D4A843', paddingTop: 12, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
+              <ShoppingCart size={16} color="#D4A843" />
+              <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', letterSpacing: '2px', fontSize: 12, color: '#D4A843', fontWeight: 600 }}>
+                ✦ PLAN DE RÉAPPROVISIONNEMENT IA
+              </span>
+              <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(212,168,67,0.4), transparent 80%)' }} />
+            </div>
             {(() => {
-              const items = REORDER_RECS;
+              const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
+              // Sort: critique first, then by urgency
+              const urgRank: Record<string, number> = { critique: 3, urgent: 3, 'modéré': 2, ok: 1 };
+              const items = [...REORDER_RECS].sort((a, b) => (urgRank[b.urgency] || 0) - (urgRank[a.urgency] || 0));
               if (items.length === 0) {
                 return (
                   <Card style={{ textAlign: 'center', padding: '40px 20px' }}>
@@ -1104,16 +1118,20 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                   {items.map((item, idx) => {
                     const isCritique = item.urgency === 'critique' || item.urgency === 'urgent';
                     const isModere = item.urgency === 'modéré';
-                    const leftBorderColor = isCritique ? '#ef4444' : isModere ? '#D4A843' : '#22c55e';
                     const urgColor = isCritique ? '#ef4444' : isModere ? '#f59e0b' : '#22c55e';
                     const urgBg = isCritique ? 'rgba(239,68,68,0.15)' : isModere ? 'rgba(245,158,11,0.15)' : 'rgba(34,197,94,0.15)';
                     const urgBorder = isCritique ? 'rgba(239,68,68,0.4)' : isModere ? 'rgba(245,158,11,0.4)' : 'rgba(34,197,94,0.4)';
+                    const topBorderColor = isCritique ? '#EF4444' : '#F59E0B';
                     const days = item.days_remaining;
+                    const daysNum = days !== null ? Number(days) : null;
+                    const autoColor = daysNum === null ? '#9CA3AF' : daysNum < 7 ? '#EF4444' : daysNum <= 8 ? '#F59E0B' : '#22C55E';
                     return (
                       <div key={item.id} style={{
                         background: isCritique ? 'rgba(239,68,68,0.04)' : 'rgba(255,255,255,0.04)',
+                        borderTop: `2px solid ${topBorderColor}`,
                         border: '1px solid rgba(255,255,255,0.08)',
-                        borderLeft: `3px solid ${leftBorderColor}`,
+                        borderTopWidth: 2,
+                        borderTopColor: topBorderColor,
                         borderRadius: 14, padding: '18px 16px',
                         display: 'flex', flexDirection: 'column', minHeight: 200,
                         position: 'relative',
@@ -1122,7 +1140,6 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                           ? `fadeSlideIn 500ms ${idx * 80}ms forwards, critiqueGlow 2s ease-in-out ${idx * 80 + 500}ms infinite`
                           : `fadeSlideIn 500ms ${idx * 80}ms forwards`,
                       }}>
-                        {/* Header with absolute badge */}
                         <div style={{ marginBottom: 12 }}>
                           <span style={{ fontWeight: 600, fontSize: 18, color: '#fff' }}>{item.materiau}</span>
                           <span style={{
@@ -1137,7 +1154,7 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
                             <span style={{ color: T.textDim }}>Qté recommandée</span>
-                            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, fontSize: 15, color: '#fff' }}>
+                            <span style={{ fontFamily: MONO, fontWeight: 600, fontSize: 15, color: '#D4A843' }}>
                               {Number(item.recommended_qty).toLocaleString('fr-FR')} {item.unite}
                             </span>
                           </div>
@@ -1145,15 +1162,12 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                             <span style={{ color: T.textDim, display: 'flex', alignItems: 'center', gap: 4 }}>
                               <Package size={11} style={{ opacity: 0.5 }} />Fournisseur
                             </span>
-                            <span style={{ color: T.textSec, fontWeight: 500 }}>{item.fournisseur || 'À définir'}</span>
+                            <span style={{ fontFamily: MONO, color: '#fff', fontWeight: 400 }}>{item.fournisseur || 'À définir'}</span>
                           </div>
                           {days !== null && !isCritique && (
                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
                               <span style={{ color: T.textDim }}>Autonomie</span>
-                              <span style={{
-                                fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
-                                color: Number(days) <= 5 ? '#f59e0b' : '#22c55e',
-                              }}>
+                              <span style={{ fontFamily: MONO, fontWeight: 600, color: autoColor }}>
                                 {Math.round(Number(days) * 10) / 10}j
                               </span>
                             </div>
@@ -1166,12 +1180,15 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                           onClick={() => toast.success(`Commande ${item.materiau} — ${Number(item.recommended_qty).toLocaleString('fr-FR')} ${item.unite} ajoutée à la file d'attente.`)}
                           style={{
                             marginTop: 'auto', padding: '10px 0', borderRadius: 8, width: '100%',
-                            background: '#D4A843', border: 'none',
-                            color: '#0F1629', fontWeight: 600, fontSize: 12, cursor: 'pointer',
+                            background: isCritique ? '#EF4444' : '#D4A843',
+                            border: 'none',
+                            color: isCritique ? '#fff' : '#0F1629',
+                            fontWeight: 600, fontSize: 12, cursor: 'pointer',
+                            fontFamily: MONO,
                             transition: 'all 150ms',
                           }}
-                          onMouseEnter={e => { e.currentTarget.style.background = '#FFD700'; e.currentTarget.style.transform = 'scale(1.02)'; }}
-                          onMouseLeave={e => { e.currentTarget.style.background = '#D4A843'; e.currentTarget.style.transform = 'scale(1)'; }}
+                          onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.15)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.filter = 'brightness(1)'; e.currentTarget.style.transform = 'scale(1)'; }}
                         >
                           Créer Commande
                         </button>
@@ -1186,13 +1203,14 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
           {/* RIGHT — 40% Alertes Stock */}
           <div style={{ flex: '0 0 calc(40% - 24px)', position: 'sticky', top: 16, alignSelf: 'flex-start', maxHeight: 'calc(100vh - 120px)', overflowY: 'auto' }}>
             {(() => {
+              const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
               const dbAlerts = STOCK_ALERTS_DB;
               return (
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-                    <AlertTriangle size={14} color={T.danger} />
-                    <span style={{ color: T.danger, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>Alertes Stock</span>
-                    <Badge label={`${dbAlerts.length} actives`} color={dbAlerts.length > 0 ? T.danger : T.success} bg={dbAlerts.length > 0 ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)'} pulse={dbAlerts.length > 0} />
+                  <div style={{ borderTop: '2px solid #EF4444', paddingTop: 12, display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+                    <AlertTriangle size={14} color="#EF4444" />
+                    <span style={{ fontFamily: MONO, color: '#D4A843', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px' }}>ALERTES STOCK</span>
+                    <Badge label={`${dbAlerts.length} actives`} color={dbAlerts.length > 0 ? '#EF4444' : T.success} bg={dbAlerts.length > 0 ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)'} pulse={dbAlerts.length > 0} />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {dbAlerts.length === 0 ? (
@@ -1201,13 +1219,12 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                       </div>
                     ) : (
                       dbAlerts.map((a, i) => {
-                        const sevColor = a.severity === 'critical' ? '#ef4444' : a.severity === 'warning' ? '#f59e0b' : '#22c55e';
-                        const sevBg = a.severity === 'critical' ? 'rgba(239,68,68,0.15)' : a.severity === 'warning' ? 'rgba(245,158,11,0.15)' : 'rgba(34,197,94,0.15)';
-                        const sevBorder = a.severity === 'critical' ? 'rgba(239,68,68,0.3)' : a.severity === 'warning' ? 'rgba(245,158,11,0.3)' : 'rgba(34,197,94,0.3)';
+                        const sevColor = a.severity === 'critical' ? '#ef4444' : a.severity === 'warning' ? '#f59e0b' : '#D4A843';
+                        const leftBorder = a.alert_type === 'seuil_bas' ? '#ef4444' : a.alert_type === 'consommation_élevée' ? '#f59e0b' : '#D4A843';
                         return (
                           <div key={a.id} style={{
                             background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
-                            borderLeft: `3px solid ${sevColor}`,
+                            borderLeftWidth: 3, borderLeftStyle: 'solid', borderLeftColor: leftBorder,
                             borderRadius: 10, padding: '12px 14px',
                             opacity: 0, animation: `fadeSlideIn 400ms ${i * 80}ms forwards`,
                           }}>
@@ -1218,20 +1235,22 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                                 boxShadow: `0 0 8px ${sevColor}80`,
                                 animation: a.severity === 'critical' ? 'tbos-pulse 2s infinite' : 'none',
                               }} />
-                              <span style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{a.materiau}</span>
+                              <span style={{ fontFamily: MONO, fontWeight: 500, fontSize: 13, color: '#fff' }}>{a.materiau}</span>
                               <span style={{
                                 marginLeft: 'auto',
                                 padding: '2px 8px', borderRadius: 999,
-                                fontSize: 10, fontWeight: 700, letterSpacing: '0.05em',
-                                background: sevBg, color: sevColor, border: `1px solid ${sevBorder}`,
+                                fontSize: 10, fontWeight: 700, letterSpacing: '0.05em', fontFamily: MONO,
+                                background: a.alert_type === 'seuil_bas' ? 'rgba(239,68,68,0.08)' : 'rgba(245,158,11,0.08)',
+                                color: a.alert_type === 'seuil_bas' ? '#EF4444' : '#F59E0B',
+                                border: `1px solid ${a.alert_type === 'seuil_bas' ? '#EF4444' : '#F59E0B'}`,
                               }}>
                                 {a.alert_type}
                               </span>
                             </div>
-                            <p style={{ fontSize: 11, color: `${sevColor}cc`, marginBottom: 4 }}>
+                            <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginBottom: 4 }}>
                               {a.message}
                             </p>
-                            <p style={{ fontSize: 10, color: T.textDim, fontFamily: 'JetBrains Mono, monospace' }}>
+                            <p style={{ fontFamily: MONO, fontSize: 10, color: a.severity === 'critical' ? '#EF4444' : T.textDim }}>
                               {a.severity.toUpperCase()} • {new Date(a.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
                             </p>
                           </div>
