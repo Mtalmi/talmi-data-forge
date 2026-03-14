@@ -892,6 +892,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                     flex: 1, padding: '10px 12px', textAlign: 'center',
                     borderLeft: i > 0 ? `1px solid ${T.cardBorder}` : 'none',
                     background: w.color === '#EF4444' ? 'rgba(239,68,68,0.06)' : 'transparent',
+                    ...(w.color === '#EF4444' ? { borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(239,68,68,0.3)' } : {}),
                   }}>
                     <p style={{ fontSize: 10, fontWeight: 700, color: T.textDim, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{w.day}</p>
                     <p style={{ fontSize: 16, marginBottom: 2 }}>{w.icon} <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 20, fontWeight: 200, color: w.color === '#EF4444' ? '#EF4444' : T.textPri }}>{w.temp}</span></p>
