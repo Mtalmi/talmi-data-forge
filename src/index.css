@@ -510,17 +510,32 @@ html {
   background: rgba(212, 168, 67, 0.08) !important;
 }
 
-/* ─── Live Production Pulse Dot ─── */
-@keyframes livePulseDot {
-  0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 12px #D4A843; }
-  50% { transform: scale(1.6); opacity: 0.4; box-shadow: 0 0 24px transparent; }
+/* ─── Live Production Pulse Dot (Gold) ─── */
+@keyframes livePulseDotGold {
+  0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 8px rgba(212, 168, 67, 0.4); }
+  50% { transform: scale(1.3); opacity: 0.8; box-shadow: 0 0 8px rgba(212, 168, 67, 0.8); }
 }
 .live-pulse-dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   background: #D4A843;
   border-radius: 50%;
-  animation: livePulseDot 2s infinite;
+  animation: livePulseDotGold 1.5s infinite alternate;
+  box-shadow: 0 0 8px rgba(212, 168, 67, 0.4);
+}
+
+/* ─── Live Pulse Dot (Green) ─── */
+@keyframes livePulseDotGreen {
+  0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 8px rgba(34, 197, 94, 0.4); }
+  50% { transform: scale(1.3); opacity: 0.8; box-shadow: 0 0 8px rgba(34, 197, 94, 0.8); }
+}
+.live-pulse-dot-green {
+  width: 8px;
+  height: 8px;
+  background: #22C55E;
+  border-radius: 50%;
+  animation: livePulseDotGreen 1.5s infinite alternate;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
 }
 
 /* ─── Clock pulse for next delivery ─── */
