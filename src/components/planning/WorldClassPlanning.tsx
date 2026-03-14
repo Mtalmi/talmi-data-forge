@@ -710,7 +710,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             {/* Capacity Gauge */}
-            <Card className="tbos-card-stagger" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: '12px', padding: '20px', position: 'relative', overflow: 'hidden', boxShadow: 'none' }}>
+            <Card className="tbos-card-stagger" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', borderRadius: '12px', padding: '20px', position: 'relative', overflow: 'hidden', boxShadow: 'none' }}>
               <p style={{ color: T.textSec, fontSize: 12, marginBottom: 16 }}>Capacité de Production</p>
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
                 <Gauge pct={72} />
