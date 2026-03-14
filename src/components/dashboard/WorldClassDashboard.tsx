@@ -591,13 +591,13 @@ function PipelineFunnel() {
                   ...(st.wash && !isEmpty ? { backgroundColor: st.wash } : {}),
                 }}
               >
-                <span className="text-center block" style={isEmpty ? { fontFamily:'ui-monospace,monospace', fontSize:'28px', fontWeight:'300', color:'#4A5568', display:'block', textAlign:'center', lineHeight: 1 } : { fontFamily: 'ui-monospace,monospace', fontSize: '30px', color: st.color, fontWeight: '300', lineHeight: 1 }}>
+                <span className="text-center block" style={isEmpty ? { fontFamily:'ui-monospace,monospace', fontSize:'32px', fontWeight:'200', color:'#4A5568', display:'block', textAlign:'center', lineHeight: 1 } : { fontFamily: 'ui-monospace,monospace', fontSize: '32px', color: i === 3 ? '#22C55E' : st.color, fontWeight: '200', lineHeight: 1 }}>
                   {isEmpty ? '—' : s.value}
                 </span>
                 <span className="text-[10px] uppercase tracking-wider text-white/40 mt-1 block text-center">{s.label}</span>
               </div>
               {i < stages.length - 1 && (
-                <span style={{ color:'rgba(255,255,255,0.2)', fontSize:'16px', margin:'0 4px', position:'relative', zIndex:1 }}>›</span>
+                <span style={{ color:'#D4A843', fontSize:'16px', margin:'0 4px', position:'relative', zIndex:1, opacity: 0.4 }}>›</span>
               )}
             </div>
           );
