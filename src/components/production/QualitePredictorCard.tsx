@@ -122,7 +122,7 @@ export function QualitePredictorCard() {
         background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
         border: '1px solid rgba(255,255,255,0.05)',
         borderLeft: '3px solid #D4A843',
-        borderTop: '2px solid #D4A843',
+        borderTop: '2px solid #22C55E',
         borderRadius: 12,
         overflow: 'hidden',
       }}>
@@ -217,12 +217,13 @@ export function QualitePredictorCard() {
                 <div className="flex items-center gap-2 mt-3">
                   <span style={{
                     padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500,
-                    background: 'rgba(212,168,67,0.15)', color: '#D4A843',
-                    boxShadow: '0 0 0 1px rgba(212, 168, 67, 0.3)',
+                    background: 'rgba(34,197,94,0.06)', color: '#22C55E',
+                    border: '1px solid #22C55E',
                   }}>Confiance: 91%</span>
                   <span style={{
                     padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500,
-                    background: 'rgba(16,185,129,0.15)', color: '#34d399',
+                    background: 'rgba(34,197,94,0.06)', color: '#22C55E',
+                    border: '1px solid #22C55E',
                   }}>Risque Faible</span>
                 </div>
               </div>

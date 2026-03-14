@@ -48,20 +48,41 @@ const CHART_COLORS = [T.gold, T.info, T.success, T.warning, T.danger, '#94A3B8',
 // ─────────────────────────────────────────────────────
 // ANIMATED COUNTER HOOK
 // ─────────────────────────────────────────────────────
-function useAnimatedCounter(target: number, duration = 800) {
+function useAnimatedCounter(target: number, duration = 1500, delay = 0) {
   const [value, setValue] = useState(0);
   const rafRef = useRef<number>();
   useEffect(() => {
-    const start = performance.now();
-    const animate = (now: number) => {
-      const p = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
-      setValue(Math.round(eased * target));
-      if (p < 1) rafRef.current = requestAnimationFrame(animate);
-    };
-    rafRef.current = requestAnimationFrame(animate);
-    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
-  }, [target, duration]);
+    const timeout = setTimeout(() => {
+      const start = performance.now();
+      const animate = (now: number) => {
+        const p = Math.min((now - start) / duration, 1);
+        const eased = p === 1 ? 1 : 1 - Math.pow(2, -10 * p); // easeOutExpo
+        setValue(Math.round(eased * target));
+        if (p < 1) rafRef.current = requestAnimationFrame(animate);
+      };
+      rafRef.current = requestAnimationFrame(animate);
+    }, delay);
+    return () => { clearTimeout(timeout); if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [target, duration, delay]);
+  return value;
+}
+
+function useAnimatedCounterDecimal(target: number, decimals = 1, duration = 1500, delay = 0) {
+  const [value, setValue] = useState(0);
+  const rafRef = useRef<number>();
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const start = performance.now();
+      const animate = (now: number) => {
+        const p = Math.min((now - start) / duration, 1);
+        const eased = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
+        setValue(parseFloat((eased * target).toFixed(decimals)));
+        if (p < 1) rafRef.current = requestAnimationFrame(animate);
+      };
+      rafRef.current = requestAnimationFrame(animate);
+    }, delay);
+    return () => { clearTimeout(timeout); if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [target, duration, decimals, delay]);
   return value;
 }
 
@@ -139,7 +160,13 @@ function MiniSparkline({ data, color = T.gold }: { data: number[]; color?: strin
 
   return (
     <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="mt-2">
-      <polygon points={areaPoints} fill="rgba(212,168,67,0.1)" />
+      <defs>
+        <linearGradient id={`sparkGrad-${color.replace(/[^a-zA-Z0-9]/g,'')}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="rgba(212,168,67,0.08)" />
+          <stop offset="100%" stopColor="rgba(212,168,67,0)" />
+        </linearGradient>
+      </defs>
+      <polygon points={areaPoints} fill={`url(#sparkGrad-${color.replace(/[^a-zA-Z0-9]/g,'')})`} />
       <polyline
         points={points}
         fill="none"
@@ -289,22 +316,27 @@ function WorkflowStep({ count, label, color, statusLabel, delay = 0 }: {
   const [visible, setVisible] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
 
+  const isActif = statusLabel === 'Actif';
+  const isTermine = statusLabel === 'Terminé';
+  const statusColor = isActif ? '#22C55E' : isTermine ? '#22C55E' : '#9CA3AF';
+
   return (
     <div className="flex flex-col items-center gap-2" style={{
       opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(10px)',
       transition: 'all 500ms ease-out', cursor: 'pointer',
     }}>
       <p style={{
-        fontFamily: 'JetBrains Mono, monospace', fontSize: 42, fontWeight: 400,
-        color: '#fff', lineHeight: 1, letterSpacing: '-0.02em',
+        fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 36, fontWeight: 200,
+        color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em',
       }}>{animated}</p>
       <p style={{
         fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.2em',
         color: 'rgba(255,255,255,0.45)', fontWeight: 500,
       }}>{label}</p>
       <span style={{
-        fontSize: 11, fontWeight: 500, color,
+        fontSize: 11, fontWeight: 500, color: statusColor,
         textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 2,
+        ...(isActif ? { animation: 'wfActifPulse 2s infinite' } : {}),
       }}>{statusLabel}</span>
     </div>
   );
@@ -545,6 +577,9 @@ export default function WorldClassProduction() {
         @keyframes tbos-fade-up { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
         @keyframes tbos-spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
         @keyframes tbos-live { 0%,100%{opacity:1} 50%{opacity:0.4} }
+        @keyframes wfActifPulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+        @keyframes margePulseDot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:0.5} }
+        @keyframes livePulseGreen { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.3);opacity:0.5} }
       `}</style>
 
       {/* ── STICKY HEADER ── */}
@@ -626,9 +661,9 @@ export default function WorldClassProduction() {
           <SectionHeader icon={Zap} label="Production KPIs" />
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
             <KPICard label="Production Aujourd'hui" value={Math.round(kpis.totalVolume)} suffix="m³" color={T.gold} icon={Factory} trend={kpis.isDemo ? '12% vs hier' : `${Math.round(kpis.produced)} m³ livrés`} trendPositive delay={0} sparkData={sparkVolume} weekComparison="vs sem. dernière: +8%" />
-            <KPICard label="Batches Enregistrés" value={kpis.totalBatches} suffix="" color={T.success} icon={CheckCircle} trend={`${kpis.completedBatches} conformes`} trendPositive delay={80} sparkData={sparkBatches} weekComparison="vs sem. dernière: +8%" />
-            <KPICard label="Taux de Conformité" value={Math.round(kpis.conformity * 10) / 10} suffix="%" color={kpis.conformity >= 90 ? T.success : T.warning} icon={Shield} trend={kpis.conformity >= 90 ? 'Excellent' : 'À surveiller'} trendPositive={kpis.conformity >= 90} delay={160} sparkData={sparkConformity} weekComparison="vs sem. dernière: +8%" />
-            <KPICard label="En Production" value={Math.round(kpis.inProgress)} suffix="m³" color={T.info} icon={Clock} trend={`${Math.round(kpis.planned)} m³ planifiées`} trendPositive={true} delay={240} sparkData={sparkInProg} weekComparison="vs sem. dernière: +8%" />
+            <KPICard label="Batches Enregistrés" value={kpis.totalBatches} suffix="" color={T.success} icon={CheckCircle} trend={`${kpis.completedBatches} conformes`} trendPositive delay={150} sparkData={sparkBatches} weekComparison="vs sem. dernière: +8%" />
+            <KPICard label="Taux de Conformité" value={Math.round(kpis.conformity * 10) / 10} suffix="%" color={kpis.conformity >= 90 ? T.success : T.warning} icon={Shield} trend={kpis.conformity >= 90 ? 'Excellent' : 'À surveiller'} trendPositive={kpis.conformity >= 90} delay={300} sparkData={sparkConformity} weekComparison="vs sem. dernière: +8%" />
+            <KPICard label="En Production" value={Math.round(kpis.inProgress)} suffix="m³" color={T.info} icon={Clock} trend={`${Math.round(kpis.planned)} m³ planifiées`} trendPositive={true} delay={450} sparkData={sparkInProg} weekComparison="vs sem. dernière: +8%" />
           </div>
         </section>
 
@@ -660,9 +695,9 @@ export default function WorldClassProduction() {
             </div>
             <div style={{ padding: '0 16px 12px', display: 'flex', flexDirection: 'column', gap: 10 }}>
               <div style={{ display: 'flex', gap: 10 }}>
-                <button style={{ background: 'rgba(239,68,68,0.15)', color: '#EF4444', border: '1px solid #EF4444', padding: '6px 16px', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', transition: 'all 200ms', fontWeight: 500 }}>Arrêter Batch</button>
-                <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', padding: '6px 16px', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', transition: 'all 200ms', fontWeight: 500 }}>Ajuster Paramètres</button>
-                <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', padding: '6px 16px', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', transition: 'all 200ms', fontWeight: 500 }}>Notifier Lab</button>
+                <button style={{ background: '#EF4444', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>Arrêter Batch</button>
+                <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px' }}>Ajuster Paramètres</button>
+                <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px' }}>Notifier Lab</button>
               </div>
               <p style={{ color: '#9CA3AF', fontSize: 12, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace' }}>
                 14:32 — Alerte détectée · 14:33 — Lab notifié automatiquement · 14:35 — Doseur recalibré
@@ -696,7 +731,7 @@ export default function WorldClassProduction() {
             ].map((item, i) => (
               <div key={i} className="flex flex-col items-center flex-shrink-0 px-2 py-1 rounded-md" style={{ transition: 'background 200ms' }}>
                 <span style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>{item.label}</span>
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, fontWeight: 400, color: '#fff', marginTop: 2 }}>{item.value}</span>
+                <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 14, fontWeight: 200, color: '#fff', marginTop: 2 }}>{item.value}</span>
                 <span style={{ fontSize: 9, fontWeight: 600, color: item.status === 'Normal' || item.status === 'Calme' || item.status === 'Optimal' ? '#D4A843' : '#F59E0B', marginTop: 1 }}>{item.status}</span>
               </div>
             ))}
@@ -726,14 +761,14 @@ export default function WorldClassProduction() {
                 { label: 'CHAUFFEURS', value: '4/5', color: '#F59E0B' },
                 { label: 'MAINTENANCE', value: '2/2', color: '#34d399' },
               ].map((item, i) => (
-                <div key={i} className="flex flex-col items-center flex-shrink-0">
+              <div key={i} className="flex flex-col items-center flex-shrink-0">
                   <span style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>{item.label}</span>
-                  <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 16, fontWeight: 400, color: item.color, marginTop: 2 }}>{item.value}</span>
+                  <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 16, fontWeight: 400, color: item.label === 'CHAUFFEURS' ? '#F59E0B' : '#D4A843', marginTop: 2 }}>{item.value}</span>
                 </div>
               ))}
             </div>
             <div className="flex-shrink-0">
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>Prochain shift: <span style={{ color: '#D4A843', fontWeight: 600 }}>14h00</span> — 3 opérateurs</span>
+              <span style={{ fontSize: 11, color: '#D4A843', border: '1px solid rgba(212,168,67,0.3)', padding: '3px 10px', borderRadius: 999 }}>Prochain shift: <span style={{ fontWeight: 600 }}>14h00</span> — 3 opérateurs</span>
             </div>
           </div>
         </section>
@@ -762,7 +797,7 @@ export default function WorldClassProduction() {
               <p style={{ fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>Prochain shift: Opérateurs — Ahmed K., Rachid M., Samir T.</p>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-              <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', padding: '6px 16px', borderRadius: 6, fontSize: 13, cursor: 'pointer' }}>Valider Passation</button>
+              <button style={{ border: '1px solid #D4A843', color: '#0F1629', background: '#D4A843', borderRadius: '6px', padding: '8px 20px', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>Valider Passation</button>
               <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 4, background: 'rgba(212,168,67,0.15)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)' }}>Généré par IA · Claude Opus</span>
             </div>
           </div>
@@ -797,7 +832,7 @@ export default function WorldClassProduction() {
             <div style={{ display: 'flex', gap: 24 }}>
               {/* LEFT 60% */}
               <div style={{ flex: '0 0 60%' }}>
-                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 64, fontWeight: 100, color: '#F59E0B', lineHeight: 1, letterSpacing: '-0.02em', textShadow: '0 0 20px rgba(245,158,11,0.3)' }}>38.6%</p>
+                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 56, fontWeight: 100, color: '#F59E0B', lineHeight: 1, letterSpacing: '-0.02em', textShadow: '0 0 20px rgba(245,158,11,0.3)' }}>38.6%</p>
                 <p style={{ color: '#6B7280', fontSize: 11, marginTop: 8, textTransform: 'uppercase', letterSpacing: '2px' }}>Marge brute glissante · Aujourd'hui</p>
                 {/* Sparkline */}
                 <svg width={200} height={48} style={{ marginTop: 12 }}>
@@ -819,7 +854,8 @@ export default function WorldClassProduction() {
                     strokeLinejoin="round"
                     points="0,6 28,5 57,10 85,8 114,16 142,22 171,30 200,36"
                   />
-                  <circle cx={200} cy={36} r={4} fill="#F59E0B" style={{ animation: 'marge-pulse 2s infinite' }} />
+                  <circle cx={200} cy={36} r={4} fill="#F59E0B" />
+                  <circle cx={200} cy={36} r={4} fill="#F59E0B" style={{ animation: 'margePulseDot 2s infinite', transformOrigin: '200px 36px' }} />
                 </svg>
                 <style>{`@keyframes marge-pulse { 0%, 100% { r: 4; opacity: 1; } 50% { r: 5.6; opacity: 0.5; } }`}</style>
                 <p style={{ color: '#F59E0B', fontSize: 14, marginTop: 6, fontWeight: 600 }}>
@@ -834,8 +870,8 @@ export default function WorldClassProduction() {
                     3 batches B20 consécutifs ont réduit la marge. Recommandation: prioriser commande BC-2024-003 (B30, marge estimée 41%) pour rééquilibrer.
                   </p>
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
-                    <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 4, border: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.6)', boxShadow: '0 0 0 1px rgba(212,168,67,0.3)' }}>Confiance: 88%</span>
-                    <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 4, background: 'rgba(212,168,67,0.15)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)' }}>Généré par IA · Claude Opus</span>
+                    <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 4, border: '1px solid #D4A843', color: '#D4A843' }}>Confiance: 88%</span>
+                    <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 4, border: '1px solid #D4A843', color: '#D4A843', background: 'rgba(212,168,67,0.06)' }}>Généré par IA · Claude Opus</span>
                   </div>
                 </div>
               </div>
@@ -857,12 +893,12 @@ export default function WorldClassProduction() {
               <div className="flex justify-between items-center mb-4">
                 <div>
                   <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 4 }}>Production Horaire</p>
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 22, fontWeight: 400, color: T.gold }}>
+                  <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 32, fontWeight: 200, color: '#D4A843' }}>
                     {Math.round(kpis.totalVolume)} m³
                   </p>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <div className="animate-pulse" style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399' }} />
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399', animation: 'livePulseGreen 2s infinite' }} />
                   <span style={{ color: '#34d399', fontSize: 11, fontWeight: 500 }}>Live</span>
                 </div>
               </div>
@@ -926,7 +962,7 @@ export default function WorldClassProduction() {
                       <Pie data={productData} dataKey="volume" nameKey="name" innerRadius={60} outerRadius={90} animationBegin={200} animationDuration={800} label={false}>
                         {productData.map((p, i) => <Cell key={i} fill={p.color} />)}
                       </Pie>
-                      <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 22, fontWeight: 400, fill: '#fff' }}>{totalProductVolume}</text>
+                      <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 24, fontWeight: 200, fill: '#D4A843' }}>{totalProductVolume}</text>
                       <text x="50%" y="58%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 10, fill: 'rgba(255,255,255,0.35)' }}>m³ Total</text>
                       <Tooltip content={({ active, payload }) => {
                         if (!active || !payload?.length) return null;
@@ -1017,9 +1053,10 @@ export default function WorldClassProduction() {
                     padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500,
                     background: 'rgba(16,185,129,0.15)',
                     color: '#34d399',
+                    boxShadow: '0 0 10px rgba(34,197,94,0.25)',
                   }}>Excellent</span>
                 </div>
-                <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 48, fontWeight: 400, color: '#fff' }}>96.8%</p>
+                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 48, fontWeight: 200, color: '#D4A843' }}>96.8%</p>
               </div>
 
               <div style={{
@@ -1083,16 +1120,16 @@ export default function WorldClassProduction() {
           <div style={{
             background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
             border: `1px solid ${T.cardBorder}`,
-            borderTop: '2px solid #D4A843',
+            borderTop: '2px solid #F59E0B',
             borderLeft: '3px solid #D4A843',
             borderRadius: 12, padding: 20,
           }}>
             <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-              Malaxeur principal: prochain entretien dans <span style={{ color: '#fff', fontWeight: 600 }}>48h</span>. Usure courroie détectée à <span style={{ color: '#F59E0B', fontWeight: 600 }}>73%</span>. Tapis convoyeur #2: vibrations anormales (<span style={{ color: '#EF4444', fontWeight: 600 }}>+15% vs baseline</span>). Recommandation: planifier remplacement courroie avant lundi. Risque de panne non planifiée: <span style={{ color: '#fff', fontWeight: 600 }}>12%</span>.
+              Malaxeur principal: prochain entretien dans <span style={{ color: '#fff', fontWeight: 600 }}>48h</span>. Usure courroie détectée à <span style={{ color: '#F59E0B', fontWeight: 700 }}>73%</span>. Tapis convoyeur #2: vibrations anormales (<span style={{ color: '#F59E0B', fontWeight: 700 }}>+15% vs baseline</span>). Recommandation: planifier remplacement courroie avant lundi. Risque de panne non planifiée: <span style={{ color: '#F59E0B', fontWeight: 700 }}>12%</span>.
             </p>
             <div className="flex gap-2 mt-3">
-              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 88%</span>
-              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>Risque: Modéré</span>
+              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, border: '1px solid #D4A843', color: '#D4A843' }}>Confiance: 88%</span>
+              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.06)', color: '#F59E0B', border: '1px solid #F59E0B' }}>Risque Modéré</span>
             </div>
           </div>
         </section>
@@ -1114,11 +1151,11 @@ export default function WorldClassProduction() {
             borderRadius: 12, padding: 20,
           }}>
             <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-              Formule F-B30 marge <span style={{ color: '#34d399', fontWeight: 600 }}>+12%</span> vs F-B25 aujourd'hui grâce au prix gravette favorable. Recommandation: prioriser F-B30 pour les 3 prochains batches clients flexibles. Économie estimée: <span style={{ color: '#34d399', fontWeight: 600 }}>2 400 DH/jour</span>. Alerte prix ciment: hausse <span style={{ color: '#EF4444', fontWeight: 600 }}>+3%</span> prévue semaine prochaine — considérer pré-commande.
+              Formule F-B30 marge <span style={{ color: '#34d399', fontWeight: 600 }}>+12%</span> vs F-B25 aujourd'hui grâce au prix gravette favorable. Recommandation: prioriser F-B30 pour les 3 prochains batches clients flexibles. Économie estimée: <span style={{ color: '#D4A843', fontWeight: 700 }}>2 400 DH/jour</span>. Alerte prix ciment: hausse <span style={{ color: '#D4A843', fontWeight: 700 }}>+3%</span> prévue semaine prochaine — considérer pré-commande.
             </p>
             <div className="flex gap-2 mt-3">
-              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(16,185,129,0.12)', color: '#34d399' }}>Économie: 2 400 DH</span>
-              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 84%</span>
+              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843' }}>Économie: 2,400 DH</span>
+              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, border: '1px solid #D4A843', color: '#D4A843' }}>Confiance: 84%</span>
             </div>
           </div>
         </section>
