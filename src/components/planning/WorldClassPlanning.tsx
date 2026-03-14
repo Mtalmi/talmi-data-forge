@@ -1000,7 +1000,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
         </div>
 
         {/* Zone separator */}
-        <div style={{ height: 1, background: 'rgba(212, 168, 67, 0.2)', margin: '32px 0' }} />
+        <div style={{ height: 1, background: 'rgba(212, 168, 67, 0.15)', margin: '40px 0' }} />
 
         {/* ═══════════════════════════════════════════════════
             ZONE 3: INTELLIGENCE IA
@@ -1021,166 +1021,107 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
             }
           />
 
-          {/* Compact AI Agent Card Grid */}
+          {/* Single compact insight list */}
           {(() => {
-            const [expandedAgent, setExpandedAgent] = React.useState<string | null>(null);
+            const [expandedInsight, setExpandedInsight] = React.useState<string | null>(null);
 
-            const agents = [
+            const insights = [
               {
                 id: 'orchestration',
-                name: 'Orchestration Livraisons',
-                metric: 'Économie: 180 DH',
-                metricBg: 'rgba(16,185,129,0.12)',
-                metricColor: '#34d399',
-                content: (
-                  <div className="flex flex-col gap-4">
-                    <div className="flex items-start gap-3">
-                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
-                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                        Routes optimisées: <span style={{ color: '#fff', fontWeight: 600 }}>3 livraisons regroupées secteur Casa Nord</span> ce matin. Économie carburant estimée: <span style={{ color: '#34d399', fontWeight: 600 }}>180 DH</span>. Temps gagné: <span style={{ color: '#34d399', fontWeight: 600 }}>45 min</span>.
-                      </p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
-                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                        Toupie <span style={{ color: '#fff', fontWeight: 600 }}>TOU-03</span> en surcharge cette semaine (<span style={{ color: '#F59E0B', fontWeight: 600 }}>6 rotations/jour vs recommandé 5</span>). Recommandation: basculer 2 livraisons sur TOU-01 demain.
-                      </p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444' }} />
-                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                        Livraison <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-014 Saudi Readymix (50m³)</span>: volume élevé nécessite 2 rotations. Prévoir TOU-03 en backup si retard TOU-01.
-                      </p>
-                    </div>
-                    <div className="flex gap-2 mt-2">
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(16,185,129,0.12)', color: '#34d399' }}>Économie: 180 DH</span>
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>3 optimisations</span>
-                    </div>
-                  </div>
-                ),
+                dot: '#34d399',
+                summary: 'Orchestration: 3 livraisons regroupées Casa Nord — Économie 180 DH, 45 min gagné',
+                detail: 'Routes optimisées ce matin. Toupie TOU-03 en surcharge (6 rotations/jour vs recommandé 5). Recommandation: basculer 2 livraisons sur TOU-01 demain. BL-2602-014 Saudi Readymix (50m³): volume élevé nécessite 2 rotations, prévoir TOU-03 en backup.',
               },
               {
                 id: 'meteo',
-                name: 'Météo',
-                metric: 'Risque: Élevé samedi',
-                metricBg: 'rgba(239,68,68,0.12)',
-                metricColor: '#EF4444',
-                content: (
-                  <div>
-                    <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.8 }}>
-                      Prévisions 48h: <span style={{ color: '#fff', fontWeight: 600 }}>Samedi 14 mars</span> — température <span style={{ color: '#EF4444', fontWeight: 600 }}>38°C</span> prévue à 14h. Impact béton: temps de prise réduit de <span style={{ color: '#F59E0B', fontWeight: 600 }}>20%</span>, risque fissuration élevé. Recommandations: (1) Ajouter retardateur de prise aux formules B25/B30, (2) Planifier livraisons avant 11h, (3) Alerter 3 chantiers identifiés à risque. <span style={{ color: '#fff', fontWeight: 600 }}>Dimanche 15</span>: conditions normales, aucun ajustement nécessaire.
-                    </p>
-                    <div className="flex gap-2 mt-4">
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(239,68,68,0.12)', color: '#EF4444' }}>Risque: Élevé samedi</span>
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 92%</span>
-                    </div>
-                  </div>
-                ),
+                dot: '#EF4444',
+                summary: 'Météo: Samedi 14 — 38°C, risque fissuration. Retardateur requis sur B25/B30',
+                detail: 'Impact béton: temps de prise réduit de 20%, risque fissuration élevé. Recommandations: (1) Ajouter retardateur de prise aux formules B25/B30, (2) Planifier livraisons avant 11h, (3) Alerter 3 chantiers identifiés à risque. Dimanche 15: conditions normales.',
               },
               {
                 id: 'retards',
-                name: 'Prédiction Retards',
-                metric: '1 action requise',
-                metricBg: 'rgba(245,158,11,0.12)',
-                metricColor: '#F59E0B',
-                content: (
-                  <div className="flex flex-col gap-4">
-                    <div className="flex items-start gap-3">
-                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
-                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-014 Saudi Readymix</span>: probabilité retard <span style={{ color: '#F59E0B', fontWeight: 600 }}>35%</span> — distance 20km, trafic historique créneau 13h élevé, temps chargement F-B25. Recommandation: <span style={{ color: '#F59E0B', fontWeight: 600 }}>avancer départ de 15 min</span>.
-                      </p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
-                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-015 BTP Maroc</span>: probabilité retard <span style={{ color: '#34d399', fontWeight: 600 }}>8%</span> — client proche (4km), créneau 15h fluide. Aucune action requise.
-                      </p>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444' }} />
-                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-013 Constructions Modernes (80m³)</span>: 2 rotations nécessaires. Rotation 2 risque retard si Rotation 1 dépasse <span style={{ color: '#EF4444', fontWeight: 600 }}>45 min sur site</span>. Pré-alerter le chantier.
-                      </p>
-                    </div>
-                    <div className="flex gap-2 mt-2">
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>1 action requise</span>
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 89%</span>
-                    </div>
-                  </div>
-                ),
+                dot: '#F59E0B',
+                summary: 'Retards: BL-2602-014 Saudi Readymix probabilité retard 35% — avancer départ 15 min',
+                detail: 'Distance 20km, trafic historique créneau 13h élevé, temps chargement F-B25. BL-2602-015 BTP Maroc: probabilité retard 8%, client proche (4km), créneau fluide. BL-2602-013 Constructions Modernes (80m³): 2 rotations nécessaires, rotation 2 risque retard si rotation 1 dépasse 45 min.',
               },
               {
                 id: 'flotte',
-                name: 'Optimisation Flotte',
-                metric: 'Économie: 340 DH/sem',
-                metricBg: 'rgba(16,185,129,0.12)',
-                metricColor: '#34d399',
-                content: (
-                  <div>
-                    <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.8 }}>
-                      Analyse hebdomadaire flotte: <span style={{ color: '#fff', fontWeight: 600 }}>TOU-02 sous-utilisée</span> (3 rotations/jour vs capacité 5). <span style={{ color: '#F59E0B', fontWeight: 600 }}>TOU-01 en surutilisation</span> (5.2 rotations/jour moyenne). Recommandation: réaffecter livraison Alliances (Lundi 13h) de TOU-01 à TOU-02. Gain: <span style={{ color: '#34d399', fontWeight: 600 }}>2h disponibilité TOU-01</span> pour maintenance préventive courroie (alerte maintenance active). Coût carburant flotte cette semaine: <span style={{ color: '#fff', fontWeight: 600 }}>4,200 DH</span> (<span style={{ color: '#34d399', fontWeight: 600 }}>↘ -8% vs sem. dern.</span>).
-                    </p>
-                    <div className="flex gap-2 mt-4">
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(16,185,129,0.12)', color: '#34d399' }}>Économie flotte: 340 DH/sem</span>
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>Maintenance: 1 alerte</span>
-                    </div>
-                  </div>
-                ),
+                dot: '#34d399',
+                summary: 'Flotte: Coût carburant 4,200 DH (↘ -8%). TOU-02 sous-utilisée, réaffecter lundi',
+                detail: 'TOU-02 sous-utilisée (3 rotations/jour vs capacité 5). TOU-01 en surutilisation (5.2 rotations/jour). Recommandation: réaffecter livraison Alliances (Lundi 13h) de TOU-01 à TOU-02. Gain: 2h disponibilité TOU-01 pour maintenance préventive courroie.',
+              },
+              {
+                id: 'maintenance',
+                dot: '#F59E0B',
+                summary: 'Maintenance: Courroie malaxeur 73% usure — planifier remplacement avant lundi',
+                detail: 'Courroie malaxeur principal à 73% d\'usure. Si non remplacée, risque d\'arrêt non planifié estimé à 15% cette semaine. Pièce en stock (réf. CM-4502). Temps d\'intervention: 2h. Créneau recommandé: dimanche matin (aucune production planifiée).',
               },
             ];
 
             return (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {agents.map(agent => {
-                  const isExpanded = expandedAgent === agent.id;
-                  return (
-                    <div key={agent.id} style={{
-                      background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
-                      border: `1px solid ${T.cardBorder}`,
-                      borderTop: '2px solid #D4A843',
-                      borderRadius: 12,
-                      overflow: 'hidden',
-                      gridColumn: isExpanded ? '1 / -1' : undefined,
-                      transition: 'all 300ms ease',
-                    }}>
-                      <button
-                        onClick={() => setExpandedAgent(isExpanded ? null : agent.id)}
-                        style={{
-                          width: '100%', display: 'flex', flexDirection: 'column', gap: 8,
-                          padding: '16px 18px', background: 'transparent', border: 'none',
-                          cursor: 'pointer', textAlign: 'left',
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <span style={{ color: '#D4A843', fontSize: 12, animation: 'tbos-pulse 3s ease-in-out infinite' }}>✦</span>
-                            <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em' }}>{agent.name}</span>
-                          </div>
-                          {isExpanded ? <ChevronUp size={14} color={T.textSec} /> : <ChevronDown size={14} color={T.textSec} />}
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: agent.metricBg, color: agent.metricColor }}>{agent.metric}</span>
-                        </div>
-                        <span style={{ fontSize: 9, color: T.textDim, fontWeight: 500, letterSpacing: '0.05em' }}>Généré par IA · Claude Opus</span>
-                      </button>
-                      {isExpanded && (
-                        <div style={{ padding: '0 18px 18px 18px', borderTop: `1px solid ${T.cardBorder}` }}>
-                          <div style={{ paddingTop: 16 }}>
-                            {agent.content}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-                {/* Future agent placeholder */}
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.06) 0%, rgba(212, 168, 67, 0.01) 100%)',
+                border: `1px solid ${T.cardBorder}`,
+                borderTop: '2px solid #D4A843',
+                borderRadius: 12, overflow: 'hidden',
+              }}>
+                {/* IA branding bar */}
                 <div style={{
-                  border: `1px dashed rgba(212,168,67,0.2)`,
-                  borderRadius: 12, padding: '24px 18px',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '10px 18px',
+                  background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
+                  borderBottom: `1px solid ${T.cardBorder}`,
                 }}>
-                  <span style={{ color: T.textDim, fontSize: 11, fontWeight: 500 }}>+ Agent futur</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ color: '#D4A843', fontSize: 14, animation: 'tbos-pulse 3s ease-in-out infinite' }}>✦</span>
+                    <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em' }}>Résumé Agents IA</span>
+                  </div>
+                  <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>Généré par IA · Claude Opus</span>
+                </div>
+
+                {/* Insight rows */}
+                {insights.map((ins, i) => (
+                  <div key={ins.id}>
+                    <button
+                      onClick={() => setExpandedInsight(expandedInsight === ins.id ? null : ins.id)}
+                      style={{
+                        width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+                        padding: '12px 18px', background: 'transparent', border: 'none',
+                        borderTop: i > 0 ? `1px solid ${T.cardBorder}60` : 'none',
+                        cursor: 'pointer', textAlign: 'left',
+                        transition: 'background 150ms',
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212, 168, 67, 0.04)')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: ins.dot, flexShrink: 0 }} />
+                      <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, lineHeight: 1.5, flex: 1 }}>{ins.summary}</span>
+                      {expandedInsight === ins.id
+                        ? <ChevronUp size={14} color={T.textDim} style={{ flexShrink: 0 }} />
+                        : <ChevronDown size={14} color={T.textDim} style={{ flexShrink: 0 }} />
+                      }
+                    </button>
+                    {expandedInsight === ins.id && (
+                      <div style={{
+                        padding: '0 18px 14px 38px',
+                        borderTop: `1px solid ${T.cardBorder}40`,
+                      }}>
+                        <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 12, lineHeight: 1.7, paddingTop: 10 }}>{ins.detail}</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+                {/* Footer badges */}
+                <div style={{
+                  display: 'flex', gap: 8, padding: '10px 18px',
+                  borderTop: `1px solid ${T.cardBorder}`,
+                  background: `${T.cardBorder}20`,
+                }}>
+                  <span style={{ padding: '3px 8px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'rgba(16,185,129,0.12)', color: '#34d399' }}>2 optimisations actives</span>
+                  <span style={{ padding: '3px 8px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>2 actions requises</span>
+                  <span style={{ padding: '3px 8px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'rgba(239,68,68,0.12)', color: '#EF4444' }}>1 risque élevé</span>
+                  <span style={{ fontFamily: 'monospace', fontSize: 9, color: 'rgba(212, 168, 67, 0.6)', marginLeft: 'auto' }}>Dernière analyse: {new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
               </div>
             );
