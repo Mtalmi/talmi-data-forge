@@ -1378,9 +1378,9 @@ export default function Dashboard() {
                   <div className="flex-1 flex flex-col" style={{ transition: 'opacity 150ms ease', opacity: 1 }}>
                     {midPanelView === 'data' ? (
                       <>
-                        {/* Top row: Primary KPIs */}
-                        <div className="grid grid-cols-2 gap-3 mt-3">
-                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden cursor-pointer" onClick={() => setExpandedKpi(expandedKpi === 'produit' ? null : 'produit')}>
+                        {/* KPI Grid: 2x2, each card expands independently */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto', gap: '12px', marginTop: '12px', alignItems: 'start' }}>
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden cursor-pointer" style={{ minHeight: '140px' }} onClick={() => setExpandedKpi(expandedKpi === 'produit' ? null : 'produit')}>
                             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Produit</div>
                             <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '38px', color: 'white', lineHeight: 1.1 }}>{kpiProduit} <span className="text-sm text-muted-foreground/40">m³</span></div>
@@ -1394,7 +1394,7 @@ export default function Dashboard() {
                               </div>
                             </div>
                           </div>
-                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden cursor-pointer" onClick={() => setExpandedKpi(expandedKpi === 'rendement' ? null : 'rendement')}>
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden cursor-pointer" style={{ minHeight: '140px' }} onClick={() => setExpandedKpi(expandedKpi === 'rendement' ? null : 'rendement')}>
                             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Rendement</div>
                             <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '38px', color: '#D4A843', lineHeight: 1.1 }}>{kpiRendement}%</div>
@@ -1405,10 +1405,7 @@ export default function Dashboard() {
                               </div>
                             </div>
                           </div>
-                        </div>
-                        {/* Bottom row: Secondary KPIs */}
-                        <div className="grid grid-cols-2 gap-3 border-t border-white/[0.04] pt-3 mt-3 flex-1">
-                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden cursor-pointer" onClick={() => setExpandedKpi(expandedKpi === 'qualite' ? null : 'qualite')}>
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden cursor-pointer" style={{ minHeight: '140px' }} onClick={() => setExpandedKpi(expandedKpi === 'qualite' ? null : 'qualite')}>
                             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Qualité</div>
                             <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '38px', color: 'white', lineHeight: 1.1 }}>{kpiQualite}%</div>
@@ -1423,7 +1420,7 @@ export default function Dashboard() {
                               </div>
                             </div>
                           </div>
-                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden cursor-pointer" onClick={() => setExpandedKpi(expandedKpi === 'livraisons' ? null : 'livraisons')}>
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden cursor-pointer" style={{ minHeight: '140px' }} onClick={() => setExpandedKpi(expandedKpi === 'livraisons' ? null : 'livraisons')}>
                             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Livraisons</div>
                             <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '38px', color: '#D4A843', lineHeight: 1.1 }}>{kpiLivA}/{kpiLivB}</div>
