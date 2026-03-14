@@ -60,7 +60,7 @@ import { BulkConfirmAction } from '@/components/planning/BulkConfirmAction';
 import { DriverQuickContact } from '@/components/planning/DriverQuickContact';
 import { ETATracker } from '@/components/planning/ETATracker';
 import { SmartTruckAssignment } from '@/components/planning/SmartTruckAssignment';
-import { CommandCenterSection } from '@/components/planning/CommandCenterSection';
+import { DispatchTable } from '@/components/planning/DispatchTable';
 import { DeliveryRotationProgress } from '@/components/planning/DeliveryRotationProgress';
 import { SmartInvoiceDialog } from '@/components/planning/SmartInvoiceDialog';
 import { FleetPanel } from '@/components/planning/FleetPanel';
