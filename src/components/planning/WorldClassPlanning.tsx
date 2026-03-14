@@ -1246,27 +1246,27 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                 name="ORCHESTRATION LIVRAISONS"
                 content={
                   <div className="flex flex-col gap-4">
-                    <p style={{ color: '#fff', fontSize: 15, fontWeight: 700, lineHeight: 1.4 }}>3 livraisons regroupées Casa Nord — économie 180 DH et 45 min</p>
+                    <p style={{ color: '#fff', fontSize: 16, fontWeight: 600, lineHeight: 1.4 }}>3 livraisons regroupées Casa Nord — économie <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 600 }}>180 DH</span> et <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 600 }}>45 min</span></p>
                     <div className="flex items-start gap-3">
                       <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
                       <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.7 }}>
-                        Routes optimisées ce matin. Économie carburant estimée: <span style={{ color: '#34d399', fontWeight: 600 }}>180 DH</span>. Temps gagné: <span style={{ color: '#34d399', fontWeight: 600 }}>45 min</span>.
+                        Routes optimisées ce matin. Économie carburant estimée: <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 600 }}>180 DH</span>. Temps gagné: <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 600 }}>45 min</span>.
                       </p>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
                       <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.7 }}>
-                        Toupie <span style={{ color: '#fff', fontWeight: 600 }}>TOU-03</span> en surcharge cette semaine (<span style={{ color: '#F59E0B', fontWeight: 600 }}>6 rotations/jour vs recommandé 5</span>).
+                        Toupie <span style={{ color: '#fff', fontWeight: 600 }}>TOU-03</span> en surcharge cette semaine (<span style={{ color: '#F59E0B', fontWeight: 600 }}><span style={{ color: '#EF4444', fontWeight: 700 }}>6</span> rotations/jour vs recommandé <span style={{ color: '#22C55E', fontWeight: 700 }}>5</span></span>).
                       </p>
                     </div>
-                    <div style={{ background: 'rgba(212,168,67,0.05)', borderLeft: '3px solid #D4A843', padding: 12, borderRadius: '0 8px 8px 0', marginTop: 8 }}>
+                    <div style={{ background: 'rgba(212,168,67,0.04)', borderLeft: '3px solid #D4A843', padding: 12, borderRadius: '0 6px 6px 0', marginTop: 8 }}>
                       <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.6 }}>
                         <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation:</span> Basculer 2 livraisons de TOU-03 sur TOU-01 demain. Prévoir TOU-03 en backup pour BL-2602-014 Saudi Readymix (50m³).
                       </p>
                     </div>
                     <div className="flex gap-2 mt-2">
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(16,185,129,0.12)', color: '#34d399' }}>Économie: 180 DH</span>
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>3 optimisations</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843' }}>Économie: 180 DH</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 11, fontWeight: 500, background: 'rgba(34,197,94,0.06)', color: '#22C55E', border: '1px solid #22C55E' }}>3 optimisations</span>
                     </div>
                   </div>
                 }
