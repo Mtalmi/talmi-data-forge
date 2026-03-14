@@ -1009,7 +1009,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                       <div key={d} style={{
                         padding: '10px 12px', textAlign: 'center',
                         background: `${T.cardBorder}40`, borderBottom: `1px solid ${T.cardBorder}`, borderLeft: `1px solid ${T.cardBorder}`,
-                        color: T.gold, fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em',
+                        color: T.gold, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '1px',
                       }}>{d}</div>
                     ))}
                   </div>
