@@ -499,6 +499,198 @@ function TrendTooltip({ active, payload, label }: any) {
   );
 }
 
+// ── PRICE TRACKER ──
+const PRICE_DATA = [
+  { name: 'Ciment', price: '450 DH/t', trend: +8, sparkline: [410, 415, 420, 430, 440, 450] },
+  { name: 'Sable', price: '120 DH/m³', trend: -3, sparkline: [130, 128, 125, 122, 121, 120] },
+  { name: 'Gravette', price: '95 DH/m³', trend: 0, sparkline: [94, 95, 95, 96, 95, 95] },
+  { name: 'Adjuvant', price: '85 DH/L', trend: +12, sparkline: [72, 74, 76, 79, 82, 85] },
+  { name: 'Eau', price: '8 DH/m³', trend: +1, sparkline: [8, 8, 8, 8, 8, 8] },
+];
+
+function PriceTracker() {
+  return (
+    <section>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+        <span style={{ fontFamily: MONO, letterSpacing: '2px', fontSize: 12, color: '#D4A843', fontWeight: 600 }}>
+          ✦ TRACKER DE PRIX MATIÈRES
+        </span>
+        <div style={{ flex: 1, height: 0, borderTop: '1px dashed rgba(212,168,67,0.3)' }} />
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 14 }}>
+        {PRICE_DATA.map(mat => {
+          const borderColor = mat.trend > 0 ? (mat.trend > 5 ? '#EF4444' : '#22C55E') : mat.trend < 0 ? '#EF4444' : '#D4A843';
+          const trendColor = mat.trend > 0 ? (mat.trend > 5 ? '#EF4444' : '#22C55E') : mat.trend < 0 ? '#EF4444' : '#9CA3AF';
+          const trendLabel = mat.trend > 0 ? `↗ +${mat.trend}%` : mat.trend < 0 ? `↘ ${mat.trend}%` : '→ 0%';
+          const sparkMax = Math.max(...mat.sparkline, 1);
+          const sparkMin = Math.min(...mat.sparkline);
+          const range = sparkMax - sparkMin || 1;
+          const pts = mat.sparkline.map((v, i) => `${(i / 5) * 90 + 5},${38 - ((v - sparkMin) / range) * 32}`).join(' ');
+          const sparkColor = mat.trend > 5 ? '#EF4444' : mat.trend < 0 ? '#EF4444' : '#D4A843';
+
+          return (
+            <div key={mat.name} style={{
+              background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+              border: '1px solid rgba(245,158,11,0.15)',
+              borderTop: `2px solid ${borderColor}`,
+              borderRadius: 10, padding: 14,
+              transition: 'all 250ms',
+              cursor: 'default',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.03)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(to bottom right, #1a1f2e, #141824)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            >
+              <p style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF', fontWeight: 500, marginBottom: 6 }}>{mat.name}</p>
+              <p style={{ fontFamily: MONO, fontSize: 20, fontWeight: 600, color: '#D4A843', marginBottom: 8 }}>{mat.price}</p>
+              <svg width="100%" height={40} viewBox="0 0 100 40" preserveAspectRatio="none" style={{ marginBottom: 8 }}>
+                <polyline points={pts} fill="none" stroke={sparkColor} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span style={{
+                fontFamily: MONO, fontSize: 11, fontWeight: 600, color: trendColor,
+                padding: '2px 8px', borderRadius: 4,
+                background: `${trendColor}15`,
+              }}>
+                {trendLabel}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+// ── COST SIMULATOR ──
+function CostSimulator() {
+  const [sliderValue, setSliderValue] = useState(6);
+
+  const formulas = [
+    { name: 'F-B20', baseMargin: 39 },
+    { name: 'F-B25', baseMargin: 37 },
+    { name: 'F-B30', baseMargin: 35 },
+  ];
+
+  return (
+    <section>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+        <span style={{ fontFamily: MONO, letterSpacing: '2px', fontSize: 12, color: '#D4A843', fontWeight: 600 }}>
+          ✦ SIMULATEUR D'IMPACT COÛT
+        </span>
+        <div style={{ flex: 1, height: 0, borderTop: '1px dashed rgba(212,168,67,0.3)' }} />
+        <span style={{
+          fontFamily: MONO, fontSize: 10, color: '#D4A843',
+          padding: '3px 10px', borderRadius: 999,
+          border: '1px solid rgba(212,168,67,0.3)', background: 'transparent',
+        }}>
+          Interactif
+        </span>
+      </div>
+
+      <div style={{
+        background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+        border: '1px solid rgba(245,158,11,0.15)',
+        borderTop: '2px solid #D4A843',
+        borderRadius: 12, padding: 24,
+      }}>
+        {/* Slider row */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 28 }}>
+          <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF', whiteSpace: 'nowrap' }}>
+            Si le prix du ciment varie de
+          </span>
+          <div style={{ flex: 1, position: 'relative' }}>
+            <input
+              type="range" min={-20} max={20} value={sliderValue}
+              onChange={e => setSliderValue(Number(e.target.value))}
+              style={{
+                width: '100%', height: 6, appearance: 'none', WebkitAppearance: 'none',
+                background: `linear-gradient(to right, rgba(212,168,67,0.2) 0%, rgba(212,168,67,0.4) 50%, rgba(212,168,67,0.2) 100%)`,
+                borderRadius: 3, outline: 'none', cursor: 'pointer',
+              }}
+            />
+            <style>{`
+              input[type=range]::-webkit-slider-thumb {
+                -webkit-appearance: none; appearance: none;
+                width: 18px; height: 18px; border-radius: 50%;
+                background: #D4A843; border: 2px solid #0F1629;
+                box-shadow: 0 0 8px rgba(212,168,67,0.4);
+                cursor: pointer;
+              }
+              input[type=range]::-moz-range-thumb {
+                width: 18px; height: 18px; border-radius: 50%;
+                background: #D4A843; border: 2px solid #0F1629;
+                box-shadow: 0 0 8px rgba(212,168,67,0.4);
+                cursor: pointer;
+              }
+            `}</style>
+          </div>
+          <span style={{
+            fontFamily: MONO, fontSize: 28, fontWeight: 200, minWidth: 70, textAlign: 'right',
+            color: sliderValue > 0 ? '#F59E0B' : sliderValue < 0 ? '#22C55E' : '#D4A843',
+          }}>
+            {sliderValue > 0 ? '+' : ''}{sliderValue}%
+          </span>
+        </div>
+
+        {/* Impact cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}>
+          {formulas.map(f => {
+            const impact = sliderValue * 0.35; // rough ciment cost weight
+            const newMargin = parseFloat((f.baseMargin - impact).toFixed(1));
+            const delta = parseFloat((newMargin - f.baseMargin).toFixed(1));
+            const deltaColor = delta >= 0 ? '#22C55E' : '#EF4444';
+            const newColor = newMargin >= f.baseMargin ? '#22C55E' : newMargin >= 30 ? '#F59E0B' : '#EF4444';
+
+            return (
+              <div key={f.name} style={{
+                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+                borderRadius: 10, padding: 16,
+              }}>
+                <p style={{ fontFamily: MONO, fontSize: 14, fontWeight: 600, color: '#fff', marginBottom: 12 }}>{f.name}</p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <span style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF' }}>Marge actuelle</span>
+                  <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 600, color: '#22C55E' }}>{f.baseMargin}%</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                  <span style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF' }}>Nouvelle marge</span>
+                  <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 600, color: newColor, transition: 'color 300ms' }}>{newMargin}%</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: deltaColor, transition: 'color 300ms' }}>
+                    {delta >= 0 ? '↑' : '↓'} Δ {delta > 0 ? '+' : ''}{delta} pts
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Recommendation box */}
+        <div style={{
+          borderLeft: '3px solid #D4A843',
+          padding: '12px 16px',
+          background: 'rgba(212,168,67,0.04)',
+          borderRadius: '0 8px 8px 0',
+          marginBottom: 16,
+        }}>
+          <p style={{ fontFamily: MONO, fontSize: 13, color: '#9CA3AF', lineHeight: 1.7 }}>
+            <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation :</span>{' '}
+            Si hausse &gt;10% sur ciment, ajuster prix F-B25 de <span style={{ color: '#D4A843', fontWeight: 600 }}>+4%</span> et F-B30 de <span style={{ color: '#D4A843', fontWeight: 600 }}>+6%</span> pour maintenir marges &gt;30%.
+            Impact estimé : <span style={{ color: '#22C55E', fontWeight: 600 }}>+12,500 MAD/mois</span> de marge récupérée.
+          </p>
+        </div>
+
+        <span style={{
+          fontFamily: MONO, fontSize: 10, color: '#D4A843',
+          background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)',
+          padding: '4px 10px', borderRadius: 999,
+        }}>
+          Généré par IA · Claude Opus
+        </span>
+      </div>
+    </section>
+  );
+}
+
 // Fallback data when no DB recs
 const FALLBACK_RECS = [
   { id: 'f1', materiau: 'Adjuvant', recommended_qty: 500, urgency: 'CRITIQUE', fournisseur: 'Sika Maroc', unite: 'L', days_remaining: 1.5, created_at: '' },
