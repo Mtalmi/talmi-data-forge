@@ -21,12 +21,27 @@ interface FluxCommercialWidgetProps {
 
 function StageCount({ value, dimmed }: { value: number; dimmed?: boolean }) {
   const animated = useCountUp(value, 1200);
+  // Show "—" instead of 0 for credibility
+  if (value === 0) {
+    return (
+      <span style={{
+        fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
+        fontSize: 36,
+        fontWeight: 200,
+        color: '#4A5568',
+        lineHeight: 1,
+        letterSpacing: '-0.03em',
+      }}>
+        —
+      </span>
+    );
+  }
   return (
     <span style={{
-      fontFamily: "'JetBrains Mono', monospace",
-      fontSize: '2.5rem',
+      fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
+      fontSize: 36,
       fontWeight: 200,
-      color: dimmed ? 'rgba(255,255,255,0.2)' : 'white',
+      color: '#D4A843',
       lineHeight: 1,
       letterSpacing: '-0.03em',
     }}>
@@ -181,9 +196,7 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
         padding: '24px 16px',
         background: 'rgba(255,255,255,0.02)',
         border: '1px solid rgba(255,255,255,0.08)',
-        borderTop: '2px solid transparent',
-        borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
-        borderImageSlice: '1 1 0 1',
+        borderTop: '2px solid #D4A843',
         borderRadius: 16,
         overflow: 'hidden',
       }}>

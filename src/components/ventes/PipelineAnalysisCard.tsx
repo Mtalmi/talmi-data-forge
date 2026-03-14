@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { ChevronDown, ChevronUp, Sparkles, Clock, Users, TrendingUp } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { differenceInDays, startOfMonth, subMonths, format } from 'date-fns';
+import { differenceInDays, startOfMonth, subMonths } from 'date-fns';
 
 const T = {
   gold: '#D4A843',
@@ -43,7 +43,6 @@ export function PipelineAnalysisCard() {
       });
   }, [open]);
 
-  // 1. Devis en retard: en_attente + older than 14 days
   const overdueDevis = useMemo(() => {
     const now = new Date();
     return devisData
@@ -57,7 +56,6 @@ export function PipelineAnalysisCard() {
       .slice(0, 5);
   }, [devisData]);
 
-  // 2. Top client pipeline
   const topClient = useMemo(() => {
     const map = new Map<string, { name: string; total: number }>();
     devisData.forEach(d => {
@@ -72,7 +70,6 @@ export function PipelineAnalysisCard() {
     return best;
   }, [devisData]);
 
-  // 3. Tendance du mois
   const trend = useMemo(() => {
     const now = new Date();
     const thisMonthStart = startOfMonth(now);
@@ -91,9 +88,7 @@ export function PipelineAnalysisCard() {
       background: GLASS.bg,
       border: `1px solid ${GLASS.border}`,
       borderRadius: GLASS.radius,
-      borderTop: '2px solid transparent',
-      borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
-      borderImageSlice: '1 1 0 1',
+      borderTop: '2px solid #D4A843',
       padding: open ? 20 : '14px 20px',
       position: 'relative',
       overflow: 'hidden',
@@ -101,7 +96,7 @@ export function PipelineAnalysisCard() {
       animation: 'gold-shimmer-border 4s ease-in-out infinite',
       transition: 'padding 200ms ease',
     }}>
-      {/* Header — always visible */}
+      {/* Header */}
       <button
         onClick={() => setOpen(p => !p)}
         style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}
@@ -120,22 +115,20 @@ export function PipelineAnalysisCard() {
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: 5,
           padding: '3px 10px', borderRadius: 20,
-          background: 'rgba(212,168,67,0.08)',
-          border: '1px solid rgba(212,168,67,0.25)',
+          background: 'rgba(212,168,67,0.06)',
+          border: '1px solid #D4A843',
         }}>
           <span style={{ fontSize: 9, fontWeight: 600, color: T.gold, letterSpacing: '0.05em' }}>Généré par IA · Claude Opus</span>
         </div>
         {open ? <ChevronUp size={16} color={T.gold} /> : <ChevronDown size={16} color={T.gold} />}
       </button>
 
-      {/* Collapsible body */}
       {open && (
         <div style={{ marginTop: 18 }}>
           {loading ? (
             <div style={{ textAlign: 'center', padding: 24, color: T.textDim, fontSize: 12 }}>Analyse en cours...</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Devis en retard */}
               <div style={{ background: `${T.cardBorder}40`, borderRadius: 10, padding: '14px 16px', border: `1px solid ${T.cardBorder}` }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
                   <Clock size={13} color={T.danger} />
@@ -155,7 +148,6 @@ export function PipelineAnalysisCard() {
                 )}
               </div>
 
-              {/* Top client pipeline */}
               <div style={{ background: `${T.cardBorder}40`, borderRadius: 10, padding: '14px 16px', border: `1px solid ${T.cardBorder}` }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
                   <Users size={13} color={T.gold} />
@@ -176,7 +168,6 @@ export function PipelineAnalysisCard() {
                 )}
               </div>
 
-              {/* Tendance du mois */}
               <div style={{ background: `${T.cardBorder}40`, borderRadius: 10, padding: '14px 16px', border: `1px solid ${T.cardBorder}` }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
                   <TrendingUp size={13} color={trend.diff >= 0 ? T.success : T.danger} />

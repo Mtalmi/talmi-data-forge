@@ -427,7 +427,7 @@ export function DevisTable({
               <TableRow 
                 key={devis.id}
                 className={cn(
-                  "hover:bg-white/[0.03] transition-colors duration-150 cursor-pointer border-b border-white/5",
+                  "transition-all duration-200 cursor-pointer border-b border-white/5",
                   getExpirationInfo && getExpirationInfo(devis).isExpired && "opacity-60 bg-muted/30",
                   isSelected && "bg-primary/5"
                 )}
@@ -435,6 +435,8 @@ export function DevisTable({
                   borderLeft: devis.niveau_score === 'Élevé' ? '2px solid #D4A843' : '2px solid transparent',
                   boxShadow: devis.niveau_score === 'Élevé' ? 'inset 2px 0 12px rgba(212,168,67,0.12)' : undefined,
                 }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.03)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                 onClick={() => onRowClick?.(devis)}
               >
                 <TableCell onClick={(e) => e.stopPropagation()}>
@@ -444,7 +446,7 @@ export function DevisTable({
                     aria-label={`Sélectionner ${devis.devis_id}`}
                   />
                 </TableCell>
-                <TableCell className="font-mono font-medium" style={{ color: 'rgba(255,255,255,0.9)' }}>{devis.devis_id}</TableCell>
+                <TableCell style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontWeight: 500 }}>{devis.devis_id}</TableCell>
                 <TableCell style={{ color: 'rgba(255,255,255,0.9)' }}>
                   {devis.client ? (
                     <ClientHoverPreview clientId={devis.client_id || ''} clientName={devis.client.nom_client} />
@@ -456,7 +458,7 @@ export function DevisTable({
                   <span className="text-xs font-mono">{devis.formule_id}</span>
                 </TableCell>
                 <TableCell className="text-right font-mono" style={{ color: 'rgba(255,255,255,0.9)' }}>{devis.volume_m3}</TableCell>
-                <TableCell className="text-right font-mono font-semibold" style={{ color: 'rgba(255,255,255,0.9)' }}>
+                <TableCell className="text-right" style={{ color: 'rgba(255,255,255,0.9)', fontFamily: 'ui-monospace, monospace', fontWeight: 300 }}>
                   {Number(devis.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </TableCell>
                 <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
@@ -537,9 +539,8 @@ export function DevisTable({
                       background: 'rgba(255,255,255,0.05)',
                       fontSize: '11px',
                       fontFamily: 'ui-monospace',
-                      fontWeight: 200
                     }}>
-                      {devis.score_ia} {devis.niveau_score}
+                      <span style={{ fontWeight: 700 }}>{devis.score_ia}</span> {devis.niveau_score}
                     </span>
                   ) : <span style={{color: 'rgba(255,255,255,0.3)'}}>—</span>}
                 </TableCell>
@@ -551,15 +552,15 @@ export function DevisTable({
                       return <span style={{ fontSize: 10, color: '#64748B' }}>—</span>;
                     }
                     const numVal = parseInt(prob);
-                    const color = numVal >= 70 ? '#10B981' : numVal >= 40 ? '#F59E0B' : '#EF4444';
-                    const bg = numVal >= 70 ? 'rgba(16,185,129,0.12)' : numVal >= 40 ? 'rgba(245,158,11,0.12)' : 'rgba(239,68,68,0.12)';
-                    const border = numVal >= 70 ? 'rgba(16,185,129,0.25)' : numVal >= 40 ? 'rgba(245,158,11,0.25)' : 'rgba(239,68,68,0.25)';
+                    const color = numVal >= 70 ? '#22C55E' : numVal >= 40 ? '#F59E0B' : '#EF4444';
+                    const bg = numVal >= 70 ? 'rgba(34,197,94,0.12)' : numVal >= 40 ? 'rgba(245,158,11,0.12)' : 'rgba(239,68,68,0.12)';
+                    const border = numVal >= 70 ? 'rgba(34,197,94,0.25)' : numVal >= 40 ? 'rgba(245,158,11,0.25)' : 'rgba(239,68,68,0.25)';
                     return (
                       <span style={{
                         display: 'inline-flex', alignItems: 'center', gap: 4,
                         padding: '3px 10px', borderRadius: 6, fontSize: 11, fontWeight: 700,
                         background: bg, border: `1px solid ${border}`, color,
-                        fontFamily: 'JetBrains Mono, monospace',
+                        fontFamily: 'ui-monospace, monospace',
                       }}>
                         {prob}
                       </span>

@@ -56,7 +56,7 @@ function StatChip({ value, label, color, subtext }: { value: number; label: stri
       background: 'rgba(255,255,255,0.02)',
       border: '1px solid rgba(255,255,255,0.08)',
     }}>
-      <p style={{ fontSize: '1.25rem', fontWeight: 200, fontFamily: 'JetBrains Mono, monospace', color }}>
+      <p style={{ fontSize: 28, fontWeight: 200, fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", color }}>
         {animated >= 1000 ? `${(animated / 1000).toFixed(1)}K` : animated}
       </p>
       <p style={{ fontSize: 10, color: 'rgba(148,163,184,0.4)', fontWeight: 500, textTransform: 'uppercase' as const, letterSpacing: '0.1em', marginTop: 4 }}>{label}</p>
@@ -64,7 +64,7 @@ function StatChip({ value, label, color, subtext }: { value: number; label: stri
         <p style={{ fontSize: 14, color, opacity: 0.4, marginTop: 2 }}>—</p>
       )}
       {subtext && (
-        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{subtext}</p>
+        <p style={{ fontSize: 10, color: '#D4A843', fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", marginTop: 2 }}>{subtext}</p>
       )}
     </div>
   );
@@ -176,14 +176,14 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
                       <Cell key={i} fill={PRODUCT_COLORS[i % PRODUCT_COLORS.length]} stroke="transparent" />
                     ))}
                   </Pie>
-                  <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle"
-                    fill="white" style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 200, fontSize: 14 }}>
+                  <text x="50%" y="48%" textAnchor="middle" dominantBaseline="middle"
+                    fill="#D4A843" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200, fontSize: 24 }}>
                     {totalProductRevenue >= 1000
                       ? `${(totalProductRevenue / 1000).toFixed(0)}K`
                       : totalProductRevenue.toFixed(0)}
                   </text>
-                  <text x="50%" y="50%" dy={14} textAnchor="middle" dominantBaseline="middle"
-                    fill="rgba(148,163,184,0.4)" style={{ fontSize: 8 }}>
+                  <text x="50%" y="48%" dy={18} textAnchor="middle" dominantBaseline="middle"
+                    fill="#9CA3AF" style={{ fontSize: 9, fontFamily: "ui-monospace, monospace" }}>
                     DH Total
                   </text>
                   <Tooltip content={<GoldTooltip />} />
@@ -303,7 +303,7 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
           <StatChip 
             value={winLossData.pending} 
             label={vt.inProgress} 
-            color={GOLD} 
+            color="#D4A843" 
             subtext={winLossData.pendingValueHT > 0 ? `${winLossData.pendingValueHT >= 1000 ? `${(winLossData.pendingValueHT / 1000).toFixed(0)}K` : winLossData.pendingValueHT} DH` : undefined}
           />
         </div>
@@ -334,10 +334,12 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
             </ResponsiveContainer>
           </div>
         ) : (
-          <div style={{ width: 140, height: 140, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            <CheckCircle2 style={{ width: 32, height: 32, color: 'rgba(148,163,184,0.2)' }} />
-            <p style={{ fontSize: 12, color: 'rgba(148,163,184,0.4)', textAlign: 'center' }}>Aucun devis enregistré</p>
-          </div>
+            <div style={{ width: 140, height: 140, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <svg width="80" height="80" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(212,168,67,0.15)" strokeWidth="8" />
+              </svg>
+              <p style={{ fontSize: 12, color: 'rgba(148,163,184,0.4)', textAlign: 'center' }}>Aucun deal finalisé</p>
+            </div>
         )}
 
         {/* Win rate bar */}
