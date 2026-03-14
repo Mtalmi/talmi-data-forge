@@ -1429,7 +1429,7 @@ export default function WorldClassDeliveries() {
 
             {/* 3e. PIPELINE */}
             <section>
-              <SectionHeader icon={Truck} label="Pipeline de Livraison" />
+              <SectionHeader icon={Truck} label="✦ Pipeline de Livraison" />
               <div style={{ display: 'flex', gap: 16, alignItems: 'stretch' }}>
                 {pipeline.map((stage, i) => (
                   <div key={stage.label} style={{ display: 'flex', alignItems: 'center', flex: 1, gap: 12 }}>
