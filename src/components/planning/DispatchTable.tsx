@@ -347,5 +347,117 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
       </>
       )}
     </div>
+
+    {/* Impact Cascade Modal */}
+    {impactModalOpen && (
+      <div
+        onClick={() => setImpactModalOpen(false)}
+        style={{
+          position: 'fixed', inset: 0, zIndex: 9999,
+          background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}
+      >
+        <div
+          onClick={e => e.stopPropagation()}
+          style={{
+            width: 600, background: '#0F1629',
+            border: '1px solid rgba(212,168,67,0.3)',
+            borderRadius: 12, overflow: 'hidden',
+          }}
+        >
+          {/* Header */}
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '18px 24px',
+            borderBottom: '1px solid rgba(212,168,67,0.15)',
+            background: 'linear-gradient(135deg, rgba(212,168,67,0.08), rgba(212,168,67,0.02))',
+          }}>
+            <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 15 }}>⚡ Impact Cascade — BL-2602-013</span>
+            <button onClick={() => setImpactModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748B', padding: 4 }}>
+              <X size={18} />
+            </button>
+          </div>
+
+          {/* Cascade Steps */}
+          <div style={{ padding: '24px 28px' }}>
+            {[
+              { dot: '#EF4444', text: 'BL-2602-013 retard estimé +25 min' },
+              { dot: '#F59E0B', text: 'TOU-01 rotation 2 décalée → départ 13:15 au lieu de 12:50' },
+              { dot: '#EF4444', text: 'BL-2602-014 Saudi Readymix ETA 14:05 (promesse: 13:30) → retard +35 min' },
+              { dot: '#F59E0B', text: 'Satisfaction Saudi Readymix: ★4.8 → estimation ★4.3' },
+            ].map((step, idx) => (
+              <div key={idx}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: 16 }}>
+                    <div style={{
+                      width: 12, height: 12, borderRadius: '50%', background: step.dot,
+                      boxShadow: `0 0 8px ${step.dot}40`, flexShrink: 0,
+                    }} />
+                  </div>
+                  <p style={{ color: '#F1F5F9', fontSize: 13, fontWeight: 500, lineHeight: 1.5, paddingTop: 0 }}>{step.text}</p>
+                </div>
+                {idx < 3 && (
+                  <div style={{ display: 'flex', justifyContent: 'flex-start', paddingLeft: 7 }}>
+                    <div style={{ width: 2, height: 28, background: 'linear-gradient(to bottom, #D4A843, rgba(212,168,67,0.3))' }} />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Recommendation Box */}
+          <div style={{ padding: '0 28px 20px' }}>
+            <div style={{
+              background: 'rgba(212,168,67,0.05)',
+              borderLeft: '3px solid #D4A843',
+              borderRadius: '0 8px 8px 0',
+              padding: 16,
+            }}>
+              <p style={{ color: '#F1F5F9', fontSize: 13, lineHeight: 1.6, marginBottom: 10 }}>
+                <span style={{ color: '#D4A843', fontWeight: 700 }}>Recommandation IA:</span>{' '}
+                Réaffecter BL-2602-014 à TOU-02 (disponible 13:00). Retard éliminé. Coût supplémentaire: 45 DH carburant.
+              </p>
+              <span style={{
+                padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 600,
+                background: 'rgba(212,168,67,0.12)', color: '#D4A843',
+                border: '1px solid rgba(212,168,67,0.25)',
+              }}>
+                Généré par IA · Claude Opus
+              </span>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div style={{
+            display: 'flex', justifyContent: 'flex-end', gap: 10,
+            padding: '16px 28px',
+            borderTop: '1px solid rgba(212,168,67,0.15)',
+          }}>
+            <button
+              onClick={() => setImpactModalOpen(false)}
+              style={{
+                padding: '8px 20px', borderRadius: 8, fontSize: 13, fontWeight: 600,
+                background: 'transparent', border: '1px solid #D4A843', color: '#D4A843',
+                cursor: 'pointer',
+              }}
+            >
+              Fermer
+            </button>
+            <button
+              onClick={() => { toast.success('Recommandation appliquée — BL-2602-014 réaffecté à TOU-02'); setImpactModalOpen(false); }}
+              style={{
+                padding: '8px 20px', borderRadius: 8, fontSize: 13, fontWeight: 600,
+                background: '#D4A843', border: '1px solid #D4A843', color: '#0F1629',
+                cursor: 'pointer',
+              }}
+            >
+              Appliquer Recommandation
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }
