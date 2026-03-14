@@ -750,6 +750,7 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
         @keyframes heroCountUp { from{opacity:0;transform:scale(0.8)} to{opacity:1;transform:scale(1)} }
         @keyframes pulseDot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:0.5} }
         @keyframes sparkPulse { 0%,100%{r:3;opacity:1} 50%{r:5;opacity:0.6} }
+        @keyframes survPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:0.4} }
         .kpi-shimmer { position:relative; border-radius:10px; padding:1px; background:linear-gradient(90deg, transparent 0%, rgba(212,168,67,0.4) 50%, transparent 100%); background-size:200% 100%; animation:kpiShimmer 3s linear infinite; }
         .kpi-shimmer > * { border-radius:9px; }
       `}</style>
