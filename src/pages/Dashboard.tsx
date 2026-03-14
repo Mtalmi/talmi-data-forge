@@ -1058,7 +1058,7 @@ export default function Dashboard() {
           </div>
 
           {/* (3) 4 KPI Cards Row */}
-          <div className="tbos-kpi-grid grid grid-cols-4 gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch', animation: 'ccSectionIn 300ms ease-out 200ms both' }}>
+          <div className="tbos-kpi-grid grid grid-cols-5 gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch', animation: 'ccSectionIn 300ms ease-out 200ms both' }}>
           {[
             {
               label: 'VOLUME',
@@ -1235,6 +1235,92 @@ export default function Dashboard() {
               </div>
             </TiltCard>
           ); })}
+
+          {/* 5th card: LIVE P&L */}
+          {(() => {
+            const MONO = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
+            const waterfall = [
+              { label: 'Revenu', amount: 75600, color: '#D4A843', pct: 100 },
+              { label: 'Matières', amount: -37800, color: '#EF4444', pct: 50 },
+              { label: 'Logistique', amount: -5200, color: '#EF4444', pct: 6.9 },
+              { label: 'Personnel', amount: -8400, color: '#EF4444', pct: 11.1 },
+              { label: 'Net', amount: 24200, color: '#22C55E', pct: 32 },
+            ];
+            const plSparkline = '0,38 15,34 30,30 45,28 60,22 75,18 90,14 105,10 120,8';
+            return (
+              <TiltCard
+                className="tbos-hero-card group cursor-pointer shimmer-effect h-full flex flex-col min-w-0 relative overflow-hidden hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 ease-out"
+                style={{
+                  background: 'rgba(255,255,255,0.02)',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                  borderRadius: 12,
+                  padding: '14px 16px 12px',
+                  borderTop: '2px solid #D4A843',
+                }}
+              >
+                <div className="flex flex-col h-full justify-between gap-2">
+                  {/* Label + LIVE badge */}
+                  <div className="flex items-center justify-between">
+                    <span style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '1.5px', color: '#9CA3AF', fontWeight: 600 }}>
+                      PROFIT NET AUJOURD'HUI
+                    </span>
+                    <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full" style={{ background: 'rgba(34, 197, 94, 0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/50" />
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+                      </span>
+                      <span style={{ fontFamily: MONO, fontSize: 9, fontWeight: 600, color: '#22C55E', letterSpacing: '0.5px' }}>LIVE</span>
+                    </span>
+                  </div>
+
+                  {/* Large value */}
+                  <div className="flex items-baseline gap-1.5">
+                    <span style={{
+                      fontFamily: MONO, fontWeight: 100, fontSize: 36, color: '#22C55E',
+                      lineHeight: 1, letterSpacing: '-0.02em',
+                      textShadow: '0 0 20px rgba(34,197,94,0.15)',
+                    }}>
+                      24,200
+                    </span>
+                    <span style={{ fontFamily: MONO, fontWeight: 300, fontSize: 18, color: '#9CA3AF' }}>DH</span>
+                  </div>
+                  <span style={{ fontFamily: MONO, fontSize: 11, color: '#22C55E', fontWeight: 600 }}>↗ +8% vs hier</span>
+
+                  {/* Mini waterfall */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 3, marginTop: 4 }}>
+                    {waterfall.map((row) => (
+                      <div key={row.label} className="flex items-center gap-2" style={{ height: 7 }}>
+                        <span style={{ fontFamily: MONO, fontSize: 9, color: '#9CA3AF', width: 52, textAlign: 'right', flexShrink: 0 }}>
+                          {row.label}
+                        </span>
+                        <div style={{ flex: 1, height: 5, background: 'rgba(255,255,255,0.04)', borderRadius: 2, overflow: 'hidden', position: 'relative' }}>
+                          <div style={{
+                            width: `${row.pct}%`,
+                            height: '100%',
+                            background: row.color,
+                            borderRadius: 2,
+                            opacity: 0.7,
+                            ...(row.amount < 0 ? { marginLeft: 'auto' } : {}),
+                          }} />
+                        </div>
+                        <span style={{ fontFamily: MONO, fontSize: 9, color: row.color, width: 55, textAlign: 'right', flexShrink: 0 }}>
+                          {row.amount > 0 ? '' : '−'}{Math.abs(row.amount).toLocaleString('fr-FR')}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Bottom: Marge + sparkline */}
+                  <div className="flex items-end justify-between mt-auto pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                    <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', fontWeight: 600 }}>Marge: 32%</span>
+                    <svg width="80" height="24" viewBox="0 0 120 40" preserveAspectRatio="none" style={{ opacity: 0.6 }}>
+                      <polyline fill="none" stroke="#22C55E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={plSparkline} />
+                    </svg>
+                  </div>
+                </div>
+              </TiltCard>
+            );
+          })()}
           </div>
 
           {/* (4) Intelligence IA section */}
