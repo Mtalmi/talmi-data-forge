@@ -756,7 +756,7 @@ export default function WorldClassProduction() {
             <span style={{ fontSize: 13, fontWeight: 600, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.1em' }}>MARGE TEMPS RÉEL</span>
             <div style={{ flex: 1, height: 1, background: 'linear-gradient(to right, rgba(212,168,67,0.4), transparent)' }} />
           </div>
-          <div className="ops-surface-card" style={{ borderTop: '2px solid #D4A843', borderRadius: 12, padding: 24, background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}>
+          <div className="ops-surface-card" style={{ borderTop: '2px solid #D4A843', borderRight: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)', borderLeft: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 24, background: 'rgba(15,23,41,0.8)', backdropFilter: 'blur(4px)' }}>
             <div style={{ display: 'flex', gap: 24 }}>
               {/* LEFT 60% */}
               <div style={{ flex: '0 0 60%' }}>
