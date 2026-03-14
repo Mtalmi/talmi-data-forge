@@ -687,9 +687,9 @@ export default function WorldClassProduction() {
             </div>
             <div style={{ padding: '0 16px 12px', display: 'flex', flexDirection: 'column', gap: 10 }}>
               <div style={{ display: 'flex', gap: 10 }}>
-                <button style={{ background: 'rgba(239,68,68,0.15)', color: '#EF4444', border: '1px solid #EF4444', padding: '6px 16px', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', transition: 'all 200ms', fontWeight: 500 }}>Arrêter Batch</button>
-                <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', padding: '6px 16px', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', transition: 'all 200ms', fontWeight: 500 }}>Ajuster Paramètres</button>
-                <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', padding: '6px 16px', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', transition: 'all 200ms', fontWeight: 500 }}>Notifier Lab</button>
+                <button style={{ background: '#EF4444', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>Arrêter Batch</button>
+                <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px' }}>Ajuster Paramètres</button>
+                <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px' }}>Notifier Lab</button>
               </div>
               <p style={{ color: '#9CA3AF', fontSize: 12, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace' }}>
                 14:32 — Alerte détectée · 14:33 — Lab notifié automatiquement · 14:35 — Doseur recalibré
