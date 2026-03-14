@@ -506,6 +506,17 @@ function DeliveryCard({ d, delay = 0, routeData, weatherIndex = 0 }: { d: typeof
               <span style={{ fontSize: 10, color: T.success, fontWeight: 600 }}>🚛 En route · ETA {new Date(Date.now() + 25 * 60000).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
             )}
           </div>
+          {(() => {
+            const ytdData: Record<string, string> = {
+              'Ciments du Maroc': '248,000 DH YTD · 14 livraisons',
+              'ONCF': '186,000 DH YTD · 8 livraisons',
+              'Addoha Group': '124,000 DH YTD · 7 livraisons',
+              'TGCC': '42,000 DH YTD · 3 livraisons',
+              'Alliances': '95,000 DH YTD · 6 livraisons',
+            };
+            const ytd = ytdData[d.client];
+            return ytd ? <p style={{ color: '#9CA3AF', fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', marginTop: 4 }}>{ytd}</p> : null;
+          })()}
         </div>
         <Badge label={d.status} color={d.statusColor} bg={`${d.statusColor}18`} pulse={isEnRoute} />
       </div>
