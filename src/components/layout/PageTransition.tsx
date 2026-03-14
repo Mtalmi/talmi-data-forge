@@ -8,30 +8,20 @@ interface PageTransitionProps {
 
 const pageVariants = {
   initial: {
-    opacity: 0,
-    y: 10,
-    scale: 0.995,
-    filter: 'blur(6px)',
+    opacity: 0.7,
   },
   enter: {
     opacity: 1,
-    y: 0,
-    scale: 1,
-    filter: 'blur(0px)',
     transition: {
-      duration: 0.5,
-      ease: [0.16, 1, 0.3, 1], // Expo out — Vercel-tier
-      staggerChildren: 0.04,
+      duration: 0.15,
+      ease: 'easeOut',
     },
   },
   exit: {
-    opacity: 0,
-    y: -6,
-    scale: 1.005,
-    filter: 'blur(4px)',
+    opacity: 0.7,
     transition: {
-      duration: 0.25,
-      ease: [0.4, 0, 1, 1],
+      duration: 0.1,
+      ease: 'easeIn',
     },
   },
 };
@@ -47,7 +37,7 @@ export function PageTransition({ children }: PageTransitionProps) {
         initial="initial"
         animate="enter"
         exit="exit"
-        style={{ willChange: 'transform, opacity, filter' }}
+        style={{ willChange: 'opacity' }}
       >
         {children}
       </motion.div>

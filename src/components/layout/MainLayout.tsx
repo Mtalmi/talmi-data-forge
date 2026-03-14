@@ -1,6 +1,7 @@
 import { ReactNode, useState, useEffect } from 'react';
 import { TopNavBar } from './TopNavBar';
 import { QuickActionFAB } from './QuickActionFAB';
+import { BackToTop } from './BackToTop';
 import { RolePreviewBanner } from './RolePreviewSwitcher';
 import { MobileBottomNav } from './MobileBottomNav';
 import { AppSidebar } from './AppSidebar';
@@ -64,10 +65,11 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
       />
 
       {/* Content Layer — offset by sidebar width on desktop */}
-        <div
-          className={`relative z-10 flex flex-col h-screen flex-1 min-w-0 overflow-x-hidden overflow-y-auto transition-[margin] duration-300 ${sidebarOpen ? 'lg:ml-[200px]' : 'lg:ml-0'}`}
-          style={{ background: 'transparent' }}
-        >
+      <div
+        data-main-scroll
+        className={`relative z-10 flex flex-col h-screen flex-1 min-w-0 overflow-x-hidden overflow-y-auto transition-[margin] duration-300 ${sidebarOpen ? 'lg:ml-[200px]' : 'lg:ml-0'}`}
+        style={{ background: 'transparent', scrollBehavior: 'smooth' }}
+      >
         {/* Preview Mode Banner */}
         {previewRole && (
           <RolePreviewBanner
@@ -76,8 +78,11 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
           />
         )}
 
-        {/* Top Bar with hamburger */}
-        <div className="tbos-top-navbar-shell flex items-center shrink-0" style={{ height: 56, minHeight: 56 }}>
+        {/* Top Bar with hamburger — sticky */}
+        <div
+          className="tbos-top-navbar-shell flex items-center shrink-0 sticky top-0 z-30"
+          style={{ height: 56, minHeight: 56, background: '#0F1629' }}
+        >
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="ml-3 p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/[0.04] transition-all z-20 lg:hidden"
@@ -93,18 +98,21 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
         </div>
 
         {/* Main Content Area */}
-        <main className={`flex-1 min-w-0 overflow-x-hidden scroll-smooth ${previewRole ? 'pt-1' : ''}`}>
+        <main className={`flex-1 min-w-0 overflow-x-hidden ${previewRole ? 'pt-1' : ''}`}>
           <div className="p-0 m-0 mobile-content safe-area-bottom overflow-x-hidden w-full min-w-0">
-            <PageTransition>
-              {children}
-            </PageTransition>
+            <div className="tbos-content-wrapper mx-auto" style={{ maxWidth: 1600 }}>
+              <PageTransition>
+                {children}
+              </PageTransition>
+            </div>
           </div>
         </main>
 
+        {/* Back to top */}
+        <BackToTop />
         {/* Quick Action FAB */}
         <QuickActionFAB />
         <CommandPalette />
-        {/* <OfflineIndicator /> */}
         <PWAInstallPrompt />
         <NotificationSettings />
 
