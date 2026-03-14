@@ -1053,7 +1053,7 @@ function IntelligenceIATab() {
                   {b.maintenance > 0 && <div style={{ width: w(b.maintenance), background: b.name === 'T-09' ? T.danger : T.warning, transition: 'width 0.8s ease' }} />}
                   {b.tempsMort > 0 && <div style={{ width: w(b.tempsMort), background: '#6B7280', transition: 'width 0.8s ease' }} />}
                 </div>
-                <span style={{ fontFamily: MONO, fontSize: 11, color: b.revenu > 0 ? T.success : T.danger, width: 80, textAlign: 'right' }}>
+                <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 200, color: b.revenu > 0 ? T.success : T.danger, width: 80, textAlign: 'right' }}>
                   {b.revenu > 0 ? `${(b.revenu).toLocaleString('fr-MA')} DH` : `−${b.maintenance.toLocaleString('fr-MA')} DH`}
                 </span>
               </div>
