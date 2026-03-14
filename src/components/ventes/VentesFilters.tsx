@@ -158,24 +158,25 @@ export function VentesFilters({
           style={{
             border: '1px solid #D4A843',
             color: '#D4A843',
-            background: showAdvanced ? 'rgba(212,168,67,0.1)' : 'transparent',
+            background: showAdvanced ? 'rgba(212,168,67,0.08)' : 'transparent',
             borderRadius: 8,
             padding: '8px 20px',
             cursor: 'pointer',
-            fontSize: 14,
+            fontSize: 13,
+            fontFamily: 'ui-monospace',
             display: 'inline-flex',
             alignItems: 'center',
             gap: 8,
           }}
-          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.1)')}
-          onMouseLeave={e => (e.currentTarget.style.background = showAdvanced ? 'rgba(212,168,67,0.1)' : 'transparent')}
+          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.08)')}
+          onMouseLeave={e => (e.currentTarget.style.background = showAdvanced ? 'rgba(212,168,67,0.08)' : 'transparent')}
         >
           <Filter className="h-4 w-4" />
           {c.filters}
           {activeFilterCount > 0 && (
-            <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center">
+            <span style={{ marginLeft: 4, background: 'rgba(212,168,67,0.15)', color: '#D4A843', borderRadius: 10, padding: '2px 8px', fontSize: 11, fontFamily: 'ui-monospace', fontWeight: 600 }}>
               {activeFilterCount}
-            </Badge>
+            </span>
           )}
         </button>
 
