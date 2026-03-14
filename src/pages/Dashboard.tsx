@@ -1097,11 +1097,17 @@ export default function Dashboard() {
                      <span className="tbos-hero-stat-number text-3xl font-mono tracking-tight text-white" style={{
                        fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
                        fontWeight: 200, lineHeight: 1,
-                       textShadow: '0 0 20px rgba(255, 255, 255, 0.06), 0 0 35px rgba(255,215,0,0.2), 0 0 70px rgba(255,215,0,0.07)',
+                       textShadow: aboveTarget
+                         ? '0 0 8px rgba(34, 197, 94, 0.3), 0 0 20px rgba(34, 197, 94, 0.15)'
+                         : belowTarget
+                           ? '0 0 8px rgba(239, 68, 68, 0.3), 0 0 20px rgba(239, 68, 68, 0.15)'
+                           : '0 0 20px rgba(255, 255, 255, 0.06), 0 0 35px rgba(255,215,0,0.2), 0 0 70px rgba(255,215,0,0.07)',
                      }}>
                       {typeof kpi.value === 'number' && kpi.value % 1 !== 0 ? kpi.value.toFixed(1) : kpi.value}
                     </span>
                     <span className="text-lg font-mono text-muted-foreground ml-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{kpi.unit}</span>
+                    {aboveTarget && <span style={{ color: '#22C55E', fontSize: 14, fontWeight: 600, marginLeft: 2 }}>✓</span>}
+                    {belowTarget && <span style={{ color: '#EF4444', fontSize: 14, fontWeight: 600, marginLeft: 2 }}>↓</span>}
                   </div>
                   <div className="text-[11px] text-slate-500 mt-3 tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontSize: '11px', fontWeight: 400 }}>{kpi.sub}</div>
                   {kpi.trend && (
