@@ -12,7 +12,7 @@ import {
   OctagonX, Eye, CheckCheck, Brain, Search, LineChart,
   Filter, BarChart3,
 } from 'lucide-react';
-import { LineChart as RechartsLineChart, Line, ReferenceLine } from 'recharts';
+import { ReferenceLine } from 'recharts';
 import { PageHeader } from '@/components/layout/PageHeader';
 
 // ─────────────────────────────────────────────────────
