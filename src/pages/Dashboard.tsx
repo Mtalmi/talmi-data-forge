@@ -93,6 +93,7 @@ export default function Dashboard() {
   const [midPanelView, setMidPanelView] = useState<'data' | 'camera'>('data');
   const [expandedKpi, setExpandedKpi] = useState<string | null>(null);
   const [cameraTime, setCameraTime] = useState('');
+  const [demoMarket, setDemoMarket] = useState<'ma' | 'eu' | 'us'>('ma');
 
   // Camera ticking timestamp
   useEffect(() => {
@@ -712,6 +713,41 @@ export default function Dashboard() {
                     <span className="relative inline-flex rounded-full" style={{ width: 5, height: 5, backgroundColor: '#22c55e', animation: 'liveGlowPulse 2s ease-in-out infinite' }} />
                   </span>
                 </span>
+
+                {/* Market Selector Pills */}
+                <div className="flex items-center gap-2" style={{ marginTop: 8 }}>
+                  {([
+                    { id: 'ma', flag: '🇲🇦', label: 'Atlas Concrete Morocco' },
+                    { id: 'eu', flag: '🇪🇺', label: 'Demo EU Plant' },
+                    { id: 'us', flag: '🇺🇸', label: 'Demo US Plant' },
+                  ] as const).map(market => {
+                    const active = demoMarket === market.id;
+                    return (
+                      <button
+                        key={market.id}
+                        onClick={() => setDemoMarket(market.id)}
+                        style={{
+                          fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
+                          fontSize: 10,
+                          letterSpacing: '1px',
+                          padding: '3px 10px',
+                          borderRadius: 20,
+                          border: active ? '1px solid #D4A843' : '1px solid rgba(212,168,67,0.3)',
+                          background: active ? '#D4A843' : 'transparent',
+                          color: active ? '#0F1629' : '#9CA3AF',
+                          cursor: 'pointer',
+                          fontWeight: active ? 700 : 500,
+                          transition: 'all 200ms',
+                          whiteSpace: 'nowrap',
+                        }}
+                        onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.color = '#D4A843'; }}
+                        onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.color = '#9CA3AF'; }}
+                      >
+                        {market.flag} {market.label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
