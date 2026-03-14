@@ -360,9 +360,9 @@ function ScheduleBlock({ slot, delay = 0, riskyClients }: { slot: { product: str
     );
   }
 
-  const color = PRODUCT_COLORS[slot.product] || T.gold;
+  const color = '#D4A843';
   const isRisky = riskyClients?.has(slot.client.toLowerCase()) ?? false;
-  const dotColor = isRisky ? T.danger : T.success;
+  const dotColor = isRisky ? T.danger : '#D4A843';
 
   return (
     <div
