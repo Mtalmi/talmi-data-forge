@@ -295,6 +295,11 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
                 <div>
                   {section.items.map((item) => {
                     const active = isActive(item.url);
+                    const badgeColors = item.badgeStyle === 'gold'
+                      ? { bg: 'rgba(212, 168, 67, 0.2)', color: '#D4A843' }
+                      : item.badgeStyle === 'green'
+                      ? { bg: 'rgba(34, 197, 94, 0.2)', color: '#22C55E' }
+                      : { bg: '#EF4444', color: '#FFFFFF' };
                     return (
                       <button
                         key={item.url}
@@ -327,32 +332,39 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
                           strokeWidth={1.5}
                           style={{ color: active ? '#D4A843' : '#9CA3AF', marginRight: 10 }}
                         />
-                        <span
-                          className="flex-1 truncate transition-colors duration-200"
-                          style={{
-                            fontFamily: 'ui-monospace, SFMono-Regular, monospace',
-                            fontSize: 13,
-                            fontWeight: active ? 600 : 400,
-                            color: active ? '#D4A843' : '#9CA3AF',
-                          }}
-                        >
-                          {item.title}
-                        </span>
-                        {item.badge && item.badge !== '●' && (
+                        <div className="flex-1 min-w-0">
+                          <span
+                            className="block truncate transition-colors duration-200"
+                            style={{
+                              fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                              fontSize: 13,
+                              fontWeight: active ? 600 : 400,
+                              color: active ? '#D4A843' : '#9CA3AF',
+                            }}
+                          >
+                            {item.title}
+                          </span>
+                          {item.subtitle && (
+                            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 9, color: '#9CA3AF', display: 'block', marginTop: 1 }}>
+                              {item.subtitle}
+                            </span>
+                          )}
+                        </div>
+                        {item.badge != null && item.badge !== '●' && (
                           <span
                             style={{
                               fontFamily: 'ui-monospace, SFMono-Regular, monospace',
                               fontSize: 10,
                               fontWeight: 600,
-                              background: '#EF4444',
-                              color: '#FFFFFF',
-                              borderRadius: '50%',
+                              background: badgeColors.bg,
+                              color: badgeColors.color,
+                              borderRadius: 10,
                               minWidth: 20,
                               height: 20,
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              marginRight: 0,
+                              padding: '0 6px',
                               flexShrink: 0,
                             }}
                           >
