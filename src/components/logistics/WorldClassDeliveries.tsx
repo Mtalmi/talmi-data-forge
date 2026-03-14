@@ -790,48 +790,45 @@ function AnalytiqueTab() {
             </div>
           </Card>
 
-          {/* Card 3: Ponctualité Heatmap */}
+          {/* Card 3: Performance Chauffeurs */}
           <Card style={{ borderTop: `2px solid ${T.gold}` }}>
-            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: '1.5px', marginBottom: 16, textTransform: 'uppercase' as const }}>PONCTUALITÉ PAR JOUR</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              {/* Day headers */}
-              <div style={{ display: 'grid', gridTemplateColumns: '30px repeat(7, 1fr)', gap: 3 }}>
-                <span />
-                {HEATMAP_DATA.days.map(d => (
-                  <span key={d} style={{ fontFamily: MONO, fontSize: 9, color: T.textDim, textAlign: 'center' }}>{d}</span>
-                ))}
-              </div>
-              {HEATMAP_DATA.weeks.map((week, wi) => (
-                <div key={wi} style={{ display: 'grid', gridTemplateColumns: '30px repeat(7, 1fr)', gap: 3 }}>
-                  <span style={{ fontFamily: MONO, fontSize: 9, color: T.textDim, display: 'flex', alignItems: 'center' }}>S{wi + 1}</span>
-                  {week.map((cell, ci) => {
-                    let bg = 'rgba(255,255,255,0.04)'; // grey — no deliveries
-                    if (cell.pct > 0) {
-                      if (cell.pct >= 90) bg = 'rgba(34,197,94,0.3)';
-                      else if (cell.pct >= 75) bg = 'rgba(245,158,11,0.3)';
-                      else bg = 'rgba(239,68,68,0.3)';
-                    }
-                    return (
-                      <div key={ci} style={{
-                        aspectRatio: '1', borderRadius: 3, background: bg,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 8, fontFamily: MONO, color: cell.pct > 0 ? T.textPri : 'transparent',
-                      }}>
-                        {cell.pct > 0 ? `${cell.pct}` : ''}
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
+            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: '1.5px', marginBottom: 16, textTransform: 'uppercase' as const }}>PERFORMANCE CHAUFFEURS</p>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: MONO }}>
+                <thead>
+                  <tr>
+                    {['RANG', 'CHAUFFEUR', 'LIVR./MOIS', 'PONCTUALITÉ', 'SÉCURITÉ', 'DH/KM', 'SCORE'].map(h => (
+                      <th key={h} style={{ fontSize: 9, fontWeight: 600, color: T.textDim, letterSpacing: '0.12em', textTransform: 'uppercase' as const, padding: '6px 8px', textAlign: h === 'CHAUFFEUR' ? 'left' : 'center', borderBottom: `1px solid ${T.cardBorder}` }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { rank: 1, name: 'Mehdi Tazi', livr: 28, ponct: '98%', secu: 96, dhkm: '154', score: 95, badge: '★', badgeColor: T.gold },
+                    { rank: 2, name: 'Youssef Benali', livr: 42, ponct: '94%', secu: 91, dhkm: '118', score: 92, badge: '●', badgeColor: T.success },
+                    { rank: 3, name: 'Karim Idrissi', livr: 35, ponct: '89%', secu: 88, dhkm: '102', score: 86, badge: '●', badgeColor: T.success },
+                  ].map(d => (
+                    <tr key={d.rank} style={{ borderBottom: `1px solid ${T.cardBorder}`, transition: 'background 150ms' }} onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,215,0,0.04)')} onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                      <td style={{ padding: '10px 8px', textAlign: 'center', fontSize: 12, color: T.textDim }}>#{d.rank}</td>
+                      <td style={{ padding: '10px 8px', textAlign: 'left', fontSize: 12, color: T.textPri, fontWeight: 500 }}>{d.name}</td>
+                      <td style={{ padding: '10px 8px', textAlign: 'center', fontSize: 12, fontWeight: 200, color: T.textPri }}>{d.livr}</td>
+                      <td style={{ padding: '10px 8px', textAlign: 'center', fontSize: 12, fontWeight: 200, color: T.textPri }}>{d.ponct}</td>
+                      <td style={{ padding: '10px 8px', textAlign: 'center', fontSize: 12, fontWeight: 200, color: T.textPri }}>{d.secu}</td>
+                      <td style={{ padding: '10px 8px', textAlign: 'center', fontSize: 12, fontWeight: 200, color: T.textPri }}>{d.dhkm}</td>
+                      <td style={{ padding: '10px 8px', textAlign: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                          <span style={{ fontFamily: MONO, fontWeight: 200, fontSize: 24, color: d.score >= 95 ? T.gold : d.score >= 90 ? T.success : T.warning }}>{d.score}</span>
+                          <span style={{ fontSize: 14, color: d.badgeColor }}>{d.badge}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
-              {[{ label: '>90%', bg: 'rgba(34,197,94,0.3)' }, { label: '75-90%', bg: 'rgba(245,158,11,0.3)' }, { label: '<75%', bg: 'rgba(239,68,68,0.3)' }, { label: 'N/A', bg: 'rgba(255,255,255,0.04)' }].map(l => (
-                <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <div style={{ width: 10, height: 10, borderRadius: 2, background: l.bg }} />
-                  <span style={{ fontSize: 9, color: T.textDim }}>{l.label}</span>
-                </div>
-              ))}
-            </div>
+            <p style={{ fontFamily: MONO, fontSize: 12, color: T.textDim, marginTop: 14, lineHeight: 1.6 }}>
+              Mehdi Tazi — meilleur ratio profit/km du mois. Recommandation : affecter les livraisons premium et longue distance.
+            </p>
           </Card>
         </div>
       </section>
