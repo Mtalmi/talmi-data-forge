@@ -1925,7 +1925,7 @@ export default function WorldClassDeliveries() {
     { id: 'flotte', label: 'FLOTTE & LIVRAISONS' },
     { id: 'gps', label: 'CARTE GPS' },
     { id: 'analytique', label: 'ANALYTIQUE' },
-    { id: 'ia', label: 'INTELLIGENCE IA', badge: '4' },
+    { id: 'ia', label: 'INTELLIGENCE IA', badge: '8' },
   ];
 
   const revenuTotal = activePipeline.reduce((s, b) => s + ((b.volume_m3 || 0) * (b.prix_vente_m3 || 1510)), 0);
