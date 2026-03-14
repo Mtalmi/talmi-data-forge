@@ -10,6 +10,7 @@ import {
   Handshake, Wrench, PackageSearch, Clock,
   Bot, BarChart3, Bell, Shield, BookOpen, CheckSquare,
   Search, User, Settings, LogOut, TrendingUp, ChevronRight,
+  Sparkles, Brain, FileBarChart, Plug, UserRound, Calculator,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
@@ -24,6 +25,8 @@ interface NavItem {
   url: string;
   icon: LucideIcon;
   badge?: string | number;
+  badgeStyle?: 'red' | 'gold' | 'green';
+  subtitle?: string;
 }
 
 interface NavSection {
@@ -37,7 +40,7 @@ const DEFAULT_OPEN: Record<string, boolean> = {
   'operations': true,
   'finance': false,
   'ressources': false,
-  'intelligence': false,
+  'intelligence': true,
   'administration': false,
 };
 
@@ -96,6 +99,9 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       items: [
         { title: nav.expenses || 'Dépenses', url: '/depenses', icon: Wallet },
         { title: nav.payments || 'Paiements', url: '/paiements', icon: CreditCard },
+        { title: 'Trésorerie', url: '/tresorerie', icon: Landmark },
+        { title: 'P&L', url: '/pnl', icon: TrendingUp, badge: 'LIVE', badgeStyle: 'green' },
+        { title: 'Budget', url: '/budget', icon: Calculator },
         { title: nav.debts || 'Dettes', url: '/dettes', icon: Landmark },
         { title: nav.fixedAssets || 'Immobilisations', url: '/immobilisations', icon: Building2 },
         { title: nav.reconciliation || 'Rapprochement', url: '/rapprochement', icon: ArrowLeftRight },
@@ -105,9 +111,11 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       key: 'ressources',
       label: nav.sectionResources || 'RESSOURCES',
       items: [
+        { title: 'Personnel', url: '/personnel', icon: UserRound },
+        { title: 'Équipements', url: '/equipements', icon: Wrench },
+        { title: 'Fournisseurs', url: '/fournisseurs', icon: Truck },
         { title: nav.contractors || 'Prestataires', url: '/prestataires', icon: Handshake },
-        { title: nav.maintenance || 'Maintenance', url: '/maintenance', icon: Wrench },
-        { title: nav.suppliers || 'Fournisseurs', url: '/fournisseurs', icon: PackageSearch },
+        { title: nav.maintenance || 'Maintenance', url: '/maintenance', icon: PackageSearch },
         { title: nav.attendance || 'Pointage', url: '/pointage', icon: Clock },
       ],
     },
@@ -115,10 +123,12 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       key: 'intelligence',
       label: nav.sectionIntelligence || 'INTELLIGENCE',
       items: [
-        { title: nav.aiAgent || 'Agent IA', url: '/operations-agent', icon: Bot, badge: '●' },
+        { title: 'Résumé IA', url: '/resume-ia', icon: Sparkles },
+        { title: 'Alertes Actives', url: '/alertes', icon: Bell, badge: 5, badgeStyle: 'red' },
+        { title: 'Agents IA', url: '/operations-agent', icon: Brain, badge: 24, badgeStyle: 'gold' },
+        { title: 'Rapports', url: '/rapports', icon: FileBarChart },
+        { title: 'Historique', url: '/historique-ia', icon: Clock },
         { title: nav.analytics || 'Analytics', url: '/analytics', icon: TrendingUp },
-        { title: nav.alerts || 'Alertes', url: '/alertes', icon: Bell },
-        { title: nav.reports || 'Rapports', url: '/rapports', icon: BarChart3 },
         { title: 'Design Guardian', url: '/design-guardian', icon: Shield },
       ],
     },
@@ -126,12 +136,14 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       key: 'administration',
       label: nav.sectionAdmin || 'ADMINISTRATION',
       items: [
+        { title: 'Utilisateurs', url: '/utilisateurs', icon: Users },
+        { title: nav.settings || 'Paramètres', url: '/settings', icon: Settings },
+        { title: 'Intégrations', url: '/integrations', icon: Plug, subtitle: 'n8n · WhatsApp · GPS' },
         { title: nav.profile || 'Profil', url: '/user_profile', icon: User },
         { title: nav.security || 'Sécurité', url: '/securite', icon: Shield },
         { title: nav.auditLog || 'Journal', url: '/journal', icon: BookOpen },
         { title: nav.approvals || 'Approbations', url: '/approbations', icon: CheckSquare },
         { title: nav.supervisorAudit || 'Audit', url: '/audit-superviseur', icon: Search },
-        { title: nav.settings || 'Paramètres', url: '/settings', icon: Settings },
       ],
     },
   ], [nav]);
@@ -277,13 +289,18 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
               <div
                 className="overflow-hidden transition-all duration-250 ease-in-out"
                 style={{
-                  maxHeight: isOpen ? `${section.items.length * 38 + 8}px` : '0px',
+                  maxHeight: isOpen ? `${section.items.length * 42 + 8}px` : '0px',
                   opacity: isOpen ? 1 : 0,
                 }}
               >
                 <div>
                   {section.items.map((item) => {
                     const active = isActive(item.url);
+                    const badgeColors = item.badgeStyle === 'gold'
+                      ? { bg: 'rgba(212, 168, 67, 0.2)', color: '#D4A843' }
+                      : item.badgeStyle === 'green'
+                      ? { bg: 'rgba(34, 197, 94, 0.2)', color: '#22C55E' }
+                      : { bg: '#EF4444', color: '#FFFFFF' };
                     return (
                       <button
                         key={item.url}
@@ -316,32 +333,39 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
                           strokeWidth={1.5}
                           style={{ color: active ? '#D4A843' : '#9CA3AF', marginRight: 10 }}
                         />
-                        <span
-                          className="flex-1 truncate transition-colors duration-200"
-                          style={{
-                            fontFamily: 'ui-monospace, SFMono-Regular, monospace',
-                            fontSize: 13,
-                            fontWeight: active ? 600 : 400,
-                            color: active ? '#D4A843' : '#9CA3AF',
-                          }}
-                        >
-                          {item.title}
-                        </span>
-                        {item.badge && item.badge !== '●' && (
+                        <div className="flex-1 min-w-0">
+                          <span
+                            className="block truncate transition-colors duration-200"
+                            style={{
+                              fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                              fontSize: 13,
+                              fontWeight: active ? 600 : 400,
+                              color: active ? '#D4A843' : '#9CA3AF',
+                            }}
+                          >
+                            {item.title}
+                          </span>
+                          {item.subtitle && (
+                            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 9, color: '#9CA3AF', display: 'block', marginTop: 1 }}>
+                              {item.subtitle}
+                            </span>
+                          )}
+                        </div>
+                        {item.badge != null && item.badge !== '●' && (
                           <span
                             style={{
                               fontFamily: 'ui-monospace, SFMono-Regular, monospace',
                               fontSize: 10,
                               fontWeight: 600,
-                              background: '#EF4444',
-                              color: '#FFFFFF',
-                              borderRadius: '50%',
+                              background: badgeColors.bg,
+                              color: badgeColors.color,
+                              borderRadius: 10,
                               minWidth: 20,
                               height: 20,
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              marginRight: 0,
+                              padding: '0 6px',
                               flexShrink: 0,
                             }}
                           >
