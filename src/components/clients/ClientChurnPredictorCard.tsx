@@ -28,6 +28,22 @@ function useCountUp(target: number, duration = 1200, decimals = 0) {
   return value;
 }
 
+// Highlight key data in alert text
+function HighlightedAlertText({ text }: { text: string }) {
+  // Match patterns: percentages, DH amounts, time periods, numbers with units
+  const parts = text.split(/((?:\d{1,3}(?:,\d{3})*|\d+)(?:\.\d+)?(?:\s*(?:%|MAD|DH|m³\/mois|m³|jours?|j|mois|semaines?))?|(?:il y a \d+ jours?)|\-\d+%|\+\d+%)/g);
+  return (
+    <p style={{ fontSize: 11, lineHeight: 1.7, color: T.textSec }}>
+      {parts.map((part, i) => {
+        if (/(\d+(?:,\d{3})*(?:\.\d+)?)\s*(%|MAD|DH|m³|jours?|j|mois|semaines?)/.test(part) || /[\-\+]\d+%/.test(part) || /il y a \d+/.test(part) || /\d+m³\/mois/.test(part)) {
+          return <span key={i} style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>{part}</span>;
+        }
+        return <span key={i}>{part}</span>;
+      })}
+    </p>
+  );
+}
+
 const alerts = [
   {
     severity: 'high' as const,
@@ -60,7 +76,6 @@ export function ClientChurnPredictorCard() {
       overflow: 'hidden',
       position: 'relative',
     }}>
-      {/* Gold shimmer border */}
       <div style={{
         position: 'absolute', inset: 0, borderRadius: 12, pointerEvents: 'none',
         background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.15), transparent)',
@@ -79,14 +94,14 @@ export function ClientChurnPredictorCard() {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>
           <Sparkles size={12} color={T.gold} />
-          <span style={{ color: T.gold, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+          <span style={{ color: T.gold, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: MONO }}>
             Agent IA: Prédiction Attrition Clients
           </span>
           <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
         </div>
         <span style={{
           background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843',
-          fontSize: 11, borderRadius: 9999, padding: '2px 10px', fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0,
+          fontSize: 11, borderRadius: 9999, padding: '2px 10px', fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0, fontFamily: MONO,
         }}>✨ Généré par IA · Claude Opus</span>
       </div>
 
@@ -99,14 +114,12 @@ export function ClientChurnPredictorCard() {
         </div>
 
         {/* Alert cards */}
-        <p style={{ fontSize: 13, fontWeight: 700, color: T.textPri, marginBottom: 12 }}>Clients à Risque de Perte — Prédiction IA</p>
+        <p style={{ fontSize: 13, fontWeight: 700, color: T.textPri, marginBottom: 12, fontFamily: MONO }}>Clients à Risque de Perte — Prédiction IA</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {alerts.map((a, i) => {
             const isHigh = a.severity === 'high';
             const bc = isHigh ? T.danger : T.warning;
-            return (
-              <AlertRow key={i} text={a.text} borderColor={bc} isHigh={isHigh} />
-            );
+            return <AlertRow key={i} text={a.text} borderColor={bc} isHigh={isHigh} />;
           })}
         </div>
 
@@ -116,12 +129,14 @@ export function ClientChurnPredictorCard() {
           borderLeft: '3px solid #D4A843',
           background: 'rgba(212,168,67,0.04)',
           borderRadius: '0 8px 8px 0',
-          padding: '12px 16px',
+          padding: 16,
         }}>
           <p style={{ fontSize: 13, lineHeight: 1.7, color: T.textSec }}>
             <span style={{ color: '#D4A843', fontWeight: 600 }}>Action prioritaire : </span>
-            Sigma Bâtiment — <span style={{ fontFamily: MONO, color: '#D4A843' }}>4</span> factures impayées totalisant{' '}
-            <span style={{ fontFamily: MONO, color: '#D4A843' }}>189,000</span> MAD. Risque de perte imminent. Recommandation : réunion direction cette semaine pour négocier plan de paiement échelonné.
+            Sigma Bâtiment — <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>4</span> factures impayées totalisant{' '}
+            <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>189,000</span> MAD bloquent la relation. Risque de perte définitive sous{' '}
+            <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>30 jours</span>. Recommandation : réunion direction cette semaine, proposer plan de paiement échelonné sur{' '}
+            <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>3 mois</span> avec engagement de reprise des commandes.
           </p>
         </div>
       </div>
@@ -169,11 +184,11 @@ function AlertRow({ text, borderColor, isHigh }: { text: string; borderColor: st
         border: '1px solid rgba(255,255,255,0.08)',
         borderLeft: `3px solid ${borderColor}`,
         borderRadius: 8,
-        padding: '12px 16px',
+        padding: 12,
         transition: 'background 200ms',
       }}
     >
-      <p style={{ fontSize: 11, lineHeight: 1.7, color: T.textSec }}>{text}</p>
+      <HighlightedAlertText text={text} />
     </div>
   );
 }

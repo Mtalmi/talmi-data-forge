@@ -865,34 +865,41 @@ export default function WorldClassClients() {
         {/* ═══════════════════════════════════════════════ */}
         {pageTab === 'intelligence' && (
           <div key="intelligence" style={{ display: 'flex', flexDirection: 'column', gap: 40, animation: 'tab-fade-in 200ms ease forwards' }}>
-            {/* Agent 1: Churn Predictor */}
+            {/* ── HEADER ── */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
+              <div>
+                <p style={{ fontFamily: MONO, letterSpacing: '2px', fontSize: 12, color: '#D4A843', fontWeight: 700 }}>✦ CENTRE D'INTELLIGENCE CLIENT</p>
+                <p style={{ fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>
+                  <span style={{ color: '#22C55E' }}>3 agents actifs</span> · Surveillance continue · Claude Opus
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+                {[
+                  { label: 'CLIENTS À RISQUE', value: '2', color: '#EF4444' },
+                  { label: 'OPPORTUNITÉS CROISSANCE', value: '3', color: '#22C55E' },
+                  { label: 'EXPOSITION IMPAYÉS', value: '189K MAD', color: '#F59E0B' },
+                ].map((s, i) => (
+                  <div key={i} style={{ textAlign: 'center' }}>
+                    <p style={{ fontFamily: MONO, fontSize: 9, letterSpacing: '1px', color: '#9CA3AF', marginBottom: 2 }}>{s.label}</p>
+                    <p style={{ fontFamily: MONO, fontSize: 28, fontWeight: 100, color: s.color, lineHeight: 1 }}>{s.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── AGENT 1: ATTRITION ── */}
             <section>
               <ClientChurnPredictorCard />
             </section>
 
-            {/* Agent 2 & 3 placeholders — will be populated in next prompt */}
-            <section style={{ opacity: 0.5 }}>
-              <Card goldBorder>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 0' }}>
-                  <span style={{ fontSize: 16 }}>🔮</span>
-                  <div>
-                    <p style={{ fontFamily: MONO, fontSize: 12, color: '#D4A843', fontWeight: 600, letterSpacing: '1px' }}>AGENT IA: SCORING CRÉDIT PRÉDICTIF</p>
-                    <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 4 }}>Prochainement — Évaluation automatique du risque crédit</p>
-                  </div>
-                </div>
-              </Card>
+            {/* ── AGENT 2: POTENTIEL DE CROISSANCE ── */}
+            <section>
+              <GrowthPotentialAgent />
             </section>
 
-            <section style={{ opacity: 0.5 }}>
-              <Card goldBorder>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 0' }}>
-                  <span style={{ fontSize: 16 }}>📊</span>
-                  <div>
-                    <p style={{ fontFamily: MONO, fontSize: 12, color: '#D4A843', fontWeight: 600, letterSpacing: '1px' }}>AGENT IA: OPTIMISATION PORTEFEUILLE</p>
-                    <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 4 }}>Prochainement — Recommandations stratégiques de segmentation</p>
-                  </div>
-                </div>
-              </Card>
+            {/* ── AGENT 3: SANTÉ FINANCIÈRE ── */}
+            <section>
+              <FinancialHealthAgent />
             </section>
           </div>
         )}
