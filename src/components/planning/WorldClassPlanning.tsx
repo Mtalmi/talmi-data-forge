@@ -1030,59 +1030,105 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
               <div ref={capaciteRef}>
                 <SectionHeader icon={Truck} label="Capacité & Livraisons" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card className="tbos-card-stagger" style={{ background: 'radial-gradient(ellipse at 30% 50%, rgba(212,168,67,0.03) 0%, transparent 70%), linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', borderRadius: '12px', padding: '20px', position: 'relative', overflow: 'hidden', boxShadow: 'none' }}>
-                    <p style={{ color: '#9CA3AF', fontSize: 12, letterSpacing: '0.5px', marginBottom: 16 }}>Capacité de Production</p>
-                    <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
-                      {/* Left column: Donut (60%) */}
-                      <div style={{ flex: '0 0 60%', display: 'flex', justifyContent: 'center' }}>
-                        <div style={{ position: 'relative', width: 200, height: 200, borderRadius: '50%', boxShadow: 'inset 0 0 30px rgba(0,0,0,0.3)' }}>
-                          <svg width={200} height={200} viewBox="0 0 200 200">
-                            <circle cx={100} cy={100} r={80} fill="none" stroke={T.cardBorder} strokeWidth={14} />
-                            <circle cx={100} cy={100} r={80} fill="none" stroke="#D4A843" strokeWidth={14}
+                  <Card className="tbos-card-stagger" style={{ background: 'radial-gradient(ellipse at 25% 40%, rgba(212,168,67,0.04) 0%, transparent 60%), linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', borderRadius: '12px', padding: '28px 24px', position: 'relative', overflow: 'hidden', boxShadow: 'none' }}>
+                    {/* Editorial watermark */}
+                    <div style={{ position: 'absolute', top: -20, right: -10, fontSize: 180, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 100, color: 'rgba(212,168,67,0.02)', lineHeight: 1, pointerEvents: 'none', userSelect: 'none' }}>72</div>
+
+                    {/* Header row */}
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 24 }}>
+                      <div>
+                        <p style={{ color: '#D4A843', fontSize: 10, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 2 }}>CAPACITÉ</p>
+                        <p style={{ color: '#9CA3AF', fontSize: 11, fontStyle: 'italic', letterSpacing: '0.3px' }}>Production hebdomadaire · Semaine 11</p>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E', animation: 'tbos-pulse 2.5s infinite' }} />
+                        <span style={{ fontSize: 9, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#22C55E', letterSpacing: '0.5px' }}>LIVE</span>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
+                      {/* Left: Donut */}
+                      <div style={{ flex: '0 0 55%', display: 'flex', justifyContent: 'center' }}>
+                        <div style={{ position: 'relative', width: 210, height: 210 }}>
+                          {/* Outer decorative ring */}
+                          <svg width={210} height={210} viewBox="0 0 210 210" style={{ position: 'absolute', top: 0, left: 0 }}>
+                            <circle cx={105} cy={105} r={100} fill="none" stroke="rgba(212,168,67,0.04)" strokeWidth={1} />
+                            <circle cx={105} cy={105} r={96} fill="none" stroke="rgba(212,168,67,0.03)" strokeWidth={0.5} strokeDasharray="2 8" />
+                          </svg>
+                          {/* Main donut */}
+                          <svg width={210} height={210} viewBox="0 0 210 210">
+                            <defs>
+                              <linearGradient id="donut-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="#D4A843" />
+                                <stop offset="100%" stopColor="#B8922E" />
+                              </linearGradient>
+                            </defs>
+                            <circle cx={105} cy={105} r={78} fill="none" stroke="rgba(30,45,74,0.6)" strokeWidth={12} />
+                            <circle cx={105} cy={105} r={78} fill="none" stroke="url(#donut-grad)" strokeWidth={12}
                               strokeLinecap="round"
-                              strokeDasharray={`${(72 / 100) * 2 * Math.PI * 80} ${2 * Math.PI * 80}`}
-                              transform="rotate(-90 100 100)"
-                              style={{ filter: 'drop-shadow(0 0 12px rgba(212,168,67,0.25))', transition: 'stroke-dasharray 1s ease-out' }}
+                              strokeDasharray={`${(72 / 100) * 2 * Math.PI * 78} ${2 * Math.PI * 78}`}
+                              transform="rotate(-90 105 105)"
+                              style={{ filter: 'drop-shadow(0 0 14px rgba(212,168,67,0.3))', transition: 'stroke-dasharray 1.2s ease-out' }}
                             />
-                            <text x={100} y={95} textAnchor="middle" dominantBaseline="middle"
-                              style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 48, fontWeight: 100, fill: '#D4A843' }}>
+                            {/* Inner subtle ring */}
+                            <circle cx={105} cy={105} r={66} fill="none" stroke="rgba(212,168,67,0.04)" strokeWidth={0.5} />
+                            <text x={105} y={98} textAnchor="middle" dominantBaseline="middle"
+                              style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 52, fontWeight: 100, fill: '#D4A843', letterSpacing: '-2px' }}>
                               72%
                             </text>
-                            <text x={100} y={125} textAnchor="middle"
-                              style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11, fill: '#9CA3AF', letterSpacing: '1px' }}>
-                              Capacité Utilisée
+                            <text x={105} y={128} textAnchor="middle"
+                              style={{ fontSize: 9, fill: '#9CA3AF', letterSpacing: '2px', textTransform: 'uppercase' }}>
+                              UTILISÉE
                             </text>
                           </svg>
                         </div>
                       </div>
-                      {/* Right column: Metrics + Weather (40%) */}
-                      <div style={{ flex: '0 0 40%', display: 'flex', flexDirection: 'column', gap: 0, paddingTop: 8 }}>
-                        {/* Compact metric rows */}
+
+                      {/* Right: Editorial metrics */}
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0 }}>
+                        {/* Three metrics — editorial style */}
                         {[
-                          { label: 'Capacité Max', value: '1 740 m³', color: '#fff' },
-                          { label: 'Planifié', value: '1 250 m³', color: '#D4A843' },
-                          { label: 'Disponible', value: '490 m³', color: '#22C55E' },
+                          { label: 'Capacité Max', value: '1 740', unit: 'm³', color: 'rgba(255,255,255,0.85)' },
+                          { label: 'Planifié', value: '1 250', unit: 'm³', color: '#D4A843' },
+                          { label: 'Disponible', value: '490', unit: 'm³', color: '#22C55E' },
                         ].map((m, i) => (
                           <div key={m.label} style={{
                             display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
-                            padding: '8px 0',
+                            padding: '10px 0',
                             borderBottom: i < 2 ? '1px solid rgba(212,168,67,0.06)' : 'none',
                           }}>
-                            <span style={{ color: '#9CA3AF', fontSize: 11 }}>{m.label}</span>
-                            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 200, fontSize: 18, color: m.color }}>{m.value}</span>
+                            <span style={{ color: '#64748B', fontSize: 11, fontStyle: 'italic' }}>{m.label}</span>
+                            <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+                              <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 200, fontSize: 22, color: m.color, letterSpacing: '-0.5px' }}>{m.value}</span>
+                              <span style={{ fontSize: 10, color: '#4A5568' }}>{m.unit}</span>
+                            </div>
                           </div>
                         ))}
-                        {/* Weather section */}
-                        <div style={{ borderTop: '1px solid rgba(212,168,67,0.15)', marginTop: 12, paddingTop: 12 }}>
-                          <p style={{ color: '#9CA3AF', fontSize: 10, letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 6 }}>MÉTÉO IMPACT</p>
-                          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 6 }}>
-                            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 36, fontWeight: 100, color: '#F59E0B', lineHeight: 1 }}>58%</span>
-                            <span style={{ fontSize: 14, color: '#EF4444', fontWeight: 600 }}>↓ 14%</span>
+
+                        {/* Weather impact — editorial callout */}
+                        <div style={{ borderTop: '1px solid rgba(212,168,67,0.12)', marginTop: 14, paddingTop: 14 }}>
+                          <p style={{ color: '#64748B', fontSize: 9, fontWeight: 600, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 8 }}>MÉTÉO IMPACT</p>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 8 }}>
+                            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 38, fontWeight: 100, color: '#F59E0B', lineHeight: 1 }}>58%</span>
+                            <span style={{ fontSize: 13, color: '#EF4444', fontWeight: 500, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace' }}>↓ 14%</span>
                           </div>
-                          <p style={{ color: '#F59E0B', fontSize: 11, marginBottom: 3 }}>Sam. 38°C — réduite 20%</p>
-                          <p style={{ color: '#22C55E', fontSize: 11 }}>Dim. 72% normal</p>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                            <p style={{ color: '#F59E0B', fontSize: 11, fontStyle: 'italic' }}>
+                              <span style={{ display: 'inline-block', animation: 'tbos-pulse 2s ease-in-out infinite', marginRight: 4 }}>⚠</span>
+                              Sam. 38°C — réduite 20%
+                            </p>
+                            <p style={{ color: '#22C55E', fontSize: 11, fontStyle: 'italic' }}>Dim. 72% · conditions normales</p>
+                          </div>
                         </div>
                       </div>
+                    </div>
+
+                    {/* Bottom editorial quote */}
+                    <div style={{ marginTop: 20, paddingTop: 14, borderTop: '1px solid rgba(212,168,67,0.06)', display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={{ width: 2, height: 24, background: 'linear-gradient(to bottom, #D4A843, transparent)', borderRadius: 1, flexShrink: 0 }} />
+                      <p style={{ color: '#4A5568', fontSize: 10, fontStyle: 'italic', lineHeight: 1.5 }}>
+                        Capacité optimale entre <span style={{ color: '#9CA3AF' }}>65–80%</span> — au-delà, risque de saturation et retards cascade.
+                      </p>
                     </div>
                   </Card>
                   <div style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', borderRadius: 12, padding: 16 }}>
