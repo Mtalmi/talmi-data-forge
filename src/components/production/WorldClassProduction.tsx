@@ -731,6 +731,36 @@ export default function WorldClassProduction() {
           </div>
         </section>
 
+        {/* ── PASSATION DE QUART ── */}
+        <section>
+          <div className="flex items-center gap-3 mb-3">
+            <span style={{ fontSize: 14 }}>🔄</span>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.1em' }}>PASSATION DE QUART — 14h00</span>
+            <div style={{ flex: 1, height: 1, background: 'linear-gradient(to right, rgba(212,168,67,0.4), transparent)' }} />
+          </div>
+          <div className="ops-surface-card" style={{ borderTop: '2px solid #D4A843', borderRight: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)', borderLeft: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: '20px 24px', background: 'rgba(15,23,41,0.8)', backdropFilter: 'blur(4px)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B', marginTop: 5, flexShrink: 0 }} />
+                <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 1.5 }}>3 batches restants en file. Batch #403-066 écart qualité — briefer opérateur entrant.</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444', marginTop: 5, flexShrink: 0 }} />
+                <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 1.5 }}>TOU-03 carburant à 30% — ravitaillement avant tournée soir.</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10B981', marginTop: 5, flexShrink: 0 }} />
+                <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5, textDecoration: 'line-through', textDecorationColor: 'rgba(255,255,255,0.2)' }}>Stock adjuvant 15% — commande automatique passée à 13:45.</span>
+              </div>
+              <p style={{ fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>Prochain shift: Opérateurs — Ahmed K., Rachid M., Samir T.</p>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+              <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', padding: '6px 16px', borderRadius: 6, fontSize: 13, cursor: 'pointer' }}>Valider Passation</button>
+              <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 4, background: 'rgba(212,168,67,0.15)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)' }}>Généré par IA · Claude Opus</span>
+            </div>
+          </div>
+        </section>
+
         {/* ── WORKFLOW PIPELINE ── */}
         <section>
           <SectionHeader icon={Activity} label="Workflow de Production" />
