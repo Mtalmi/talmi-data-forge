@@ -454,14 +454,14 @@ export function BcTable({
                 className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
               />
             </TableHead>
-            <TableHead>{bt.bcNumber}</TableHead>
-            <TableHead>{bt.client}</TableHead>
-            <TableHead className="text-center">{bt.formula}</TableHead>
-            <TableHead className="text-center">{bt.deliveryDate}</TableHead>
-            <TableHead className="text-right">{bt.volume}</TableHead>
-            <TableHead className="text-right">{bt.totalHt}</TableHead>
-            <TableHead className="text-center">{bt.status}</TableHead>
-            <TableHead className="text-center">Suivi</TableHead>
+            <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.bcNumber}</TableHead>
+            <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.client}</TableHead>
+            <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.formula}</TableHead>
+            <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.deliveryDate}</TableHead>
+            <TableHead className="text-right" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.volume}</TableHead>
+            <TableHead className="text-right" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.totalHt}</TableHead>
+            <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.status}</TableHead>
+            <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Suivi</TableHead>
             <TableHead className="text-center"></TableHead>
           </TableRow>
         </TableHeader>
