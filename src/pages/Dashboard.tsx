@@ -1150,8 +1150,20 @@ export default function Dashboard() {
                         }));
                         const polyStr = scaled.map(p => `${p.x},${p.y}`).join(' ');
                         const last = scaled[scaled.length - 1];
+                        // Target line position
+                        const targetY = hasTarget ? (() => {
+                          const tgt = kpi.target as number;
+                          const tgtNorm = Math.max(0, Math.min(1, (tgt - minY) / ((maxY - minY) || 1)));
+                          return pad + tgtNorm * (44 - pad * 2);
+                        })() : null;
                         return (
                           <>
+                            {targetY !== null && (
+                              <>
+                                <line x1={pad} y1={targetY} x2={130 - pad} y2={targetY} stroke="rgba(255,255,255,0.25)" strokeWidth="1" strokeDasharray="3 3" />
+                                <text x={130 - pad} y={targetY - 3} textAnchor="end" fill="rgba(255,255,255,0.35)" fontSize="9" fontFamily="ui-monospace, monospace">{(kpi as any).targetLabel || 'OBJ'}</text>
+                              </>
+                            )}
                             <polyline fill="none" stroke="#D4A843" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={polyStr} style={{ opacity: 0.7 }} />
                             {last && <circle cx={last.x} cy={last.y} r="2.5" fill="#D4A843" style={{ opacity: 0.9 }} />}
                           </>
