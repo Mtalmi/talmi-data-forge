@@ -1580,6 +1580,292 @@ function IntelligenceIATab() {
           <>Pic de demande prévu <strong style={{ color: T.warning }}>mardi 18 mars : 12 livraisons</strong>, dépassant la capacité nominale de 10 livraisons/jour (3 toupies actives). Options : (1) Rappeler T-09 de maintenance lundi soir — faisable si pneus remplacés d'ici là. (2) Sous-traiter 2 livraisons à prestataire externe (coût estimé : <strong style={{ color: T.gold }}>2,400 DH</strong>, marge préservée à 28%). (3) Décaler 2 livraisons non-urgentes à mercredi. <strong style={{ color: T.success }}>Recommandation : option 1 + option 3 pour coût zéro.</strong></>
         } />
       </Card>
+
+      {/* ─── AGENT 5: PRÉDICTEUR DE RETOUR BÉTON ─── */}
+      <Card style={{ borderTop: '3px solid #EF4444' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: T.gold, letterSpacing: '2px' }}>✦ AGENT IA: PRÉDICTEUR DE RETOUR BÉTON</span>
+            <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: T.danger }}>PRÉVENTIF</span>
+          </div>
+          <IABadge />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
+          <IAKPICard label="RETOURS ÉVITÉS CE MOIS" value="2" color={T.success} subtitle="8,400 DH sauvés" borderColor={T.success} />
+          <IAKPICard label="PROBABILITÉ MOY. RETOUR" value="12%" color={T.warning} subtitle="flotte aujourd'hui" borderColor={T.warning} />
+          <IAKPICard label="PERTES RETOURS YTD" value="4,200 DH" color={T.danger} subtitle="1 retour (Sigma 06/03)" borderColor={T.danger} />
+        </div>
+
+        <p style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '1.5px', color: T.textDim, marginBottom: 14, textTransform: 'uppercase' as const }}>ANALYSE PRÉ-DÉPART — LIVRAISONS DU JOUR</p>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
+          {/* Prediction Card 1 — High risk */}
+          <div style={{ borderLeft: `3px solid ${T.danger}`, padding: '12px 14px', borderRadius: 6, background: 'rgba(239,68,68,0.03)', border: `1px solid ${T.danger}20` }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <span style={{ fontFamily: MONO, fontSize: 12, color: T.textSec }}>BL-2024-A8F3 · Résidences Atlas</span>
+            </div>
+            <p style={{ fontFamily: MONO, fontSize: 20, fontWeight: 200, color: T.danger, margin: '0 0 10px' }}>PROBABILITÉ RETOUR: 22%</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 12 }}>
+              {[
+                { color: T.danger, text: 'Aucune confirmation chantier reçue (+12% risque)' },
+                { color: T.warning, text: 'Température 34°C — fenêtre béton réduite à ~75 min (+5%)' },
+                { color: T.warning, text: 'Trafic A3 dense 10h-12h — retard estimé +14 min (+3%)' },
+                { color: T.success, text: 'Client historique: 10/12 livraisons OK (−8%)' },
+              ].map((f, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                  <div style={{ width: 7, height: 7, borderRadius: '50%', background: f.color, marginTop: 4, flexShrink: 0 }} />
+                  <span style={{ fontFamily: MONO, fontSize: 11, color: T.textSec }}>{f.text}</span>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontFamily: MONO, fontSize: 12, color: T.textDim, lineHeight: 1.6, marginBottom: 10 }}>
+              RECOMMANDATION: Retarder départ jusqu'à confirmation chantier. Envoyer SMS maintenant. Si pas de réponse sous 15 min, appeler responsable chantier.
+            </p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button className="gold-outline-btn" style={{ fontFamily: MONO, fontSize: 11, fontWeight: 600, padding: '5px 14px', borderRadius: 4, background: T.gold, color: '#0F1629', border: 'none', cursor: 'pointer' }}>Envoyer SMS</button>
+              <button className="gold-outline-btn" style={{ fontFamily: MONO, fontSize: 11, fontWeight: 600, padding: '5px 14px', borderRadius: 4, background: 'transparent', color: T.gold, border: `1px solid ${T.gold}`, cursor: 'pointer' }}>Appeler</button>
+            </div>
+          </div>
+
+          {/* Prediction Card 2 — Low risk */}
+          <div style={{ borderLeft: `3px solid ${T.success}`, padding: '12px 14px', borderRadius: 6, background: 'rgba(34,197,94,0.03)', border: `1px solid ${T.success}20` }}>
+            <span style={{ fontFamily: MONO, fontSize: 12, color: T.textSec }}>BL-2024-C1D7 · Groupe A</span>
+            <p style={{ fontFamily: MONO, fontSize: 20, fontWeight: 200, color: T.success, margin: '6px 0 10px' }}>PROBABILITÉ RETOUR: 3%</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+              {[
+                'Chantier confirmé à 06:45 ✓',
+                'Client historique: 9/9 livraisons OK',
+                'Température 30°C — fenêtre normale',
+              ].map((t, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ width: 7, height: 7, borderRadius: '50%', background: T.success, flexShrink: 0 }} />
+                  <span style={{ fontFamily: MONO, fontSize: 11, color: T.textSec }}>{t}</span>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontFamily: MONO, fontSize: 12, color: T.success, marginTop: 10, fontWeight: 600 }}>✓ DÉPART AUTORISÉ — risque minimal</p>
+          </div>
+
+          {/* Prediction Card 3 — Medium risk */}
+          <div style={{ borderLeft: `3px solid ${T.warning}`, padding: '12px 14px', borderRadius: 6, background: 'rgba(245,158,11,0.03)', border: `1px solid ${T.warning}20` }}>
+            <span style={{ fontFamily: MONO, fontSize: 12, color: T.textSec }}>BL-2024-E5B2 · Saham Im</span>
+            <p style={{ fontFamily: MONO, fontSize: 20, fontWeight: 200, color: T.warning, margin: '6px 0 10px' }}>PROBABILITÉ RETOUR: 15%</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 12 }}>
+              {[
+                { color: T.warning, text: 'Confirmation partielle — pompe non confirmée (+8%)' },
+                { color: T.danger, text: 'Température 38°C — fenêtre réduite à ~65 min (+6%)' },
+                { color: T.success, text: 'Client historique: 7/8 livraisons OK (−4%)' },
+              ].map((f, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                  <div style={{ width: 7, height: 7, borderRadius: '50%', background: f.color, marginTop: 4, flexShrink: 0 }} />
+                  <span style={{ fontFamily: MONO, fontSize: 11, color: T.textSec }}>{f.text}</span>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontFamily: MONO, fontSize: 12, color: T.textDim, lineHeight: 1.6 }}>
+              RECOMMANDATION: Confirmer pompe avant 13:30. Ajouter adjuvant retardateur au mélange pour étendre la fenêtre à ~80 min.
+            </p>
+          </div>
+        </div>
+
+        {/* Red alert box */}
+        <div style={{ borderLeft: `4px solid ${T.danger}`, background: 'rgba(239,68,68,0.05)', padding: '12px 14px', borderRadius: 6, marginBottom: 4 }}>
+          <p style={{ fontFamily: MONO, fontSize: 11, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
+            Coût moyen d'un retour béton : <strong style={{ color: T.danger }}>4,200 DH</strong> (matière 3,100 + fuel 480 + chauffeur 350 + élimination 270). Sur les 12 derniers mois, Atlas Concrete a subi 8 retours = <strong style={{ color: T.danger }}>33,600 DH</strong> de pertes. Cet agent a évité 2 retours ce mois en déclenchant des alertes pré-départ. ROI : <strong style={{ color: T.success }}>8,400 DH sauvés</strong> vs 0 DH de coût agent.
+          </p>
+        </div>
+      </Card>
+
+      {/* ─── AGENT 6: SCORE PRÉPARATION CHANTIER ─── */}
+      <Card style={{ borderTop: `3px solid ${T.gold}` }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
+          <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: T.gold, letterSpacing: '2px' }}>✦ AGENT IA: SCORE PRÉPARATION CHANTIER</span>
+          <IABadge />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
+          <IAKPICard label="CHANTIERS ACTIFS" value="5" color={T.gold} borderColor={T.gold} />
+          <IAKPICard label="SCORE MOY. PRÉPARATION" value="74/100" color={T.warning} borderColor={T.warning} />
+          <IAKPICard label="CHANTIERS À RISQUE" value="2" color={T.danger} borderColor={T.danger} />
+        </div>
+
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: MONO }}>
+            <thead>
+              <tr>
+                {['CLIENT', 'CHANTIER', 'LIVR.', 'ON-TIME', 'RETOURS', 'SURESTARIES', 'SCORE', ''].map(h => (
+                  <th key={h} style={{ fontSize: 9, fontWeight: 600, color: T.textDim, letterSpacing: '0.1em', padding: '6px 8px', textAlign: 'left', borderBottom: `1px solid ${T.cardBorder}` }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { client: 'TGCC', chantier: 'Chantier Nord', livr: 14, onTime: '100%', retours: 0, surest: '0', score: 97, badge: 'FIABLE', badgeColor: T.success, border: false },
+                { client: 'Groupe A', chantier: 'Rabat Center', livr: 9, onTime: '94%', retours: 0, surest: '1 (8 min)', score: 89, badge: 'BON', badgeColor: T.success, border: false },
+                { client: 'Saham Im', chantier: 'Marina Kénitra', livr: 8, onTime: '88%', retours: 0, surest: '1 (15 min)', score: 78, badge: 'MOYEN', badgeColor: T.warning, border: false },
+                { client: 'Résidences Atlas', chantier: 'Chantier Massif', livr: 12, onTime: '83%', retours: 0, surest: '2 (22+35 min)', score: 65, badge: 'ATTENTION', badgeColor: T.warning, border: false },
+                { client: 'Sigma Bâtiment', chantier: 'Hay Hassani', livr: 6, onTime: '67%', retours: 1, surest: '2 (28+45 min)', score: 23, badge: 'CRITIQUE', badgeColor: T.danger, border: true },
+              ].map((r, i) => (
+                <tr key={r.client} style={{ borderLeft: r.border ? `3px solid ${T.danger}` : 'none', background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.06)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)')}>
+                  <td style={{ fontSize: 11, color: T.textPri, padding: '8px 8px', fontWeight: 600 }}>{r.client}</td>
+                  <td style={{ fontSize: 11, color: T.textSec, padding: '8px 8px' }}>{r.chantier}</td>
+                  <td style={{ fontSize: 11, color: T.textPri, padding: '8px 8px', fontWeight: 200 }}>{r.livr}</td>
+                  <td style={{ fontSize: 11, color: r.onTime === '100%' ? T.success : r.onTime >= '80%' ? T.warning : T.danger, padding: '8px 8px', fontWeight: 200 }}>{r.onTime}</td>
+                  <td style={{ fontSize: 11, color: r.retours > 0 ? T.danger : T.success, padding: '8px 8px', fontWeight: 200 }}>{r.retours}</td>
+                  <td style={{ fontSize: 11, color: T.textSec, padding: '8px 8px' }}>{r.surest}</td>
+                  <td style={{ fontFamily: MONO, fontSize: 20, fontWeight: 200, color: r.score > 80 ? T.success : r.score >= 50 ? T.warning : T.danger, padding: '8px 8px' }}>{r.score}</td>
+                  <td style={{ padding: '8px 8px' }}>
+                    <span style={{ fontFamily: MONO, fontSize: 10, padding: '2px 8px', borderRadius: 4, border: `1px solid ${r.badgeColor}40`, color: r.badgeColor, background: 'transparent' }}>{r.badge}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <RecommendationBox text={
+          <>Sigma Bâtiment (score <strong style={{ color: T.danger }}>23/100</strong>) est le chantier le plus problématique : 1 retour béton + 2 surestaries + 33% retard. Corrélation : ce client a aussi un score paiement de <strong style={{ color: T.danger }}>12/100</strong> (page Clients). Recommandation : exiger confirmation chantier + paiement anticipé pour toute livraison. Résidences Atlas (<strong style={{ color: T.warning }}>65/100</strong>) en baisse — 2 surestaries en 3 mois, enquêter sur changement de responsable chantier.</>
+        } />
+      </Card>
+
+      {/* ─── AGENT 7: RÉCUPÉRATEUR DE REVENUS PERDUS ─── */}
+      <Card style={{ borderTop: `3px solid ${T.gold}` }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: T.gold, letterSpacing: '2px' }}>✦ AGENT IA: RÉCUPÉRATEUR DE REVENUS PERDUS</span>
+            <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: 'rgba(212,168,67,0.15)', border: `1px solid rgba(212,168,67,0.3)`, color: T.gold }}>💰 ARGENT RÉCUPÉRABLE</span>
+          </div>
+          <IABadge />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
+          <IAKPICard label="REVENUS NON-RÉCLAMÉS" value="16,600 DH" color={T.danger} subtitle="ce mois" borderColor={T.danger} />
+          <IAKPICard label="RÉCUPÉRÉ YTD" value="8,400 DH" color={T.success} subtitle="grâce aux alertes IA" borderColor={T.success} />
+          <IAKPICard label="POTENTIEL ANNUEL" value="+145,000 DH" color={T.gold} subtitle="si 100% facturation" borderColor={T.gold} />
+        </div>
+
+        <p style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '1.5px', color: T.textDim, marginBottom: 14, textTransform: 'uppercase' as const }}>SOURCES DE REVENUS PERDUS</p>
+
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: MONO }}>
+            <thead>
+              <tr>
+                {['CATÉGORIE', 'MONTANT', 'OCC.', 'CLIENT PRINCIPAL', 'ACTION'].map(h => (
+                  <th key={h} style={{ fontSize: 9, fontWeight: 600, color: T.textDim, letterSpacing: '0.1em', padding: '6px 8px', textAlign: 'left', borderBottom: `1px solid ${T.cardBorder}` }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { cat: 'Surestaries non-facturées', montant: '12,400 DH', occ: 4, client: 'Sigma Bâtiment (45%)', hasAmount: true },
+                { cat: 'Retour béton non-facturé', montant: '4,200 DH', occ: 1, client: 'Sigma Bâtiment', hasAmount: true },
+                { cat: 'Surcharge carburant non-appliquée', montant: '0 DH', occ: 0, client: '—', hasAmount: false },
+                { cat: 'Livraisons sous-tarifées', montant: '0 DH', occ: 0, client: '—', hasAmount: false },
+              ].map((r, i) => (
+                <tr key={r.cat} style={{ borderLeft: r.hasAmount ? `3px solid ${T.danger}` : 'none', background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)' }}>
+                  <td style={{ fontSize: 11, color: T.textSec, padding: '8px 8px' }}>{r.cat}</td>
+                  <td style={{ fontFamily: MONO, fontSize: 11, fontWeight: 200, color: r.hasAmount ? T.danger : T.success, padding: '8px 8px' }}>{r.montant}</td>
+                  <td style={{ fontSize: 11, color: T.textPri, padding: '8px 8px', fontWeight: 200 }}>{r.occ}</td>
+                  <td style={{ fontSize: 11, color: T.textSec, padding: '8px 8px' }}>{r.client}</td>
+                  <td style={{ padding: '8px 8px' }}>
+                    {r.hasAmount ? (
+                      <button className="gold-outline-btn" style={{ fontFamily: MONO, fontSize: 10, fontWeight: 600, padding: '3px 10px', borderRadius: 4, background: T.gold, color: '#0F1629', border: 'none', cursor: 'pointer' }}>Facturer</button>
+                    ) : (
+                      <span style={{ fontFamily: MONO, fontSize: 10, color: T.success }}>✓ À jour</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+              <tr style={{ borderTop: `1px solid ${T.gold}40` }}>
+                <td style={{ fontSize: 11, fontWeight: 700, color: T.gold, padding: '8px 8px' }}>TOTAL</td>
+                <td style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.danger, padding: '8px 8px' }}>16,600 DH</td>
+                <td colSpan={3} />
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <button className="gold-outline-btn" style={{ fontFamily: MONO, fontSize: 12, fontWeight: 600, padding: '10px 0', borderRadius: 6, background: T.gold, color: '#0F1629', border: 'none', cursor: 'pointer', width: '100%', marginTop: 16, marginBottom: 16 }}>
+          Récupérer Tout (16,600 DH)
+        </button>
+
+        {/* Red left-border recommendation */}
+        <div style={{ borderLeft: `3px solid ${T.danger}`, background: 'linear-gradient(135deg, rgba(239,68,68,0.08) 0%, rgba(239,68,68,0.02) 100%)', padding: '12px 14px', borderRadius: 6 }}>
+          <p style={{ fontFamily: MONO, fontSize: 11, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
+            <strong style={{ color: T.danger }}>16,600 DH</strong> de revenus identifiés et non-réclamés ce mois. Sigma Bâtiment concentre 100% des pertes (surestaries 2,500 DH + retour béton 4,200 DH non-facturés). Ce client a un historique de non-paiement (score <strong style={{ color: T.danger }}>12/100</strong>). Recommandation urgente : (1) Émettre factures immédiatement avec preuve horodatée (GPS + timestamps). (2) Suspendre toute livraison Sigma Bâtiment tant que le solde <strong style={{ color: T.danger }}>189K DH</strong> (créances) + <strong style={{ color: T.danger }}>6,700 DH</strong> (revenus logistique) n'est pas régularisé. (3) Automatiser la facturation surestaries : chaque dépassement &gt;20 min génère automatiquement une ligne de facturation.
+          </p>
+        </div>
+      </Card>
+
+      {/* ─── AGENT 8: SÉCURITÉ & FATIGUE CHAUFFEUR ─── */}
+      <Card style={{ borderTop: '3px solid #EF4444' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: T.gold, letterSpacing: '2px' }}>✦ AGENT IA: SÉCURITÉ & VIGILANCE CHAUFFEUR</span>
+            <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: T.danger }}>SÉCURITÉ</span>
+          </div>
+          <IABadge />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
+          <IAKPICard label="SCORE SÉCURITÉ FLOTTE" value="87/100" color={T.success} borderColor={T.success} />
+          <IAKPICard label="ALERTES FATIGUE" value="1" color={T.warning} subtitle="T-04 à surveiller" borderColor={T.warning} />
+          <IAKPICard label="INCIDENTS 30J" value="0" color={T.success} subtitle="objectif maintenu ✓" borderColor={T.success} />
+        </div>
+
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: MONO }}>
+            <thead>
+              <tr>
+                {['CHAUFFEUR', 'HEURES', 'PAUSES', 'VIT. MOY.', 'FREIN.', 'SCORE', 'ALERTE'].map(h => (
+                  <th key={h} style={{ fontSize: 9, fontWeight: 600, color: T.textDim, letterSpacing: '0.1em', padding: '6px 8px', textAlign: 'left', borderBottom: `1px solid ${T.cardBorder}` }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { name: 'Youssef Benali', hours: '5.5h/8h', hoursVal: 5.5, pauses: '1 (conforme)', vit: '42 km/h', frein: 2, score: 91, alerte: '⚠ Pause recommandée dans 30 min', alerteColor: T.warning },
+                { name: 'Karim Idrissi', hours: '2.0h/8h', hoursVal: 2, pauses: '0', vit: '38 km/h', frein: 0, score: 96, alerte: '✓ OK', alerteColor: T.success },
+                { name: 'Mehdi Tazi', hours: '0h (planifié 14:00)', hoursVal: 0, pauses: '—', vit: '—', frein: 0, score: 94, alerte: '✓ Repos suffisant', alerteColor: T.success },
+              ].map((r, i) => (
+                <tr key={r.name} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.06)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)')}>
+                  <td style={{ fontSize: 11, color: T.textPri, padding: '8px 8px', fontWeight: 600 }}>{r.name}</td>
+                  <td style={{ fontSize: 11, color: r.hoursVal > 7 ? T.danger : r.hoursVal > 5 ? T.warning : T.textPri, padding: '8px 8px', fontWeight: 200 }}>{r.hours}</td>
+                  <td style={{ fontSize: 11, color: T.textSec, padding: '8px 8px' }}>{r.pauses}</td>
+                  <td style={{ fontSize: 11, color: T.textPri, padding: '8px 8px', fontWeight: 200 }}>{r.vit}</td>
+                  <td style={{ fontSize: 11, color: r.frein > 5 ? T.danger : r.frein >= 3 ? T.warning : T.textPri, padding: '8px 8px', fontWeight: 200 }}>{r.frein}</td>
+                  <td style={{ fontFamily: MONO, fontSize: 20, fontWeight: 200, color: r.score > 85 ? T.success : r.score >= 70 ? T.warning : T.danger, padding: '8px 8px' }}>{r.score}</td>
+                  <td style={{ fontSize: 10, color: r.alerteColor, padding: '8px 8px', fontFamily: MONO }}>{r.alerte}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Amber alert card for Youssef */}
+        <div style={{ borderLeft: `4px solid ${T.warning}`, background: 'rgba(245,158,11,0.05)', padding: '12px 14px', borderRadius: 6, marginTop: 16, marginBottom: 16 }}>
+          <p style={{ fontFamily: MONO, fontSize: 11, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
+            <strong style={{ color: T.warning }}>Youssef Benali</strong> : 5.5h de conduite continue. Réglementation marocaine : pause obligatoire de 30 min après 6h. Prochaine livraison (Saham Im 14:00) : recommander pause de 30 min entre 12:30-13:00 avant départ. Risque incident augmente de <strong style={{ color: T.danger }}>+34%</strong> au-delà de 6h de conduite. Assurance flotte exige conformité aux temps de repos.
+          </p>
+        </div>
+
+        {/* Historique incidents */}
+        <p style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '1.5px', color: T.textDim, marginBottom: 10, textTransform: 'uppercase' as const }}>HISTORIQUE INCIDENTS (12 MOIS)</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 16 }}>
+          <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, margin: 0 }}>✓ 0 accident · 0 infraction · 2 freinages brusques signalés (résolu par formation)</p>
+          <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, margin: 0 }}>Dernière formation sécurité : 15/02/2026 — prochaine : 15/05/2026</p>
+          <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, margin: 0 }}>Assurance flotte : MAIF Pro · Validité : 01/09/2026 · Prime annuelle : 42,000 DH</p>
+        </div>
+
+        <RecommendationBox text={
+          <>Score sécurité flotte excellent à <strong style={{ color: T.success }}>87/100</strong>. Actions recommandées : (1) Planifier pause Youssef Benali 12:30-13:00 avant livraison Saham Im. (2) Formation conduite défensive programmée mai 2026 — confirmer inscription 4 chauffeurs. (3) Le score sécurité de 87/100 qualifie Atlas Concrete pour une réduction prime assurance de <strong style={{ color: T.gold }}>−8%</strong> au prochain renouvellement (économie estimée : <strong style={{ color: T.gold }}>3,360 DH/an</strong>).</>
+        } />
+      </Card>
     </div>
   );
 }
