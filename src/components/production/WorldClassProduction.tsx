@@ -1151,11 +1151,11 @@ export default function WorldClassProduction() {
             borderRadius: 12, padding: 20,
           }}>
             <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-              Formule F-B30 marge <span style={{ color: '#34d399', fontWeight: 600 }}>+12%</span> vs F-B25 aujourd'hui grâce au prix gravette favorable. Recommandation: prioriser F-B30 pour les 3 prochains batches clients flexibles. Économie estimée: <span style={{ color: '#34d399', fontWeight: 600 }}>2 400 DH/jour</span>. Alerte prix ciment: hausse <span style={{ color: '#EF4444', fontWeight: 600 }}>+3%</span> prévue semaine prochaine — considérer pré-commande.
+              Formule F-B30 marge <span style={{ color: '#34d399', fontWeight: 600 }}>+12%</span> vs F-B25 aujourd'hui grâce au prix gravette favorable. Recommandation: prioriser F-B30 pour les 3 prochains batches clients flexibles. Économie estimée: <span style={{ color: '#D4A843', fontWeight: 700 }}>2 400 DH/jour</span>. Alerte prix ciment: hausse <span style={{ color: '#D4A843', fontWeight: 700 }}>+3%</span> prévue semaine prochaine — considérer pré-commande.
             </p>
             <div className="flex gap-2 mt-3">
-              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(16,185,129,0.12)', color: '#34d399' }}>Économie: 2 400 DH</span>
-              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 84%</span>
+              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843' }}>Économie: 2,400 DH</span>
+              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, border: '1px solid #D4A843', color: '#D4A843' }}>Confiance: 84%</span>
             </div>
           </div>
         </section>
