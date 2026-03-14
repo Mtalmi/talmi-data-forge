@@ -346,7 +346,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                         transition: 'width 300ms ease',
                       }} />
                     </div>
-                    <span style={{ fontFamily: mono, fontSize: 10, color: 'rgba(255,255,255,0.25)' }}>
+                    <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: 'rgba(255,255,255,0.25)' }}>
                       {delivered}/{row.volume}m³
                     </span>
                   </div>
