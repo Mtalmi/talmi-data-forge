@@ -832,7 +832,7 @@ export default function WorldClassProduction() {
             <div style={{ display: 'flex', gap: 24 }}>
               {/* LEFT 60% */}
               <div style={{ flex: '0 0 60%' }}>
-                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 64, fontWeight: 100, color: '#F59E0B', lineHeight: 1, letterSpacing: '-0.02em', textShadow: '0 0 20px rgba(245,158,11,0.3)' }}>38.6%</p>
+                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 56, fontWeight: 100, color: '#F59E0B', lineHeight: 1, letterSpacing: '-0.02em', textShadow: '0 0 20px rgba(245,158,11,0.3)' }}>38.6%</p>
                 <p style={{ color: '#6B7280', fontSize: 11, marginTop: 8, textTransform: 'uppercase', letterSpacing: '2px' }}>Marge brute glissante · Aujourd'hui</p>
                 {/* Sparkline */}
                 <svg width={200} height={48} style={{ marginTop: 12 }}>
