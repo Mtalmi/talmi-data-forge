@@ -1576,126 +1576,63 @@ export default function Planning() {
         }
         dispatchMain={
           <div className="space-y-6">
-            <CommandCenterSection bons={displayCommandCenterBons} camions={displayCommandCenterCamions} demoMode={isBottomDemoMode} />
-            <div className="rounded-2xl p-5 overflow-x-auto" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
-            <div className="flex flex-col md:flex-row gap-8 lg:gap-10 md:min-w-[980px]">
-              <Card className="rounded-xl flex-1 min-w-[320px]" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
+            <DispatchTable bons={displayCommandCenterBons} onRowClick={(bon) => { setSelectedBonId(bon.bl_id); setDetailOpen(true); }} />
+            {aFacturer.length > 0 && (
+              <Card className="border-2 border-warning/50 bg-warning/5">
                 <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-3 text-base">
-                    <ClipboardList className="h-6 w-6 text-[#D4A843] flex-shrink-0" strokeWidth={1.5} />
-                    <span className="text-lg font-medium text-white whitespace-nowrap">{t.pages.planning.toProduce}</span>
-                    <Badge className="ml-auto text-xs bg-[#D4A843]/20 text-[#D4A843] border-0">{displayAProduire.length}</Badge>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <div className="p-1.5 rounded bg-warning/20 animate-pulse"><Receipt className="h-4 w-4 text-warning" /></div>
+                    {t.pages.planning.toInvoice}
+                    <Badge className="ml-auto bg-warning text-white">{aFacturer.length}</Badge>
                   </CardTitle>
-                  <p className="text-[11px] text-muted-foreground">{t.pages.planning.next2Hours}</p>
+                  <p className="text-xs text-muted-foreground">{t.pages.planning.deliveredAwaitingInvoice}</p>
                 </CardHeader>
-                <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
-                  {displayAProduire.length === 0 ? (
-                    <div className="text-center py-12">
-                      <ClipboardList className="h-12 w-12 mx-auto mb-4 text-[#D4A843]/20" strokeWidth={1.5} />
-                      <p className="text-sm text-muted-foreground">{t.pages.planning.noPlannedDelivery}</p>
-                    </div>
-                  ) : (displayAProduire.map(bon => <BonCard key={bon.bl_id} bon={bon} showTimeInput />))}
-                </CardContent>
-              </Card>
-              <Card className="rounded-xl flex-1 min-w-[320px]" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-3 text-base">
-                    <Loader className="h-6 w-6 text-blue-400 flex-shrink-0" strokeWidth={1.5} />
-                    <span className="text-lg font-medium text-white whitespace-nowrap">{t.pages.planning.enChargement}</span>
-                    <Badge className="ml-auto bg-blue-400/20 text-blue-400 border-0">{displayEnChargement.length}</Badge>
-                    {displayEnChargement.length > 0 && (
-                      <Button variant="ghost" size="sm" className="ml-auto gap-1 text-blue-400 hover:bg-blue-400/10 h-7 text-[9px] px-1.5 whitespace-nowrap" data-testid="centre-production-link" onClick={() => navigate(`/production?date=${selectedDate}`)}>
-                        <Eye className="h-3 w-3" />{t.pages.planning.productionCenter}<ExternalLink className="h-3 w-3" />
-                      </Button>
-                    )}
-                  </CardTitle>
-                  <p className="text-[11px] text-muted-foreground">{t.pages.planning.productionAndValidation}</p>
-                </CardHeader>
-                <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
-                  {displayEnChargement.length === 0 ? (
-                    <div className="text-center py-12">
-                      <Loader className="h-12 w-12 mx-auto mb-4 text-blue-400/20" strokeWidth={1.5} />
-                      <p className="text-sm text-muted-foreground">{t.pages.planning.noLoadingInProgress}</p>
-                    </div>
-                  ) : (displayEnChargement.map(bon => <BonCard key={bon.bl_id} bon={bon} />))}
-                </CardContent>
-              </Card>
-              <Card className="rounded-xl flex-1 min-w-[320px]" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-3 text-base">
-                    <Truck className="h-6 w-6 text-emerald-400 flex-shrink-0" strokeWidth={1.5} />
-                    <span className="text-lg font-medium text-white whitespace-nowrap">{t.pages.planning.enLivraison}</span>
-                    <Badge className="ml-auto bg-emerald-400/20 text-emerald-400 border-0">{displayEnLivraison.length}</Badge>
-                  </CardTitle>
-                  <p className="text-[11px] text-muted-foreground">{t.pages.planning.trucksOnRoute}</p>
-                </CardHeader>
-                <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
-                  {displayEnLivraison.length === 0 ? (
-                    <div className="text-center py-12">
-                      <Truck className="h-12 w-12 mx-auto mb-4 text-emerald-400/20" />
-                      <p className="text-sm text-muted-foreground">{t.pages.planning.noTruckOnDelivery}</p>
-                    </div>
-                  ) : (displayEnLivraison.map(bon => <BonCard key={bon.bl_id} bon={bon} />))}
-                </CardContent>
-              </Card>
-              {aFacturer.length > 0 && (
-                <Card className="border-2 border-warning/50 bg-warning/5">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center gap-2 text-base">
-                      <div className="p-1.5 rounded bg-warning/20 animate-pulse"><Receipt className="h-4 w-4 text-warning" /></div>
-                      {t.pages.planning.toInvoice}
-                      <Badge className="ml-auto bg-warning text-white">{aFacturer.length}</Badge>
-                    </CardTitle>
-                    <p className="text-xs text-muted-foreground">{t.pages.planning.deliveredAwaitingInvoice}</p>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      {aFacturer.map(bon => (
-                        <div key={bon.bl_id} className="flex items-center justify-between p-3 bg-warning/10 border border-warning/30 rounded-lg hover:bg-warning/20 transition-colors cursor-pointer" onClick={() => { setSelectedDeliveryForInvoice(bon); setInvoiceDialogOpen(true); }}>
-                          <div className="flex items-center gap-3">
-                            <span className="font-mono font-semibold">{bon.bl_id}</span>
-                            <span className="text-muted-foreground">{bon.clients?.nom_client || bon.client_id}</span>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <span className="font-semibold">{bon.volume_m3} m³</span>
-                            {bon.facturer_attente && (<Badge variant="outline" className="border-warning text-warning text-xs gap-1"><Clock className="h-3 w-3" />{t.pages.planning.waiting}</Badge>)}
-                            <Button size="sm" className="gap-1 bg-success hover:bg-success/90"><Receipt className="h-4 w-4" />{t.pages.planning.invoice}</Button>
-                          </div>
+                <CardContent>
+                  <div className="space-y-2">
+                    {aFacturer.map(bon => (
+                      <div key={bon.bl_id} className="flex items-center justify-between p-3 bg-warning/10 border border-warning/30 rounded-lg hover:bg-warning/20 transition-colors cursor-pointer" onClick={() => { setSelectedDeliveryForInvoice(bon); setInvoiceDialogOpen(true); }}>
+                        <div className="flex items-center gap-3">
+                          <span className="font-mono font-semibold">{bon.bl_id}</span>
+                          <span className="text-muted-foreground">{bon.clients?.nom_client || bon.client_id}</span>
                         </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-              {facturesAujourdhui.length > 0 && (
-                <Card className="border-success/30 bg-success/5 opacity-80">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center gap-2 text-base">
-                      <div className="p-1.5 rounded bg-success/10"><CheckCircle className="h-4 w-4 text-success" /></div>
-                      {t.pages.planning.invoiced}
-                      <Badge variant="outline" className="ml-auto border-success/30 text-success">{facturesAujourdhui.length}</Badge>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      {facturesAujourdhui.map(bon => (
-                        <div key={bon.bl_id} className="flex items-center justify-between p-2 bg-muted/30 rounded text-sm">
-                          <div className="flex items-center gap-3">
-                            <span className="font-mono font-medium">{bon.bl_id}</span>
-                            <span className="text-muted-foreground">{bon.clients?.nom_client || bon.client_id}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold">{bon.volume_m3} m³</span>
-                            <Badge variant="outline" className="text-success border-success/30 text-xs">{t.pages.planning.invoicedCheck}</Badge>
-                          </div>
+                        <div className="flex items-center gap-3">
+                          <span className="font-semibold">{bon.volume_m3} m³</span>
+                          {bon.facturer_attente && (<Badge variant="outline" className="border-warning text-warning text-xs gap-1"><Clock className="h-3 w-3" />{t.pages.planning.waiting}</Badge>)}
+                          <Button size="sm" className="gap-1 bg-success hover:bg-success/90"><Receipt className="h-4 w-4" />{t.pages.planning.invoice}</Button>
                         </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-            </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            {facturesAujourdhui.length > 0 && (
+              <Card className="border-success/30 bg-success/5 opacity-80">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <div className="p-1.5 rounded bg-success/10"><CheckCircle className="h-4 w-4 text-success" /></div>
+                    {t.pages.planning.invoiced}
+                    <Badge variant="outline" className="ml-auto border-success/30 text-success">{facturesAujourdhui.length}</Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {facturesAujourdhui.map(bon => (
+                      <div key={bon.bl_id} className="flex items-center justify-between p-2 bg-muted/30 rounded text-sm">
+                        <div className="flex items-center gap-3">
+                          <span className="font-mono font-medium">{bon.bl_id}</span>
+                          <span className="text-muted-foreground">{bon.clients?.nom_client || bon.client_id}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold">{bon.volume_m3} m³</span>
+                          <Badge variant="outline" className="text-success border-success/30 text-xs">{t.pages.planning.invoicedCheck}</Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         }
         fleetPanel={!isMobile ? <FleetPanel selectedDate={selectedDate} isOpen={fleetPanelOpen} onOpenChange={setFleetPanelOpen} /> : undefined}
