@@ -739,14 +739,15 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
           })}
         </div>
         <button style={{
-          padding: '7px 16px', borderRadius: 8, background: '#F59E0B', color: '#000000',
-          fontWeight: 700, fontSize: 12,
+          padding: '8px 24px', borderRadius: 8, background: '#D4A843', color: '#0F1629',
+          fontWeight: 600, fontSize: 14,
           border: 'none', cursor: 'pointer',
-          transition: 'background 150ms',
+          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+          transition: 'filter 150ms',
         }}
           onClick={() => onNewMovement ? onNewMovement() : toast.info('Utilisez les boutons d\'action dans l\'en-tête pour créer un mouvement.')}
-          onMouseEnter={e => (e.currentTarget.style.background = '#D97706')}
-          onMouseLeave={e => (e.currentTarget.style.background = '#F59E0B')}
+          onMouseEnter={e => (e.currentTarget.style.filter = 'brightness(1.15)')}
+          onMouseLeave={e => (e.currentTarget.style.filter = 'brightness(1)')}
         >
           + Nouveau Mouvement
         </button>
@@ -1402,25 +1403,7 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
           );
         })()}
 
-        {/* ── FOOTER ── */}
-        <footer style={{
-          borderTop: '1px solid rgba(212,168,67,0.1)',
-          background: 'rgba(15,22,41,0.8)',
-          padding: '16px 24px',
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          borderRadius: '0 0 12px 12px',
-        }}>
-          <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', color: T.textDim, fontSize: 11 }}>
-            TBOS STOCKS INTELLIGENCE v2.0 — {new Date().toLocaleDateString('fr-FR')}
-          </span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'rgba(34,197,94,0.8)', animation: 'tbos-pulse 3s infinite' }} />
-            <span style={{ color: T.textDim, fontSize: 11 }}>Synchronisé en temps réel</span>
-          </div>
-          <span style={{ color: '#D4A843', fontSize: 11, opacity: 0.7 }}>
-            ⚡ Propulsé par Claude Opus · Atlas Concrete Morocco
-          </span>
-        </footer>
+        {/* footer removed */}
       </div>
     </div>
   );

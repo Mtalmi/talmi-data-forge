@@ -1,6 +1,9 @@
 import { cn } from '@/lib/utils';
 import { AlertTriangle, TrendingDown, Clock, Gauge } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nContext';
+import { useState } from 'react';
+
+const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
 
 interface SiloVisualProps {
   materiau: string;
@@ -28,24 +31,25 @@ export function SiloVisual({
   className,
 }: SiloVisualProps) {
   const { t } = useI18n();
+  const [hov, setHov] = useState(false);
   const percentage = capacite > 0 ? Math.min((quantite / capacite) * 100, 100) : 0;
   const seuilPercentage = capacite > 0 ? (seuil / capacite) * 100 : 0;
   const isCritical = quantite <= seuil;
   const isLow = quantite <= seuil * 1.5 && !isCritical;
 
-  // Gold-unified colors — critical uses red (semantic)
-  const colors = isCritical
-    ? { border: 'border-red-500', fill: 'from-red-500 to-red-600' }
-    : { border: 'border-[#FFD700]', fill: 'from-[#FFD700] to-[#B8860B]' };
+  // Color-code fill by level: <20% red, 20-40% amber, 40-70% gold, >70% green
+  const fillColor = percentage < 20 ? '#EF4444'
+    : percentage < 40 ? '#F59E0B'
+    : percentage < 70 ? '#D4A843'
+    : '#22C55E';
+
+  const borderColor = percentage < 20 ? 'border-red-500' : percentage < 40 ? 'border-amber-500' : percentage < 70 ? 'border-[#D4A843]' : 'border-emerald-500';
 
   const formatQuantity = (qty: number) => {
-    if (qty >= 1000) {
-      return `${(qty / 1000).toFixed(1)}k`;
-    }
+    if (qty >= 1000) return `${(qty / 1000).toFixed(1)}k`;
     return qty.toFixed(0);
   };
 
-  // Show real autonomy or "—" instead of 999j
   const displayAutonomy = (() => {
     if (daysRemaining === undefined) return null;
     if (daysRemaining > 365) return '—';
@@ -53,7 +57,6 @@ export function SiloVisual({
     return `${rounded}j${hoursRemaining !== undefined ? ` ${Math.round(hoursRemaining % 24)}h` : ''}`;
   })();
 
-  // Glow color/speed based on autonomy
   const glowConfig = daysRemaining === undefined
     ? null
     : daysRemaining < 3
@@ -62,8 +65,24 @@ export function SiloVisual({
     ? { color: 'rgba(251,146,60,0.6)', border: 'rgba(251,146,60,0.35)', speed: '1.5s' }
     : { color: 'rgba(34,197,94,0.6)', border: 'rgba(34,197,94,0.3)', speed: '1.5s' };
 
+  // Autonomy badge border color by urgency
+  const autoBorderColor = daysRemaining === undefined ? 'rgba(100,116,139,0.3)'
+    : daysRemaining < 7 ? '#EF4444'
+    : daysRemaining <= 10 ? '#F59E0B'
+    : '#22C55E';
+
   return (
-    <div className={cn('flex flex-col items-center', className)}>
+    <div
+      className={cn('flex flex-col items-center', className)}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        transition: 'transform 200ms ease, box-shadow 200ms ease',
+        transform: hov ? 'translateY(-2px)' : 'translateY(0)',
+        boxShadow: hov ? '0 4px 20px rgba(212,168,67,0.1)' : 'none',
+        cursor: 'pointer',
+      }}
+    >
       {isCritical && (
         <div className="mb-2 flex items-center gap-1 px-2 py-1 rounded bg-destructive/20 border border-destructive/50 animate-pulse">
           <AlertTriangle className="h-3 w-3 text-destructive" />
@@ -88,30 +107,24 @@ export function SiloVisual({
         {/* Top cap */}
         <div className={cn(
           'h-4 rounded-t-full border-2 border-b-0',
-          colors.border,
+          borderColor,
           'bg-muted/30'
         )} />
         
         {/* Silo body */}
         <div className={cn(
           'flex-1 relative border-2 border-t-0 border-b-0 overflow-hidden',
-          colors.border,
+          borderColor,
           'bg-muted/20'
         )}>
-          {/* Fill level */}
+          {/* Fill level — color-coded by percentage */}
           <div
-            className={cn(
-              'absolute bottom-0 left-0 right-0 transition-all duration-700',
-              'bg-gradient-to-t',
-              isCritical ? 'from-destructive to-destructive/80' : colors.fill,
-              isCritical && 'animate-pulse'
-            )}
+            className="absolute bottom-0 left-0 right-0 transition-all duration-700"
             style={{
               height: `${percentage}%`,
+              background: `linear-gradient(to top, ${fillColor}, ${fillColor}cc)`,
               transformOrigin: 'bottom',
-              animation: daysRemaining !== undefined && daysRemaining < 3
-                ? 'silo-breathing 3s ease-in-out infinite'
-                : 'silo-breathing 3s ease-in-out infinite',
+              animation: 'silo-breathing 3s ease-in-out infinite',
             }}
           />
           {/* Liquid shimmer overlay */}
@@ -149,38 +162,30 @@ export function SiloVisual({
             </span>
           </div>
           
-          {/* Percentage text */}
+          {/* Percentage text — monospace weight 200 size 24px */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className={cn(
-              'text-2xl font-bold font-mono text-white',
-            )}>
+            <span style={{
+              fontFamily: MONO,
+              fontWeight: 200,
+              fontSize: 24,
+              color: '#fff',
+            }}>
               {percentage.toFixed(0)}%
             </span>
           </div>
         </div>
         
         {/* Bottom cone */}
-        <div className={cn(
-          'h-6 relative overflow-hidden',
-          colors.border
-        )}>
+        <div className={cn('h-6 relative overflow-hidden', borderColor)}>
           <div
-            className={cn(
-              'absolute inset-0 border-l-2 border-r-2',
-              colors.border,
-              'bg-muted/30'
-            )}
-            style={{
-              clipPath: 'polygon(0 0, 100% 0, 70% 100%, 30% 100%)',
-            }}
+            className={cn('absolute inset-0 border-l-2 border-r-2', borderColor, 'bg-muted/30')}
+            style={{ clipPath: 'polygon(0 0, 100% 0, 70% 100%, 30% 100%)' }}
           />
           {percentage > 0 && (
             <div
-              className={cn(
-                'absolute inset-0 bg-gradient-to-t',
-                isCritical ? 'from-destructive to-destructive/80' : colors.fill
-              )}
+              className="absolute inset-0"
               style={{
+                background: `linear-gradient(to top, ${fillColor}, ${fillColor}cc)`,
                 clipPath: 'polygon(0 0, 100% 0, 70% 100%, 30% 100%)',
                 height: `${Math.min(percentage, 100)}%`,
               }}
@@ -189,23 +194,16 @@ export function SiloVisual({
         </div>
         
         {/* Output pipe */}
-        <div className={cn(
-          'h-4 w-6 mx-auto border-2 border-t-0 rounded-b',
-          colors.border,
-          'bg-muted/30'
-        )} />
+        <div className={cn('h-4 w-6 mx-auto border-2 border-t-0 rounded-b', borderColor, 'bg-muted/30')} />
       </div>
 
       {/* Material Info */}
       <div className="mt-4 text-center">
-        <h3 className="font-bold text-sm text-white">{materiau}</h3>
-        <p className={cn(
-          'font-mono text-sm',
-          isCritical ? 'text-destructive font-bold' : 'text-gray-300'
-        )}>
-          {formatQuantity(quantite)} <span className="text-xs text-gray-500">{unite}</span>
+        <h3 style={{ fontFamily: MONO, fontWeight: 500, fontSize: 14, color: '#fff' }}>{materiau}</h3>
+        <p style={{ fontFamily: MONO, fontWeight: 300, fontSize: 13, color: '#D4A843' }}>
+          {formatQuantity(quantite)} <span style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF' }}>{unite}</span>
         </p>
-        <p className="text-xs text-gray-500 font-mono">
+        <p style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF' }}>
           / {formatQuantity(capacite)} {unite}
         </p>
       </div>
@@ -224,7 +222,6 @@ export function SiloVisual({
         }));
         const line = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
         const area = `${line} L${pts[pts.length - 1].x},${H} L${pts[0].x},${H} Z`;
-        // Trend: compare last 3 days
         const last3 = sparklineData.slice(-3);
         const trend = last3.length >= 2
           ? last3[last3.length - 1] - last3[0] < -range * 0.05 ? 'down'
@@ -249,21 +246,25 @@ export function SiloVisual({
         );
       })()}
 
-      {/* Autonomy */}
+      {/* Autonomy — with borderTop colored by urgency */}
       {displayAutonomy !== null && (
         <div
-          className={cn(
-            'mt-3 p-2 rounded-lg',
-            daysRemaining !== undefined && daysRemaining <= 3 
-              ? 'border border-destructive/50 bg-destructive/10' 
-              : daysRemaining !== undefined && daysRemaining <= 7 
-                ? 'border border-warning/50 bg-warning/10' 
-                : 'border border-[#FFD700]/20 bg-[#FFD700]/5'
-          )}
-          style={glowConfig ? {
-            animation: `silo-badge-glow ${glowConfig.speed} ease-in-out infinite alternate`,
-            ['--silo-glow-color' as string]: glowConfig.color,
-          } : undefined}
+          className="mt-3 p-2 rounded-lg"
+          style={{
+            borderTop: `2px solid ${autoBorderColor}`,
+            border: `1px solid ${autoBorderColor}33`,
+            borderTopWidth: 2,
+            borderTopColor: autoBorderColor,
+            background: daysRemaining !== undefined && daysRemaining <= 3
+              ? 'rgba(239,68,68,0.08)'
+              : daysRemaining !== undefined && daysRemaining <= 7
+                ? 'rgba(245,158,11,0.08)'
+                : 'rgba(212,168,67,0.05)',
+            ...(glowConfig ? {
+              animation: `silo-badge-glow ${glowConfig.speed} ease-in-out infinite alternate`,
+              ['--silo-glow-color' as string]: glowConfig.color,
+            } : {}),
+          }}
         >
           <div className="flex items-center gap-1.5 justify-center">
             <Gauge className={cn(
@@ -272,26 +273,30 @@ export function SiloVisual({
                 ? 'text-destructive animate-pulse' 
                 : daysRemaining !== undefined && daysRemaining <= 7 
                   ? 'text-warning' 
-                  : 'text-[#FFD700]'
+                  : 'text-[#D4A843]'
             )} />
-            <span className="text-xs text-gray-400">
+            <span style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF' }}>
               {t.pages.stocks.estimatedAutonomy}
             </span>
           </div>
-          <div className={cn(
-            'mt-1 text-center font-mono text-lg font-bold',
-            daysRemaining !== undefined && daysRemaining <= 3 
-              ? 'text-destructive' 
-              : daysRemaining !== undefined && daysRemaining <= 7 
-                ? 'text-warning' 
-                : 'text-[#FFD700]'
-          )}>
+          <div className="mt-1 text-center" style={{
+            fontFamily: MONO,
+            fontWeight: 600,
+            fontSize: 18,
+            color: daysRemaining !== undefined && daysRemaining <= 3
+              ? '#EF4444'
+              : daysRemaining !== undefined && daysRemaining <= 7
+                ? '#F59E0B'
+                : '#D4A843',
+          }}>
             {displayAutonomy}
           </div>
           {avgDailyUsage !== undefined && avgDailyUsage > 0 && (
-            <div className="mt-1 text-[10px] text-muted-foreground text-center flex items-center justify-center gap-1">
-              <TrendingDown className="h-3 w-3" />
-              <span>{t.pages.stocks.avgConsumption}: {avgDailyUsage.toFixed(0)} {unite}{t.pages.stocks.perDay}</span>
+            <div className="mt-1 text-center flex items-center justify-center gap-1">
+              <TrendingDown className="h-3 w-3" style={{ color: '#9CA3AF' }} />
+              <span style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF' }}>
+                Conso moy: {avgDailyUsage.toFixed(0)} {unite}{t.pages.stocks.perDay}
+              </span>
             </div>
           )}
         </div>
@@ -308,13 +313,26 @@ export function SiloVisual({
         </div>
       )}
 
-      {/* Status indicator */}
-      <div className={cn(
-        'mt-2 h-2 w-2 rounded-full',
-        isCritical ? 'bg-destructive animate-ping' :
-        isLow ? 'bg-warning' :
-        'bg-emerald-400'
-      )} />
+      {/* Status indicator — pulse for healthy, red pulse for critical */}
+      <div style={{
+        marginTop: 8,
+        width: 8, height: 8, borderRadius: '50%',
+        background: isCritical ? '#EF4444' : isLow ? '#F59E0B' : '#22C55E',
+        animation: isCritical
+          ? 'silo-status-pulse-red 2s infinite'
+          : 'silo-status-pulse-green 2s infinite',
+      }} />
+
+      <style>{`
+        @keyframes silo-status-pulse-green {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.4); opacity: 0.7; }
+        }
+        @keyframes silo-status-pulse-red {
+          0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 rgba(239,68,68,0); }
+          50% { transform: scale(1.4); opacity: 0.8; box-shadow: 0 0 8px rgba(239,68,68,0.5); }
+        }
+      `}</style>
     </div>
   );
 }
