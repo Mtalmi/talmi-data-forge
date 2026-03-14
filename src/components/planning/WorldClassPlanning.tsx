@@ -692,6 +692,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
 
   const [routePanelOpen, setRoutePanelOpen] = useState(false);
   const [riskyClients, setRiskyClients] = useState<Set<string>>(new Set());
+  const [selectedSlot, setSelectedSlot] = useState<ScheduleSlotInfo | null>(null);
 
   // Fetch clients with stale 'en_attente' devis (>30 days)
   useEffect(() => {
