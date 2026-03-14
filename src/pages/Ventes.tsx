@@ -56,6 +56,7 @@ import { SavedFilterViews } from '@/components/ventes/SavedFilterViews';
 import { ExpiringQuotesAlert } from '@/components/ventes/ExpiringQuotesAlert';
 import { RevenueForecastChart } from '@/components/ventes/RevenueForecastChart';
 import { SalesPerformanceCharts } from '@/components/ventes/SalesPerformanceCharts';
+import { AnalytiqueExtended } from '@/components/ventes/AnalytiqueExtended';
 import { BatchReminderDialog } from '@/components/ventes/BatchReminderDialog';
 import { CommunicationLogDrawer } from '@/components/ventes/CommunicationLogDrawer';
 import { ScheduledRemindersDialog } from '@/components/ventes/ScheduledRemindersDialog';
