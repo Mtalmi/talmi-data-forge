@@ -1154,9 +1154,6 @@ export default function Dashboard() {
             <IntelligenceBriefingCard />
           </div>
 
-          {/* Résumé IA one-liner */}
-          <ResumeIABar />
-
           {/* (5) Flux Usine ribbon */}
           <Suspense fallback={<div className="h-32 rounded-lg bg-white/[0.02] animate-pulse mt-2" style={{ animation: 'ccSectionIn 300ms ease-out 550ms both' }} />}>
             <PlantFlowSchematic />
