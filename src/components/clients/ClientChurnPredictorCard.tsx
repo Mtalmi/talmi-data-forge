@@ -140,6 +140,10 @@ export function ClientChurnPredictorCard() {
             <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>30 jours</span>. Recommandation : réunion direction cette semaine, proposer plan de paiement échelonné sur{' '}
             <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>3 mois</span> avec engagement de reprise des commandes.
           </p>
+          <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+            <WhatsAppButton label="Contacter via WhatsApp" />
+            <button style={{ fontFamily: MONO, fontSize: 12, fontWeight: 600, padding: '6px 14px', borderRadius: 6, background: 'transparent', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)', cursor: 'pointer' }}>Planifier Réunion</button>
+          </div>
         </div>
       </div>
     </div>
