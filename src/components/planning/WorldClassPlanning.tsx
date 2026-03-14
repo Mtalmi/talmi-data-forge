@@ -1078,7 +1078,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                             style={{
                               fontSize: 11, cursor: 'pointer', paddingBottom: 2,
                               color: deliverySort === s ? '#D4A843' : '#9CA3AF',
-                              borderBottom: deliverySort === s ? '1px solid #D4A843' : '1px solid transparent',
+                              borderBottom: deliverySort === s ? '2px solid #D4A843' : '2px solid transparent',
                               fontWeight: deliverySort === s ? 600 : 400,
                               transition: 'all 150ms',
                             }}
