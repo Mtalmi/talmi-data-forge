@@ -11,7 +11,9 @@ import {
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import WorldClassDeliveryArchive from '@/components/archive/WorldClassDeliveryArchive';
-import { FleetPredatorPage } from '@/components/fleet/FleetPredatorPage';
+import { FleetGPSMap } from '@/components/fleet/FleetGPSMap';
+import { useGPSTracking } from '@/hooks/useGPSTracking';
+import { Shield, Map as MapIcon, Users, TrendingDown, Minus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { format, startOfWeek, endOfWeek, subDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -520,23 +522,62 @@ function LogisticsBriefingBanner({ totalDeliveries, enRoute, planned }: { totalD
 }
 
 // ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────
+// DRIVER PERF DATA (for Zones & Performance sub-tab)
+// ─────────────────────────────────────────────────────
+const DRIVER_PERF_DATA = [
+  { name: 'Youssef Benali', initials: 'YB', score: 94, trend: 3, ponctualite: 'green' as const, securite: 'green' as const, efficacite: 'green' as const },
+  { name: 'Karim Idrissi', initials: 'KI', score: 89, trend: 1, ponctualite: 'green' as const, securite: 'green' as const, efficacite: 'amber' as const },
+  { name: 'Mehdi Tazi', initials: 'MT', score: 85, trend: -2, ponctualite: 'amber' as const, securite: 'green' as const, efficacite: 'green' as const },
+  { name: 'Omar Fassi', initials: 'OF', score: 78, trend: 0, ponctualite: 'green' as const, securite: 'amber' as const, efficacite: 'amber' as const },
+  { name: 'Hassan Berrada', initials: 'HB', score: 72, trend: -4, ponctualite: 'amber' as const, securite: 'red' as const, efficacite: 'amber' as const },
+  { name: 'Rachid Amrani', initials: 'RA', score: 65, trend: 2, ponctualite: 'red' as const, securite: 'amber' as const, efficacite: 'amber' as const },
+];
+
+const TRIP_HISTORY = [
+  { date: '14/03', toupie: 'T-04', chauffeur: 'Youssef B.', depart: 'Atlas Concrete 09:15', arrivee: 'Résidences Atlas 10:44', distance: 67, duree: '1h29', carburant: 28, retourVide: 48 },
+  { date: '14/03', toupie: 'T-07', chauffeur: 'Karim I.', depart: 'Atlas Concrete 06:30', arrivee: 'Rabat Center 08:15', distance: 98, duree: '1h45', carburant: 41, retourVide: 31 },
+  { date: '13/03', toupie: 'T-12', chauffeur: 'Mehdi T.', depart: 'Atlas Concrete 14:00', arrivee: 'Saham Im 14:52', distance: 45, duree: '52 min', carburant: 19, retourVide: 0 },
+  { date: '13/03', toupie: 'T-04', chauffeur: 'Youssef B.', depart: 'Atlas Concrete 07:00', arrivee: 'TGCC Chantier 08:25', distance: 54, duree: '1h25', carburant: 23, retourVide: 52 },
+  { date: '12/03', toupie: 'T-09', chauffeur: 'Omar F.', depart: 'Atlas Concrete 08:00', arrivee: 'Addoha Casa 09:12', distance: 38, duree: '1h12', carburant: 18, retourVide: 45 },
+];
+
+// ─────────────────────────────────────────────────────
 // GPS TAB CONTENT
 // ─────────────────────────────────────────────────────
 function CarteGPSTab() {
   const [subTab, setSubTab] = useState('carte');
+  const [selectedToupie, setSelectedToupie] = useState('all');
+  const { geofences, alerts } = useGPSTracking();
+
   const subTabs = [
     { id: 'carte', label: 'CARTE LIVE' },
     { id: 'historique', label: 'HISTORIQUE TRAJETS' },
     { id: 'zones', label: 'ZONES & PERFORMANCE' },
   ];
-  
+
   const fleetSidebar = [
     { truck: 'T-04', driver: 'Youssef Benali', status: 'En route', location: 'A3 Casablanca → Maarif', eta: '10:44', speed: '45 km/h', color: T.gold, distLeft: '12 km', tripPct: 72, etaColor: T.danger },
     { truck: 'T-07', driver: 'Karim Idrissi', status: 'Livré', location: 'Rabat Center', eta: '—', speed: '0 km/h', color: T.success, distLeft: '—', tripPct: 100, etaColor: T.success },
     { truck: 'T-12', driver: 'Mehdi Tazi', status: 'Planifié', location: 'Centrale BPE', eta: 'Départ 13:45', speed: '0 km/h', color: T.textDim, distLeft: '45 km', tripPct: 0, etaColor: T.textDim },
     { truck: 'T-09', driver: '—', status: 'Maintenance', location: 'Garage', eta: '—', speed: '—', color: T.danger, distLeft: '—', tripPct: 0, etaColor: T.danger },
   ];
-  
+
+  const statusBorderMap: Record<string, string> = { 'En route': '#22C55E', 'Livré': '#9CA3AF', 'Planifié': '#D4A843', 'Maintenance': '#EF4444' };
+  const statusBadgeMap: Record<string, { border: string; color: string }> = {
+    'En route': { border: '#D4A843', color: '#D4A843' },
+    'Livré': { border: '#22C55E', color: '#22C55E' },
+    'Planifié': { border: '#9CA3AF', color: '#9CA3AF' },
+    'Maintenance': { border: '#EF4444', color: '#EF4444' },
+  };
+  const retourVideColor = (pct: number) => pct > 50 ? T.danger : pct >= 30 ? T.warning : T.success;
+
+  const seededZones = [
+    { id: 1, name: 'Casablanca Port Zone', top: '25%', left: '20%', vehiclesInside: 0 },
+    { id: 2, name: 'ONCF Rabat Chantier', top: '15%', left: '55%', vehiclesInside: 0 },
+    { id: 3, name: 'Addoha Casa Sidi Moumen', top: '55%', left: '70%', vehiclesInside: 0 },
+  ];
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {/* Sub-tabs */}
@@ -552,54 +593,318 @@ function CarteGPSTab() {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20 }}>
-        {/* Map */}
-        <div style={{ position: 'relative' }}>
-          {subTab === 'carte' && (
-            <>
-              <FleetPredatorPage />
-              {/* Bottom map overlay strip */}
-              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(15,22,41,0.92)', backdropFilter: 'blur(8px)', padding: '10px 16px', borderTop: `1px solid ${T.cardBorder}`, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontFamily: MONO, fontSize: 11, color: T.gold }}>3 véhicules actifs</span>
-                <span style={{ color: `${T.gold}40` }}>·</span>
-                <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>Distance totale: <span style={{ color: T.gold }}>270 km</span></span>
-                <span style={{ color: `${T.gold}40` }}>·</span>
-                <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>Prochain arrêt: <span style={{ color: T.gold }}>T-04 à Résidences Atlas</span> (ETA <span style={{ color: T.danger }}>10:44</span>)</span>
-              </div>
-            </>
-          )}
-          {subTab === 'historique' && <div style={{ padding: 60, textAlign: 'center', color: T.textDim }}>Historique des trajets — Contenu en cours de déploiement...</div>}
-          {subTab === 'zones' && <div style={{ padding: 60, textAlign: 'center', color: T.textDim }}>Zones & Performance — Contenu en cours de déploiement...</div>}
-        </div>
+      {/* ═══════════ CARTE LIVE ═══════════ */}
+      {subTab === 'carte' && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20 }}>
+          {/* Map — directly using FleetGPSMap, no FleetPredatorPage wrapper */}
+          <div style={{ position: 'relative' }}>
+            <FleetGPSMap
+              className="min-h-[300px] md:min-h-[600px] h-[calc(100dvh-340px-5rem)] md:h-[calc(100dvh-340px)]"
+              hideOverlay={false}
+            />
+            {/* Bottom map overlay strip */}
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(15,22,41,0.92)', backdropFilter: 'blur(8px)', padding: '10px 16px', borderTop: `1px solid ${T.cardBorder}`, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontFamily: MONO, fontSize: 11, color: T.success }}>3 véhicules actifs</span>
+              <span style={{ color: `${T.gold}40` }}>·</span>
+              <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>Distance totale: <span style={{ color: T.gold }}>270 km</span></span>
+              <span style={{ color: `${T.gold}40` }}>·</span>
+              <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>Prochain arrêt: <span style={{ color: T.gold }}>T-04 à Résidences Atlas</span> (ETA <span style={{ color: T.danger }}>10:44</span>)</span>
+            </div>
+          </div>
 
-        {/* Fleet sidebar */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <div style={{ borderTop: `2px solid ${T.gold}`, background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: '16px 14px' }}>
-            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: '1.5px', marginBottom: 14, textTransform: 'uppercase' as const }}>Flotte GPS</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {fleetSidebar.map(f => (
-                <div key={f.truck} style={{ padding: '12px 10px', background: 'rgba(255,255,255,0.02)', borderRadius: 8, border: `1px solid ${T.cardBorder}`, borderLeft: `3px solid ${f.color}` }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                    <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: T.textPri }}>{f.truck}</span>
-                    <span style={{ fontFamily: MONO, fontSize: 10, padding: '2px 6px', borderRadius: 4, background: `${f.color}18`, color: f.color, border: `1px solid ${f.color}40` }}>{f.status}</span>
-                  </div>
-                  <p style={{ fontFamily: MONO, fontSize: 11, color: T.textSec, margin: '0 0 2px' }}>{f.driver}</p>
-                  <p style={{ fontSize: 10, color: T.textDim, margin: '0 0 2px' }}><MapPin size={9} style={{ display: 'inline', marginRight: 4 }} />{f.location}</p>
-                  <div style={{ display: 'flex', gap: 12, marginTop: 4 }}>
-                    <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>Vit: <span style={{ color: T.textPri }}>{f.speed}</span></span>
-                    <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>ETA: <span style={{ color: f.etaColor }}>{f.eta}</span></span>
-                    <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>Dist: <span style={{ color: T.textPri }}>{f.distLeft}</span></span>
-                  </div>
-                  {/* Trip progress bar */}
-                  <div style={{ marginTop: 6, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
-                    <div style={{ width: `${f.tripPct}%`, height: '100%', background: f.color, borderRadius: 2, transition: 'width 0.8s ease' }} />
-                  </div>
+          {/* Fleet sidebar */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ borderTop: `2px solid ${T.gold}`, background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: '16px 14px' }}>
+              <p style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: T.gold, letterSpacing: '2px', marginBottom: 14, textTransform: 'uppercase' as const }}>FLOTTE GPS</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {fleetSidebar.map(f => {
+                  const badge = statusBadgeMap[f.status] || { border: T.textDim, color: T.textDim };
+                  return (
+                    <div key={f.truck} style={{ padding: '12px 10px', background: 'rgba(255,255,255,0.02)', borderRadius: 8, border: `1px solid ${T.cardBorder}`, borderLeft: `3px solid ${statusBorderMap[f.status] || T.textDim}` }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                        <span style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: '#FFFFFF' }}>{f.truck}</span>
+                        <span style={{ fontFamily: MONO, fontSize: 10, padding: '2px 6px', borderRadius: 4, background: 'transparent', color: badge.color, border: `1px solid ${badge.border}` }}>{f.status}</span>
+                      </div>
+                      <p style={{ fontSize: 12, color: '#FFFFFF', margin: '0 0 2px' }}>{f.driver}</p>
+                      <p style={{ fontSize: 10, color: T.textDim, margin: '0 0 2px' }}><MapPin size={9} style={{ display: 'inline', marginRight: 4 }} />{f.location}</p>
+                      <div style={{ display: 'flex', gap: 12, marginTop: 4 }}>
+                        <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>Vit: <span style={{ color: '#FFFFFF' }}>{f.speed}</span></span>
+                        <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>ETA: <span style={{ color: f.etaColor }}>{f.eta}</span></span>
+                        <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>Dist: <span style={{ color: '#FFFFFF' }}>{f.distLeft}</span></span>
+                      </div>
+                      <div style={{ marginTop: 6, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                        <div style={{ width: `${f.tripPct}%`, height: '100%', background: f.color, borderRadius: 2, transition: 'width 0.8s ease' }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* LÉGENDE FLOTTE */}
+            <div style={{ borderTop: `2px solid ${T.gold}`, background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: '14px' }}>
+              <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: '1.5px', marginBottom: 10, textTransform: 'uppercase' as const }}>LÉGENDE FLOTTE</p>
+              {[
+                { color: '#22C55E', label: 'En route' },
+                { color: '#D4A843', label: 'Planifié' },
+                { color: '#9CA3AF', label: 'Livré' },
+                { color: '#EF4444', label: 'Maintenance' },
+              ].map(l => (
+                <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: l.color }} />
+                  <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>{l.label}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* ═══════════ HISTORIQUE TRAJETS ═══════════ */}
+      {subTab === 'historique' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {/* Filter row */}
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+            <select
+              value={selectedToupie}
+              onChange={e => setSelectedToupie(e.target.value)}
+              style={{ fontFamily: MONO, fontSize: 12, padding: '8px 12px', background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.cardBorder}`, borderRadius: 8, color: T.textPri, cursor: 'pointer' }}
+            >
+              <option value="all">Toutes</option>
+              <option value="T-04">T-04</option>
+              <option value="T-07">T-07</option>
+              <option value="T-09">T-09</option>
+              <option value="T-12">T-12</option>
+            </select>
+            <input type="date" style={{ fontFamily: MONO, fontSize: 12, padding: '8px 12px', background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.cardBorder}`, borderRadius: 8, color: T.textPri }} />
+            <button style={{ fontFamily: MONO, fontSize: 11, fontWeight: 600, padding: '8px 16px', background: T.gold, color: '#0F1629', border: 'none', borderRadius: 8, cursor: 'pointer', letterSpacing: '0.5px' }}>
+              Charger le trajet
+            </button>
+          </div>
+
+          {/* Section header */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>✦ TRAJETS RÉCENTS</span>
+            <div style={{ flex: 1, height: 0, borderTop: `1px dotted ${T.gold}40` }} />
+          </div>
+
+          {/* Table */}
+          <div style={{ overflowX: 'auto', borderRadius: 10, border: `1px solid ${T.cardBorder}` }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: MONO }}>
+              <thead>
+                <tr style={{ borderBottom: `1px solid ${T.cardBorder}` }}>
+                  {['DATE', 'TOUPIE', 'CHAUFFEUR', 'DÉPART', 'ARRIVÉE', 'DISTANCE', 'DURÉE', 'CARBURANT', 'RETOUR VIDE'].map(h => (
+                    <th key={h} style={{ padding: '10px 12px', textAlign: 'left', fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '1.5px' }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {TRIP_HISTORY.filter(t => selectedToupie === 'all' || t.toupie === selectedToupie).map((t, i) => (
+                  <tr key={i} style={{
+                    borderBottom: `1px solid ${T.cardBorder}50`,
+                    background: i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)',
+                    transition: 'background 150ms',
+                  }}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.06)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)')}
+                  >
+                    <td style={{ padding: '10px 12px', fontSize: 12, color: T.textDim }}>{t.date}</td>
+                    <td style={{ padding: '10px 12px', fontSize: 12, color: T.gold, fontWeight: 200 }}>{t.toupie}</td>
+                    <td style={{ padding: '10px 12px', fontSize: 12, color: T.textPri }}>{t.chauffeur}</td>
+                    <td style={{ padding: '10px 12px', fontSize: 11, color: T.textSec }}>{t.depart}</td>
+                    <td style={{ padding: '10px 12px', fontSize: 11, color: T.textSec }}>{t.arrivee}</td>
+                    <td style={{ padding: '10px 12px', fontSize: 12, fontWeight: 200, color: T.textPri }}>{t.distance} km</td>
+                    <td style={{ padding: '10px 12px', fontSize: 12, fontWeight: 200, color: T.textPri }}>{t.duree}</td>
+                    <td style={{ padding: '10px 12px', fontSize: 12, fontWeight: 200, color: T.textPri }}>{t.carburant}L</td>
+                    <td style={{ padding: '10px 12px', fontSize: 12, fontWeight: 200, color: retourVideColor(t.retourVide) }}>{t.retourVide}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Summary footer */}
+          <div style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, padding: '10px 14px', background: 'rgba(212,168,67,0.03)', borderRadius: 8, border: `1px solid ${T.cardBorder}` }}>
+            MOY. DISTANCE: <span style={{ color: T.textPri }}>60 km</span> · MOY. DURÉE: <span style={{ color: T.textPri }}>1h17</span> · MOY. CARBURANT: <span style={{ color: T.textPri }}>26L</span> · MOY. RETOUR VIDE: <span style={{ color: T.warning }}>35%</span>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════ ZONES & PERFORMANCE ═══════════ */}
+      {subTab === 'zones' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 30 }}>
+          {/* SECTION A: ZONES GÉOFENCÉES */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>✦ ZONES GÉOFENCÉES</span>
+              <div style={{ flex: 1, height: 0, borderTop: `1px dotted ${T.gold}40` }} />
+            </div>
+
+            {/* Geofence map visual */}
+            <div style={{ position: 'relative', height: 320, borderRadius: 14, overflow: 'hidden', border: `1px solid ${T.goldBorder}`, marginBottom: 20 }}>
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #0F172A, #1E293B, #0F172A)' }}>
+                <div style={{ position: 'absolute', inset: 0, opacity: 0.1, backgroundImage: `linear-gradient(${T.gold}4D 1px, transparent 1px), linear-gradient(90deg, ${T.gold}4D 1px, transparent 1px)`, backgroundSize: '40px 40px' }} />
+                {seededZones.map(zone => (
+                  <div key={zone.id} style={{ position: 'absolute', top: zone.top, left: zone.left, transform: 'translate(-50%, -50%)' }}>
+                    <div style={{ width: 96, height: 96, borderRadius: '50%', border: `2px solid ${T.gold}`, background: 'rgba(212,168,67,0.15)', boxShadow: '0 0 30px rgba(212,168,67,0.2)' }} />
+                    <div style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', marginTop: 8, padding: '8px 12px', borderRadius: 8, border: `1px solid ${T.goldBorder}`, background: 'rgba(15,23,41,0.95)', backdropFilter: 'blur(8px)', minWidth: 200 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                        <MapPin size={12} color={T.gold} />
+                        <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 600, color: '#FFFFFF' }}>{zone.name}</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>{zone.vehiclesInside} véhicule{zone.vehiclesInside !== 1 ? 's' : ''}</span>
+                        <span style={{ fontFamily: MONO, fontSize: 9, padding: '2px 6px', borderRadius: 10, background: 'transparent', border: '1px solid #22C55E', color: '#22C55E' }}>Aucune intrusion</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <div style={{ position: 'absolute', bottom: 12, left: 12, padding: '4px 8px', borderRadius: 4, background: 'rgba(0,0,0,0.6)', fontFamily: MONO, fontSize: 10, color: 'rgba(255,255,255,0.6)' }}>Maroc · Casablanca-Rabat</div>
+                <div style={{ position: 'absolute', bottom: 12, right: 12 }}>
+                  <span style={{ fontFamily: MONO, fontSize: 10, padding: '4px 8px', borderRadius: 4, background: 'transparent', border: `1px solid ${T.gold}`, color: T.gold }}>3 zones actives</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Zones & Alerts cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              {/* Zones de Sécurité Actives */}
+              <div style={{ borderTop: `2px solid ${T.gold}`, background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: '18px 16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Shield size={16} color={T.gold} />
+                    <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: T.textPri }}>Zones de Sécurité Actives</span>
+                  </div>
+                  <button style={{ fontFamily: MONO, fontSize: 10, padding: '4px 10px', background: 'transparent', border: `1px solid ${T.gold}`, borderRadius: 6, color: T.gold, cursor: 'pointer' }}>+ Ajouter</button>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <div style={{ padding: '10px 12px', background: 'rgba(255,255,255,0.02)', borderRadius: 8, border: `1px solid ${T.cardBorder}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <span style={{ fontFamily: MONO, fontSize: 12, color: T.textPri }}>Centrale Talmi Béton</span>
+                      <p style={{ fontFamily: MONO, fontSize: 10, color: T.textDim, margin: '2px 0 0' }}>33.5731, -7.5898 · 500m</p>
+                    </div>
+                    <span style={{ fontFamily: MONO, fontSize: 9, padding: '2px 6px', borderRadius: 4, background: 'transparent', border: `1px solid ${T.gold}`, color: T.gold }}>Centrale</span>
+                  </div>
+                  {geofences.slice(0, 3).map(z => (
+                    <div key={z.id} style={{ padding: '10px 12px', background: 'rgba(255,255,255,0.02)', borderRadius: 8, border: `1px solid ${T.cardBorder}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <span style={{ fontFamily: MONO, fontSize: 12, color: T.textPri }}>{z.name}</span>
+                        <p style={{ fontFamily: MONO, fontSize: 10, color: T.textDim, margin: '2px 0 0' }}>{z.latitude.toFixed(4)}, {z.longitude.toFixed(4)} · {z.radius_meters}m</p>
+                      </div>
+                      <span style={{ fontFamily: MONO, fontSize: 9, padding: '2px 6px', borderRadius: 4, background: 'transparent', border: `1px solid ${T.textDim}`, color: T.textDim }}>{z.type}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Alertes Géofencing */}
+              <div style={{ borderTop: `2px solid ${T.success}`, background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: '18px 16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+                  <Shield size={16} color={T.success} />
+                  <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: T.textPri }}>Alertes Géofencing</span>
+                </div>
+                {alerts.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '30px 0' }}>
+                    <Shield size={40} color={T.success} style={{ margin: '0 auto 10px' }} />
+                    <p style={{ fontFamily: MONO, fontSize: 13, color: T.success, fontWeight: 600 }}>Aucune alerte</p>
+                    <p style={{ fontSize: 12, color: T.textDim, marginTop: 4 }}>Toutes les zones sécurisées</p>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {alerts.slice(0, 5).map(a => (
+                      <div key={a.id} style={{ padding: 10, background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 8 }}>
+                        <span style={{ fontFamily: MONO, fontSize: 11, color: T.danger, fontWeight: 700 }}>🚨 {a.id_camion}</span>
+                        <p style={{ fontSize: 10, color: T.textDim, margin: '4px 0 0' }}>Durée: {Math.round(a.duration_minutes || 0)} min</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* SECTION B: PERFORMANCE CHAUFFEURS IA */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>✦ PERFORMANCE CHAUFFEURS IA</span>
+              <div style={{ flex: 1, height: 0, borderTop: `1px dotted ${T.gold}40` }} />
+              <IABadge />
+            </div>
+
+            <div style={{ borderTop: `2px solid ${T.gold}`, background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: 24 }}>
+              {/* Header row */}
+              <div style={{ display: 'grid', gridTemplateColumns: '44px 1fr 80px 200px 60px', gap: 12, alignItems: 'center', padding: '0 8px 10px', borderBottom: `1px solid ${T.cardBorder}` }}>
+                <span />
+                <span style={{ fontFamily: MONO, fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '0.1em' }}>Chauffeur</span>
+                <span style={{ fontFamily: MONO, fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '0.1em', textAlign: 'center' }}>Score IA</span>
+                <span style={{ fontFamily: MONO, fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '0.1em', textAlign: 'center' }}>Indicateurs</span>
+                <span style={{ fontFamily: MONO, fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '0.1em', textAlign: 'center' }}>Trend</span>
+              </div>
+
+              {DRIVER_PERF_DATA.map((d, i) => {
+                const scoreColor = d.score > 85 ? T.success : d.score >= 70 ? T.warning : T.danger;
+                const isRachid = d.name === 'Rachid Amrani';
+                return (
+                  <div key={d.name}>
+                    <div style={{
+                      display: 'grid', gridTemplateColumns: '44px 1fr 80px 200px 60px', gap: 12, alignItems: 'center',
+                      padding: '12px 8px',
+                      borderBottom: i < DRIVER_PERF_DATA.length - 1 ? '1px solid rgba(30,45,74,0.5)' : 'none',
+                      borderLeft: isRachid ? `3px solid ${T.danger}` : 'none',
+                      transition: 'background 0.15s', borderRadius: 6,
+                    }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.06)')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <div style={{
+                        width: 36, height: 36, borderRadius: '50%',
+                        background: `linear-gradient(135deg, rgba(212,168,67,${0.25 - i * 0.03}), rgba(212,168,67,0.1))`,
+                        border: '1px solid rgba(212,168,67,0.3)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontFamily: MONO, fontSize: 12, fontWeight: 600, color: T.gold,
+                      }}>
+                        {d.initials}
+                      </div>
+                      <div>
+                        <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 600, color: T.textPri }}>{d.name}</span>
+                        <span style={{ fontSize: 10, color: T.textDim, marginLeft: 8 }}>#{i + 1}</span>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <span style={{ fontFamily: MONO, fontWeight: 200, fontSize: 28, color: scoreColor, letterSpacing: '-0.02em', lineHeight: 1 }}>{d.score}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'center', gap: 6 }}>
+                        {(['ponctualite', 'securite', 'efficacite'] as const).map(key => {
+                          const label = key === 'ponctualite' ? 'Ponctualité' : key === 'securite' ? 'Sécurité' : 'Efficacité';
+                          return (
+                            <span key={key} style={{
+                              fontFamily: MONO, fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 4,
+                              background: 'transparent', color: T.gold, border: '1px solid rgba(212,168,67,0.3)', whiteSpace: 'nowrap' as const,
+                            }}>
+                              {label}
+                            </span>
+                          );
+                        })}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}>
+                        {d.trend > 0 ? <TrendingUp size={13} color={T.success} /> : d.trend < 0 ? <TrendingDown size={13} color={T.danger} /> : <Minus size={13} color={T.gold} />}
+                        <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 600, color: d.trend > 0 ? T.success : d.trend < 0 ? T.danger : T.gold }}>
+                          {d.trend > 0 ? `+${d.trend}` : d.trend === 0 ? '→' : d.trend}
+                        </span>
+                      </div>
+                    </div>
+                    {isRachid && (
+                      <p style={{ fontFamily: MONO, fontSize: 11, color: T.danger, padding: '4px 8px 8px 60px' }}>⚠ Formation recommandée</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Chauffeur du mois */}
+            <p style={{ fontFamily: MONO, fontSize: 12, color: T.gold, marginTop: 14 }}>★ Chauffeur du mois : Youssef Benali — score 94, 0 incident, meilleur ratio ponctualité.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
