@@ -210,6 +210,12 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ─── Gold shimmer keyframe for skeletons ─── */
+@keyframes tbosShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 /* ─── Premium Scrollbar — gold thumb on dark track ─── */
 ::-webkit-scrollbar {
   width: 6px;

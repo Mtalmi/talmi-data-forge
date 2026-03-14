@@ -914,12 +914,10 @@ function CarteGPSTab() {
 // ─────────────────────────────────────────────────────
 function EmptyTabPlaceholder({ title, icon: Icon }: { title: string; icon: React.ElementType }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 40px', gap: 16 }}>
-      <div style={{ width: 64, height: 64, borderRadius: 16, background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Icon size={28} color={T.gold} />
-      </div>
-      <p style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: T.gold, textTransform: 'uppercase', letterSpacing: '2px' }}>{title}</p>
-      <p style={{ fontSize: 13, color: T.textDim, textAlign: 'center' }}>Contenu en cours de déploiement...</p>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', textAlign: 'center', minHeight: 240 }}>
+      <Icon size={48} strokeWidth={1} style={{ color: 'rgba(212, 168, 67, 0.2)', marginBottom: 16 }} />
+      <p style={{ fontFamily: MONO, fontSize: 14, color: '#9CA3AF', marginBottom: 6 }}>{title}</p>
+      <p style={{ fontFamily: MONO, fontSize: 12, color: 'rgba(156, 163, 175, 0.5)' }}>Cette section sera disponible prochainement.</p>
     </div>
   );
 }

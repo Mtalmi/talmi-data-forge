@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { EmptyState } from '@/components/ui/states';
 import { useI18n } from '@/i18n/I18nContext';
 import MainLayout from '@/components/layout/MainLayout';
 import { useReceivables, Receivable } from '@/hooks/useReceivables';
@@ -79,6 +80,8 @@ import {
   FileSpreadsheet,
   Briefcase,
   Eye,
+  BarChart3,
+  Bot,
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { getDateLocale } from '@/i18n/dateLocale';
@@ -2144,29 +2147,17 @@ export default function Creances() {
               </CardContent>
             </Card>
           )}
-          <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: '#9CA3AF' }}>
-              Contenu en cours de déploiement...
-            </p>
-          </div>
+          <EmptyState />
         </>)}
 
         {/* ANALYTIQUE TAB */}
         {creancesTab === 'analytique' && (
-          <div style={{ textAlign: 'center', padding: '60px 0' }}>
-            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: '#9CA3AF' }}>
-              Contenu en cours de déploiement...
-            </p>
-          </div>
+          <EmptyState icon={BarChart3} title="Analytique en cours de déploiement..." />
         )}
 
         {/* INTELLIGENCE IA TAB */}
         {creancesTab === 'ia' && (
-          <div style={{ textAlign: 'center', padding: '60px 0' }}>
-            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: '#9CA3AF' }}>
-              Contenu en cours de déploiement...
-            </p>
-          </div>
+          <EmptyState icon={Bot} title="Intelligence IA en cours de déploiement..." />
         )}
 
         {/* Action Dialog */}
