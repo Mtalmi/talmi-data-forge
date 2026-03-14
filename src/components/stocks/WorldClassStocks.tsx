@@ -818,17 +818,17 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
         </div>
       )}
 
+      {/* ── CONTENT ── */}
+      <div style={{ width: '100%', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 40 }}>
 
         {activeTab === 'overview' && (
-          <div style={{ width: '100%', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 40 }}>
-            <OverviewTab
-              AUTONOMY={AUTONOMY}
-              STOCK_ALERTS_DB={STOCK_ALERTS_DB}
-              REORDER_RECS={REORDER_RECS}
-              STOCKS={STOCKS}
-              onNavigateToAlerts={() => setActiveTab('alertes')}
-            />
-          </div>
+          <OverviewTab
+            AUTONOMY={AUTONOMY}
+            STOCK_ALERTS_DB={STOCK_ALERTS_DB}
+            REORDER_RECS={REORDER_RECS}
+            STOCKS={STOCKS}
+            onNavigateToAlerts={() => setActiveTab('alertes')}
+          />
         )}
 
         {/* ── TAB: MOUVEMENTS ── */}
@@ -841,7 +841,6 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
           <SurveillanceIATab />
         )}
 
-        {/* footer removed */}
       </div>
     </div>
   );
