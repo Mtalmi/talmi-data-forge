@@ -673,6 +673,31 @@ export default function Ventes() {
               ══════════════════════════════════════════════════════ */}
           {mainTab === 'intelligence' && (
             <div style={{ animation: 'fade-in 200ms ease-out' }} className="space-y-6">
+              {/* Section header */}
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', letterSpacing: '2px', fontSize: 12, color: '#D4A843', fontWeight: 600, textTransform: 'uppercase' }}>✦ CENTRE D'INTELLIGENCE ARTIFICIELLE</span>
+                  <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(212,168,67,0.3), transparent 80%)' }} />
+                </div>
+                <p style={{ fontSize: 12, color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>
+                  <span style={{ color: '#22C55E' }}>6 agents actifs</span> · Analyse en temps réel · Claude Opus
+                </p>
+              </div>
+
+              {/* Summary strip */}
+              <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
+                {[
+                  { label: 'OPPORTUNITÉS DÉTECTÉES', value: '3', color: '#D4A843' },
+                  { label: 'RISQUES IDENTIFIÉS', value: '2', color: '#F59E0B' },
+                  { label: 'GAIN POTENTIEL', value: '+52,800 MAD/mois', color: '#22C55E' },
+                ].map(item => (
+                  <div key={item.label} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <span style={{ fontSize: 10, color: '#9CA3AF', fontFamily: 'ui-monospace, monospace', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 600 }}>{item.label}</span>
+                    <span style={{ fontSize: 28, fontFamily: 'ui-monospace, monospace', fontWeight: 100, color: item.color }}>{item.value}</span>
+                  </div>
+                ))}
+              </div>
+
               <MarginOverviewCard />
               <PipelineAnalysisCard />
               <ConversionPredictorCard />
