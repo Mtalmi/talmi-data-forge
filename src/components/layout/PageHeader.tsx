@@ -1,5 +1,6 @@
 import { ReactNode, useState, useEffect } from 'react';
 import type { LucideIcon } from 'lucide-react';
+import { DataFreshnessDot } from './DataFreshnessDot';
 
 const MONO = 'ui-monospace, SFMono-Regular, monospace';
 
@@ -113,6 +114,7 @@ export function PageHeader({
             >
               <LiveClock />
             </span>
+            <DataFreshnessDot />
             {loading && (
               <div
                 style={{
