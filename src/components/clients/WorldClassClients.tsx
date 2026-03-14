@@ -762,6 +762,107 @@ function FinanceRow({ client, factures, montant, retard, retardColor, score, sco
 }
 
 // ─────────────────────────────────────────────────────
+// REVENUE HEATMAP
+// ─────────────────────────────────────────────────────
+const HEATMAP_MONTHS = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+const HEATMAP_DATA: { client: string; values: number[] }[] = [
+  { client: 'TGCC', values: [420, 420, 350, 420, 350, 420] },
+  { client: 'Constructions Modernes', values: [250, 200, 250, 200, 250, 200] },
+  { client: 'BTP Maroc SARL', values: [150, 100, 120, 180, 200, 220] },
+  { client: 'Ciments & Béton du Sud', values: [120, 130, 100, 110, 90, 80] },
+  { client: 'Saudi Readymix Co.', values: [75, 75, 90, 75, 90, 150] },
+  { client: 'Sigma Bâtiment', values: [50, 30, 10, 0, 0, 0] },
+];
+const HEATMAP_MAX = 420;
+
+function heatColor(val: number) {
+  if (val === 0) return 'rgba(212,168,67,0.03)';
+  const ratio = val / HEATMAP_MAX;
+  if (ratio < 0.15) return 'rgba(212,168,67,0.08)';
+  if (ratio < 0.3) return 'rgba(212,168,67,0.18)';
+  if (ratio < 0.55) return 'rgba(212,168,67,0.35)';
+  return `rgba(212,168,67,${0.5 + ratio * 0.35})`;
+}
+
+function RevenueHeatmap() {
+  const [hovCell, setHovCell] = useState<{ r: number; c: number } | null>(null);
+
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: 0 }}>
+        {/* Grid */}
+        <div style={{ flex: 1, overflow: 'auto' }}>
+          {/* Month headers */}
+          <div style={{ display: 'grid', gridTemplateColumns: '160px repeat(6, 1fr)', gap: 2, marginBottom: 2 }}>
+            <div />
+            {HEATMAP_MONTHS.map(m => (
+              <div key={m} style={{ textAlign: 'center', fontFamily: MONO, fontSize: 11, letterSpacing: '1px', color: '#9CA3AF', padding: '6px 0' }}>{m}</div>
+            ))}
+          </div>
+          {/* Rows */}
+          {HEATMAP_DATA.map((row, ri) => (
+            <div key={row.client} style={{ display: 'grid', gridTemplateColumns: '160px repeat(6, 1fr)', gap: 2, marginBottom: 2 }}>
+              <div style={{ fontFamily: MONO, fontSize: 12, color: '#F1F5F9', textAlign: 'right', paddingRight: 12, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>{row.client}</div>
+              {row.values.map((val, ci) => {
+                const isHov = hovCell?.r === ri && hovCell?.c === ci;
+                const prevVal = ci > 0 ? row.values[ci - 1] : null;
+                const delta = prevVal !== null && prevVal > 0 ? Math.round(((val - prevVal) / prevVal) * 100) : null;
+                return (
+                  <div
+                    key={ci}
+                    onMouseEnter={() => setHovCell({ r: ri, c: ci })}
+                    onMouseLeave={() => setHovCell(null)}
+                    style={{
+                      background: heatColor(val),
+                      borderRadius: 4,
+                      minHeight: 50,
+                      minWidth: 80,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      border: isHov ? '1px solid #D4A843' : '1px solid transparent',
+                      transition: 'border 150ms',
+                      position: 'relative',
+                      cursor: 'default',
+                    }}
+                  >
+                    <span style={{ fontFamily: MONO, fontSize: 12, color: val === 0 ? '#4A5568' : val > 300 ? '#0F1629' : '#D4A843', fontWeight: val > 300 ? 700 : 500 }}>
+                      {val === 0 ? '—' : `${val}K`}
+                    </span>
+                    {isHov && (
+                      <div style={{ position: 'absolute', bottom: '110%', left: '50%', transform: 'translateX(-50%)', background: '#1a1f2e', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 8, padding: '8px 12px', whiteSpace: 'nowrap', zIndex: 10, pointerEvents: 'none' }}>
+                        <p style={{ fontFamily: MONO, fontSize: 12, color: '#D4A843', fontWeight: 600 }}>{val === 0 ? '0 DH' : `${val},000 DH`}</p>
+                        {delta !== null && (
+                          <p style={{ fontFamily: MONO, fontSize: 10, color: delta >= 0 ? '#22C55E' : '#EF4444', marginTop: 2 }}>vs mois précédent: {delta >= 0 ? '+' : ''}{delta}%</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+
+        {/* Legend */}
+        <div style={{ width: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', marginLeft: 12, paddingTop: 28, paddingBottom: 4 }}>
+          <span style={{ fontFamily: MONO, fontSize: 10, color: '#9CA3AF' }}>420K+</span>
+          <div style={{ flex: 1, width: 12, borderRadius: 6, margin: '6px 0', background: 'linear-gradient(to bottom, #D4A843, rgba(212,168,67,0.35), rgba(212,168,67,0.15), rgba(212,168,67,0.05))' }} />
+          <span style={{ fontFamily: MONO, fontSize: 10, color: '#9CA3AF' }}>0 DH</span>
+        </div>
+      </div>
+
+      {/* Insight line */}
+      <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid rgba(212,168,67,0.08)' }}>
+        <p style={{ fontFamily: MONO, fontSize: 12, color: '#94A3B8', lineHeight: 1.7 }}>
+          <span style={{ color: '#F1F5F9', fontWeight: 500 }}>TGCC</span> et <span style={{ color: '#F1F5F9', fontWeight: 500 }}>Constructions Modernes</span> génèrent <span style={{ color: '#D4A843', fontWeight: 600 }}>62%</span> du CA total. <span style={{ color: '#F1F5F9', fontWeight: 500 }}>Saudi Readymix</span> en croissance accélérée (<span style={{ color: '#D4A843', fontWeight: 600 }}>+100%</span> en mars). <span style={{ color: '#F1F5F9', fontWeight: 500 }}>Sigma Bâtiment</span> inactif depuis janvier.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // MAIN
 // ─────────────────────────────────────────────────────
 export default function WorldClassClients() {
