@@ -1126,9 +1126,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
 
                     {/* Bottom editorial quote */}
                     <div style={{ marginTop: 20, paddingTop: 14, borderTop: '1px solid rgba(212,168,67,0.06)', display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <div style={{ width: 2, height: 24, background: 'linear-gradient(to bottom, #D4A843, transparent)', borderRadius: 1, flexShrink: 0 }} />
+                      <div style={{ width: 3, height: 24, borderLeft: '3px solid #D4A843', borderRadius: 1, flexShrink: 0 }} />
                       <p style={{ color: '#4A5568', fontSize: 10, fontStyle: 'italic', lineHeight: 1.5 }}>
-                        Capacité optimale entre <span style={{ color: '#9CA3AF' }}>65–80%</span> — au-delà, risque de saturation et retards cascade.
+                        Capacité optimale entre <span style={{ color: '#D4A843', fontWeight: 600 }}>65–80%</span> — au-delà, risque de saturation et retards cascade.
                       </p>
                     </div>
                   </Card>
