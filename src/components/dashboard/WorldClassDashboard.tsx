@@ -591,20 +591,20 @@ function PipelineFunnel() {
                   ...(st.wash && !isEmpty ? { backgroundColor: st.wash } : {}),
                 }}
               >
-                <span className="text-center block" style={isEmpty ? { fontFamily:'ui-monospace,monospace', fontSize:'28px', fontWeight:'300', color:'#4A5568', display:'block', textAlign:'center', lineHeight: 1 } : { fontFamily: 'ui-monospace,monospace', fontSize: '30px', color: st.color, fontWeight: '300', lineHeight: 1 }}>
+                <span className="text-center block" style={isEmpty ? { fontFamily:'ui-monospace,monospace', fontSize:'32px', fontWeight:'200', color:'#4A5568', display:'block', textAlign:'center', lineHeight: 1 } : { fontFamily: 'ui-monospace,monospace', fontSize: '32px', color: i === 3 ? '#22C55E' : st.color, fontWeight: '200', lineHeight: 1 }}>
                   {isEmpty ? '—' : s.value}
                 </span>
                 <span className="text-[10px] uppercase tracking-wider text-white/40 mt-1 block text-center">{s.label}</span>
               </div>
               {i < stages.length - 1 && (
-                <span style={{ color:'rgba(255,255,255,0.2)', fontSize:'16px', margin:'0 4px', position:'relative', zIndex:1 }}>›</span>
+                <span style={{ color:'#D4A843', fontSize:'16px', margin:'0 4px', position:'relative', zIndex:1, opacity: 0.4 }}>›</span>
               )}
             </div>
           );
         })}
       </div>
       <div style={{ textAlign:'center', color:'rgba(255,255,255,0.15)', fontSize:'11px', letterSpacing:'0.05em', margin:'12px 0' }}>FLUX COMMERCIAL DU JOUR</div>
-      <div className="mt-3 text-center"><span className="text-xs text-white/40 uppercase tracking-wider">Conversion </span><span className="text-[#D4A843] font-medium">{Math.round((stages[3].value / Math.max(stages[0].value, 1)) * 100)}%</span><div className="text-[10px] text-white/30 uppercase tracking-wider text-center mt-1">Ce mois</div></div>
+      <div className="mt-3 text-center"><span className="text-xs text-white/40 uppercase tracking-wider">Conversion </span><span style={{ fontFamily: 'ui-monospace, monospace', fontSize: '18px', color: '#D4A843', fontWeight: 500 }}>{Math.round((stages[3].value / Math.max(stages[0].value, 1)) * 100)}%</span><div style={{ fontSize: '11px', color: '#9CA3AF', marginTop: '2px' }}>Objectif: 35%</div><div className="text-[10px] text-white/30 uppercase tracking-wider text-center mt-1">Ce mois</div></div>
     </div>
     </div>
   );
@@ -914,42 +914,46 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
         ) : (
         <>
         {/* ─── Hero Score Bar ─── */}
-        <div className="mb-6 flex items-center justify-between backdrop-blur-sm relative z-[1] w-full" style={{ background:'linear-gradient(to right,rgba(212,168,67,0.04),transparent)', border:'1px solid rgba(212,168,67,0.12)', borderRadius:'8px', padding:'16px 20px', position:'relative', overflow:'hidden' }}>
-          <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent 0%,rgba(212,168,67,0.7) 50%,transparent 100%)', zIndex:99, pointerEvents:'none' }} />
+        <div className="mb-6 flex items-center justify-between backdrop-blur-sm relative z-[1] w-full" style={{ background:'linear-gradient(to right,rgba(212,168,67,0.04),transparent)', border:'1px solid rgba(212,168,67,0.12)', borderTop: '2px solid #D4A843', borderRadius:'8px', padding:'16px 20px', position:'relative', overflow:'hidden' }}>
+          <div style={{ position:'absolute', top:2, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent 0%,rgba(212,168,67,0.7) 50%,transparent 100%)', zIndex:99, pointerEvents:'none' }} />
           {/* Left: Score */}
           <div className="flex flex-col">
             <span className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground/40 font-medium">Score Opérationnel du Jour</span>
-            <span className="text-4xl font-bold font-mono text-[#D4A843]" style={{ textShadow: '0 0 25px rgba(212, 168, 67, 0.2)', lineHeight: 1.1 }}>8.7/10</span>
-            <span className="inline-flex items-center text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded px-2 py-0.5 gap-1 mt-1">↗ +0.4 pts vs hier</span>
-            <div style={{ display:'flex', gap:'6px', marginTop:'6px' }}><span style={{ fontSize:'9px', background:'transparent', border:'1px solid #D4A843', borderRadius:'4px', padding:'2px 6px', color:'#D4A843' }}>LIVRAISONS 60%</span><span style={{ fontSize:'9px', background:'transparent', border:'1px solid #D4A843', borderRadius:'4px', padding:'2px 6px', color:'#D4A843' }}>QUALITÉ 96%</span><span style={{ fontSize:'9px', background:'transparent', border:'1px solid #D4A843', borderRadius:'4px', padding:'2px 6px', color:'#D4A843' }}>MARGE +12%</span></div>
+            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontWeight: 100, fontSize: '56px', color: '#D4A843', textShadow: '0 0 20px rgba(212,168,67,0.2)', lineHeight: 1.1 }}>8.7/10</span>
+            <span className="inline-flex items-center text-xs rounded px-2 py-0.5 gap-1 mt-1" style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid #22C55E', color: '#22C55E' }}>↗ +0.4 pts vs hier</span>
+            <div style={{ display:'flex', gap:'6px', marginTop:'6px' }}>
+              <span style={{ fontSize:'12px', background:'rgba(212,168,67,0.06)', border:'1px solid #D4A843', borderRadius:'4px', padding:'2px 10px', color:'#D4A843', fontFamily:'ui-monospace, monospace' }}>LIVRAISONS 60%</span>
+              <span style={{ fontSize:'12px', background:'rgba(212,168,67,0.06)', border:'1px solid #D4A843', borderRadius:'4px', padding:'2px 10px', color:'#D4A843', fontFamily:'ui-monospace, monospace' }}>QUALITÉ 96%</span>
+              <span style={{ fontSize:'12px', background:'rgba(212,168,67,0.06)', border:'1px solid #D4A843', borderRadius:'4px', padding:'2px 10px', color:'#D4A843', fontFamily:'ui-monospace, monospace' }}>MARGE +12%</span>
+            </div>
           </div>
 
           {/* Middle: Micro-metrics */}
           <div className="flex items-center gap-0">
             <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
               <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Livraisons</span>
-              <span className="text-lg font-semibold font-mono" style={{ color: 'rgb(251,191,36)', fontWeight: '500' }}>3/5</span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '22px', color: 'rgb(251,191,36)' }}>3/5</span>
               <div className="flex items-center gap-1"><span className="text-[10px] uppercase tracking-wider text-green-400/70">3 LIVRÉES</span><span className="text-[10px] uppercase tracking-wider text-amber-400/70">· 2 EN COURS</span></div>
             </div>
             <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
               <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Qualité</span>
-              <span className="text-lg font-semibold font-mono" style={{ color: 'rgb(74,222,128)', fontWeight: '500', textShadow: '0 0 8px rgba(34,197,94,0.2)' }}>96.2%</span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '22px', color: 'rgb(74,222,128)', textShadow: '0 0 8px rgba(34,197,94,0.2)' }}>96.2%</span>
               <div className="flex items-center gap-1 mt-0.5"><span className="text-xs px-1.5 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20">2 OK</span><span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 animate-pulse">1 VAR <span style={{ fontSize:'9px' }}>↗</span></span></div>
             </div>
             <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
               <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Trésorerie</span>
-              <span className="text-lg font-semibold font-mono" style={{ color: '#D4A843', fontWeight: '500' }}>+18.4K</span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '22px', color: '#D4A843' }}>+18.4K</span>
               <span className="text-[10px] text-muted-foreground/40">vs +16.2K hier</span>
             </div>
             <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
               <span className="text-[10px] uppercase tracking-wider text-white/40 mb-1">Batches</span>
-              <span className="text-2xl font-light text-white">23</span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '22px', color: 'white' }}>23</span>
               <span className="text-[10px] text-white/30">Aujourd'hui</span>
             </div>
           </div>
 
           {/* Right: Progress Ring */}
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center" style={{ filter: 'drop-shadow(0 0 8px rgba(212,168,67,0.2))' }}>
             <svg width="80" height="80" viewBox="0 0 80 80">
               <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
               <circle cx="40" cy="40" r="34" fill="none" stroke="#D4A843" strokeWidth="3" strokeLinecap="round"
@@ -962,7 +966,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
         </div>
 
         {/* ─── Team Status Strip ─── */}
-        <div className="mb-4 relative z-[1] w-full" style={{ background:'linear-gradient(to right,rgba(212,168,67,0.04),transparent)', border:'1px solid rgba(212,168,67,0.12)', borderRadius:'8px', padding:'10px 16px', marginTop:'8px', position:'relative', overflow:'hidden', display: 'flex', alignItems: 'center', gap: '24px' }}>
+        <div className="mb-4 relative z-[1] w-full" style={{ background:'linear-gradient(to right,rgba(212,168,67,0.04),transparent)', border:'1px solid rgba(212,168,67,0.12)', borderTop: '1px solid rgba(212,168,67,0.1)', borderRadius:'8px', padding:'10px 16px', marginTop:'8px', position:'relative', overflow:'hidden', display: 'flex', alignItems: 'center', gap: '24px' }}>
           <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent 0%,rgba(212,168,67,0.7) 50%,transparent 100%)', zIndex:99, pointerEvents:'none' }} />
           <div className="flex items-center">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse mr-2" />
@@ -978,14 +982,14 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               <div key={t.role} className="flex items-center gap-3">
                 <div className="flex flex-col items-center">
                   <span style={{ fontSize:'10px', textTransform:'uppercase', letterSpacing:'0.05em', color:'rgba(255,255,255,0.4)', display:'block', marginTop:'2px' }}>{t.role}</span>
-                  <span className={`text-sm font-mono ${t.full ? 'text-green-400 font-medium' : 'text-amber-400 font-medium animate-pulse'}`}>{t.value}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 500, fontSize: '14px', color: !t.full ? '#F59E0B' : '#D4A843' }} className={!t.full ? 'animate-pulse' : ''}>{t.value}</span>
                 </div>
                 {i < arr.length - 1 && <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span>}
               </div>
             ))}
           </div>
           <div className="flex-1" />
-          <span style={{ background: 'rgba(212,168,67,0.05)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '4px', padding: '2px 10px', fontSize: '11px', color: 'rgba(212,168,67,0.8)' }}>Prochain shift: 14h00 — 3 opérateurs</span>
+          <span style={{ background: 'transparent', border: '1px solid rgba(212,168,67,0.3)', borderRadius: '4px', padding: '2px 10px', fontSize: '11px', color: '#D4A843' }}>Prochain shift: 14h00 — 3 opérateurs</span>
         </div>
 
         <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5 relative z-[1] w-full" style={{ alignItems: 'start', borderRadius: 0, overflow: 'visible' }}>
@@ -1003,15 +1007,15 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                 <div>
                   <div className="text-[14px] font-medium text-white/90">Production Journalière</div>
                   <div className="flex items-center gap-2 text-[11px] mt-1">
-                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: T.dotOk }} /> {qualityData[0].ok} OK</span>
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: T.dotOk }} /> <span style={{ color: '#22C55E' }}>{qualityData[0].ok} OK</span></span>
                     <span className="text-slate-700">·</span>
-                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: T.dotWarn }} /> {qualityData[0].var} Var</span>
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: T.dotWarn }} /> <span style={{ color: '#F59E0B' }}>{qualityData[0].var} Var</span></span>
                     <span className="text-slate-700">·</span>
-                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: T.dotCrit }} /> {qualityData[0].crit} Crit</span>
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: T.dotCrit }} /> <span style={{ color: 'rgba(148,163,184,0.4)' }}>{qualityData[0].crit} Crit</span></span>
                   </div>
                 </div>
                 <div>
-                  <span className="text-3xl font-extralight font-mono tracking-tight tabular-nums" style={{ color: '#D4A843', fontWeight: '500', textShadow: '0 0 12px rgba(212,168,67,0.2)' }}>{prodTotal}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '36px', color: '#D4A843', textShadow: '0 0 12px rgba(212,168,67,0.2)', letterSpacing: '-0.02em' }}>{prodTotal}</span>
                   <span className="text-sm font-light text-white/40 ml-1">m³</span>
                 </div>
               </div>
@@ -1167,18 +1171,18 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           <div className="space-y-4 min-w-0">
             {/* Créances — Aging Gold-Fade System */}
             {!hideOpsWidgets && (
-            <div className="ops-enter tbos-stagger-7 relative hover:-translate-y-[1px] cursor-pointer transition-all duration-200 ease-out" style={{ position:'relative', overflow:'hidden', minHeight: 420, borderRadius: 4, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
-              <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent, rgba(212,168,67,0.7),transparent)', zIndex:99 }} />
+            <div className="ops-enter tbos-stagger-7 relative hover:-translate-y-[1px] cursor-pointer transition-all duration-200 ease-out" style={{ position:'relative', overflow:'hidden', minHeight: 420, borderRadius: 4, border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+              <div style={{ position:'absolute', top:2, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent, rgba(212,168,67,0.7),transparent)', zIndex:99 }} />
               <div className="p-6">
               {/* Satisfaction Client */}
               <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '12px', marginBottom: '12px' }}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium">Satisfaction Client</span>
-                  <span className="font-mono"><span style={{ fontSize: '20px', fontWeight: '500', color: '#D4A843' }}>4.6</span><span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>/5</span> <span style={{ color: '#D4A843' }}>★★★★</span><span style={{ opacity: 0.2, color: '#D4A843' }}>★</span></span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace' }}><span style={{ fontWeight: 200, fontSize: '28px', color: '#D4A843' }}>4.6</span><span style={{ fontSize: '16px', color: 'rgba(255,255,255,0.4)' }}>/5</span> <span style={{ color: '#D4A843' }}>★★★★</span><span style={{ opacity: 0.2, color: '#D4A843' }}>★</span></span>
                 </div>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="inline-flex items-center gap-1 text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded px-2 py-0.5">12 livraisons à l'heure</span>
-                  <span className="inline-flex items-center gap-1 text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded px-2 py-0.5">0 réclamation cette semaine</span>
+                  <span className="inline-flex items-center gap-1 text-xs rounded px-2 py-0.5" style={{ background: 'rgba(34,197,94,0.06)', border: '1px solid #22C55E', color: '#22C55E' }}>12 livraisons à l'heure</span>
+                  <span className="inline-flex items-center gap-1 text-xs rounded px-2 py-0.5" style={{ background: 'rgba(34,197,94,0.06)', border: '1px solid #22C55E', color: '#22C55E' }}>0 réclamation cette semaine</span>
                 </div>
               </div>
 
@@ -1188,7 +1192,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   <div className="text-[10px] uppercase tracking-wider text-white/40">Vieillissement</div>
                 </div>
                 <div className="text-right">
-                  <span className="text-xl font-extralight tabular-nums font-mono whitespace-nowrap" style={{ color: '#D4A843', fontWeight: '500', textShadow: '0 0 15px rgba(212,168,67,0.15)' }}>{totalAR}K DH</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '20px', color: '#D4A843', textShadow: '0 0 15px rgba(212,168,67,0.15)' }}>{totalAR}K DH</span>
                   <div style={{ fontSize:'10px', color:'rgba(255,255,255,0.3)', marginTop:'2px' }}>vs 65K DH mois dernier ↗</div>
                 </div>
               </div>
@@ -1240,20 +1244,20 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               <span className="text-sm text-white/80">AGENT IA : 2 livraisons en retard potentiel — <span style={{ fontWeight:'500', color:'white' }}>Constructions Modernes SA</span> (14:30) arrive à 85% de la fenêtre de livraison. BTP Maroc (16:00) non confirmé.</span>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0 ml-4">
-              <button className="text-xs px-3 py-1.5 rounded-lg hover:brightness-110 transition-colors" style={{ boxShadow: '0 0 12px rgba(245,158,11,0.35)', background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.4)', color: 'rgb(251,191,36)', fontWeight: '500' }}>Alerter Client</button>
-              <span style={{ border: '1px solid #D4A843', color: '#D4A843', borderRadius: '4px', padding: '4px 12px', fontSize: '12px', cursor: 'pointer', transition: 'all 0.2s ease' }} className="hover:bg-[#D4A843]/10 transition-colors" onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(212,168,67,0.1)'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>Ignorer</span>
+              <button style={{ border: '1px solid #D4A843', color: '#0F1629', background: '#D4A843', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>Alerter Client</button>
+              <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px' }}>Ignorer</button>
             </div>
           </div>
         )}
 
         {/* ─── Full-width: P&L du Jour ─── */}
         {!hideOpsWidgets && (
-          <div style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.06), transparent)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '8px', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ color: '#D4A843', fontSize: '20px', fontWeight: '500', fontFamily: "ui-monospace, SFMono-Regular, monospace" }}>
+           <div style={{ background: 'linear-gradient(90deg, rgba(212,168,67,0.04), transparent 60%)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '8px', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ color: '#D4A843', fontSize: '28px', fontWeight: 200, fontFamily: "ui-monospace, SFMono-Regular, monospace" }}>
               +18.4K DH
             </div>
             <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.4)' }}>marge nette estimée</div>
-            <div className="bg-emerald-500/10 text-emerald-400 text-sm font-semibold px-3 py-1 rounded-full">↗ +12% vs hier</div>
+            <div className="text-sm font-semibold px-3 py-1 rounded-full" style={{ background: 'rgba(34,197,94,0.1)', color: '#22C55E' }}>↗ +12% vs hier</div>
           </div>
         )}
         </>
