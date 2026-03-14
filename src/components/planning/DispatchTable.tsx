@@ -141,8 +141,8 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
           </div>
           <span style={{
             padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600,
-            background: 'rgba(212,168,67,0.12)', color: '#D4A843',
-            border: '1px solid rgba(212,168,67,0.25)',
+            background: 'rgba(212,168,67,0.06)', color: '#D4A843',
+            border: '1px solid #D4A843',
           }}>
             {uniqueToupies.size} toupies · {rows.length} livraisons
           </span>
