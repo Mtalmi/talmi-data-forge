@@ -1111,22 +1111,22 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                 name="ORCHESTRATION LIVRAISONS"
                 content={
                   <div className="flex flex-col gap-4">
+                    <p style={{ color: '#fff', fontSize: 15, fontWeight: 700, lineHeight: 1.4 }}>3 livraisons regroupées Casa Nord — économie 180 DH et 45 min</p>
                     <div className="flex items-start gap-3">
                       <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
-                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                        Routes optimisées: <span style={{ color: '#fff', fontWeight: 600 }}>3 livraisons regroupées secteur Casa Nord</span> ce matin. Économie carburant estimée: <span style={{ color: '#34d399', fontWeight: 600 }}>180 DH</span>. Temps gagné: <span style={{ color: '#34d399', fontWeight: 600 }}>45 min</span>.
+                      <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.7 }}>
+                        Routes optimisées ce matin. Économie carburant estimée: <span style={{ color: '#34d399', fontWeight: 600 }}>180 DH</span>. Temps gagné: <span style={{ color: '#34d399', fontWeight: 600 }}>45 min</span>.
                       </p>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
-                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                        Toupie <span style={{ color: '#fff', fontWeight: 600 }}>TOU-03</span> en surcharge cette semaine (<span style={{ color: '#F59E0B', fontWeight: 600 }}>6 rotations/jour vs recommandé 5</span>). Recommandation: basculer 2 livraisons sur TOU-01 demain.
+                      <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.7 }}>
+                        Toupie <span style={{ color: '#fff', fontWeight: 600 }}>TOU-03</span> en surcharge cette semaine (<span style={{ color: '#F59E0B', fontWeight: 600 }}>6 rotations/jour vs recommandé 5</span>).
                       </p>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444' }} />
-                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                        Livraison <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-014 Saudi Readymix (50m³)</span>: volume élevé nécessite 2 rotations. Prévoir TOU-03 en backup si retard TOU-01.
+                    <div style={{ background: 'rgba(212,168,67,0.05)', borderLeft: '3px solid #D4A843', padding: 12, borderRadius: '0 8px 8px 0', marginTop: 8 }}>
+                      <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.6 }}>
+                        <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation:</span> Basculer 2 livraisons de TOU-03 sur TOU-01 demain. Prévoir TOU-03 en backup pour BL-2602-014 Saudi Readymix (50m³).
                       </p>
                     </div>
                     <div className="flex gap-2 mt-2">
