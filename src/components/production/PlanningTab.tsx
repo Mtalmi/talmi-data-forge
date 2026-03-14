@@ -61,6 +61,15 @@ function getDemoData(): PlanningDay[] {
   ];
 }
 
+const FORMULE_COLORS: Record<string, { bg: string; color: string }> = {
+  'F-B25': { bg: 'rgba(212,168,67,0.2)', color: '#D4A843' },
+  'F-B30': { bg: 'rgba(59,130,246,0.2)', color: '#60A5FA' },
+  'F-B35': { bg: 'rgba(168,85,247,0.2)', color: '#A855F7' },
+  'F-B20': { bg: 'rgba(34,197,94,0.2)', color: '#22C55E' },
+  'F-B40': { bg: 'rgba(239,68,68,0.2)', color: '#EF4444' },
+  'Spécial': { bg: 'rgba(236,72,153,0.2)', color: '#EC4899' },
+};
+
 function chipStyle(status: PlanningChip['status']) {
   switch (status) {
     case 'completed': return { bg: 'rgba(16,185,129,0.10)', border: T.success };
@@ -218,6 +227,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
 
   return (
     <div className="flex flex-col gap-6">
+      <style>{`@keyframes urgent-pulse { 0%, 100% { background: rgba(248,113,113,0.15); } 50% { background: rgba(248,113,113,0.3); } }`}</style>
       {showModal && <PlanningModal onClose={() => setShowModal(false)} />}
 
       {/* Header + Actions */}
@@ -283,24 +293,29 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
         <div className="flex-1">
           <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, overflow: 'hidden' }}>
             <div className="grid grid-cols-7" style={{ borderBottom: `1px solid ${T.cardBorder}` }}>
-              {weekDays.map(day => (
-                <div key={day.toISOString()} style={{
-                  padding: '12px 8px', textAlign: 'center',
-                  background: isToday(day) ? `${T.gold}0D` : isWeekend(day) ? 'rgba(255,255,255,0.01)' : 'transparent',
-                  borderBottom: isToday(day) ? `2px solid ${T.gold}` : '2px solid transparent',
-                }}>
-                  <p style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>
-                    {format(day, 'EEE', { locale: fr })}
-                  </p>
-                  <p style={{
-                    fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 400,
-                    color: isToday(day) ? T.gold : isBefore(day, startOfDay(new Date())) ? 'rgba(255,255,255,0.3)' : '#fff',
-                    marginTop: 2,
+              {weekDays.map(day => {
+                const isSunday = day.getDay() === 0;
+                return (
+                  <div key={day.toISOString()} style={{
+                    padding: '12px 8px', textAlign: 'center',
+                    background: isSunday
+                      ? 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(75,85,99,0.1) 10px, rgba(75,85,99,0.1) 11px)'
+                      : isToday(day) ? `${T.gold}0D` : isWeekend(day) ? 'rgba(255,255,255,0.01)' : 'transparent',
+                    borderBottom: isToday(day) ? `2px solid ${T.gold}` : '2px solid transparent',
                   }}>
-                    {format(day, 'dd')}
-                  </p>
-                </div>
-              ))}
+                    <p style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>
+                      {format(day, 'EEE', { locale: fr })}
+                    </p>
+                    <p style={{
+                      fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 400,
+                      color: isToday(day) ? T.gold : isBefore(day, startOfDay(new Date())) ? 'rgba(255,255,255,0.3)' : '#fff',
+                      marginTop: 2,
+                    }}>
+                      {format(day, 'dd')}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
 
             <div className="grid grid-cols-7" style={{ minHeight: 280 }}>
@@ -309,6 +324,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
                 const isSelected = selectedDate && isSameDay(day, selectedDate);
                 const isPast = isBefore(day, startOfDay(new Date()));
 
+                const isSunday = day.getDay() === 0;
                 return (
                   <div
                     key={day.toISOString()}
@@ -317,37 +333,56 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
                       padding: '10px 8px',
                       borderRight: `1px solid ${T.cardBorder}`,
                       cursor: 'pointer',
-                      background: isSelected ? 'rgba(212,168,67,0.06)' : isWeekend(day) ? 'rgba(255,255,255,0.01)' : 'transparent',
+                      background: isSunday
+                        ? 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(75,85,99,0.1) 10px, rgba(75,85,99,0.1) 11px)'
+                        : isToday(day)
+                          ? 'linear-gradient(180deg, rgba(212,168,67,0.06) 0%, transparent 100%)'
+                          : isSelected ? 'rgba(212,168,67,0.06)' : isWeekend(day) ? 'rgba(255,255,255,0.01)' : 'transparent',
                       opacity: isPast ? 0.4 : 1,
                       transition: 'background 150ms',
                       minHeight: 120,
                     }}
-                    onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; }}
-                    onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = isWeekend(day) ? 'rgba(255,255,255,0.01)' : 'transparent'; }}
+                    onMouseEnter={e => { if (!isSelected && !isSunday) e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; }}
+                    onMouseLeave={e => { if (!isSelected && !isSunday) e.currentTarget.style.background = isToday(day) ? 'linear-gradient(180deg, rgba(212,168,67,0.06) 0%, transparent 100%)' : isWeekend(day) ? 'rgba(255,255,255,0.01)' : 'transparent'; }}
                   >
-                    {day.getDay() === 0 ? (
-                      <p style={{ fontSize: 11, color: '#4A5568', textAlign: 'center', paddingTop: 30, fontStyle: 'italic' }}>Fermé</p>
+                    {isSunday ? (
+                      <p style={{ fontSize: 13, color: '#4A5568', textAlign: 'center', paddingTop: 30, fontStyle: 'italic' }}>Fermé</p>
                     ) : dayChips.length > 0 ? (
                       <div className="flex flex-col gap-1.5">
                         {dayChips.map(chip => {
                           const cs = chipStyle(chip.status);
+                          const fc = FORMULE_COLORS[chip.formule] || FORMULE_COLORS['F-B25'];
+                          const bigOrder = chip.volume >= 50;
                           return (
                             <div key={chip.id} style={{
                               padding: '6px 8px', borderRadius: 6,
                               background: cs.bg, borderLeft: `2px solid ${cs.border}`,
                               borderTop: '2px solid #D4A843',
+                              border: `1px solid ${bigOrder ? 'rgba(212,168,67,0.6)' : 'rgba(212,168,67,0.25)'}`,
+                              borderLeftWidth: 2, borderLeftColor: cs.border,
+                              borderTopWidth: 2, borderTopColor: '#D4A843',
                               overflow: 'hidden',
-                            }}>
+                              transition: 'all 200ms ease',
+                              cursor: 'pointer',
+                            }}
+                              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)'; e.currentTarget.style.borderColor = '#D4A843'; }}
+                              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = bigOrder ? 'rgba(212,168,67,0.6)' : 'rgba(212,168,67,0.25)'; }}
+                            >
                               <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                                <span style={{ fontSize: 11, fontWeight: 500, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
-                                  {chip.bc ? `${chip.bc} · ` : ''}{chip.formule}
+                                <span style={{
+                                  fontSize: 10, fontWeight: 700, padding: '1px 5px', borderRadius: 3,
+                                  background: fc.bg, color: fc.color, flexShrink: 0,
+                                }}>{chip.formule.replace('F-', '')}</span>
+                                <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+                                  {chip.bc ? chip.bc : chip.client}
                                 </span>
                                 {chip.status === 'urgent' && (
                                   <span style={{
-                                    fontSize: 11, fontWeight: 700, color: T.danger,
-                                    background: 'rgba(248,113,113,0.15)', padding: '4px 8px', borderRadius: 3,
+                                    fontSize: 9, fontWeight: 700, color: T.danger,
+                                    background: 'rgba(248,113,113,0.15)', padding: '4px 10px', borderRadius: 3,
                                     textTransform: 'uppercase', letterSpacing: '0.05em', flexShrink: 0,
                                     boxShadow: '0 0 8px rgba(239,68,68,0.4)',
+                                    animation: 'urgent-pulse 2s infinite',
                                   }}>Urgent</span>
                                 )}
                               </div>
@@ -359,7 +394,17 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
                         })}
                       </div>
                     ) : (
-                      <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.15)', textAlign: 'center', paddingTop: 30 }}>—</p>
+                      <div
+                        style={{
+                          border: '1px dashed rgba(212,168,67,0.2)', borderRadius: 6,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          minHeight: 58, cursor: 'pointer', transition: 'all 200ms',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.4)'; e.currentTarget.style.background = 'rgba(212,168,67,0.03)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.2)'; e.currentTarget.style.background = 'transparent'; }}
+                      >
+                        <span style={{ color: 'rgba(212,168,67,0.3)', fontSize: 18, lineHeight: 1 }}>+</span>
+                      </div>
                     )}
                   </div>
                 );
