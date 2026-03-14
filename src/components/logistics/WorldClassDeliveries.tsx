@@ -1085,8 +1085,8 @@ function IntelligenceIATab() {
         </div>
 
         <RecommendationBox borderColor={T.success} text={
-          <>En regroupant les livraisons par zone géographique (Casablanca Est le matin, axe Rabat l'après-midi), réduction estimée de <strong style={{ color: T.success }}>22% des km parcourus</strong>. Économie carburant : <strong style={{ color: T.gold }}>52,000 MAD/an</strong>. Bonus : réduction temps d'attente de 35% en évitant les créneaux de trafic 10h-12h sur l'axe A3.</>
-        } />
+           <>En regroupant les livraisons par zone géographique (Casablanca Est le matin, axe Rabat l'après-midi), réduction estimée de <strong style={{ color: T.success }}>22% des km parcourus</strong>. Économie carburant : <strong style={{ color: T.gold }}>52,000 MAD/an</strong>. Bonus : réduction temps d'attente de 35% en évitant les créneaux de trafic 10h-12h sur l'axe A3. Opportunité retour chargé : T-04 peut récupérer <strong style={{ color: T.gold }}>20T de gravette</strong> chez Carrières du Sud (à 8 km du chantier Résidences Atlas) sur le trajet retour. Élimination complète du retour à vide + économie transport matière première de <strong style={{ color: T.gold }}>1,200 DH</strong>.</>
+         } />
       </Card>
 
       {/* ─── AGENT 3: SURVEILLANCE CARBURANT ─── */}
