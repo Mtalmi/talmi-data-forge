@@ -333,6 +333,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
                             <div key={chip.id} style={{
                               padding: '6px 8px', borderRadius: 6,
                               background: cs.bg, borderLeft: `2px solid ${cs.border}`,
+                              borderTop: '2px solid #D4A843',
                               overflow: 'hidden',
                             }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
