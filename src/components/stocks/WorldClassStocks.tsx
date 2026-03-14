@@ -767,6 +767,7 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
 
       {/* ── HERO SECTION (VUE D'ENSEMBLE only) ── */}
       {activeTab === 'overview' && (() => {
+        const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
         const weights: Record<string, number> = { ciment: 0.30, gravette: 0.25, sable: 0.20, eau: 0.15, adjuvant: 0.10 };
         const tierScore = (d: number) => d >= 7 ? 100 : d >= 5 ? 75 : d >= 3 ? 50 : d >= 1 ? 25 : 0;
         let tw = 0, ws = 0;
@@ -775,7 +776,6 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
           if (auto?.days != null) { ws += tierScore(auto.days) * w; tw += w; }
         }
         const heroScore = tw > 0 ? Math.round(ws / tw) : 0;
-        const heroScoreColor = heroScore >= 80 ? '#D4A843' : heroScore >= 50 ? '#f97316' : '#ef4444';
 
         const criticalCount = STOCK_ALERTS_DB.filter(a => a.severity === 'critical').length;
         const suggestedCount = REORDER_RECS.length;
@@ -783,22 +783,10 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
         const allAutonomyDays = Object.values(AUTONOMY).map(a => a?.days).filter((d): d is number => d != null);
         const minAutonomy = allAutonomyDays.length > 0 ? Math.min(...allAutonomyDays) : 0;
 
-        const severityRank: Record<string, number> = { critical: 3, warning: 2, info: 1 };
         const topRec = [...REORDER_RECS].sort((a, b) => {
-          const urgRank: Record<string, number> = { CRITIQUE: 3, URGENT: 3, 'MODÉRÉ': 2, OK: 1 };
+          const urgRank: Record<string, number> = { CRITIQUE: 3, URGENT: 3, critique: 3, urgent: 3, 'MODÉRÉ': 2, 'modéré': 2, OK: 1 };
           return (urgRank[b.urgency] || 0) - (urgRank[a.urgency] || 0);
         })[0];
-        const verdictText = topRec
-          ? `${topRec.materiau} — commander ${Number(topRec.recommended_qty).toLocaleString('fr-FR')} ${topRec.unite} (${topRec.urgency})`
-          : 'Tous les stocks sont à niveau optimal';
-
-        const pillStyle: React.CSSProperties = {
-          border: '1px solid rgba(212,168,67,0.3)', padding: '12px 20px', borderRadius: 999,
-          fontSize: 13, color: '#fff', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap',
-        };
-        const dot = (color: string): React.CSSProperties => ({
-          width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0,
-        });
 
         return (
           <div style={{
@@ -810,7 +798,7 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               {(() => {
                 const size = 180;
-                const strokeW = 10;
+                const strokeW = 6;
                 const r = (size - strokeW) / 2;
                 const circ = 2 * Math.PI * r;
                 const pct = Math.min(heroScore, 100) / 100;
@@ -822,7 +810,7 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                       <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#D4A843" strokeWidth={strokeW}
                         strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={offset}
                         style={{
-                          animation: 'gaugeArc 1.5s cubic-bezier(0.25,0.46,0.45,0.94) forwards',
+                          animation: 'gaugeArc 2s cubic-bezier(0.25,0.46,0.45,0.94) forwards',
                           ['--gauge-offset' as any]: offset,
                         }}
                       />
@@ -830,25 +818,51 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                     <div style={{
                       position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
-                      <span style={{
-                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
-                        fontSize: 60, fontWeight: 200, lineHeight: 1, letterSpacing: '-0.02em', color: '#fff',
-                      }}>
-                        {heroScore}
-                      </span>
+                      <HeroScoreCounter target={heroScore} />
                     </div>
                   </div>
                 );
               })()}
-              <p style={{ fontSize: 14, color: '#9CA3AF', marginTop: 10 }}>État Général des Stocks</p>
-              <p style={{ fontSize: 13, color: '#9CA3AF', marginTop: 6 }}>
-                ⚡ {verdictText}
-              </p>
+              <p style={{ fontFamily: MONO, fontSize: 13, color: '#9CA3AF', marginTop: 10 }}>État Général des Stocks</p>
+              {topRec && (
+                <p style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF', marginTop: 6 }}>
+                  ⚡ {topRec.materiau} — commander{' '}
+                  <span style={{ color: '#D4A843', fontWeight: 600 }}>{Number(topRec.recommended_qty).toLocaleString('fr-FR')} {topRec.unite}</span>{' '}
+                  <span style={{ color: '#F59E0B' }}>({topRec.urgency})</span>
+                </p>
+              )}
             </div>
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-              <div style={pillStyle}><span style={dot('#ef4444')} />{criticalCount} matériaux critiques</div>
-              <div style={pillStyle}><span style={dot('#D4A843')} />{suggestedCount} commandes suggérées</div>
-              <div style={pillStyle}><span style={dot('#f97316')} />Autonomie min: {minAutonomy}j</div>
+              {/* Critical badge */}
+              <div style={{
+                border: '1px solid #EF4444', padding: '12px 20px', borderRadius: 999,
+                fontSize: 13, color: '#EF4444', fontWeight: 500, fontFamily: MONO,
+                background: 'rgba(239,68,68,0.08)',
+                display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap',
+              }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444', flexShrink: 0, animation: 'pulseDot 2s infinite' }} />
+                {criticalCount} matériaux critiques
+              </div>
+              {/* Suggested badge */}
+              <div style={{
+                border: '1px solid #F59E0B', padding: '12px 20px', borderRadius: 999,
+                fontSize: 13, color: '#F59E0B', fontWeight: 500, fontFamily: MONO,
+                background: 'transparent',
+                display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap',
+              }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B', flexShrink: 0 }} />
+                {suggestedCount} commandes suggérées
+              </div>
+              {/* Autonomy badge */}
+              <div style={{
+                border: '1px solid #D4A843', padding: '12px 20px', borderRadius: 999,
+                fontSize: 13, color: '#D4A843', fontWeight: 500, fontFamily: MONO,
+                background: 'transparent',
+                display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap',
+              }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#D4A843', flexShrink: 0 }} />
+                Autonomie min: {minAutonomy}j
+              </div>
             </div>
           </div>
         );
