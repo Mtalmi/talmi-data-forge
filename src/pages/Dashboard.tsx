@@ -89,6 +89,26 @@ export default function Dashboard() {
   const [showLancerToast, setShowLancerToast] = useState(false);
   const [lancerToastVisible, setLancerToastVisible] = useState(false);
   const [midPanelView, setMidPanelView] = useState<'data' | 'camera'>('data');
+  const [expandedKpi, setExpandedKpi] = useState<string | null>(null);
+  const [cameraTime, setCameraTime] = useState('');
+
+  // Camera ticking timestamp
+  useEffect(() => {
+    const tick = () => {
+      const n = new Date();
+      setCameraTime(`${n.getHours().toString().padStart(2,'0')}:${n.getMinutes().toString().padStart(2,'0')}:${n.getSeconds().toString().padStart(2,'0')} UTC+1`);
+    };
+    tick();
+    const iv = setInterval(tick, 1000);
+    return () => clearInterval(iv);
+  }, []);
+
+  // KPI count-up values
+  const kpiProduit = useCountUp(671, 1500, 0);
+  const kpiRendement = useCountUp(94, 1500, 200);
+  const kpiQualite = useCountUp(96.2, 1500, 400, 1);
+  const kpiLivA = useCountUp(8, 1500, 600);
+  const kpiLivB = useCountUp(12, 1500, 600);
 
   const heroRef = useRef<HTMLDivElement>(null);
 
