@@ -1673,7 +1673,7 @@ export default function WorldClassDeliveries() {
 
             {/* 3h. PERFORMANCE HEBDOMADAIRE */}
             <section>
-              <SectionHeader icon={TrendingUp} label="Performance Hebdomadaire" />
+              <SectionHeader icon={TrendingUp} label="✦ Performance Hebdomadaire" />
               <Card style={{ borderTop: `2px solid ${T.gold}` }}>
                 <ResponsiveContainer width="100%" height={300}>
                   <ComposedChart data={perfData} margin={{ top: 10, right: 50, left: -10, bottom: 0 }}>
