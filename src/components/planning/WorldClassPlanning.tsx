@@ -779,6 +779,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
         @keyframes tbos-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:0.85} }
         @keyframes liveDotPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.3);opacity:0.5} }
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        @keyframes riskPulse { 0%,100%{box-shadow:0 0 8px rgba(239,68,68,0.3)} 50%{box-shadow:0 0 16px rgba(239,68,68,0.1)} }
       `}</style>
 
       <PageHeader
