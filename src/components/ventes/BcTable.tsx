@@ -544,7 +544,7 @@ export function BcTable({
                 
                 {/* VOLUME */}
                 <TableCell className="text-right">
-                  <span className="text-xs font-mono">{bc.volume_m3}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 300, fontSize: 12 }}>{bc.volume_m3}</span>
                 </TableCell>
                 
                 {/* TOTAL HT */}
