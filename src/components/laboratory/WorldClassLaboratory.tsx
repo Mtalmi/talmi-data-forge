@@ -9,8 +9,10 @@ import {
   FlaskConical, CheckCircle, AlertTriangle, Clock, Plus,
   FileText, Bell, Zap, Droplets, Activity, CloudRain,
   TrendingUp, BookOpen, ChevronDown, ChevronUp, User,
-  OctagonX, Eye, CheckCheck, Brain,
+  OctagonX, Eye, CheckCheck, Brain, Search, LineChart,
+  Filter, BarChart3,
 } from 'lucide-react';
+import { LineChart as RechartsLineChart, Line, ReferenceLine } from 'recharts';
 import { PageHeader } from '@/components/layout/PageHeader';
 
 // ─────────────────────────────────────────────────────
