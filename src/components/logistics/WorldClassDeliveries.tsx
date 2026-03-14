@@ -900,7 +900,7 @@ function AnalytiqueTab() {
 
       {/* ROW 3 — EFFICIENCY */}
       <section>
-        <SectionHeader icon={Activity} label="Efficacité Opérationnelle" />
+        <SectionHeader icon={Activity} label="✦ Efficacité Opérationnelle" />
         <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
 
           {/* Coût par Livraison */}
