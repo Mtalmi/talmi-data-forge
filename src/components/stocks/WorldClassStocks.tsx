@@ -700,6 +700,10 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
         @keyframes gaugeArc { from{stroke-dashoffset:${2 * Math.PI * 85}} to{stroke-dashoffset:var(--gauge-offset)} }
         @keyframes critiqueGlow { 0%,100%{box-shadow:0 0 20px rgba(239,68,68,0.3)} 50%{box-shadow:0 0 20px rgba(239,68,68,0.6)} }
         @keyframes kpiShimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+        @keyframes goldBtnGlow { 0%,100%{box-shadow:0 0 6px rgba(212,168,67,0.3)} 50%{box-shadow:0 0 20px rgba(212,168,67,0.6)} }
+        @keyframes heroCountUp { from{opacity:0;transform:scale(0.8)} to{opacity:1;transform:scale(1)} }
+        @keyframes pulseDot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:0.5} }
+        @keyframes sparkPulse { 0%,100%{r:3;opacity:1} 50%{r:5;opacity:0.6} }
         .kpi-shimmer { position:relative; border-radius:10px; padding:1px; background:linear-gradient(90deg, transparent 0%, rgba(212,168,67,0.4) 50%, transparent 100%); background-size:200% 100%; animation:kpiShimmer 3s linear infinite; }
         .kpi-shimmer > * { border-radius:9px; }
       `}</style>
