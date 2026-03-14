@@ -732,8 +732,8 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
     { id: 'silos', label: 'SILOS' },
     { id: 'overview', label: "VUE D'ENSEMBLE" },
     { id: 'mouvements', label: 'MOUVEMENTS' },
-    { id: 'alertes', label: 'ALERTES' },
-  ];
+    { id: 'alertes', label: 'SURVEILLANCE IA', hasPulse: true },
+  ] as const;
 
   return (
     <div style={{ fontFamily: 'DM Sans, sans-serif', color: T.textPri }}>
