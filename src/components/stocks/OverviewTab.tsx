@@ -428,10 +428,15 @@ export function OverviewTab({ AUTONOMY, STOCK_ALERTS_DB, REORDER_RECS, STOCKS, o
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          EXISTING SECTIONS — Price Tracker, Cost Simulator, Smart Queue
+          SECTION — TRACKER DE PRIX MATIÈRES
           ═══════════════════════════════════════════════════ */}
-      <MaterialPriceTracker />
-      <CostImpactSimulator />
+      <PriceTracker />
+
+      {/* ═══════════════════════════════════════════════════
+          SECTION — SIMULATEUR D'IMPACT COÛT
+          ═══════════════════════════════════════════════════ */}
+      <CostSimulator />
+
       <SmartReorderQueue />
     </>
   );
