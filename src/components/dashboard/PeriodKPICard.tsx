@@ -1,6 +1,9 @@
-import { LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCountUp } from '@/hooks/useCountUp';
+import { TrendIndicator } from '@/components/ui/formatted-value';
+
+const MONO = 'ui-monospace, SFMono-Regular, monospace';
 
 interface PeriodKPICardProps {
   title: string;
@@ -15,24 +18,30 @@ interface PeriodKPICardProps {
   delay?: number;
 }
 
+/** Extract numeric value, prefix, suffix, and unit from a display string */
 function parseDisplayValue(value: string | number) {
   if (typeof value === 'number') {
-    return { num: value, prefix: '', suffix: '', decimals: value % 1 !== 0 ? 1 : 0 };
+    return { num: value, prefix: '', suffix: '', unit: '', decimals: value % 1 !== 0 ? 1 : 0 };
   }
   const str = String(value);
   if (str === '—' || str === '0') return null;
 
-  const match = str.match(/^([^\d-]*)(-?[\d,.]+)(.*)$/);
+  const match = str.match(/^([^\d-]*)(-?[\d\s,.]+)\s*(DH|m³|%|kg|L|j|K DH|M DH|K|M)?(.*)$/);
   if (!match) return null;
 
-  const num = parseFloat(match[2].replace(',', '.'));
+  const rawNum = match[2].replace(/\s/g, '').replace(',', '.');
+  const num = parseFloat(rawNum);
   if (isNaN(num)) return null;
 
   const decPart = match[2].split(/[.,]/)[1];
+  const unit = match[3] || '';
+  const trailing = match[4]?.trim() || '';
+
   return {
     prefix: match[1],
     num,
-    suffix: match[3],
+    suffix: trailing,
+    unit,
     decimals: decPart ? decPart.length : 0,
   };
 }
@@ -57,22 +66,12 @@ export function PeriodKPICard({
     const formatted = parsed.decimals > 0
       ? animatedNum.toLocaleString('fr-FR', { minimumFractionDigits: parsed.decimals, maximumFractionDigits: parsed.decimals })
       : animatedNum.toLocaleString('fr-FR');
-    return `${parsed.prefix}${formatted}${parsed.suffix}`;
+    return formatted.replace(/\u202F/g, ' ').replace(/\u00A0/g, ' ');
   };
 
-  const displayValue = formatAnimated();
+  const displayNum = formatAnimated();
   const done = animatedNum === Math.floor(parsed?.num ?? 0);
-
-  const getTrendIcon = () => {
-    if (trend === undefined || trend === 0) return <Minus className="h-3 w-3" />;
-    return trend > 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />;
-  };
-
-  const getTrendColor = () => {
-    if (trend === undefined) return 'text-muted-foreground';
-    if (title.includes('CUR')) return trend <= 0 ? 'text-success' : 'text-destructive';
-    return trend >= 0 ? 'text-success' : 'text-destructive';
-  };
+  const unit = parsed?.unit || '';
 
   const accentColor = {
     default: 'hsl(var(--primary))',
@@ -128,9 +127,16 @@ export function PeriodKPICard({
               variant === 'negative' ? 'text-destructive' : variant === 'warning' ? 'text-warning' : 'text-primary',
               done && parsed?.num ? 'drop-shadow-[0_0_10px_hsl(51_100%_50%/0.4)]' : '',
             )}
-            style={{ fontFamily: 'JetBrains Mono, monospace' }}
+            style={{ fontFamily: MONO, fontWeight: 200 }}
           >
-            {displayValue}
+            {parsed?.prefix}
+            {displayNum}
+            {unit && (
+              <span style={{ fontWeight: 300, fontSize: '60%', color: '#9CA3AF', marginLeft: 4 }}>
+                {unit}
+              </span>
+            )}
+            {parsed?.suffix}
           </p>
           {subtitle && (
             <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 truncate">{subtitle}</p>
@@ -148,25 +154,15 @@ export function PeriodKPICard({
       </div>
 
       {trend !== undefined && (
-        <div className="mt-2.5 pt-2 border-t border-border/30 flex items-center gap-2">
-          <span
-            className={cn(
-              'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border',
-              trend > 0
-                ? 'bg-success/10 text-success border-success/20'
-                : trend < 0
-                  ? 'bg-destructive/10 text-destructive border-destructive/20'
-                  : 'bg-muted/50 text-muted-foreground border-border/30',
-            )}
-          >
-            {getTrendIcon()}
-            {Math.abs(trend ?? 0).toFixed(1)}%
-          </span>
-          {trendLabel && (
-            <span className="text-[10px] text-muted-foreground truncate">vs {trendLabel}</span>
-          )}
+        <div className="mt-2.5 pt-2 border-t border-border/30">
+          <TrendIndicator
+            value={trend}
+            label={trendLabel}
+            invertColor={title.includes('CUR')}
+          />
         </div>
       )}
     </div>
   );
 }
+
