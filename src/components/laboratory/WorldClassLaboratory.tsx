@@ -1153,9 +1153,9 @@ function HistoriqueNormesTab() {
           <Card style={{ borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
             <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 20 }}>Conformité par Formule</p>
             {[
-              { label: 'F-B20', pct: 97, color: T.success, barW: conformBar },
+              { label: 'F-B20', pct: 97, color: '#D4A843', barW: conformBar },
               { label: 'F-B25', pct: 95, color: '#D4A843', barW: conformBar2 },
-              { label: 'F-B30', pct: 98, color: T.success, barW: conformBar3 },
+              { label: 'F-B30', pct: 98, color: '#D4A843', barW: conformBar3 },
             ].map((f, i) => (
               <div key={i} style={{ marginBottom: 14 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
