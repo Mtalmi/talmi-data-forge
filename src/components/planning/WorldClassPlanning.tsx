@@ -739,8 +739,16 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
               ))}
             </div>
 
-            {/* 3. Planning Chronologique Table */}
-            <div>
+            {/* Dispatch header content (calendar, KPIs) */}
+            {dispatchHeader}
+
+            {/* Main dispatch area + fleet sidebar */}
+            <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 24 }}>
+                {dispatchMain}
+
+                {/* Planning Chronologique Table */}
+                <div>
               <SectionHeader icon={Clock} label="Planning Chronologique" />
               <Card style={{ padding: 0, overflow: 'hidden' }}>
                 <div style={{
