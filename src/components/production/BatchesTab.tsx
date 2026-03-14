@@ -136,7 +136,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
 
   return (
     <>
-    <style>{`@keyframes batch-pulse { 0%, 100% { box-shadow: 0 0 0px rgba(212,168,67,0); } 50% { box-shadow: 0 0 8px rgba(212,168,67,0.3); } }`}</style>
+    <style>{`@keyframes batch-pulse { 0%, 100% { box-shadow: 0 0 0px rgba(212,168,67,0); } 50% { box-shadow: 0 0 8px rgba(212,168,67,0.3); } } @keyframes live-dot-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.5; } }`}</style>
     <div className="flex flex-col gap-6">
 
       {/* ═══ 1. ACTION BUTTONS ═══ */}
