@@ -1337,6 +1337,25 @@ export default function Dashboard() {
                     </div>
                   )}
                 <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#0a0f1a]/80 to-transparent pointer-events-none" />
+                {/* Chart summary strip */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', borderTop: '1px solid rgba(212,168,67,0.1)', marginTop: 'auto' }}>
+                  <div>
+                    <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>PIC</div>
+                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: '#D4A843' }}>98 m³/h · 15h</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Moyenne</div>
+                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: 'white' }}>72 m³/h</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Écart moy.</div>
+                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: '#22C55E' }}>+3.2%</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Hier</div>
+                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: '#9CA3AF' }}>645 m³</div>
+                  </div>
+                </div>
               </div>
 
               {/* Performance / Camera panel */}
