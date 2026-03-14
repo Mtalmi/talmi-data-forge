@@ -554,7 +554,7 @@ function ZoneHeader({ icon, label, right }: { icon: string; label: string; right
 // COLLAPSIBLE CHRONOLOGIQUE TABLE
 // ─────────────────────────────────────────────────────
 function CollapsibleChronologique() {
-  const [chronoOpen, setChronoOpen] = useState(false);
+  const [chronoOpen, setChronoOpen] = useState(true);
   return (
     <div style={{ borderBottom: chronoOpen ? 'none' : '1px solid rgba(212, 168, 67, 0.2)' }}>
       <button
