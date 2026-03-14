@@ -229,8 +229,8 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
           <button style={{
             display: 'flex', alignItems: 'center', gap: 6,
             padding: '8px 16px', borderRadius: 8, cursor: 'pointer',
-            background: 'transparent', border: `1px solid ${T.cardBorder}`,
-            color: T.textSec, fontWeight: 500, fontSize: 12,
+            background: 'transparent', border: '1px solid #D4A843',
+            color: '#D4A843', fontWeight: 500, fontSize: 12,
           }}>
             <Upload size={14} /> Importer BC
           </button>
