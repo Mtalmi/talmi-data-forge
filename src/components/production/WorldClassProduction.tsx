@@ -381,11 +381,11 @@ export default function WorldClassProduction() {
 
     const hasData = totalVolume > 0 || totalBatches > 0;
     if (hasData) {
-      return { produced, inProgress, planned, totalVolume, completedBatches, conformity, totalBatches };
+      return { produced, inProgress, planned, totalVolume, completedBatches, conformity, totalBatches, isDemo: false };
     }
     return {
-      produced: 0, inProgress: 0, planned: 0,
-      totalVolume: 0, completedBatches: 0, conformity: 100, totalBatches: 0,
+      produced: 671, inProgress: 8, planned: 2,
+      totalVolume: 671, completedBatches: 12, conformity: 96.8, totalBatches: 14, isDemo: true,
     };
   }, [bons, batches]);
 
