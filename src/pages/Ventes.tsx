@@ -93,7 +93,7 @@ const MAIN_TABS = [
   { id: 'overview', label: "VUE D'ENSEMBLE" },
   { id: 'orders', label: 'DEVIS & COMMANDES', badgeCount: 6 },
   { id: 'analytics', label: 'ANALYTIQUE' },
-  { id: 'intelligence', label: 'INTELLIGENCE IA', badgeCount: 3 },
+  { id: 'intelligence', label: 'INTELLIGENCE IA', badgeCount: 6 },
 ] as const;
 
 export default function Ventes() {
