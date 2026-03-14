@@ -334,10 +334,12 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
             </ResponsiveContainer>
           </div>
         ) : (
-          <div style={{ width: 140, height: 140, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            <CheckCircle2 style={{ width: 32, height: 32, color: 'rgba(148,163,184,0.2)' }} />
-            <p style={{ fontSize: 12, color: 'rgba(148,163,184,0.4)', textAlign: 'center' }}>Aucun devis enregistré</p>
-          </div>
+            <div style={{ width: 140, height: 140, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <svg width="80" height="80" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(212,168,67,0.15)" strokeWidth="8" />
+              </svg>
+              <p style={{ fontSize: 12, color: 'rgba(148,163,184,0.4)', textAlign: 'center' }}>Aucun deal finalisé</p>
+            </div>
         )}
 
         {/* Win rate bar */}
