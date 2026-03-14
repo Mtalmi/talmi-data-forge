@@ -674,6 +674,7 @@ export function DevisTable({
           })}
         </TableBody>
       </Table>
+      </div>
       
       {/* Confirmation Dialog for Annulé Status */}
       <AlertDialog open={!!cancelConfirmDevis} onOpenChange={(open) => !open && setCancelConfirmDevis(null)}>
