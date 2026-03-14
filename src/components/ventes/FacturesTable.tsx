@@ -377,9 +377,9 @@ export function FacturesTable({
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col">
-                      <span className="text-xs font-mono">{facture.bl_id}</span>
+                      <span style={{ fontFamily: 'ui-monospace, monospace', color: 'rgba(212,168,67,0.7)', fontWeight: 400, fontSize: 12 }}>{facture.bl_id}</span>
                       {facture.bc_id && (
-                        <span className="text-[10px] text-muted-foreground">{facture.bc_id}</span>
+                        <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: '#9CA3AF' }}>{facture.bc_id}</span>
                       )}
                     </div>
                   </TableCell>
