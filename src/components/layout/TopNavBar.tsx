@@ -96,6 +96,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
 
           {/* Language */}
           <LanguageSwitcher variant="compact" />
+          <UnitSwitcher />
 
           {/* AI sparkle */}
           <button
