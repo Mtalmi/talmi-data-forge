@@ -193,7 +193,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
           { label: 'SYNC MACHINE', icon: Wifi, value: '98', suffix: '%' },
           { label: 'ALERTES', icon: AlertTriangle, value: '1', suffix: '1 écart' },
         ].map(k => (
-          <div key={k.label} style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 16 }}>
+          <div key={k.label} style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, padding: 16 }}>
             <k.icon size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.20)', marginBottom: 8 }} />
             <p style={{ fontFamily: mono, fontSize: 24, fontWeight: 400, color: '#fff', lineHeight: 1 }}>
               {k.value}
