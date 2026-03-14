@@ -32,11 +32,11 @@ const STATUS_MAP: Record<string, { label: string; color: string; prefix: string 
 
 // Demo rows when no real data
 const DEMO_ROWS = [
-  { bl: '2602-015', client: 'BTP Maroc', formule: 'F-B30', vol: '20m³', toupie: 'TOU-02', depart: '15:00', eta: '15:22', status: 'planification' },
-  { bl: '2602-014', client: 'Saudi Readymix', formule: 'F-B25', vol: '50m³', toupie: 'TOU-03', depart: '13:00', eta: '13:38', status: 'en_chargement' },
-  { bl: '2602-013', client: 'Constructions Modernes', formule: 'F-B20', vol: '80m³', toupie: 'TOU-01', depart: '10:30', eta: '11:07', status: 'en_livraison', statusExtra: '(1/4)' },
-  { bl: '2602-012', client: 'Ciments & Béton du Sud', formule: 'F-B30', vol: '30m³', toupie: 'TOU-02', depart: '09:00', eta: '—', status: 'livre' },
-  { bl: '2602-011', client: 'BTP Maroc', formule: 'F-B25', vol: '45m³', toupie: 'TOU-01', depart: '07:00', eta: '—', status: 'livre' },
+  { bl: '2602-015', client: 'BTP Maroc', formule: 'F-B30', vol: '20 m³', toupie: 'TOU-02', depart: '15:00', eta: '15:22', status: 'planification' },
+  { bl: '2602-014', client: 'Saudi Readymix', formule: 'F-B25', vol: '50 m³', toupie: 'TOU-03', depart: '13:00', eta: '13:38', status: 'en_chargement' },
+  { bl: '2602-013', client: 'Constructions Modernes', formule: 'F-B20', vol: '80 m³', toupie: 'TOU-01', depart: '10:30', eta: '11:07', status: 'en_livraison', statusExtra: '(1/4)' },
+  { bl: '2602-012', client: 'Ciments & Béton du Sud', formule: 'F-B30', vol: '30 m³', toupie: 'TOU-02', depart: '09:00', eta: '—', status: 'livre' },
+  { bl: '2602-011', client: 'BTP Maroc', formule: 'F-B25', vol: '45 m³', toupie: 'TOU-01', depart: '07:00', eta: '—', status: 'livre' },
 ];
 
 function estimateETA(depart: string | null): string {
@@ -67,7 +67,7 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
       bl: b.bl_id.replace('BL-', ''),
       client: b.clients?.nom_client || b.client_id,
       formule: b.formule_id.startsWith('F-') ? b.formule_id : `F-${b.formule_id}`,
-      vol: `${b.volume_m3}m³`,
+      vol: `${b.volume_m3} m³`,
       toupie: b.toupie_assignee || b.camion_assigne || '—',
       depart: b.heure_prevue || '—',
       eta: b.heure_arrivee_chantier || estimateETA(b.heure_prevue),
@@ -87,7 +87,7 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
     { key: 'toupie', label: 'TOUPIE', width: '10%', align: 'center' as const },
     { key: 'depart', label: 'DÉPART', width: '10%', align: 'center' as const },
     { key: 'eta', label: 'ETA', width: '10%', align: 'center' as const },
-    { key: 'statut', label: 'STATUT', width: '19%', align: 'center' as const },
+    { key: 'statut', label: 'STATUT', width: '19%', align: 'right' as const },
   ];
 
   return (
@@ -186,8 +186,8 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
             <div style={{ padding: '12px 16px', fontSize: 11, textAlign: 'center' }}>
               <span style={{
                 padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 600,
-                background: 'rgba(96,165,250,0.12)', color: '#60A5FA',
-                border: '1px solid rgba(96,165,250,0.2)',
+                background: 'rgba(212,168,67,0.15)', color: '#D4A843',
+                border: '1px solid rgba(212,168,67,0.4)',
               }}>
                 {row.toupie}
               </span>
@@ -201,15 +201,15 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
               {row.eta}
             </div>
             {/* STATUT */}
-            <div style={{ padding: '12px 16px', textAlign: 'center' }}>
+            <div style={{ padding: '12px 16px', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
               <span style={{
                 display: 'inline-flex', alignItems: 'center', gap: 6,
-                padding: '3px 10px', borderRadius: 999,
+                padding: '3px 10px', borderRadius: 999, minWidth: 100, justifyContent: 'center',
                 background: `${s.color}15`,
                 border: `1px solid ${s.color}30`,
               }}>
                 <span style={{ fontSize: 10, color: s.color }}>{s.prefix}</span>
-                <span style={{ fontSize: 10, fontWeight: 600, color: s.color }}>
+                <span style={{ fontSize: 10, fontWeight: 600, color: s.color, whiteSpace: 'nowrap' }}>
                   {s.label}{row.statusExtra ? ` ${row.statusExtra}` : ''}
                 </span>
               </span>
