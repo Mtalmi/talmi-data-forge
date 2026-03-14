@@ -66,9 +66,21 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('tous');
 
-  // Live data only — no fallback
+  // Demo fallback data
+  const DEMO_ROWS: BatchRow[] = [
+    { bl_id: '#403-068', client: 'BTP Maroc SARL', formule: 'F-B25', volume: 8, heure: '10:42', status: 'valide', progress: 100 },
+    { bl_id: '#403-067', client: 'Constructions Modernes SA', formule: 'F-B30', volume: 12, heure: '11:28', status: 'valide', progress: 100 },
+    { bl_id: '#403-066', client: 'Ciments & Béton du Sud', formule: 'F-B25', volume: 8, heure: '11:55', status: 'production', progress: 72 },
+    { bl_id: '#403-065', client: 'BTP Maroc SARL', formule: 'F-B35', volume: 10, heure: '12:35', status: 'valide', progress: 100 },
+    { bl_id: '#403-064', client: 'Saudi Readymix', formule: 'F-B25', volume: 8, heure: '13:21', status: 'valide', progress: 100 },
+    { bl_id: '#403-063', client: 'ATLAS CONSTRUCT', formule: 'F-B30', volume: 15, heure: '14:10', status: 'production', progress: 45 },
+    { bl_id: '#403-062', client: 'Ciments & Béton du Sud', formule: 'F-B20', volume: 6, heure: '14:55', status: 'planifie', progress: 0 },
+    { bl_id: '#403-061', client: 'Constructions Modernes SA', formule: 'F-B25', volume: 10, heure: '15:20', status: 'planifie', progress: 0 },
+  ];
+
+  // Live data with demo fallback
   const rows: BatchRow[] = useMemo(() => {
-    return bons.map(b => ({
+    const liveRows = bons.map(b => ({
       bl_id: b.bl_id,
       client: b.chauffeur_nom || b.client_id || '—',
       formule: b.formule_id || '—',
@@ -81,6 +93,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
       progress: b.workflow_status === 'validation_technique' ? 100 :
         b.workflow_status === 'production' ? 55 : 0,
     }));
+    return liveRows.length > 0 ? liveRows : DEMO_ROWS;
   }, [bons]);
 
   // Counts
