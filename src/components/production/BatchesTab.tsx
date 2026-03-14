@@ -286,15 +286,15 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
               const delivered = Math.round(row.volume * row.progress / 100);
               const isInProd = row.status === 'production';
               return (
-                <div key={row.bl_id} className="grid items-center" style={{
+                <div key={row.bl_id} className="grid items-center batch-row-hover" style={{
                   gridTemplateColumns: '110px 1fr 90px 70px 65px 90px 70px 60px 120px 100px 80px',
                   padding: '16px 16px',
                   borderBottom: '1px solid rgba(255,255,255,0.04)',
-                  borderLeft: isInProd ? '2px solid rgba(96,165,250,0.50)' : '2px solid transparent',
-                  cursor: 'pointer', transition: 'background 150ms',
+                  borderLeft: '3px solid transparent',
+                  cursor: 'pointer', transition: 'all 200ms ease',
                 }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,215,0,0.04)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.04)'; e.currentTarget.style.borderLeft = '3px solid #D4A843'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderLeft = '3px solid transparent'; }}
                   onClick={() => setDrawerOpen(true)}
                 >
                   <span style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 500 }}>{row.bl_id}</span>
