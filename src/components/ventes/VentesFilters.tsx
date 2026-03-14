@@ -99,13 +99,29 @@ export function VentesFilters({
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: '#D4A843' }} />
+          <input
             ref={searchInputRef}
             placeholder={vf.searchPlaceholder}
             value={filters.search}
             onChange={(e) => updateFilter('search', e.target.value)}
-            className="pl-10 pr-8"
+            style={{
+              width: '100%',
+              paddingLeft: 40,
+              paddingRight: 32,
+              paddingTop: 8,
+              paddingBottom: 8,
+              fontSize: 13,
+              fontFamily: 'ui-monospace, monospace',
+              borderRadius: 8,
+              border: '1px solid rgba(212,168,67,0.2)',
+              background: 'rgba(15,22,41,0.5)',
+              color: 'rgba(255,255,255,0.9)',
+              outline: 'none',
+              transition: 'border-color 200ms',
+            }}
+            onFocus={(e) => { e.currentTarget.style.borderColor = '#D4A843'; }}
+            onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.2)'; }}
           />
           {filters.search && (
             <button
