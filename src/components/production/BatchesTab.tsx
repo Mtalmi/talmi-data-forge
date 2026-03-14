@@ -1,4 +1,5 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { Smile } from 'lucide-react';
 import { BatchDetailDrawer } from './BatchDetailDrawer';
 import {
   CheckCircle, Clock, Search, SlidersHorizontal, Pause,
