@@ -49,6 +49,9 @@ import { PipelineAnalysisCard } from '@/components/ventes/PipelineAnalysisCard';
 import { PipelineKpiCards } from '@/components/ventes/PipelineKpiCards';
 import { PipelineBriefingCard } from '@/components/ventes/PipelineBriefingCard';
 import { ConversionPredictorCard } from '@/components/ventes/ConversionPredictorCard';
+import { RelanceIntelligenteCard } from '@/components/ventes/RelanceIntelligenteCard';
+import { ScoringDynamiquePrixCard } from '@/components/ventes/ScoringDynamiquePrixCard';
+import { ConcentrationClientCard } from '@/components/ventes/ConcentrationClientCard';
 
 // Phase 5-7 Components
 import { useVentesKeyboardShortcuts, KeyboardShortcutsHint } from '@/components/ventes/KeyboardShortcuts';
@@ -90,7 +93,7 @@ const MAIN_TABS = [
   { id: 'overview', label: "VUE D'ENSEMBLE" },
   { id: 'orders', label: 'DEVIS & COMMANDES', badgeCount: 6 },
   { id: 'analytics', label: 'ANALYTIQUE' },
-  { id: 'intelligence', label: 'INTELLIGENCE IA', badgeCount: 3 },
+  { id: 'intelligence', label: 'INTELLIGENCE IA', badgeCount: 6 },
 ] as const;
 
 export default function Ventes() {
@@ -423,7 +426,7 @@ export default function Ventes() {
           <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid rgba(255,255,255,0.06)', marginBottom: 8 }}>
             {MAIN_TABS.map(tab => {
               const isActive = mainTab === tab.id;
-              const badgeNum = tab.id === 'orders' ? (filteredDevis.length || undefined) : tab.id === 'intelligence' ? 3 : undefined;
+              const badgeNum = tab.id === 'orders' ? (filteredDevis.length || undefined) : tab.id === 'intelligence' ? 6 : undefined;
               return (
                 <button
                   key={tab.id}
@@ -701,6 +704,9 @@ export default function Ventes() {
               <MarginOverviewCard />
               <PipelineAnalysisCard />
               <ConversionPredictorCard />
+              <RelanceIntelligenteCard />
+              <ScoringDynamiquePrixCard />
+              <ConcentrationClientCard />
             </div>
           )}
 
