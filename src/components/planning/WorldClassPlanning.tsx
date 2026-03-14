@@ -630,8 +630,8 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
               style={{
                 padding: '6px 16px',
                 borderRadius: 8,
-                background: 'linear-gradient(135deg, #C4933B, #FDB913)',
-                border: '1px solid rgba(245, 158, 11, 0.25)',
+                background: 'linear-gradient(135deg, #D4A843, #C49A3A)',
+                border: '1px solid rgba(212, 168, 67, 0.4)',
                 color: '#0F172A',
                 fontFamily: 'DM Sans, sans-serif',
                 fontWeight: 600,
