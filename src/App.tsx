@@ -139,6 +139,7 @@ function RouteLoader() {
 
 const App = () => (
   <I18nProvider>
+  <UnitProvider>
     <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <TooltipProvider>
