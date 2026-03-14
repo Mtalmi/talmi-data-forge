@@ -2150,11 +2150,7 @@ export default function Creances() {
 
         {/* ANALYTIQUE TAB */}
         {creancesTab === 'analytique' && (
-          <div style={{ textAlign: 'center', padding: '60px 0' }}>
-            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: '#9CA3AF' }}>
-              Contenu en cours de déploiement...
-            </p>
-          </div>
+          <EmptyState icon={BarChart3} title="Analytique en cours de déploiement..." />
         )}
 
         {/* INTELLIGENCE IA TAB */}
