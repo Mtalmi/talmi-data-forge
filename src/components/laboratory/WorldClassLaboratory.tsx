@@ -1445,6 +1445,7 @@ function AnalytiqueTab() {
             <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 20 }}>Conformité par Opérateur</p>
             {OPERATORS_A.map((op, i) => {
               const isLow = op.pct < 85;
+              const barColor = isLow ? T.warning : 'linear-gradient(90deg, #C49A3C, #D4A843)';
               const scoreColor = op.score >= 85 ? T.success : op.score >= 70 ? T.warning : T.danger;
               return (
                 <div key={i} style={{ marginBottom: 16 }}>
@@ -1452,11 +1453,11 @@ function AnalytiqueTab() {
                     <span style={{ fontSize: 12, color: T.textSec }}>{op.name}</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                       <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 200, color: isLow ? T.warning : T.textPri }}>{op.pct}%</span>
-                      <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 200, color: scoreColor, padding: '1px 6px', border: `1px solid ${scoreColor}40`, borderRadius: 4 }}>IA {op.score}</span>
+                      <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 200, color: isLow ? T.warning : scoreColor, padding: '1px 6px', border: `1px solid ${(isLow ? T.warning : scoreColor)}40`, borderRadius: 4 }}>IA {op.score}</span>
                     </div>
                   </div>
                   <div style={{ height: 6, borderRadius: 99, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: `${opBarWidths[i]}%`, background: isLow ? T.warning : 'linear-gradient(90deg, #C49A3C, #D4A843)', borderRadius: 99, transition: 'width 900ms cubic-bezier(0.4,0,0.2,1)' }} />
+                    <div style={{ height: '100%', width: `${opBarWidths[i]}%`, background: barColor, borderRadius: 99, transition: 'width 900ms cubic-bezier(0.4,0,0.2,1)' }} />
                   </div>
                 </div>
               );
