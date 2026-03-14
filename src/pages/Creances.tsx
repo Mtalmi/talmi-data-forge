@@ -102,13 +102,14 @@ function AIEarlyWarningBanner({ warnings }: { warnings: { message: string; clien
   const [dismissed, setDismissed] = useState(false);
   if (dismissed || warnings.length === 0) return null;
   const now = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  const severityBorders = ['#EF4444', '#F59E0B', '#F59E0B'];
   return (
     <div
-      className="rounded-xl overflow-hidden animate-pulse-subtle"
+      className="rounded-xl overflow-hidden"
       style={{
-        background: 'rgba(239, 68, 68, 0.06)',
+        background: 'rgba(239, 68, 68, 0.05)',
         border: '1.5px solid rgba(239, 68, 68, 0.4)',
-        animation: 'pulse 3s ease-in-out infinite',
+        borderLeft: '4px solid #EF4444',
       }}
     >
       <div className="px-5 py-4">
@@ -119,18 +120,23 @@ function AIEarlyWarningBanner({ warnings }: { warnings: { message: string; clien
             </div>
             <div className="flex-1 min-w-0 space-y-3">
               <div className="flex items-center gap-2">
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+                <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, fontWeight: 700, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
                   ALERTE PRÉVENTIVE IA
                 </span>
                 <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontFamily: 'ui-monospace, monospace' }}>{now}</span>
               </div>
               {warnings.map((w, i) => (
-                <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '10px 14px' }}>
+                <div key={i} style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                  borderLeft: `3px solid ${severityBorders[i] || '#F59E0B'}`,
+                  borderRadius: 8, padding: '10px 14px',
+                }}>
                   <p style={{ fontSize: 12, color: '#ef4444', fontWeight: 600, marginBottom: 4 }}>⚠ {w.message}</p>
                   <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>
-                    Client: <span style={{ fontWeight: 600, color: '#F1F5F9' }}>{w.client}</span>
+                    Client: <span style={{ fontWeight: 700, color: w.client.includes('Sigma') ? '#EF4444' : '#F1F5F9' }}>{w.client}</span>
                   </p>
-                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>
+                  <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>
                     <span style={{ color: '#D4A843', fontWeight: 600 }}>Action →</span> {w.action}
                   </p>
                 </div>
@@ -150,12 +156,24 @@ function AIEarlyWarningBanner({ warnings }: { warnings: { message: string; clien
   );
 }
 
+function IABadgeCreances() {
+  return (
+    <span style={{
+      fontFamily: 'ui-monospace, monospace', fontSize: 10, padding: '2px 8px',
+      borderRadius: 12, background: 'rgba(15,22,41,0.8)', border: '1px solid #D4A843', color: '#D4A843',
+    }}>
+      ✨ Généré par IA · Claude Opus
+    </span>
+  );
+}
+
 function RelancesPipeline({ stages }: { stages: { label: string; range: string; color: string; bgAlpha: string; borderAlpha: string; clients: number; amount: number; lastAction: string; pulse: boolean }[] }) {
   const [open, setOpen] = useState(true);
   return (
     <div style={{
       background: 'rgba(212, 168, 67, 0.04)',
       border: '1px solid rgba(212, 168, 67, 0.15)',
+      borderTop: '2px solid #D4A843',
       borderLeft: '4px solid #D4A843',
       borderRadius: 12, overflow: 'hidden',
     }}>
@@ -163,14 +181,15 @@ function RelancesPipeline({ stages }: { stages: { label: string; range: string; 
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-white/[0.02] transition-colors"
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Sparkles className="h-4 w-4" style={{ color: '#FFD700' }} />
-          <span style={{ fontSize: 11, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+          <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
             Agent IA: Relances Automatiques
           </span>
           <Badge variant="outline" className="border-[#D4A843]/30 text-[#D4A843] text-[10px] ml-1">
             {stages.reduce((s, st) => s + st.clients, 0)} clients
           </Badge>
+          <IABadgeCreances />
         </div>
         <ChevronDown className="h-4 w-4 transition-transform" style={{ color: '#D4A843', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </button>
@@ -181,10 +200,10 @@ function RelancesPipeline({ stages }: { stages: { label: string; range: string; 
               <div key={i} style={{
                 background: `${stage.color}${stage.bgAlpha.replace('0.', '0')}`,
                 border: `1px solid ${stage.color}${stage.borderAlpha.replace('0.', '')}`,
+                borderTop: `2px solid ${stage.color}`,
                 borderRadius: 10, padding: '16px 18px',
                 animation: stage.pulse ? 'pulse 3s ease-in-out infinite' : 'none',
               }}>
-                {/* Stage header */}
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <div style={{ width: 8, height: 8, borderRadius: '50%', background: stage.color }} />
@@ -192,7 +211,6 @@ function RelancesPipeline({ stages }: { stages: { label: string; range: string; 
                   </div>
                   <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontFamily: 'ui-monospace, monospace' }}>{stage.range}</span>
                 </div>
-                {/* Metrics */}
                 <div className="flex items-baseline gap-3 mb-3">
                   <span style={{
                     fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
@@ -202,24 +220,22 @@ function RelancesPipeline({ stages }: { stages: { label: string; range: string; 
                 </div>
                 <p style={{
                   fontFamily: 'ui-monospace, SFMono-Regular, monospace',
-                  fontSize: 14, fontWeight: 500, color: stage.color, marginBottom: 12,
+                  fontSize: 14, fontWeight: 200, color: stage.color, marginBottom: 12,
                 }}>{stage.amount.toLocaleString('fr-MA')} DH</p>
-                {/* Last action */}
                 <div className="flex items-center gap-1.5 mb-3">
                   <Clock className="h-3 w-3" style={{ color: 'rgba(255,255,255,0.3)' }} />
-                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>Dernière relance: {stage.lastAction}</span>
+                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontFamily: 'ui-monospace, monospace' }}>Dernière relance: {stage.lastAction}</span>
                 </div>
-                {/* Action button */}
                 <button
                   onClick={() => toast.success(`Relances ${stage.label} lancées pour ${stage.clients} clients`)}
                   style={{
                     width: '100%', padding: '8px 0', borderRadius: 8,
-                    background: 'rgba(212, 168, 67, 0.15)', border: '1px solid rgba(212, 168, 67, 0.3)',
-                    color: '#D4A843', fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                    background: '#D4A843', border: 'none',
+                    color: '#0F1629', fontSize: 11, fontWeight: 700, cursor: 'pointer',
                     transition: 'all 150ms',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.25)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#E8C96A'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#D4A843'; }}
                 >
                   ⚡ Lancer Relances
                 </button>
@@ -256,6 +272,7 @@ export default function Creances() {
   const [actionType, setActionType] = useState<'reminder' | 'dispute' | 'writeoff' | 'paid'>('reminder');
   const [actionNotes, setActionNotes] = useState('');
   const [processingAction, setProcessingAction] = useState(false);
+  const [creancesTab, setCreancesTab] = useState('overview');
 
   const canManageReceivables = isCeo || role === 'agent_administratif' || role === 'superviseur';
 
@@ -483,6 +500,49 @@ export default function Creances() {
           </div>
         </div>
 
+        {/* TAB BAR */}
+        <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid rgba(255,255,255,0.08)', marginBottom: 4 }}>
+          {[
+            { id: 'overview', label: "VUE D'ENSEMBLE" },
+            { id: 'aging', label: 'ANALYSE AGING' },
+            { id: 'analytique', label: 'ANALYTIQUE' },
+            { id: 'ia', label: 'INTELLIGENCE IA', badge: '4' },
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setCreancesTab(tab.id)}
+              style={{
+                fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                fontSize: 12,
+                letterSpacing: '1.5px',
+                padding: '10px 18px',
+                color: creancesTab === tab.id ? '#D4A843' : '#9CA3AF',
+                background: 'transparent',
+                border: 'none',
+                borderBottom: creancesTab === tab.id ? '2px solid #D4A843' : '2px solid transparent',
+                cursor: 'pointer',
+                transition: 'all 200ms',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
+              {tab.label}
+              {tab.badge && (
+                <span style={{
+                  fontFamily: 'ui-monospace, monospace',
+                  fontSize: 10,
+                  padding: '1px 6px',
+                  borderRadius: 4,
+                  background: creancesTab === tab.id ? 'rgba(212,168,67,0.2)' : 'rgba(255,255,255,0.08)',
+                  color: creancesTab === tab.id ? '#D4A843' : '#9CA3AF',
+                }}>{tab.badge}</span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {creancesTab === 'overview' && (<>
         {/* AI EARLY WARNING BANNER */}
         {(() => {
           // Detect risk patterns
@@ -549,55 +609,54 @@ export default function Creances() {
             borderTop: '2px solid #D4A843',
           }}
         >
-          <div className="flex items-center gap-2 mb-4">
-            <Target className="h-4 w-4 text-[#D4A843]" />
-            <span className="text-xs font-semibold uppercase tracking-widest text-[#D4A843]">
-              RÉSUMÉ EXÉCUTIF IA
-            </span>
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+            <div className="flex items-center gap-2">
+              <Target className="h-4 w-4 text-[#D4A843]" />
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 700, color: '#D4A843', letterSpacing: '2px', textTransform: 'uppercase' as const }}>
+                ✦ RÉSUMÉ EXÉCUTIF IA
+              </span>
+            </div>
+            <IABadgeCreances />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Left: Portfolio Health Score */}
             <div className="flex flex-col items-center justify-center">
-              <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-2">Score Santé Portefeuille</p>
-              {(() => {
-                const healthScore = 84;
-                const scoreColor = '#22c55e';
-                
-                return (
-                  <span 
-                    style={{ 
-                      fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
-                      fontSize: '64px',
-                      fontWeight: 200,
-                      lineHeight: 1,
-                      color: scoreColor,
-                      letterSpacing: '-0.02em',
-                    }}
-                  >
-                    {healthScore}
-                  </span>
-                );
-              })()}
-              <p className="text-[10px] text-gray-500 mt-1">/ 100</p>
+              <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' as const, marginBottom: 8 }}>Score Santé Portefeuille</p>
+              <div className="flex items-baseline">
+                <span 
+                  style={{ 
+                    fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                    fontSize: 56,
+                    fontWeight: 100,
+                    lineHeight: 1,
+                    color: '#D4A843',
+                    letterSpacing: '-0.02em',
+                    textShadow: '0 0 20px rgba(212,168,67,0.2)',
+                  }}
+                >
+                  84
+                </span>
+                <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 20, color: '#9CA3AF', marginLeft: 4 }}>/100</span>
+              </div>
             </div>
 
             {/* Center: AI Insights */}
             <div className="flex flex-col justify-center space-y-2 border-l border-r border-white/10 px-6">
               <div className="flex items-start gap-2">
-                <TrendingUp className="h-3.5 w-3.5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#22c55e', marginTop: 5, flexShrink: 0 }} />
                 <p className="text-xs text-gray-300">
                   <span className="text-emerald-400 font-medium">Tendance forte:</span> Taux de recouvrement en hausse de {Math.round(stats.collectionRate)}% ce mois
                 </p>
               </div>
               <div className="flex items-start gap-2">
-                <AlertTriangle className="h-3.5 w-3.5 text-amber-400 mt-0.5 flex-shrink-0" />
+                <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#F59E0B', marginTop: 5, flexShrink: 0 }} />
                 <p className="text-xs text-gray-300">
                   <span className="text-amber-400 font-medium">Risque majeur:</span> {stats.clientsWithOverdue} client{stats.clientsWithOverdue > 1 ? 's' : ''} avec créances +30 jours ({formatCurrency(stats.atRiskAmount)})
                 </p>
               </div>
               <div className="flex items-start gap-2">
-                <CheckCircle className="h-3.5 w-3.5 text-[#D4A843] mt-0.5 flex-shrink-0" />
+                <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#D4A843', marginTop: 5, flexShrink: 0 }} />
                 <p className="text-xs text-gray-300">
                   <span className="text-[#D4A843] font-medium">Action recommandée:</span> Prioriser relance des {Math.min(3, stats.clientsWithOverdue)} plus gros encours
                 </p>
@@ -606,12 +665,12 @@ export default function Creances() {
 
             {/* Right: 30-day Forecast */}
             <div className="flex flex-col items-center justify-center">
-              <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-2">Prévision Encaissement 30j</p>
+              <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' as const, marginBottom: 8 }}>Prévision Encaissement 30j</p>
               <div className="flex items-baseline gap-2">
                 <span 
                   style={{ 
                     fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
-                    fontSize: '28px',
+                    fontSize: 28,
                     fontWeight: 200,
                     color: '#D4A843',
                     letterSpacing: '-0.02em',
@@ -663,7 +722,6 @@ export default function Creances() {
           const disputed = receivables.filter(r => r.amount_paid > 0 && r.amount_paid < r.amount && r.status !== 'paid');
           const disputedAmount = disputed.reduce((s, r) => s + (r.amount - r.amount_paid), 0);
           const disputedClients = new Set(disputed.map(r => r.client_id)).size;
-          // Always show with fallback demo data
           const showAmount = disputedAmount > 0 ? disputedAmount : 340;
           const showClients = disputedClients > 0 ? disputedClients : 1;
           const showCount = disputed.length > 0 ? disputed.length : 1;
@@ -671,6 +729,7 @@ export default function Creances() {
             <div style={{
               background: 'rgba(212, 168, 67, 0.08)',
               border: '1px solid rgba(212, 168, 67, 0.25)',
+              borderTop: '2px solid #F59E0B',
               borderLeft: '4px solid #D4A843',
               borderRadius: 12, padding: '16px 20px',
             }}>
@@ -679,22 +738,23 @@ export default function Creances() {
                   <Sparkles className="h-5 w-5" style={{ color: '#FFD700' }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-2">
-                    <p style={{ fontSize: 13, fontWeight: 700, color: '#D4A843' }}>DÉTECTION LITIGES IA</p>
+                  <div className="flex items-center gap-2 mb-2 flex-wrap">
+                    <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 700, color: '#D4A843', letterSpacing: '2px' }}>✦ DÉTECTION LITIGES IA</p>
                     <Badge variant="outline" className="border-warning/50 bg-warning/10 text-warning text-[10px]">
                       {showCount} détecté{showCount > 1 ? 's' : ''}
                     </Badge>
+                    <IABadgeCreances />
                   </div>
                   <div className="flex items-center gap-6 flex-wrap">
                     <div>
-                      <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-1">Montant en litige</p>
+                      <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' as const, marginBottom: 4 }}>Montant en litige</p>
                       <p style={{
                         fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
                         fontSize: 22, fontWeight: 200, color: '#f59e0b', lineHeight: 1,
                       }}>{showAmount.toLocaleString('fr-MA')} <span style={{ fontSize: 12, color: '#9CA3AF' }}>DH</span></p>
                     </div>
                     <div>
-                      <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-1">Clients concernés</p>
+                      <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' as const, marginBottom: 4 }}>Clients concernés</p>
                       <p style={{
                         fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
                         fontSize: 22, fontWeight: 200, color: '#f59e0b', lineHeight: 1,
@@ -706,10 +766,10 @@ export default function Creances() {
                     }}>
                       <div className="flex items-center gap-2 mb-1">
                         <Sparkles className="h-3 w-3" style={{ color: '#D4A843' }} />
-                        <p style={{ fontSize: 10, fontWeight: 700, color: '#D4A843' }}>RECOMMANDATION IA</p>
+                        <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, fontWeight: 700, color: '#D4A843' }}>RECOMMANDATION IA</p>
                       </div>
                       <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)', lineHeight: 1.4 }}>
-                        Contacter <span style={{ color: '#D4A843', fontWeight: 600 }}>f.zahra@constructions-modernes.ma</span> — écart de <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 600, color: '#f59e0b' }}>340 DH</span> détecté sur <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 600 }}>BL-2602-092</span>
+                        Contacter <span style={{ color: '#D4A843', fontWeight: 600 }}>f.zahra@constructions-modernes.ma</span> — écart de <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 600, color: '#f59e0b' }}>340 DH</span> détecté sur <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 600, color: '#D4A843' }}>BL-2602-092</span>
                       </p>
                     </div>
                   </div>
@@ -1116,122 +1176,7 @@ export default function Creances() {
           );
         })()}
 
-        {/* Aging Summary */}
-        {hasData && (
-        <Card style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-md" style={{ background: 'rgba(255, 215, 0, 0.15)' }}>
-                <Calendar className="h-4 w-4" style={{ color: '#FFD700' }} />
-              </div>
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
-                {t.pages.creances.aging}
-              </span>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col md:flex-row gap-6">
-              {/* Aging bars */}
-              <div className="flex-1 space-y-4">
-                {(() => {
-                  const BAR_COLORS = ['#D4A843', '#f59e0b', '#f97316', '#ef4444', '#dc2626'];
-                  return stats.agingBuckets.map((bucket, index) => {
-                    const barColor = BAR_COLORS[index] || BAR_COLORS[4];
-                    const isDeepRed = index >= 4;
-                    return (
-                      <div key={bucket.bucket} className="space-y-1.5">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-white">{bucket.bucket}</span>
-                          <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, color: '#9CA3AF' }}>
-                            {bucket.invoice_count} fact. · <span style={{ color: barColor, fontWeight: 500 }}>{bucket.total_amount.toLocaleString('fr-MA')} DH</span>
-                          </span>
-                        </div>
-                        <div style={{ height: 8, borderRadius: 4, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
-                          <div
-                            className={isDeepRed ? 'animate-pulse' : ''}
-                            style={{
-                              height: '100%',
-                              width: `${Math.max(bucket.percentage, 2)}%`,
-                              borderRadius: 4,
-                              background: barColor,
-                              transition: 'width 600ms ease-out',
-                            }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  });
-                })()}
-              </div>
-
-              {/* Donut chart */}
-              {(() => {
-                const AGING_DONUT_COLORS = ['#D4A843', '#B8860B', '#A0732A', '#8B6914', '#6B5210'];
-                const hardcodedBuckets = [
-                  { name: 'Courant (0-30j)', value: 17175 },
-                  { name: '1-30 jours', value: 8610 },
-                  { name: '31-60 jours', value: 0 },
-                  { name: '61-90 jours', value: 0 },
-                  { name: '90+ jours', value: 0 },
-                ];
-                const totalAmount = 840500;
-                const donutData = hardcodedBuckets.map((b, i) => ({
-                  name: b.name,
-                  value: b.value || 1, // minimum slice for visibility
-                  realValue: b.value,
-                  fill: AGING_DONUT_COLORS[i] || AGING_DONUT_COLORS[4],
-                }));
-
-                return (
-                  <div className="flex flex-col items-center justify-center" style={{ minWidth: 160 }}>
-                    <div style={{ position: 'relative', width: 140, height: 140 }}>
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={donutData}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={40}
-                            outerRadius={60}
-                            paddingAngle={2}
-                            dataKey="value"
-                            stroke="none"
-                          >
-                            {donutData.map((entry, idx) => (
-                              <Cell key={idx} fill={entry.fill} />
-                            ))}
-                          </Pie>
-                          <RechartsTooltip
-                            contentStyle={{ background: 'hsl(var(--card))', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 11 }}
-                            formatter={(val: number, name: string, entry: any) => [`${(entry?.payload?.realValue ?? val).toLocaleString('fr-MA')} DH`, '']}
-                          />
-                        </PieChart>
-                      </ResponsiveContainer>
-                      {/* Center label */}
-                      <div style={{
-                        position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-                        textAlign: 'center', pointerEvents: 'none',
-                      }}>
-                        <span style={{
-                          fontFamily: 'ui-monospace, SFMono-Regular, monospace',
-                          fontSize: 14, fontWeight: 600, color: '#FFFFFF', lineHeight: 1,
-                        }}>
-                          {totalAmount >= 1000000
-                            ? `${(totalAmount / 1000000).toFixed(1)}M`
-                            : totalAmount >= 1000
-                            ? `${Math.round(totalAmount / 1000)}K`
-                            : totalAmount.toLocaleString('fr-MA')}
-                        </span>
-                        <p style={{ fontSize: 9, color: '#9CA3AF', marginTop: 2 }}>DH</p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })()}
-            </div>
-          </CardContent>
-        </Card>
-        )}
+        {/* Aging section moved to ANALYSE AGING tab */}
 
         {/* IMPACT TRÉSORERIE IA */}
         {hasData && (() => {
@@ -2107,6 +2052,122 @@ export default function Creances() {
             </Card>
           </TabsContent>
         </Tabs>
+        </>)}
+
+        {/* ANALYSE AGING TAB */}
+        {creancesTab === 'aging' && (<>
+          {hasData && (
+            <Card style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderTop: '2px solid #D4A843' }}>
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-2">
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 700, color: '#D4A843', letterSpacing: '2px' }}>
+                    ✦ ANTÉRIORITÉ DES CRÉANCES
+                  </span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col md:flex-row gap-6">
+                  <div className="flex-1 space-y-4">
+                    {(() => {
+                      const BAR_COLORS = ['#D4A843', '#f59e0b', '#ef4444', '#991B1B', '#7F1D1D'];
+                      return stats.agingBuckets.map((bucket, index) => {
+                        const barColor = BAR_COLORS[index] || BAR_COLORS[4];
+                        const isDeepRed = index >= 4;
+                        return (
+                          <div key={bucket.bucket} className="space-y-1.5">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-medium text-white">{bucket.bucket}</span>
+                              <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, fontWeight: 200, color: '#9CA3AF' }}>
+                                {bucket.invoice_count} fact. · <span style={{ color: barColor, fontWeight: 500 }}>{bucket.total_amount.toLocaleString('fr-MA')} DH</span>
+                              </span>
+                            </div>
+                            <div style={{ height: 8, borderRadius: 4, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                              <div
+                                className={isDeepRed ? 'animate-pulse' : ''}
+                                style={{
+                                  height: '100%',
+                                  width: `${Math.max(bucket.percentage, 2)}%`,
+                                  borderRadius: 4,
+                                  background: index === 0 ? 'linear-gradient(90deg, #C49A3C, #D4A843)' : barColor,
+                                  transition: 'width 600ms ease-out',
+                                }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      });
+                    })()}
+                  </div>
+                  {(() => {
+                    const AGING_DONUT_COLORS = ['#D4A843', '#B8860B', '#A0732A', '#8B6914', '#6B5210'];
+                    const hardcodedBuckets = [
+                      { name: 'Courant (0-30j)', value: 17175 },
+                      { name: '1-30 jours', value: 8610 },
+                      { name: '31-60 jours', value: 0 },
+                      { name: '61-90 jours', value: 0 },
+                      { name: '90+ jours', value: 0 },
+                    ];
+                    const totalAmount = 840500;
+                    const donutData = hardcodedBuckets.map((b, i) => ({
+                      name: b.name,
+                      value: b.value || 1,
+                      realValue: b.value,
+                      fill: AGING_DONUT_COLORS[i] || AGING_DONUT_COLORS[4],
+                    }));
+                    return (
+                      <div className="flex flex-col items-center justify-center" style={{ minWidth: 160 }}>
+                        <div style={{ position: 'relative', width: 140, height: 140 }}>
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie data={donutData} cx="50%" cy="50%" innerRadius={40} outerRadius={60} paddingAngle={2} dataKey="value" stroke="none">
+                                {donutData.map((entry, idx) => (
+                                  <Cell key={idx} fill={entry.fill} />
+                                ))}
+                              </Pie>
+                              <RechartsTooltip
+                                contentStyle={{ background: 'hsl(var(--card))', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 11 }}
+                                formatter={(val: number, name: string, entry: any) => [`${(entry?.payload?.realValue ?? val).toLocaleString('fr-MA')} DH`, '']}
+                              />
+                            </PieChart>
+                          </ResponsiveContainer>
+                          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', pointerEvents: 'none' }}>
+                            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 14, fontWeight: 200, color: '#D4A843', lineHeight: 1 }}>
+                              {totalAmount >= 1000 ? `${Math.round(totalAmount / 1000)}K` : totalAmount.toLocaleString('fr-MA')}
+                            </span>
+                            <p style={{ fontSize: 9, color: '#9CA3AF', marginTop: 2 }}>DH</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          <div style={{ textAlign: 'center', padding: '40px 0' }}>
+            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: '#9CA3AF' }}>
+              Contenu en cours de déploiement...
+            </p>
+          </div>
+        </>)}
+
+        {/* ANALYTIQUE TAB */}
+        {creancesTab === 'analytique' && (
+          <div style={{ textAlign: 'center', padding: '60px 0' }}>
+            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: '#9CA3AF' }}>
+              Contenu en cours de déploiement...
+            </p>
+          </div>
+        )}
+
+        {/* INTELLIGENCE IA TAB */}
+        {creancesTab === 'ia' && (
+          <div style={{ textAlign: 'center', padding: '60px 0' }}>
+            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: '#9CA3AF' }}>
+              Contenu en cours de déploiement...
+            </p>
+          </div>
+        )}
 
         {/* Action Dialog */}
         <Dialog open={actionDialogOpen} onOpenChange={setActionDialogOpen}>
