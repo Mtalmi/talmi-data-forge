@@ -1764,7 +1764,7 @@ export default function WorldClassDeliveries() {
             </section>
             {/* 3i. PRÉVISION DEMANDE IA */}
             <section>
-              <SectionHeader icon={TrendingUp} label="Prévision Demande IA — 14 Jours" right={
+              <SectionHeader icon={TrendingUp} label="✦ Prévision Demande IA — 14 Jours" right={
                 <span style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, color: T.gold, background: 'transparent', border: `1px solid ${T.gold}40`, borderRadius: 4, padding: '2px 8px' }}>Prévision IA</span>
               } />
               <Card style={{ borderTop: `2px solid ${T.gold}` }}>
