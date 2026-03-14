@@ -1166,7 +1166,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </TiltCard>
-          ))}
+          ); })}
           </div>
 
           {/* (4) Intelligence IA section */}
