@@ -405,16 +405,23 @@ export function DevisTable({
                 className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
               />
             </TableHead>
-            <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>N° Devis</TableHead>
-            <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Client</TableHead>
-            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Formule</TableHead>
-            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Vol (m³)</TableHead>
-            <TableHead className="text-right" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Total HT (DH)</TableHead>
-            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Statut</TableHead>
-            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Score IA</TableHead>
-            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Conversion</TableHead>
-            <TableHead className="text-center" style={{ padding: '10px 4px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Prté</TableHead>
-            <TableHead className="text-center" style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9CA3AF' }}>Actions</TableHead>
+            {(['N° Devis', 'Client', 'Formule', 'Vol (m³)', 'Total HT (DH)', 'Statut', 'Score IA', 'Conversion', 'Prté', 'Actions'] as const).map((label, i) => (
+              <TableHead
+                key={label}
+                style={{
+                  padding: '10px 8px',
+                  fontSize: 10,
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '1.5px',
+                  color: '#9CA3AF',
+                  fontFamily: 'ui-monospace, monospace',
+                  textAlign: i >= 3 && i !== 5 ? (i === 4 ? 'right' : 'center') : 'left',
+                }}
+              >
+                {label}
+              </TableHead>
+            ))}
           </TableRow>
         </TableHeader>
         <TableBody>
