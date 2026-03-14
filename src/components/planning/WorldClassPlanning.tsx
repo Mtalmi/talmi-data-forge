@@ -1031,30 +1031,46 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                 <SectionHeader icon={Truck} label="Capacité & Livraisons" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <Card className="tbos-card-stagger" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', borderRadius: '12px', padding: '20px', position: 'relative', overflow: 'hidden', boxShadow: 'none' }}>
-                    <p style={{ color: T.textSec, fontSize: 12, marginBottom: 16 }}>Capacité de Production</p>
+                    <p style={{ color: '#9CA3AF', fontSize: 12, letterSpacing: '0.5px', marginBottom: 16 }}>Capacité de Production</p>
                     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-                      <Gauge pct={72} />
+                      <svg width={220} height={130} viewBox="0 0 220 130">
+                        <path d={`M ${110 - 80} ${110} A 80 80 0 0 1 ${110 + 80} ${110}`}
+                          fill="none" stroke={T.cardBorder} strokeWidth={16} strokeLinecap="round" />
+                        <path d={`M ${110 - 80} ${110} A 80 80 0 0 1 ${110 + 80} ${110}`}
+                          fill="none" stroke="#F59E0B" strokeWidth={16} strokeLinecap="round"
+                          strokeDasharray={`${(72 / 100) * Math.PI * 80} ${Math.PI * 80}`}
+                          style={{ filter: 'drop-shadow(0 0 10px rgba(212,168,67,0.2))', transition: 'stroke-dasharray 1s ease-out' }}
+                        />
+                        <text x={110} y={100} textAnchor="middle"
+                          style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 42, fontWeight: 200, fill: '#D4A843' }}>
+                          72%
+                        </text>
+                        <text x={110} y={122} textAnchor="middle"
+                          style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12, fill: '#9CA3AF', letterSpacing: '0.5px' }}>
+                          Capacité Utilisée
+                        </text>
+                      </svg>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
                       {[
-                        { label: 'Capacité Max', value: '1 740 m³', color: T.textSec },
-                        { label: 'Planifié', value: '1 250 m³', color: T.warning },
-                        { label: 'Disponible', value: '490 m³', color: T.success },
+                        { label: 'Capacité Max', value: '1 740 m³' },
+                        { label: 'Planifié', value: '1 250 m³' },
+                        { label: 'Disponible', value: '490 m³' },
                       ].map(box => (
                         <div key={box.label} style={{
                           background: `${T.cardBorder}40`, borderRadius: 10, padding: '10px 12px', textAlign: 'center',
                           border: `1px solid ${T.cardBorder}`,
                         }}>
-                          <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>{box.label}</p>
-                          <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 13, fontWeight: 700, color: '#D4A843' }}>{box.value}</p>
+                          <p style={{ color: '#9CA3AF', fontSize: 10, marginBottom: 4 }}>{box.label}</p>
+                          <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 20, fontWeight: 200, color: '#D4A843' }}>{box.value}</p>
                         </div>
                       ))}
                     </div>
                     {/* Weather-adjusted capacity */}
                     <div style={{ borderTop: '1px solid rgba(212,168,67,0.15)', marginTop: 12, paddingTop: 12 }}>
                       <p style={{ color: '#9CA3AF', fontSize: 12, marginBottom: 6 }}>Capacité ajustée météo</p>
-                      <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 36, fontWeight: 200, color: '#F59E0B', lineHeight: 1, marginBottom: 8, textShadow: '0 0 12px rgba(245,158,11,0.2)' }}>58%</p>
-                      <p style={{ color: '#F59E0B', fontSize: 12, marginBottom: 4 }}>⚠ Samedi 38°C — capacité réduite estimée 20%</p>
+                      <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 42, fontWeight: 200, color: '#F59E0B', lineHeight: 1, marginBottom: 8, textShadow: '0 0 15px rgba(245,158,11,0.2)' }}>58%</p>
+                      <p style={{ color: '#F59E0B', fontSize: 12, marginBottom: 4 }}><span style={{ display: 'inline-block', animation: 'tbos-pulse 2s ease-in-out infinite' }}>⚠</span> Samedi 38°C — capacité réduite estimée 20%</p>
                       <p style={{ color: '#22C55E', fontSize: 12 }}>Dimanche: 72% (conditions normales)</p>
                     </div>
                   </Card>
