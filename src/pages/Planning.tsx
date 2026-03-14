@@ -1671,7 +1671,7 @@ export default function Planning() {
                 <Badge className="bg-[#D4A843] text-black ml-1">{pendingBLCount}</Badge>
               </Button>
             )}
-            <Button variant="outline" size="sm" onClick={fetchData} disabled={loading} style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent' }}>
+            <Button size="sm" onClick={fetchData} disabled={loading} style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent' }}>
               <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
               {t.pages.planning.refresh}
             </Button>
