@@ -1641,8 +1641,8 @@ export default function Planning() {
             <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', fontSize: '14px', display: 'inline-flex', alignItems: 'center', gap: '8px' }} onClick={() => navigate('/logistique')}>
               <Crosshair className="h-4 w-4" />
               {t.pages.planning.gpsTracking}
-              {enLivraison.length > 0 && (<Badge className="bg-emerald-500 text-white ml-1">{enLivraison.length}</Badge>)}
-            </Button>
+              {enLivraison.length > 0 && (<span style={{ background: '#22C55E', color: 'white', borderRadius: 999, padding: '1px 6px', fontSize: 11, fontWeight: 600, marginLeft: 4 }}>{enLivraison.length}</span>)}
+            </button>
             <DailyPlanningReport
               date={parseISO(selectedDate)}
               stats={{
