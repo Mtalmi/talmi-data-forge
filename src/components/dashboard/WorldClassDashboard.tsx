@@ -1252,12 +1252,12 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
 
         {/* ─── Full-width: P&L du Jour ─── */}
         {!hideOpsWidgets && (
-          <div style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.06), transparent)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '8px', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ color: '#D4A843', fontSize: '20px', fontWeight: '500', fontFamily: "ui-monospace, SFMono-Regular, monospace" }}>
+           <div style={{ background: 'linear-gradient(90deg, rgba(212,168,67,0.04), transparent 60%)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '8px', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ color: '#D4A843', fontSize: '28px', fontWeight: 200, fontFamily: "ui-monospace, SFMono-Regular, monospace" }}>
               +18.4K DH
             </div>
             <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.4)' }}>marge nette estimée</div>
-            <div className="bg-emerald-500/10 text-emerald-400 text-sm font-semibold px-3 py-1 rounded-full">↗ +12% vs hier</div>
+            <div className="text-sm font-semibold px-3 py-1 rounded-full" style={{ background: 'rgba(34,197,94,0.1)', color: '#22C55E' }}>↗ +12% vs hier</div>
           </div>
         )}
         </>
