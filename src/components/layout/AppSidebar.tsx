@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { SystemHealthBar } from './SystemHealthBar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { usePreviewRole } from '@/hooks/usePreviewRole';
