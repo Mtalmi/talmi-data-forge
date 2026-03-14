@@ -1095,6 +1095,12 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
           );
         })()}
 
+        {/* ── MATERIAL PRICE TRACKER ── */}
+        <MaterialPriceTracker />
+
+        {/* ── COST IMPACT SIMULATOR ── */}
+        <CostImpactSimulator />
+
         {/* ── PLAN DE RÉAPPROVISIONNEMENT + ALERTES — Two-column layout ── */}
         <div style={{ display: 'flex', gap: 24 }}>
           {/* LEFT — 60% Plan de Réapprovisionnement IA */}
