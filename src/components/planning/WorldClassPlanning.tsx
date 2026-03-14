@@ -372,25 +372,23 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = f
   const isRisky = riskyClients?.has(slot.client.toLowerCase()) ?? false;
   const dotColor = isRisky ? T.danger : '#D4A843';
 
+  // Left accent bar color by formule
+  const accentColors: Record<string, string> = { B25: '#D4A843', B30: '#E8C96A', B35: '#C49A3C', B40: '#F59E0B', 'Spécial': '#F59E0B' };
+  const accentColor = accentColors[slot.product] || '#D4A843';
+
   // Rentabilité mode styling
   const HIGH_MARGIN = ['ciments du maroc', 'saudi readymix', 'oncf'];
   const LOW_MARGIN = ['tgcc', 'jet con.'];
   const clientLower = slot.client.toLowerCase();
-  let rentaBg = 'rgba(245, 158, 11, 0.08)';
-  let rentaBorder = color;
+  let rentaBorder = accentColor;
   if (rentabilite) {
     if (HIGH_MARGIN.some(c => clientLower.includes(c))) {
-      rentaBg = 'rgba(34,197,94,0.08)';
       rentaBorder = '#22C55E';
     } else if (LOW_MARGIN.some(c => clientLower.includes(c))) {
-      rentaBg = 'rgba(245,158,11,0.08)';
       rentaBorder = '#F59E0B';
-    } else {
-      rentaBorder = '#D4A843';
     }
   }
 
-  // Determine status for tooltip
   const statusLabel = isRisky ? 'Paiement en attente' : 'Confirmé';
 
   return (
@@ -401,25 +399,26 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = f
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? (hov ? 'translateY(-2px)' : 'translateY(0)') : 'translateY(12px)',
-        transition: 'opacity 500ms ease-out, transform 200ms ease-out, box-shadow 200ms, border-color 200ms',
-        background: rentabilite ? rentaBg : 'rgba(245, 158, 11, 0.08)',
-        border: `1px solid ${hov ? 'rgba(212,168,67,0.4)' : 'rgba(245, 158, 11, 0.15)'}`,
-        borderLeft: `3px solid ${rentabilite ? rentaBorder : color}`,
-        borderRadius: 8, padding: '8px 10px',
+        transition: 'all 250ms ease',
+        background: 'linear-gradient(135deg, rgba(212,168,67,0.04) 0%, rgba(15,22,41,0.95) 100%)',
+        border: `1px solid ${hov ? 'rgba(212,168,67,0.35)' : 'rgba(212,168,67,0.12)'}`,
+        borderLeft: `3px solid ${rentabilite ? rentaBorder : accentColor}`,
+        borderRadius: 8, padding: 14,
         cursor: 'pointer', minHeight: 58,
         position: 'relative',
-        boxShadow: hov ? '0 0 15px rgba(212,168,67,0.1)' : 'none',
+        boxShadow: hov ? '0 4px 20px rgba(212,168,67,0.08)' : 'none',
+        backdropFilter: 'blur(8px)',
       }}
     >
-      {/* Payment status dot with tooltip */}
+      {/* Status dot with tooltip */}
       <div
         onMouseEnter={() => setDotHov(true)}
         onMouseLeave={() => setDotHov(false)}
         style={{
-          position: 'absolute', top: 5, right: 5,
-          width: 7, height: 7, borderRadius: '50%',
+          position: 'absolute', top: 8, right: 8,
+          width: 6, height: 6, borderRadius: '50%',
           background: dotColor,
-          boxShadow: `0 0 4px ${dotColor}60`,
+          boxShadow: `0 0 6px rgba(212,168,67,0.4)`,
           cursor: 'default',
         }}
       >
@@ -435,9 +434,11 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = f
           </div>
         )}
       </div>
-      <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: slot.product === 'Spécial' ? 9 : 11, fontWeight: 800, color: '#D4A843', marginBottom: 2, display: 'inline-block', padding: '1px 6px', borderRadius: 4, background: 'transparent', border: '1px solid #D4A843' }}>{slot.product}</p>
-      <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 13, fontWeight: 500, color: '#fff' }}>{slot.volume} m³</p>
-      <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>{slot.client}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: slot.product === 'Spécial' ? 9 : 11, fontWeight: 700, color: '#D4A843', margin: 0, display: 'inline-block', padding: '3px 10px', borderRadius: 4, background: 'rgba(212,168,67,0.08)', border: '1px solid #D4A843', alignSelf: 'flex-start' }}>{slot.product}</p>
+        <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 18, fontWeight: 300, color: '#D4A843', margin: 0, lineHeight: 1 }}>{slot.volume} m³</p>
+        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', margin: 0, letterSpacing: '0.3px' }}>{slot.client}</p>
+      </div>
     </div>
   );
 }
