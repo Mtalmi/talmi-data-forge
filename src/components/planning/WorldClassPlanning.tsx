@@ -821,7 +821,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                     { label: 'FLOTTE 87%', bg: 'rgba(212,168,67,0.12)' },
                     { label: 'QUALITÉ 96%', bg: 'rgba(212,168,67,0.12)' },
                   ].map(b => (
-                    <span key={b.label} style={{ padding: '3px 8px', borderRadius: 999, fontSize: 9, fontWeight: 700, background: b.bg, color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)', letterSpacing: '0.08em' }}>{b.label}</span>
+                    <span key={b.label} style={{ padding: '3px 8px', borderRadius: 999, fontSize: 9, fontWeight: 700, background: 'transparent', color: '#D4A843', border: '1px solid #D4A843', letterSpacing: '0.08em' }}>{b.label}</span>
                   ))}
                 </div>
               </div>
