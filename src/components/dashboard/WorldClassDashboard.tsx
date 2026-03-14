@@ -138,7 +138,7 @@ function useAnimatedCounter(target: number, duration = 1200) {
     const start = performance.now();
     const animate = (now: number) => {
       const p = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
+      const eased = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
       setValue(Math.round(eased * target));
       if (p < 1) rafRef.current = requestAnimationFrame(animate);
     };
@@ -760,7 +760,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
   } = useWorldClassLiveData();
 
   const totalAR = useAnimatedCounter(Math.round(arAgingData.reduce((s, d) => s + d.value, 0) / 1000) || 77);
-  const prodTotal = useAnimatedCounter(Math.round(stats.totalVolume) || 851);
+  const prodTotal = useAnimatedCounter(Math.round(stats.totalVolume) || 851, 1500);
 
   const prodChartData = hourlyProductionData.length ? hourlyProductionData : [
     { hour: '6h', volume: 12 }, { hour: '8h', volume: 65 }, { hour: '10h', volume: 95 },
@@ -1015,27 +1015,77 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   </div>
                 </div>
                 <div>
-                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '36px', color: '#D4A843', textShadow: '0 0 12px rgba(212,168,67,0.2)', letterSpacing: '-0.02em' }}>{prodTotal}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '40px', color: '#D4A843', textShadow: '0 0 12px rgba(212,168,67,0.2)', letterSpacing: '-0.02em' }}>{prodTotal}</span>
                   <span className="text-sm font-light text-white/40 ml-1">m³</span>
                 </div>
               </div>
-              <div className="overflow-hidden w-full" style={{ height: 180, filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.25))' }}>
+              <div className="overflow-hidden w-full" style={{ height: 180, filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.25))', position: 'relative' }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={prodChartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="prodGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={T.gold} stopOpacity={0.12} />
-                        <stop offset="40%" stopColor={T.gold} stopOpacity={0.04} />
+                        <stop offset="0%" stopColor={T.gold} stopOpacity={0.10} />
+                        <stop offset="50%" stopColor={T.gold} stopOpacity={0.04} />
                         <stop offset="100%" stopColor={T.gold} stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="hour" tick={{ fill: '#8899aa', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
-                    <Tooltip content={(p) => <RichTooltip {...p} unit=" m³/h" sparkData={prodChartData} />} cursor={{ stroke: 'rgba(255,255,255,0.06)', strokeDasharray: '4 4' }} />
-                    {/* Single crisp line — no glow layers */}
+                    <Tooltip
+                      content={({ active, payload, label }: any) => {
+                        if (!active || !payload?.length) return null;
+                        const vol = payload[0]?.value || 0;
+                        const idx = prodChartData.findIndex((d: any) => d.hour === label);
+                        const cumul = prodChartData.slice(0, idx + 1).reduce((s: number, d: any) => s + (d.volume || 0), 0);
+                        return (
+                          <div style={{ background: '#1A1F2E', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 8, padding: '8px 12px' }}>
+                            <div style={{ fontFamily: 'ui-monospace, monospace', color: '#D4A843', fontSize: 12, marginBottom: 4 }}>{label}</div>
+                            <div style={{ color: '#fff', fontSize: 12 }}><span style={{ fontFamily: 'ui-monospace, monospace', color: '#D4A843' }}>{cumul}</span> m³ cumulés</div>
+                            <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11 }}>{vol} m³/h · {idx + 1} batch{idx > 0 ? 'es' : ''}</div>
+                          </div>
+                        );
+                      }}
+                      cursor={{ stroke: '#D4A843', strokeDasharray: '3 3', strokeOpacity: 0.3 }}
+                    />
                     <ReferenceLine y={800} stroke="rgba(255,255,255,0.15)" strokeDasharray="4 4" label={{ value: 'Obj. 800', position: 'right', fill: 'rgba(255,255,255,0.3)', fontSize: 10 }} />
                     <Area type="monotone" dataKey="volume" stroke="#C9A84C" strokeWidth={2} fill="url(#prodGrad)" dot={false} activeDot={{ r: 2, fill: '#C9A84C', stroke: 'none' }} animationDuration={1200} />
                   </AreaChart>
                 </ResponsiveContainer>
+                {/* Live pulse dot at rightmost data point */}
+                <div style={{
+                  position: 'absolute',
+                  top: (() => {
+                    const lastVol = prodChartData[prodChartData.length - 1]?.volume || 0;
+                    const maxVol = Math.max(...prodChartData.map((d: any) => d.volume || 0), 110);
+                    return `${5 + (1 - lastVol / maxVol) * 170}px`;
+                  })(),
+                  right: '5px',
+                  width: 8, height: 8,
+                  background: '#D4A843',
+                  borderRadius: '50%',
+                  animation: 'prodPulseDot 2s infinite',
+                  pointerEvents: 'none',
+                }} />
+                <style>{`
+                  @keyframes prodPulseDot {
+                    0% { transform: scale(1); opacity: 1; box-shadow: 0 0 10px #D4A843; }
+                    50% { transform: scale(1.5); opacity: 0.4; box-shadow: 0 0 20px transparent; }
+                    100% { transform: scale(1); opacity: 1; box-shadow: 0 0 10px #D4A843; }
+                  }
+                `}</style>
+              </div>
+              {/* Summary strip */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 16px', borderTop: '1px solid rgba(212,168,67,0.1)', marginTop: 8 }}>
+                {[
+                  { label: 'PIC', value: '98 m³/h · 14h', color: '#D4A843' },
+                  { label: 'MOY. HORAIRE', value: '71 m³/h', color: '#fff' },
+                  { label: 'OBJECTIF', value: '800 m³', color: '#9CA3AF' },
+                  { label: 'AVANCE', value: '+6.4%', color: '#22C55E' },
+                ].map(s => (
+                  <div key={s.label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <span style={{ fontSize: 10, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.label}</span>
+                    <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: s.color }}>{s.value}</span>
+                  </div>
+                ))}
               </div>
             </div>
             </div>
