@@ -325,7 +325,9 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
                     onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; }}
                     onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = isWeekend(day) ? 'rgba(255,255,255,0.01)' : 'transparent'; }}
                   >
-                    {dayChips.length > 0 ? (
+                    {day.getDay() === 0 ? (
+                      <p style={{ fontSize: 11, color: '#4A5568', textAlign: 'center', paddingTop: 30, fontStyle: 'italic' }}>Fermé</p>
+                    ) : dayChips.length > 0 ? (
                       <div className="flex flex-col gap-1.5">
                         {dayChips.map(chip => {
                           const cs = chipStyle(chip.status);
@@ -342,9 +344,10 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
                                 </span>
                                 {chip.status === 'urgent' && (
                                   <span style={{
-                                    fontSize: 8, fontWeight: 700, color: T.danger,
-                                    background: 'rgba(248,113,113,0.15)', padding: '1px 4px', borderRadius: 3,
+                                    fontSize: 11, fontWeight: 700, color: T.danger,
+                                    background: 'rgba(248,113,113,0.15)', padding: '4px 8px', borderRadius: 3,
                                     textTransform: 'uppercase', letterSpacing: '0.05em', flexShrink: 0,
+                                    boxShadow: '0 0 8px rgba(239,68,68,0.4)',
                                   }}>Urgent</span>
                                 )}
                               </div>
