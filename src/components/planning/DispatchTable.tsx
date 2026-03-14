@@ -296,6 +296,27 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
             <div style={{ padding: '12px 16px', fontSize: 12, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', color: isEnRoute ? '#10B981' : '#94A3B8', textAlign: 'center', fontWeight: isEnRoute ? 600 : 400 }}>
               {row.eta}
             </div>
+            {/* PROMESSE */}
+            <div style={{ padding: '12px 8px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
+              {(() => {
+                const p = PROMESSE_DATA[row.bl];
+                if (!p) return <span style={{ color: '#4A5568', fontSize: 11 }}>—</span>;
+                return (
+                  <>
+                    <span style={{ fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', color: '#94A3B8', fontWeight: 500 }}>{p.time}</span>
+                    {p.type === 'muted' ? (
+                      <span style={{ fontSize: 10, color: '#4A5568' }}>—</span>
+                    ) : (
+                      <span style={{
+                        fontSize: 10, fontWeight: 600, padding: '1px 6px', borderRadius: 999,
+                        background: p.type === 'green' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
+                        color: p.type === 'green' ? '#22C55E' : '#EF4444',
+                      }}>{p.badge}</span>
+                    )}
+                  </>
+                );
+              })()}
+            </div>
             {/* STATUT */}
             <div style={{ padding: '12px 16px', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
               <span style={{
