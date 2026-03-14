@@ -1011,12 +1011,12 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                       ))}
                     </div>
                   </Card>
-                  <div>
+                  <div style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', borderRadius: 12, padding: 16 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
                       <Clock size={14} color={T.gold} />
                       <span style={{ color: T.textSec, fontSize: 12, fontWeight: 600 }}>Prochaines Livraisons</span>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 400, overflowY: 'auto' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 420, overflowY: 'auto' }}>
                       {(liveDeliveries.length > 0 ? liveDeliveries : deliveries).map((d, i) => (
                         <DeliveryCard key={i} d={d} delay={i * 70} routeData={routeDataMap[(d as any).bl_id || '']} weatherIndex={i} />
                       ))}
