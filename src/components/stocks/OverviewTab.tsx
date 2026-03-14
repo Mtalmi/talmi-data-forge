@@ -435,6 +435,11 @@ export function OverviewTab({ AUTONOMY, STOCK_ALERTS_DB, REORDER_RECS, STOCKS, o
           ═══════════════════════════════════════════════════ */}
       <CostSimulator />
 
+      {/* ═══════════════════════════════════════════════════
+          SECTION — FILE D'ATTENTE RÉAPPROVISIONNEMENT
+          ═══════════════════════════════════════════════════ */}
+      <ReorderQueue />
+
       <SmartReorderQueue />
     </>
   );
