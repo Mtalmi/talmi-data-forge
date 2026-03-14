@@ -3840,9 +3840,9 @@ const en = {
     notSpecified: 'Not specified',
   },
   globalSearch: {
-    quickSearch: 'Quick search...',
+    quickSearch: 'Search metrics, KPIs, reports...',
     search: 'Search',
-    searchPlaceholder: 'Search clients, BLs, invoices...',
+    searchPlaceholder: 'Search metrics, KPIs, reports...',
     noResultsFound: 'No results found.',
     typeMinChars: 'Type at least 2 characters to search',
     clients: 'Clients',
