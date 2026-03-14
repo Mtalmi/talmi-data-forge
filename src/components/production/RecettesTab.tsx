@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Beaker, CheckCircle } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip,
@@ -99,6 +99,17 @@ function SectionHeader({ label }: { label: string }) {
 }
 
 function FormulaCard({ f }: { f: Formula }) {
+  const [hovered, setHovered] = useState(false);
+  const [barMounted, setBarMounted] = useState(false);
+
+  // Trigger bar animation on mount
+  useState(() => {
+    setTimeout(() => setBarMounted(true), 300);
+  });
+
+  const isPrix = (label: string) => label === 'Prix de revient' || label === 'Prix vente min';
+  const isMarge = (label: string) => label === 'Marge cible';
+
   const props: [string, string][] = [
     ['Résistance', f.resistance],
     ['Classe', f.classe],
@@ -115,15 +126,27 @@ function FormulaCard({ f }: { f: Formula }) {
   ];
 
   return (
-    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, overflow: 'hidden' }}>
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, overflow: 'hidden',
+        boxShadow: hovered ? '0 0 20px rgba(212,168,67,0.08)' : 'none',
+        transform: hovered ? 'translateY(-2px)' : 'translateY(0)',
+        transition: 'all 300ms ease',
+      }}
+    >
       {/* Header */}
       <div className="flex items-start justify-between" style={{ background: T.cardBg, padding: '16px 24px', borderBottom: `1px solid ${T.cardBorder}` }}>
         <div>
-          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 20, fontWeight: 500, color: '#fff' }}>{f.code}</p>
+          <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 28, fontWeight: 200, color: '#D4A843' }}>{f.code}</p>
           <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.50)', marginTop: 2 }}>{f.name}</p>
         </div>
-        <span style={{ fontSize: 11, color: '#10B981', display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
-          <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
+        <span style={{
+          fontSize: 11, color: '#22C55E', display: 'flex', alignItems: 'center', gap: 4, marginTop: 4,
+          border: '1px solid #22C55E', background: 'rgba(34,197,94,0.06)', borderRadius: 999, padding: '3px 10px',
+        }}>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E', display: 'inline-block' }} />
           Active
         </span>
       </div>
@@ -132,8 +155,12 @@ function FormulaCard({ f }: { f: Formula }) {
       <div className="grid grid-cols-2" style={{ gap: '12px 32px', padding: '20px 24px' }}>
         {props.map(([label, value]) => (
           <div key={label}>
-            <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.35)', marginBottom: 2 }}>{label}</p>
-            <p style={{ fontSize: 13, fontFamily: 'JetBrains Mono, monospace', fontWeight: 400, color: '#fff' }}>{value}</p>
+            <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#9CA3AF', marginBottom: 2 }}>{label}</p>
+            <p style={{
+              fontSize: 13, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 300,
+              color: isPrix(label) ? '#D4A843' : isMarge(label) ? '#22C55E' : '#fff',
+              ...(isPrix(label) || isMarge(label) ? { fontWeight: 600 } : {}),
+            }}>{value}</p>
           </div>
         ))}
       </div>
@@ -141,10 +168,15 @@ function FormulaCard({ f }: { f: Formula }) {
       {/* Footer */}
       <div style={{ padding: '12px 24px', borderTop: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.02)' }}>
         <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginBottom: 6 }}>
-          Utilisé dans {f.usagePct}% des batches ce mois
+          Utilisé dans <span style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace' }}>{f.usagePct}%</span> des batches ce mois
         </p>
         <div style={{ height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
-          <div style={{ width: `${f.usagePct}%`, height: '100%', borderRadius: 2, background: T.gold }} />
+          <div style={{
+            width: barMounted ? `${f.usagePct}%` : '0%',
+            height: '100%', borderRadius: 2,
+            background: 'linear-gradient(90deg, #D4A843, #E8C96A)',
+            transition: 'width 1s ease',
+          }} />
         </div>
       </div>
     </div>
@@ -169,24 +201,21 @@ function CompositionChart({ formulas }: { formulas: Formula[] }) {
             <XAxis type="number" tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
             <YAxis type="category" dataKey="name" tick={{ fill: 'rgba(255,255,255,0.45)', fontSize: 11 }} axisLine={false} tickLine={false} width={65} />
             <Tooltip
-              contentStyle={{ background: '#111827', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12, fontFamily: 'JetBrains Mono, monospace' }}
-              itemStyle={{ color: '#fff' }}
-              labelStyle={{ color: 'rgba(255,255,255,0.5)', marginBottom: 4 }}
               cursor={{ fill: 'rgba(255,255,255,0.03)' }}
               content={({ active, payload, label }) => {
                 if (!active || !payload?.length) return null;
                 return (
-                  <div style={{ background: '#111827', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '8px 12px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace' }}>
-                    <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 4 }}>{label}</p>
+                  <div style={{ background: '#1A1F2E', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 8, padding: '8px 12px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}>
+                    <p style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontSize: 12, fontWeight: 700, marginBottom: 4 }}>{label}</p>
                     {payload.map((p: any) => (
-                      <p key={p.dataKey} style={{ color: p.color || '#fff' }}>{p.dataKey}: {p.value}</p>
+                      <p key={p.dataKey} style={{ color: p.color || '#fff', fontFamily: 'ui-monospace, monospace', fontSize: 12 }}>{p.dataKey}: {p.value}</p>
                     ))}
                   </div>
                 );
               }}
             />
-            {formulas.map((f, i) => (
-              <Bar key={f.code} dataKey={f.code} fill={f.color} radius={[0, 3, 3, 0]} barSize={10} />
+            {formulas.map((f) => (
+              <Bar key={f.code} dataKey={f.code} fill={f.color} radius={[0, 3, 3, 0]} barSize={10} animationDuration={800} animationEasing="ease-out" />
             ))}
           </BarChart>
         </ResponsiveContainer>
@@ -221,7 +250,10 @@ export default function RecettesTab() {
           <SectionHeader label="Formules de Béton" />
           <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.40)', marginTop: -8 }}>Bibliothèque des formulations disponibles</p>
         </div>
-        <span style={{ fontSize: 11, color: '#10B981', background: 'rgba(16,185,129,0.12)', borderRadius: 999, padding: '5px 12px' }}>
+        <span style={{
+          fontSize: 11, color: '#D4A843', border: '1px solid #D4A843',
+          background: 'rgba(212,168,67,0.06)', borderRadius: 999, padding: '5px 12px',
+        }}>
           {FORMULAS.length} formules actives
         </span>
       </div>
@@ -243,10 +275,10 @@ export default function RecettesTab() {
         <div className="grid grid-cols-4 gap-4">
           {NORMES.map(n => (
             <div key={n.label} style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, padding: 16 }}>
-              <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.35)', marginBottom: 6 }}>{n.label}</p>
+              <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#9CA3AF', marginBottom: 6 }}>{n.label}</p>
               <div className="flex items-center gap-2">
-                {n.check && <CheckCircle size={14} style={{ color: '#10B981' }} />}
-                <span style={{ fontSize: 13, color: '#fff', fontFamily: n.label.includes('calibration') ? 'JetBrains Mono, monospace' : 'inherit', fontWeight: 400 }}>{n.value}</span>
+                {n.check && <CheckCircle size={14} style={{ color: '#22C55E' }} />}
+                <span style={{ fontSize: 13, color: '#D4A843', fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 400 }}>{n.value}</span>
               </div>
             </div>
           ))}
