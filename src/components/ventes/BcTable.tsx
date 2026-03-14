@@ -57,11 +57,11 @@ import { Progress } from '@/components/ui/progress';
 // Status configs use static colors but labels are resolved dynamically via i18n
 const BC_STATUS_COLORS: Record<string, { color: string; icon: React.ReactNode }> = {
   en_attente_validation: { color: 'text-[#FDB913] bg-[rgba(253,185,19,0.08)] border-none', icon: <Clock className="h-3 w-3" /> },
-  pret_production: { color: 'text-[#3B82F6] bg-[rgba(59,130,246,0.08)] border-none', icon: <CheckCircle className="h-3 w-3" /> },
+  pret_production: { color: '', icon: <CheckCircle className="h-3 w-3" /> },
   en_production: { color: 'text-[#00D9FF] bg-[rgba(0,217,255,0.08)] border-none', icon: <Factory className="h-3 w-3" /> },
   en_livraison: { color: 'text-[#FB923C] bg-[rgba(251,146,60,0.08)] border-none', icon: <Truck className="h-3 w-3" /> },
   en_retour: { color: 'text-[#FB923C] bg-[rgba(251,146,60,0.08)] border-none', icon: <Truck className="h-3 w-3" /> },
-  termine: { color: 'text-[#10B981] bg-[rgba(16,185,129,0.08)] border-none', icon: <CheckCircle className="h-3 w-3" /> },
+  termine: { color: '', icon: <CheckCircle className="h-3 w-3" /> },
   livre: { color: 'text-[#10B981] bg-[rgba(16,185,129,0.08)] border-none', icon: <Truck className="h-3 w-3" /> },
   facture: { color: 'text-[#10B981] bg-[rgba(16,185,129,0.08)] border-none', icon: <CheckCircle className="h-3 w-3" /> },
   refuse: { color: 'text-[#FF6B6B] bg-[rgba(255,107,107,0.08)] border-none', icon: <AlertCircle className="h-3 w-3" /> },
@@ -257,21 +257,22 @@ export function BcTable({
     
     const date = parseISO(bc.date_livraison_souhaitee);
     const priority = getBcPriority(bc);
-    const isOverdue = isPast(date) && !isToday(date) && bc.statut === 'pret_production';
+    const isOverdue = isPast(date) && !isToday(date);
+    const now = new Date();
+    const diffDays = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    const isWithin3Days = diffDays >= 0 && diffDays <= 3;
     
+    const dateColor = isOverdue ? '#EF4444' : isWithin3Days ? '#F59E0B' : '#9CA3AF';
+
     return (
-      <span className={cn(
-        "text-xs font-mono",
-        isOverdue && "text-red-400 font-medium",
-        priority.isUrgent && bc.statut === 'pret_production' && "font-medium"
-      )}>
+      <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: dateColor, fontWeight: isOverdue ? 500 : 400 }}>
         {isToday(date) ? (
-          <span className="flex items-center gap-1 text-[#D4A843] font-medium">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#D4A843] animate-pulse" />
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#D4A843', fontWeight: 500, justifyContent: 'center' }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#D4A843', animation: 'pulse 2s ease-in-out infinite' }} />
             Auj.
           </span>
         ) : isTomorrow(date) ? (
-          <span className="text-warning">Demain</span>
+          <span style={{ color: '#F59E0B' }}>Demain</span>
         ) : (
           format(date, 'dd/MM/yy')
         )}
@@ -285,7 +286,6 @@ export function BcTable({
     const volumeTotal = bc.volume_m3;
     const progressPct = volumeTotal > 0 ? Math.min(100, (volumeLivre / volumeTotal) * 100) : 0;
     
-    // Invoice status
     let invoiceBadge: React.ReactNode = null;
     if (bc.facture_consolidee_id) {
       invoiceBadge = (
@@ -296,8 +296,7 @@ export function BcTable({
       );
     } else if (bc.statut === 'livre' || bc.statut === 'termine') {
       invoiceBadge = (
-        <span className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground">
-          <Clock className="h-2.5 w-2.5" />
+        <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#F59E0B' }}>
           {bt.toInvoice}
         </span>
       );
@@ -306,14 +305,14 @@ export function BcTable({
     return (
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-1.5">
-          <Progress 
-            value={progressPct} 
-            className="h-1.5 flex-1 bg-white/[0.06]"
-            indicatorClassName={cn(
-              progressPct >= 100 ? "bg-emerald-500" : progressPct > 0 ? "bg-amber-500" : "bg-white/10"
-            )}
-          />
-          <span className="text-[10px] font-mono text-muted-foreground whitespace-nowrap">
+          <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.05)', overflow: 'hidden' }}>
+            <div style={{
+              width: `${progressPct}%`, height: '100%', borderRadius: 3,
+              background: progressPct >= 100 ? '#22C55E' : 'linear-gradient(90deg, #C49A3C, #D4A843)',
+              transition: 'width 0.5s ease',
+            }} />
+          </div>
+          <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#9CA3AF', whiteSpace: 'nowrap' }}>
             {volumeLivre}/{volumeTotal}
           </span>
         </div>
@@ -331,10 +330,10 @@ export function BcTable({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
-            className="flex items-center justify-center w-8 h-8 rounded-md text-gray-400 hover:text-amber-400 transition-colors duration-150"
-            style={{ background: 'transparent' }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(245, 158, 11, 0.1)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+            className="flex items-center justify-center w-8 h-8 rounded-md transition-colors duration-150"
+            style={{ background: 'transparent', color: '#D4A843' }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(245,158,11,0.1)'; e.currentTarget.style.color = '#E8C96A'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#D4A843'; }}
             onClick={e => e.stopPropagation()}
           >
             <MoreHorizontal className="h-4 w-4" />
@@ -454,14 +453,14 @@ export function BcTable({
                 className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
               />
             </TableHead>
-            <TableHead>{bt.bcNumber}</TableHead>
-            <TableHead>{bt.client}</TableHead>
-            <TableHead className="text-center">{bt.formula}</TableHead>
-            <TableHead className="text-center">{bt.deliveryDate}</TableHead>
-            <TableHead className="text-right">{bt.volume}</TableHead>
-            <TableHead className="text-right">{bt.totalHt}</TableHead>
-            <TableHead className="text-center">{bt.status}</TableHead>
-            <TableHead className="text-center">Suivi</TableHead>
+            <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.bcNumber}</TableHead>
+            <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.client}</TableHead>
+            <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.formula}</TableHead>
+            <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.deliveryDate}</TableHead>
+            <TableHead className="text-right" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.volume}</TableHead>
+            <TableHead className="text-right" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.totalHt}</TableHead>
+            <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.status}</TableHead>
+            <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Suivi</TableHead>
             <TableHead className="text-center"></TableHead>
           </TableRow>
         </TableHeader>
@@ -495,8 +494,8 @@ export function BcTable({
                   bcIsEmergency && bc.statut === 'pret_production' && "bg-red-500/5 animate-pulse border-l-2 border-l-red-500",
                   bc.statut === 'en_attente_validation' && "bg-amber-500/5 border-l-2 border-l-amber-500"
                 )}
-                style={{ background: undefined }}
-                onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = 'rgba(245, 158, 11, 0.04)'; }}
+                style={{ background: undefined, transition: 'background 200ms' }}
+                onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = 'rgba(212,168,67,0.03)'; }}
                 onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = ''; }}
                 onClick={() => onOpenDetail(bc)}
               >
@@ -512,7 +511,11 @@ export function BcTable({
                 <TableCell>
                   <div className="flex items-center gap-1.5">
                     {renderPriorityDot(bc)}
-                    <span className="font-mono text-xs font-medium whitespace-nowrap">{bc.bc_id}</span>
+                    <span
+                      style={{ fontFamily: 'ui-monospace, monospace', color: '#D4A843', fontWeight: 500, fontSize: 12, cursor: 'pointer', whiteSpace: 'nowrap' }}
+                      onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
+                      onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
+                    >{bc.bc_id}</span>
                     {bcIsEmergency && (
                       <Zap className="h-3 w-3 text-red-500 shrink-0" />
                     )}
@@ -532,7 +535,7 @@ export function BcTable({
                 
                 {/* FORMULA */}
                 <TableCell className="text-center">
-                  <span className="text-xs font-mono">{bc.formule_id}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 400, fontSize: 12 }}>{bc.formule_id}</span>
                 </TableCell>
                 
                 {/* DELIVERY DATE */}
@@ -540,12 +543,12 @@ export function BcTable({
                 
                 {/* VOLUME */}
                 <TableCell className="text-right">
-                  <span className="text-xs font-mono">{bc.volume_m3}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 300, fontSize: 12 }}>{bc.volume_m3}</span>
                 </TableCell>
                 
                 {/* TOTAL HT */}
                 <TableCell className="text-right">
-                  <span className="text-sm font-mono font-medium">
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 300, color: 'white', fontSize: 13 }}>
                     {Number(bc.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                   </span>
                 </TableCell>
@@ -553,10 +556,19 @@ export function BcTable({
                 {/* STATUS */}
                 <TableCell className="text-center">
                   <div className="flex flex-col gap-1 items-center">
-                    <span className={cn("inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium whitespace-nowrap", statusConfig.color)}>
-                      {statusConfig.icon}
-                      {statusConfig.label}
-                    </span>
+                    {bc.statut === 'pret_production' ? (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, border: '1px solid #22C55E', color: '#22C55E', background: 'rgba(34,197,94,0.08)', fontFamily: 'ui-monospace, monospace', fontSize: 11, borderRadius: 6, padding: '2px 8px', whiteSpace: 'nowrap' }}>
+                        {statusConfig.icon} {statusConfig.label}
+                      </span>
+                    ) : (bc.statut === 'termine' || bc.statut === 'livre') && !bc.facture_consolidee_id ? (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, border: '1px solid #D4A843', color: '#D4A843', background: 'rgba(212,168,67,0.08)', fontFamily: 'ui-monospace, monospace', fontSize: 11, borderRadius: 6, padding: '2px 8px', whiteSpace: 'nowrap' }}>
+                        {statusConfig.icon} {statusConfig.label}
+                      </span>
+                    ) : (
+                      <span className={cn("inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium whitespace-nowrap", statusConfig.color)} style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11 }}>
+                        {statusConfig.icon} {statusConfig.label}
+                      </span>
+                    )}
                     {mostAdvancedBl && bc.statut === 'en_production' && (
                       <Tooltip>
                         <TooltipTrigger>
@@ -599,6 +611,10 @@ export function BcTable({
           })}
         </TableBody>
       </Table>
+      {/* Summary row */}
+      <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(255,255,255,0.06)', fontFamily: 'ui-monospace, monospace', fontSize: 12, color: '#9CA3AF' }}>
+        <span style={{ color: '#D4A843' }}>{bcList.length}</span> bons de commande · Volume total: <span style={{ color: '#D4A843' }}>{bcList.reduce((s, b) => s + b.volume_m3, 0)} m³</span> · Valeur: <span style={{ color: '#D4A843' }}>{bcList.reduce((s, b) => s + b.total_ht, 0).toLocaleString('fr-FR')} DH</span>
+      </div>
     </div>
   );
 }
