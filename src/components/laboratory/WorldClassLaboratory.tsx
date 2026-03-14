@@ -2078,53 +2078,7 @@ export default function WorldClassLaboratory() {
         }
       />
 
-      {/* CUSTOM TAB BAR (override PageHeader tabs for exact styling) */}
-      <div style={{ padding: '0 32px', borderBottom: `1px solid ${T.cardBorder}`, marginBottom: 0 }}>
-        <div style={{ display: 'flex', gap: 0 }}>
-          {TABS.map(tab => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                style={{
-                  fontFamily: MONO,
-                  fontSize: 12,
-                  letterSpacing: '1.5px',
-                  fontWeight: 600,
-                  color: isActive ? '#D4A843' : '#9CA3AF',
-                  background: 'transparent',
-                  border: 'none',
-                  borderBottom: isActive ? '2px solid #D4A843' : '2px solid transparent',
-                  padding: '14px 24px',
-                  cursor: 'pointer',
-                  transition: 'all 200ms ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  textTransform: 'uppercase',
-                }}
-              >
-                {tab.label}
-                {tab.badge && (
-                  <span style={{
-                    fontFamily: MONO,
-                    fontSize: 10,
-                    fontWeight: 700,
-                    color: '#0F1629',
-                    background: '#D4A843',
-                    borderRadius: 999,
-                    padding: '1px 7px',
-                    lineHeight: '16px',
-                  }}>
-                    {tab.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      {/* Duplicate tab bar removed — using PageHeader tabs only */}
 
       {/* TAB CONTENT */}
       <div style={{ padding: '32px 32px 0', animation: 'lab-tab-fade 0.35s ease-out' }} key={activeTab}>
