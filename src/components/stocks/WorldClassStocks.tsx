@@ -1185,94 +1185,9 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
         </>)}
 
         {/* ── TAB: MOUVEMENTS ── */}
-        {activeTab === 'mouvements' && (<>
-        {/* ── MOUVEMENTS CHART ── */}
-        <section>
-          <SectionHeader icon={ArrowUpDown} label="Mouvements de Stock" />
-          <Card>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <div>
-                <p style={{ color: T.textPri, fontWeight: 700, fontSize: 14 }}>Mouvements de Stock</p>
-                <p style={{ color: T.textDim, fontSize: 11, marginTop: 2 }}>7 derniers jours</p>
-              </div>
-              <div style={{ display: 'flex', gap: 16 }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: T.textSec, fontSize: 11 }}>
-                  <span style={{ width: 10, height: 10, borderRadius: 2, background: T.success, display: 'inline-block' }} />Entrées
-                </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: T.textSec, fontSize: 11 }}>
-                  <span style={{ width: 10, height: 10, borderRadius: 2, background: T.amber, display: 'inline-block' }} />Sorties
-                </span>
-              </div>
-            </div>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={MOVEMENT_DATA} margin={{ top: 0, right: 0, left: -10, bottom: 0 }}>
-                <defs>
-                  <filter id="goldGlow"><feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="rgba(212,168,67,0.3)" /></filter>
-                  <filter id="redGlow"><feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="rgba(239,68,68,0.3)" /></filter>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.amberGrid} vertical={false} />
-                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11 }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }}
-                  tickFormatter={(v) => v >= 1000 ? `${v / 1000}K` : v} />
-                <RechartsTooltip content={<DarkTooltip suffix=" kg" />} cursor={{ fill: T.amberSubtle }} />
-                <Bar dataKey="entrees" name="Entrées"  fill={T.success} radius={[3, 3, 0, 0]} isAnimationActive animationDuration={1000} style={{ filter: 'url(#goldGlow)' }} />
-                <Bar dataKey="sorties" name="Sorties"  fill={T.amber}   radius={[3, 3, 0, 0]} isAnimationActive animationDuration={1000} animationBegin={150} style={{ filter: 'url(#redGlow)' }} />
-              </BarChart>
-            </ResponsiveContainer>
-          </Card>
-        </section>
-
-        {/* ── SECTION 5: RECENT MOVEMENTS ── */}
-        <section>
-          <SectionHeader icon={ArrowUpDown} label="Derniers Mouvements" right={<LastUpdateTimer />} />
-          <Card>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {/* Header row */}
-              <div style={{ display: 'flex', gap: 14, padding: '0 14px 10px', borderBottom: `1px solid ${T.cardBorder}` }}>
-                {['Type', 'Date', 'Matériau', 'Quantité', 'Référence', 'Responsable'].map(h => (
-                  <span key={h} style={{ color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>{h}</span>
-                ))}
-              </div>
-              {MOVEMENTS.map((m, i) => <MovementRow key={i} m={m} delay={i * 60} isFirst={i === 0} />)}
-            </div>
-          </Card>
-        </section>
-
-        {/* ── SECTION 6: VALUE BREAKDOWN — Amber Gradient ── */}
-        <section>
-          <SectionHeader
-            icon={TrendingUp}
-            label="Valeur par Catégorie"
-            right={<span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: T.amber }}>Total: 2.4 M DH</span>}
-          />
-          <Card>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart
-                data={[...VALUE_BREAKDOWN].sort((a, b) => b.value - a.value)}
-                layout="vertical"
-                margin={{ top: 0, right: 60, left: 10, bottom: 0 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke={T.amberGrid} horizontal={false} />
-                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}
-                  tickFormatter={(v) => `${v}K`} />
-                <YAxis dataKey="cat" type="category" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 12, fontFamily: 'JetBrains Mono, monospace' }} width={70} />
-                <RechartsTooltip content={<ValueTooltip />} cursor={{ fill: T.amberSubtle }} />
-                <Bar dataKey="value" name="Valeur" radius={[0, 4, 4, 0]} isAnimationActive animationDuration={1000} minPointSize={40}
-                  label={({ x, y, width, height, value }: any) => (
-                    <text x={x + width + 6} y={y + height / 2} dominantBaseline="central" fill="#fff" fontSize={11} fontFamily="JetBrains Mono, monospace">
-                      {Number(value).toLocaleString('fr-FR')} DH
-                    </text>
-                  )}
-                >
-                  {[...VALUE_BREAKDOWN].sort((a, b) => b.value - a.value).map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </Card>
-        </section>
-        </>)}
+        {activeTab === 'mouvements' && (
+          <MouvementsTab MOVEMENT_DATA={MOVEMENT_DATA} MOVEMENTS={MOVEMENTS} VALUE_BREAKDOWN={VALUE_BREAKDOWN} />
+        )}
 
         {/* ── TAB: SURVEILLANCE IA ── */}
         {activeTab === 'alertes' && (
