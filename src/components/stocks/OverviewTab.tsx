@@ -696,6 +696,148 @@ function CostSimulator() {
   );
 }
 
+// ── REORDER QUEUE ──
+const REORDER_ROWS = [
+  { priority: 'CRITIQUE', color: '#EF4444', mat: 'Adjuvant', fourn: 'Sika Maroc', qty: '500 L', cost: '8,500 DH', delai: '2-3j' },
+  { priority: 'BAS', color: '#F59E0B', mat: 'Eau', fourn: 'ONEE', qty: '35,000 L', cost: '5,250 DH', delai: '1j' },
+  { priority: 'BAS', color: '#F59E0B', mat: 'Gravette', fourn: 'Carrières du Sud', qty: '50,000 m³', cost: '6,000 DH', delai: '3-4j' },
+  { priority: 'MODÉRÉ', color: '#22C55E', mat: 'Ciment', fourn: 'LafargeHolcim', qty: '20,000 kg', cost: '9,000 DH', delai: '2-3j' },
+  { priority: 'MODÉRÉ', color: '#22C55E', mat: 'Sable', fourn: 'Carrière Atlas Settat', qty: '40,000 m³', cost: '4,800 DH', delai: '2j' },
+];
+
+function ReorderQueue() {
+  const cols = ['PRIORITÉ', 'MATÉRIAU', 'FOURNISSEUR', 'QUANTITÉ', 'COÛT ESTIMÉ', 'DÉLAI', 'ACTION'];
+
+  return (
+    <section>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+        <span style={{ fontFamily: MONO, letterSpacing: '2px', fontSize: 12, color: '#D4A843', fontWeight: 600 }}>
+          ✦ FILE D'ATTENTE RÉAPPROVISIONNEMENT
+        </span>
+        <div style={{ flex: 1, height: 0, borderTop: '1px dashed rgba(212,168,67,0.3)' }} />
+        <span style={{
+          fontFamily: MONO, fontSize: 10, color: '#F59E0B',
+          padding: '3px 10px', borderRadius: 999,
+          border: '1px solid rgba(245,158,11,0.4)', background: 'transparent',
+        }}>
+          3 commandes en attente
+        </span>
+      </div>
+
+      <div style={{
+        background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+        border: '1px solid rgba(245,158,11,0.15)',
+        borderTop: '2px solid #D4A843',
+        borderRadius: 12, overflow: 'hidden',
+      }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              {cols.map(c => (
+                <th key={c} style={{
+                  fontFamily: MONO, fontSize: 10, fontWeight: 600, letterSpacing: '0.15em',
+                  color: '#9CA3AF', textTransform: 'uppercase', padding: '12px 16px',
+                  textAlign: c === 'ACTION' ? 'center' : 'left',
+                  borderBottom: '1px solid rgba(255,255,255,0.06)',
+                }}>{c}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {REORDER_ROWS.map((r, i) => (
+              <tr
+                key={i}
+                style={{
+                  background: i % 2 === 1 ? 'rgba(212,168,67,0.03)' : 'transparent',
+                  transition: 'background 150ms',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.05)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = i % 2 === 1 ? 'rgba(212,168,67,0.03)' : 'transparent'; }}
+              >
+                <td style={{ padding: '12px 16px' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{
+                      width: 8, height: 8, borderRadius: '50%', background: r.color,
+                      boxShadow: r.priority === 'CRITIQUE' ? `0 0 6px ${r.color}` : 'none',
+                    }} />
+                    <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 600, color: r.color }}>{r.priority}</span>
+                  </span>
+                </td>
+                <td style={{ padding: '12px 16px', fontFamily: MONO, fontSize: 12, color: '#fff', fontWeight: 500 }}>{r.mat}</td>
+                <td style={{ padding: '12px 16px', fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>{r.fourn}</td>
+                <td style={{ padding: '12px 16px', fontFamily: MONO, fontSize: 12, fontWeight: 200, color: '#fff' }}>{r.qty}</td>
+                <td style={{ padding: '12px 16px', fontFamily: MONO, fontSize: 12, fontWeight: 200, color: '#D4A843' }}>{r.cost}</td>
+                <td style={{ padding: '12px 16px', fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>{r.delai}</td>
+                <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                  <button
+                    onClick={() => toast.success(`Commande ${r.mat} approuvée`)}
+                    style={{
+                      fontFamily: MONO, fontSize: 11, fontWeight: 600,
+                      background: '#D4A843', color: '#0F1629',
+                      border: 'none', borderRadius: 6, padding: '6px 14px',
+                      cursor: 'pointer', transition: 'opacity 200ms',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; }}
+                    onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
+                  >
+                    Approuver
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+              <td colSpan={7} style={{ padding: '14px 16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>
+                    Commande groupée : remise estimée <span style={{ color: '#22C55E', fontWeight: 600 }}>-4.2%</span> (<span style={{ color: '#22C55E', fontWeight: 600 }}>1,400 DH</span> économisés)
+                  </span>
+                  <button
+                    onClick={() => toast.success('Toutes les commandes approuvées')}
+                    style={{
+                      fontFamily: MONO, fontSize: 12, fontWeight: 600,
+                      background: '#D4A843', color: '#0F1629',
+                      border: 'none', borderRadius: 8, padding: '10px 24px',
+                      cursor: 'pointer', transition: 'opacity 200ms',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; }}
+                    onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
+                  >
+                    Approuver Tout
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      {/* AI Insight */}
+      <div style={{
+        borderLeft: '3px solid #D4A843',
+        padding: '14px 18px',
+        background: 'rgba(212,168,67,0.04)',
+        borderRadius: '0 8px 8px 0',
+        marginTop: 16,
+      }}>
+        <p style={{ fontFamily: MONO, fontSize: 13, color: '#9CA3AF', lineHeight: 1.7, marginBottom: 10 }}>
+          <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation :</span>{' '}
+          Grouper les commandes Gravette + Sable chez Carrières du Sud pour bénéficier d'une remise transport de{' '}
+          <span style={{ color: '#22C55E', fontWeight: 600 }}>-8%</span>. Livraison combinée possible jeudi 20 mars.
+        </p>
+        <span style={{
+          fontFamily: MONO, fontSize: 10, color: '#D4A843',
+          background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)',
+          padding: '4px 10px', borderRadius: 999,
+        }}>
+          Généré par IA · Claude Opus
+        </span>
+      </div>
+    </section>
+  );
+}
+
 // Fallback data when no DB recs
 const FALLBACK_RECS = [
   { id: 'f1', materiau: 'Adjuvant', recommended_qty: 500, urgency: 'CRITIQUE', fournisseur: 'Sika Maroc', unite: 'L', days_remaining: 1.5, created_at: '' },
