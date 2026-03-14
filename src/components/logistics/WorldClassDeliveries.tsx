@@ -221,6 +221,11 @@ function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; del
         </div>
         <IABadge />
         <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textAlign: 'center', margin: 0 }}>Revenu/jour: {v.revenue}</p>
+        {/* Driver info */}
+        <div style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 8, marginTop: 4 }}>
+          <p style={{ fontFamily: MONO, fontSize: 12, color: T.textPri, textAlign: 'center', margin: '0 0 2px' }}>{v.driver}</p>
+          <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textAlign: 'center', margin: 0 }}>{v.driverStats}</p>
+        </div>
       </div>
     </div>
   );
