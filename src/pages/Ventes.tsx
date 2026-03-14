@@ -716,7 +716,7 @@ export default function Ventes() {
                  <Receipt className="h-3.5 w-3.5" />
                  {t.pages.ventes.invoicesTab}
                </TabsTrigger>
-               <TabsTrigger value="calendar" className="shrink-0 whitespace-nowrap gap-2 rounded-[9px] px-[18px] py-2 text-xs font-medium transition-all data-[state=inactive]:text-slate-400/50 data-[state=inactive]:hover:text-slate-300/80 data-[state=inactive]:hover:bg-white/[0.03] data-[state=active]:bg-white/[0.06] data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-[0_1px_3px_rgba(0,0,0,0.2)]">
+               <TabsTrigger value="calendar" className="shrink-0 whitespace-nowrap gap-2 rounded-none px-[18px] py-2 text-xs font-medium transition-all data-[state=inactive]:text-[#9CA3AF] data-[state=inactive]:hover:text-slate-300/80 data-[state=inactive]:hover:bg-white/[0.03] data-[state=active]:bg-transparent data-[state=active]:text-[#D4A843] data-[state=active]:font-semibold data-[state=active]:shadow-none" data-active-border>
                  <Calendar className="h-3.5 w-3.5" />
                  {t.pages.ventes.calendarTab}
                </TabsTrigger>
