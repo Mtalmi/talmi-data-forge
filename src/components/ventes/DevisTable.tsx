@@ -444,7 +444,7 @@ export function DevisTable({
                     aria-label={`Sélectionner ${devis.devis_id}`}
                   />
                 </TableCell>
-                <TableCell className="font-mono font-medium" style={{ color: 'rgba(255,255,255,0.9)' }}>{devis.devis_id}</TableCell>
+                <TableCell style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontWeight: 500 }}>{devis.devis_id}</TableCell>
                 <TableCell style={{ color: 'rgba(255,255,255,0.9)' }}>
                   {devis.client ? (
                     <ClientHoverPreview clientId={devis.client_id || ''} clientName={devis.client.nom_client} />
