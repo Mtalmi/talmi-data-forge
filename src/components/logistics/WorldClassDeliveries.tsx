@@ -1421,7 +1421,7 @@ export default function WorldClassDeliveries() {
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead><tr>
-                      {['TOUPIE','CHAUFFEUR','LIVRAISONS','KM','REVENU','CARBURANT','MAINTENANCE','TEMPS MORT','PROFIT NET','DH/KM',''].map(h => <th key={h} style={tblHdr}>{h}</th>)}
+                      {['TOUPIE','CHAUFFEUR','LIVRAISONS','KM','REVENU','CARBURANT','MAINTENANCE','TEMPS MORT','PROFIT NET','DH/KM','RETOUR VIDE',''].map(h => <th key={h} style={tblHdr}>{h}</th>)}
                     </tr></thead>
                     <tbody>
                       {PROFIT_DATA.map((r, i) => (
