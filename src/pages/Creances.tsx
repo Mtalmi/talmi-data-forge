@@ -102,13 +102,14 @@ function AIEarlyWarningBanner({ warnings }: { warnings: { message: string; clien
   const [dismissed, setDismissed] = useState(false);
   if (dismissed || warnings.length === 0) return null;
   const now = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  const severityBorders = ['#EF4444', '#F59E0B', '#F59E0B'];
   return (
     <div
-      className="rounded-xl overflow-hidden animate-pulse-subtle"
+      className="rounded-xl overflow-hidden"
       style={{
-        background: 'rgba(239, 68, 68, 0.06)',
+        background: 'rgba(239, 68, 68, 0.05)',
         border: '1.5px solid rgba(239, 68, 68, 0.4)',
-        animation: 'pulse 3s ease-in-out infinite',
+        borderLeft: '4px solid #EF4444',
       }}
     >
       <div className="px-5 py-4">
@@ -119,18 +120,23 @@ function AIEarlyWarningBanner({ warnings }: { warnings: { message: string; clien
             </div>
             <div className="flex-1 min-w-0 space-y-3">
               <div className="flex items-center gap-2">
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+                <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, fontWeight: 700, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
                   ALERTE PRÉVENTIVE IA
                 </span>
                 <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontFamily: 'ui-monospace, monospace' }}>{now}</span>
               </div>
               {warnings.map((w, i) => (
-                <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '10px 14px' }}>
+                <div key={i} style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                  borderLeft: `3px solid ${severityBorders[i] || '#F59E0B'}`,
+                  borderRadius: 8, padding: '10px 14px',
+                }}>
                   <p style={{ fontSize: 12, color: '#ef4444', fontWeight: 600, marginBottom: 4 }}>⚠ {w.message}</p>
                   <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>
-                    Client: <span style={{ fontWeight: 600, color: '#F1F5F9' }}>{w.client}</span>
+                    Client: <span style={{ fontWeight: 700, color: w.client.includes('Sigma') ? '#EF4444' : '#F1F5F9' }}>{w.client}</span>
                   </p>
-                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>
+                  <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>
                     <span style={{ color: '#D4A843', fontWeight: 600 }}>Action →</span> {w.action}
                   </p>
                 </div>
