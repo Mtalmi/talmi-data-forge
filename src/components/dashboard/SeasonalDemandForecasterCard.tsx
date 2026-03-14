@@ -279,7 +279,7 @@ export function SeasonalDemandForecasterCard() {
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'brightness(1)'; e.currentTarget.style.background = `${ins.color}06`; }}
               >
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                  <div className="rounded-sm flex-shrink-0 mt-[3px]" style={{ width: 10, height: 10, background: ins.color }} />
+                  <div className="rounded-sm flex-shrink-0 mt-[3px]" style={{ width: 10, height: 10, background: '#D4A843' }} />
                   <p style={{ fontSize: 11, lineHeight: 1.7, color: T.textSec }}>
                     {(() => {
                       // Strip leading emoji
