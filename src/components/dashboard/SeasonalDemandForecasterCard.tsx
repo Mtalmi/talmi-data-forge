@@ -130,7 +130,7 @@ export function SeasonalDemandForecasterCard() {
           </span>
           <span style={{ color: '#D4A843', fontSize: 13, animation: 'agentSparkle 2s ease-in-out infinite' }}>✦</span>
           <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
-          <span style={{ fontFamily: "'SF Mono', ui-monospace, monospace", fontSize: 11, color: 'rgba(212,168,67,0.45)', whiteSpace: 'nowrap', marginRight: 8 }}>Dernière analyse: il y a 3h</span>
+          <span style={{ fontFamily: "monospace", fontSize: 11, color: 'rgba(212,168,67,0.6)', whiteSpace: 'nowrap', marginRight: 8 }}>Dernière analyse: il y a 3h</span>
         </div>
         {open ? <ChevronUp size={14} color={T.textDim} /> : <ChevronDown size={14} color={T.textDim} />}
       </button>
@@ -196,6 +196,7 @@ export function SeasonalDemandForecasterCard() {
                           display: 'inline-block', padding: '2px 8px', borderRadius: 999,
                           fontSize: 10, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace',
                           background: `${cc}15`, color: cc, border: '1px solid rgba(255,255,255,0.2)',
+                          boxShadow: '0 0 0 1px rgba(212,168,67,0.3)',
                         }}>{r.confiance}%</span>
                       </td>
                       <td style={{ padding: '10px 14px', fontSize: 11, color: T.textSec }}>{r.facteur}</td>
@@ -278,7 +279,7 @@ export function SeasonalDemandForecasterCard() {
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'brightness(1)'; e.currentTarget.style.background = `${ins.color}06`; }}
               >
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                  <div className="rounded-sm flex-shrink-0 mt-[3px]" style={{ width: 10, height: 10, background: ins.color }} />
+                  <div className="rounded-sm flex-shrink-0 mt-[3px]" style={{ width: 10, height: 10, background: '#D4A843' }} />
                   <p style={{ fontSize: 11, lineHeight: 1.7, color: T.textSec }}>
                     {(() => {
                       // Strip leading emoji

@@ -46,7 +46,7 @@ export function EnergyCostAnomalyWidget() {
             Confiance: 85%
           </span>
         </div>
-        <span style={{ fontFamily: "'SF Mono', ui-monospace, monospace", fontSize: 11, color: 'rgba(212,168,67,0.45)', whiteSpace: 'nowrap' }}>Dernière analyse: il y a 1h</span>
+        <span style={{ fontFamily: "monospace", fontSize: 11, color: 'rgba(212,168,67,0.6)', whiteSpace: 'nowrap' }}>Dernière analyse: il y a 1h</span>
       </div>
 
       {/* Status */}
@@ -58,9 +58,9 @@ export function EnergyCostAnomalyWidget() {
       {/* Anomaly list */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 10 }}>
         {anomalies.map((a, i) => (
-          <p key={i} style={{ fontSize: 10, lineHeight: 1.5, color: T.textSec, paddingLeft: 12, marginBottom: 8, borderLeft: '2px solid rgba(251,191,36,0.5)', borderRadius: 2, transition: 'all 0.2s ease', cursor: 'default' }}
-            onMouseEnter={e => { e.currentTarget.style.borderLeftColor = 'rgba(212,168,67,0.8)'; e.currentTarget.style.background = 'rgba(212,168,67,0.03)'; }}
-            onMouseLeave={e => { e.currentTarget.style.borderLeftColor = 'rgba(251,191,36,0.5)'; e.currentTarget.style.background = 'transparent'; }}
+          <p key={i} style={{ fontSize: 10, lineHeight: 1.5, color: T.textSec, paddingLeft: 12, marginBottom: 8, borderLeft: '2px solid #D4A843', borderRadius: 2, transition: 'all 0.2s ease', cursor: 'default' }}
+            onMouseEnter={e => { e.currentTarget.style.borderLeftColor = '#D4A843'; e.currentTarget.style.background = 'rgba(212,168,67,0.03)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderLeftColor = '#D4A843'; e.currentTarget.style.background = 'transparent'; }}
           >
             {a}
           </p>

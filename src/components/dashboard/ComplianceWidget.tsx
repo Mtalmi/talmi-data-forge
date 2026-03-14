@@ -44,7 +44,7 @@ export function ComplianceWidget() {
             Confiance: 78%
           </span>
         </div>
-        <span style={{ fontFamily: "'SF Mono', ui-monospace, monospace", fontSize: 11, color: 'rgba(212,168,67,0.45)', whiteSpace: 'nowrap' }}>Dernière analyse: il y a 2h</span>
+        <span style={{ fontFamily: "monospace", fontSize: 11, color: 'rgba(212,168,67,0.6)', whiteSpace: 'nowrap' }}>Dernière analyse: il y a 2h</span>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
