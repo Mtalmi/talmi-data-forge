@@ -536,7 +536,7 @@ export function BcTable({
                 
                 {/* FORMULA */}
                 <TableCell className="text-center">
-                  <span className="text-xs font-mono">{bc.formule_id}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 400, fontSize: 12 }}>{bc.formule_id}</span>
                 </TableCell>
                 
                 {/* DELIVERY DATE */}
