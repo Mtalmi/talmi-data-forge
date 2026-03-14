@@ -1282,6 +1282,28 @@ export default function WorldClassDeliveries() {
               </div>
             </section>
 
+            {/* FLEET STATUS STRIP */}
+            <div style={{ background: 'rgba(212,168,67,0.03)', borderRadius: 8, padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 0, fontFamily: MONO, fontSize: 11 }}>
+                {[
+                  { label: 'DISPONIBLES: 1', color: T.success, pulse: false },
+                  { label: 'EN LIVRAISON: 2', color: T.gold, pulse: true },
+                  { label: 'EN RETOUR: 1', color: T.textDim, pulse: false },
+                  { label: 'MAINTENANCE: 1', color: T.danger, pulse: false },
+                ].map((s, i) => (
+                  <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: s.color }}>
+                    {i > 0 && <span style={{ margin: '0 10px', color: `${T.gold}40` }}>·</span>}
+                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: s.color, flexShrink: 0, animation: s.pulse ? 'tbos-pulse 1.5s ease-in-out infinite' : 'none' }} />
+                    {s.label}
+                  </span>
+                ))}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: MONO, fontSize: 11 }}>
+                <span style={{ color: T.textDim }}>🍃 ÉMISSIONS CO₂: <span style={{ color: T.textPri }}>0.8 T</span></span>
+                <span style={{ color: T.success }}>↓ −15% vs mois dernier grâce à l'optimisation IA</span>
+              </div>
+            </div>
+
             {/* 3c. SANTÉ FLOTTE */}
             <section>
               <SectionHeader icon={Truck} label="Santé Flotte IA" />
