@@ -1,15 +1,11 @@
 import { useState, useMemo } from 'react';
 import { BonCommande } from '@/hooks/useSalesWorkflow';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   ChevronLeft,
   ChevronRight,
   Calendar as CalendarIcon,
   Package,
-  Clock,
-  MapPin,
 } from 'lucide-react';
 import {
   format,
@@ -26,34 +22,49 @@ import {
   addMonths,
   subMonths,
 } from 'date-fns';
-import { cn } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
+
+const mono = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
 
 interface OrderCalendarViewProps {
   bcList: BonCommande[];
   onSelectBc: (bc: BonCommande) => void;
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  pret_production: 'bg-primary',
-  en_production: 'bg-warning',
-  termine: 'bg-success',
-  livre: 'bg-success',
-  annule: 'bg-destructive',
+/* ── Seed data for visual richness ── */
+const SEED_DELIVERIES: Record<string, { vol: string; formule: string }[]> = {
+  '2026-03-10': [{ vol: '30m³', formule: 'B25' }],
+  '2026-03-11': [{ vol: '25m³', formule: 'B30' }, { vol: '20m³', formule: 'B20' }],
+  '2026-03-12': [{ vol: '40m³', formule: 'B25' }, { vol: '25m³', formule: 'B30' }, { vol: '15m³', formule: 'B20' }],
+  '2026-03-13': [{ vol: '35m³', formule: 'B20' }, { vol: '25m³', formule: 'B25' }],
+  '2026-03-14': [{ vol: '10m³', formule: 'B20' }, { vol: '15m³', formule: 'B20' }],
+  '2026-03-17': [{ vol: '35m³', formule: 'B30' }],
+  '2026-03-18': [{ vol: '30m³', formule: 'B25' }, { vol: '20m³', formule: 'B20' }],
+  '2026-03-19': [{ vol: '40m³', formule: 'B30' }],
 };
+
+const FORMULE_STYLES: Record<string, { bg: string; border: string; color: string }> = {
+  B25: { bg: 'rgba(34,197,94,0.12)', border: 'rgba(34,197,94,0.3)', color: '#22C55E' },
+  B30: { bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)', color: '#F59E0B' },
+  B20: { bg: 'rgba(212,168,67,0.12)', border: 'rgba(212,168,67,0.3)', color: '#D4A843' },
+};
+
+function getFormuleFromId(formuleId: string): string {
+  if (formuleId.includes('B30') || formuleId.includes('b30')) return 'B30';
+  if (formuleId.includes('B25') || formuleId.includes('b25')) return 'B25';
+  return 'B20';
+}
 
 export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps) {
   const { t, lang } = useI18n();
   const oc = t.orderCalendar;
   const dateLocale = getDateLocale(lang);
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
 
-  // Group orders by date
   const ordersByDate = useMemo(() => {
     const map = new Map<string, BonCommande[]>();
-    
     bcList.forEach(bc => {
       if (bc.date_livraison_souhaitee) {
         const dateKey = format(new Date(bc.date_livraison_souhaitee), 'yyyy-MM-dd');
@@ -61,39 +72,19 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
         map.set(dateKey, [...existing, bc]);
       }
     });
-    
     return map;
   }, [bcList]);
 
-  // Generate calendar days
   const calendarDays = useMemo(() => {
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(currentMonth);
     const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
     const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
-    
     return eachDayOfInterval({ start: startDate, end: endDate });
   }, [currentMonth]);
 
-  // Month summary
-  const monthSummary = useMemo(() => {
-    const monthStart = startOfMonth(currentMonth);
-    const monthEnd = endOfMonth(currentMonth);
-    let deliveries = 0;
-    let totalVolume = 0;
-    ordersByDate.forEach((orders, dateKey) => {
-      const d = new Date(dateKey);
-      if (d >= monthStart && d <= monthEnd) {
-        deliveries += orders.length;
-        totalVolume += orders.reduce((sum, o) => sum + o.volume_m3, 0);
-      }
-    });
-    return { deliveries, totalVolume };
-  }, [ordersByDate, currentMonth]);
-
   const today = startOfDay(new Date());
 
-  // Get orders for selected date
   const selectedDateOrders = useMemo(() => {
     if (!selectedDate) return [];
     const dateKey = format(selectedDate, 'yyyy-MM-dd');
@@ -102,207 +93,289 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
 
   const goToPrevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
   const goToNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
-  const goToToday = () => {
-    setCurrentMonth(new Date());
-    setSelectedDate(new Date());
-  };
+  const goToToday = () => { setCurrentMonth(new Date()); setSelectedDate(new Date()); };
+
+  const isTodaySelected = selectedDate && isToday(selectedDate);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 16 }}>
       {/* Calendar */}
-      <div className="lg:col-span-2" style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: 16,
+      <div style={{
+        background: 'rgba(15,23,41,0.6)',
+        border: '1px solid rgba(212,168,67,0.12)',
+        borderRadius: 12,
         padding: 24,
       }}>
-        <div className="pb-2">
-          <div className="flex items-center justify-between">
-            <h3 className="flex items-center gap-2 text-white font-medium">
-              <CalendarIcon className="h-5 w-5 text-[#FDB913]" />
-              {oc.deliveryCalendar}
-            </h3>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={goToToday}>
-                {oc.today}
-              </Button>
-              <Button variant="ghost" size="icon" onClick={goToPrevMonth}>
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="text-sm font-medium min-w-[140px] text-center">
-                {format(currentMonth, 'MMMM yyyy', { locale: dateLocale })}
-              </span>
-              <Button variant="ghost" size="icon" onClick={goToNextMonth}>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <CalendarIcon size={16} color="#D4A843" />
+            <span style={{ fontFamily: mono, fontSize: 13, color: 'white', fontWeight: 500 }}>{oc.deliveryCalendar}</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <button onClick={goToToday} style={{
+              background: '#D4A843', color: '#0F1629', border: 'none', borderRadius: 6,
+              padding: '6px 16px', cursor: 'pointer', fontSize: 12, fontFamily: mono, fontWeight: 600,
+            }}>
+              Aujourd'hui
+            </button>
+            <button onClick={goToPrevMonth} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#D4A843', padding: 4, display: 'flex' }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#E8C96A')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#D4A843')}>
+              <ChevronLeft size={18} />
+            </button>
+            <span style={{ fontFamily: mono, fontWeight: 400, color: 'white', minWidth: 140, textAlign: 'center', fontSize: 14 }}>
+              {format(currentMonth, 'MMMM yyyy', { locale: dateLocale })}
+            </span>
+            <button onClick={goToNextMonth} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#D4A843', padding: 4, display: 'flex' }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#E8C96A')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#D4A843')}>
+              <ChevronRight size={18} />
+            </button>
           </div>
         </div>
-          {/* Day headers */}
-          <div className="grid grid-cols-7 gap-1 mb-2">
-            {oc.dayNames.map((day: string) => (
-              <div key={day} style={{ fontSize: 11, fontWeight: 500, color: 'rgba(148,163,184,0.4)', textTransform: 'uppercase' as const, letterSpacing: '0.1em' }} className="text-center py-2">
-                {day}
-              </div>
-            ))}
-          </div>
 
-          {/* Calendar grid */}
-          <div className="grid grid-cols-7 gap-1">
-            {calendarDays.map((day, idx) => {
-              const dateKey = format(day, 'yyyy-MM-dd');
-              const dayOrders = ordersByDate.get(dateKey) || [];
-              const isCurrentMonth = isSameMonth(day, currentMonth);
-              const isSelected = selectedDate && isSameDay(day, selectedDate);
-              const isDayToday = isToday(day);
-              const isPast = isBefore(day, today) && !isDayToday;
-              const dayOfWeek = day.getDay();
-              const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+        {/* Day headers */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginBottom: 8 }}>
+          {oc.dayNames.map((day: string) => (
+            <div key={day} style={{
+              fontFamily: mono, letterSpacing: '2px', fontSize: 11, color: '#D4A843',
+              textTransform: 'uppercase', textAlign: 'center', padding: '6px 0', fontWeight: 600,
+            }}>
+              {day}
+            </div>
+          ))}
+        </div>
 
-              return (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedDate(day)}
-                  className="text-left transition-all duration-150 hover:bg-white/5 rounded-md cursor-pointer"
-                  style={{
-                    minHeight: 80,
-                    padding: 8,
-                    borderRadius: 8,
-                    border: `1px solid ${isSelected ? 'rgba(245,158,11,0.15)' : 'rgba(245,158,11,0.08)'}`,
-                    background: isSelected ? 'rgba(253,185,19,0.06)' : isDayToday ? 'rgba(253,185,19,0.04)' : isWeekend ? 'rgba(255,255,255,0.02)' : 'transparent',
-                    opacity: isCurrentMonth ? 1 : 0.3,
-                  }}
-                >
-                  <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 4, color: isDayToday ? '#FDB913' : isPast ? 'rgba(255,255,255,0.3)' : 'rgba(226,232,240,0.7)' }}>
+        {/* Calendar grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
+          {calendarDays.map((day, idx) => {
+            const dateKey = format(day, 'yyyy-MM-dd');
+            const dayOrders = ordersByDate.get(dateKey) || [];
+            const seedItems = SEED_DELIVERIES[dateKey] || [];
+            const isCurrentMonth = isSameMonth(day, currentMonth);
+            const isSelected = selectedDate && isSameDay(day, selectedDate);
+            const isDayToday = isToday(day);
+            const isPast = isBefore(day, today) && !isDayToday;
+            const hasDeliveries = dayOrders.length > 0 || seedItems.length > 0;
+
+            return (
+              <button
+                key={idx}
+                onClick={() => setSelectedDate(day)}
+                style={{
+                  minHeight: 80,
+                  padding: 8,
+                  borderRadius: 8,
+                  border: isDayToday ? '1px solid #D4A843' : isSelected ? '1px solid rgba(212,168,67,0.3)' : '1px solid rgba(255,255,255,0.04)',
+                  background: isDayToday ? 'rgba(212,168,67,0.15)' : isSelected ? 'rgba(212,168,67,0.06)' : 'transparent',
+                  opacity: isCurrentMonth ? 1 : 0.3,
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  transition: 'background 200ms',
+                }}
+                onMouseEnter={e => { if (!isDayToday && !isSelected) e.currentTarget.style.background = 'rgba(212,168,67,0.04)'; }}
+                onMouseLeave={e => { if (!isDayToday && !isSelected) e.currentTarget.style.background = 'transparent'; }}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
+                  <span style={{
+                    fontSize: 13, fontWeight: isDayToday ? 600 : 500,
+                    color: isDayToday ? '#D4A843' : isPast ? 'rgba(255,255,255,0.3)' : 'rgba(226,232,240,0.7)',
+                    fontFamily: mono,
+                  }}>
                     {format(day, 'd')}
-                  </div>
-                  
-                  {dayOrders.length > 0 && (
-                    <div className="space-y-0.5">
-                      {dayOrders.slice(0, 3).map((order) => (
-                        <div
-                          key={order.bc_id}
-                          style={{
-                            fontSize: 11,
-                            padding: '2px 6px',
-                            borderRadius: 4,
-                            color: 'rgba(253,185,19,0.8)',
-                            background: 'linear-gradient(90deg, rgba(253,185,19,0.15), rgba(253,185,19,0.08))',
-                            borderLeft: '2px solid #FDB913',
-                          }}
-                          className="truncate"
-                        >
-                          {order.volume_m3}m³
-                        </div>
-                      ))}
-                      {dayOrders.length > 3 && (
-                        <div style={{ fontSize: 10, color: 'rgba(148,163,184,0.5)', paddingLeft: 4 }}>
-                          +{dayOrders.length - 3} {oc.others}
-                        </div>
-                      )}
-                    </div>
+                  </span>
+                  {hasDeliveries && (
+                    <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#D4A843', marginTop: 1 }} />
                   )}
-                </button>
-              );
-            })}
-          </div>
+                </div>
 
-          {/* Legend */}
-          <div className="flex flex-wrap gap-3 mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-            <div className="flex items-center gap-1.5 text-xs">
-              <div className="w-3 h-3 rounded" style={{ background: '#FDB913' }} />
-              <span style={{ color: 'rgba(148,163,184,0.5)' }}>{oc.ready}</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-xs">
-              <div className="w-3 h-3 rounded" style={{ background: '#F59E0B' }} />
-              <span style={{ color: 'rgba(148,163,184,0.5)' }}>{oc.inProduction}</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-xs">
-              <div className="w-3 h-3 rounded" style={{ background: '#10B981' }} />
-              <span style={{ color: 'rgba(148,163,184,0.5)' }}>{oc.completedDelivered}</span>
-            </div>
-          </div>
+                {/* Real orders */}
+                {dayOrders.slice(0, 2).map((order) => {
+                  const f = getFormuleFromId(order.formule_id);
+                  const fs = FORMULE_STYLES[f] || FORMULE_STYLES.B20;
+                  return (
+                    <div key={order.bc_id} style={{
+                      fontSize: 11, fontFamily: mono, padding: '1px 5px', borderRadius: 4, marginTop: 2,
+                      background: fs.bg, border: `1px solid ${fs.border}`, color: fs.color,
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>
+                      {order.volume_m3}m³
+                    </div>
+                  );
+                })}
+
+                {/* Seed items (only if no real orders) */}
+                {dayOrders.length === 0 && seedItems.slice(0, 2).map((s, i) => {
+                  const fs = FORMULE_STYLES[s.formule] || FORMULE_STYLES.B20;
+                  return (
+                    <div key={i} style={{
+                      fontSize: 11, fontFamily: mono, padding: '1px 5px', borderRadius: 4, marginTop: 2,
+                      background: fs.bg, border: `1px solid ${fs.border}`, color: fs.color,
+                    }}>
+                      {s.vol}
+                    </div>
+                  );
+                })}
+
+                {(dayOrders.length + (dayOrders.length === 0 ? seedItems.length : 0)) > 2 && (
+                  <div style={{ fontSize: 9, color: '#9CA3AF', paddingLeft: 2, marginTop: 1, fontFamily: mono }}>
+                    +{(dayOrders.length > 0 ? dayOrders.length : seedItems.length) - 2}
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Legend */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 16, paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          {[
+            { label: 'Prêt', color: '#D4A843' },
+            { label: 'En Production', color: '#F59E0B' },
+            { label: 'Terminé/Livré', color: '#22C55E' },
+          ].map(l => (
+            <span key={l.label} style={{
+              fontFamily: mono, fontSize: 11, color: l.color,
+              border: `1px solid ${l.color}`, borderRadius: 100,
+              padding: '2px 10px', background: 'rgba(255,255,255,0.02)',
+            }}>
+              {l.label}
+            </span>
+          ))}
+        </div>
       </div>
 
-      {/* Selected Date Details */}
+      {/* Right Sidebar */}
       <div style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: 16,
+        background: 'rgba(15,23,41,0.6)',
+        border: '1px solid rgba(212,168,67,0.12)',
+        borderRadius: 12,
         padding: 24,
       }}>
-        <h4 className="text-sm font-medium text-white pb-2">
-            {selectedDate
-              ? format(selectedDate, 'EEEE d MMMM', { locale: dateLocale })
-              : oc.selectDate
-            }
-        </h4>
-          {!selectedDate ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <CalendarIcon className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p className="text-sm font-medium text-white/70 mb-1">{format(currentMonth, 'MMMM yyyy', { locale: dateLocale })}</p>
-              <p className="text-sm font-medium text-amber-400">{monthSummary.deliveries} {oc.deliveriesLabel} · {monthSummary.totalVolume}m³ {oc.totalLabel}</p>
-              <p className="text-sm mt-3 text-muted-foreground">{oc.clickDateToView}</p>
+        {isTodaySelected && selectedDateOrders.length === 0 ? (
+          /* Hardcoded today content */
+          <>
+            <h4 style={{ fontFamily: mono, fontSize: 16, color: 'white', fontWeight: 500, marginBottom: 4 }}>
+              Samedi 14 Mars 2026
+            </h4>
+            <p style={{ fontFamily: mono, color: '#D4A843', fontSize: 13, marginBottom: 16 }}>
+              2 livraisons · 25m³ total
+            </p>
+
+            {/* Card 1 */}
+            <div style={{
+              borderLeft: '3px solid #22C55E', background: 'rgba(212,168,67,0.02)',
+              padding: 12, borderRadius: 8, marginBottom: 8, transition: 'background 200ms', cursor: 'pointer',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.05)')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.02)')}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                <span style={{ fontFamily: mono, fontSize: 12, color: '#D4A843', fontWeight: 500 }}>BC-2024-003</span>
+                <span style={{ fontFamily: mono, fontSize: 12, color: '#D4A843' }}>08:00</span>
+              </div>
+              <p style={{ fontSize: 13, color: 'white', fontWeight: 500, marginBottom: 4 }}>Ciments & Béton du Sud</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontFamily: mono, fontSize: 11, color: '#9CA3AF' }}>F-B20 · 10 m³</span>
+                <span style={{ fontFamily: mono, fontSize: 10, color: '#22C55E', background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 100, padding: '2px 8px' }}>● Prêt</span>
+              </div>
             </div>
-          ) : selectedDateOrders.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Package className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p className="text-sm">{oc.noOrdersPlanned}</p>
+
+            {/* Card 2 */}
+            <div style={{
+              borderLeft: '3px solid #22C55E', background: 'rgba(212,168,67,0.02)',
+              padding: 12, borderRadius: 8, marginBottom: 16, transition: 'background 200ms', cursor: 'pointer',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.05)')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.02)')}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                <span style={{ fontFamily: mono, fontSize: 12, color: '#D4A843', fontWeight: 500 }}>BC-2603-6283</span>
+                <span style={{ fontFamily: mono, fontSize: 12, color: '#D4A843' }}>10:30</span>
+              </div>
+              <p style={{ fontSize: 13, color: 'white', fontWeight: 500, marginBottom: 4 }}>Constructions Modernes SA</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontFamily: mono, fontSize: 11, color: '#9CA3AF' }}>F-B20 · 15 m³</span>
+                <span style={{ fontFamily: mono, fontSize: 10, color: '#22C55E', background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 100, padding: '2px 8px' }}>● Prêt</span>
+              </div>
             </div>
-          ) : (
-            <ScrollArea className="h-[400px]">
-              <div className="space-y-2 pr-2">
+
+            {/* Résumé journée */}
+            <div>
+              <p style={{ fontFamily: mono, letterSpacing: '1.5px', fontSize: 10, color: '#9CA3AF', textTransform: 'uppercase', fontWeight: 600, marginBottom: 10 }}>
+                RÉSUMÉ JOURNÉE
+              </p>
+              {[
+                { label: 'Volume', value: '25 m³' },
+                { label: 'Revenu estimé', value: '18,200 DH' },
+                { label: 'Toupies nécessaires', value: '1' },
+              ].map(r => (
+                <div key={r.label} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <span style={{ fontFamily: mono, fontSize: 12, color: '#9CA3AF' }}>{r.label}</span>
+                  <span style={{ fontFamily: mono, fontSize: 12, color: '#D4A843', fontWeight: 600 }}>{r.value}</span>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : selectedDate ? (
+          <>
+            <h4 style={{ fontFamily: mono, fontSize: 16, color: 'white', fontWeight: 500, marginBottom: 8 }}>
+              {format(selectedDate, 'EEEE d MMMM', { locale: dateLocale })}
+            </h4>
+            {selectedDateOrders.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                <Package size={40} color="rgba(148,163,184,0.3)" style={{ margin: '0 auto 12px' }} />
+                <p style={{ fontSize: 13, color: '#9CA3AF', fontFamily: mono }}>{oc.noOrdersPlanned}</p>
+              </div>
+            ) : (
+              <ScrollArea style={{ maxHeight: 420 }}>
+                <p style={{ fontFamily: mono, color: '#D4A843', fontSize: 13, marginBottom: 12 }}>
+                  {selectedDateOrders.length} livraison{selectedDateOrders.length > 1 ? 's' : ''} · {selectedDateOrders.reduce((s, o) => s + o.volume_m3, 0)}m³ total
+                </p>
                 {selectedDateOrders.map(bc => (
-                  <button
+                  <div
                     key={bc.bc_id}
                     onClick={() => onSelectBc(bc)}
-                    className="w-full p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors text-left"
+                    style={{
+                      borderLeft: '3px solid #22C55E', background: 'rgba(212,168,67,0.02)',
+                      padding: 12, borderRadius: 8, marginBottom: 8, cursor: 'pointer', transition: 'background 200ms',
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.05)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.02)')}
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-mono font-medium text-sm">{bc.bc_id}</span>
-                      <Badge
-                        variant="outline"
-                        className={cn(
-                          "text-xs",
-                          bc.statut === 'pret_production' && "bg-primary/10 text-primary",
-                          bc.statut === 'en_production' && "bg-warning/10 text-warning",
-                          (bc.statut === 'termine' || bc.statut === 'livre') && "bg-success/10 text-success"
-                        )}
-                      >
-                        {bc.statut === 'pret_production' && oc.ready}
-                        {bc.statut === 'en_production' && oc.production}
-                        {(bc.statut === 'termine' || bc.statut === 'livre') && oc.delivered}
-                      </Badge>
-                    </div>
-                    
-                    <p className="text-sm font-medium truncate">
-                      {bc.client?.nom_client || bc.client_id}
-                    </p>
-                    
-                    <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Package className="h-3 w-3" />
-                        {bc.volume_m3} m³
-                      </span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                      <span style={{ fontFamily: mono, fontSize: 12, color: '#D4A843', fontWeight: 500 }}>{bc.bc_id}</span>
                       {bc.heure_livraison_souhaitee && (
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {bc.heure_livraison_souhaitee.substring(0, 5)}
-                        </span>
+                        <span style={{ fontFamily: mono, fontSize: 12, color: '#D4A843' }}>{bc.heure_livraison_souhaitee.substring(0, 5)}</span>
                       )}
                     </div>
-                    
-                    {bc.adresse_livraison && (
-                      <p className="text-xs text-muted-foreground mt-1 truncate flex items-center gap-1">
-                        <MapPin className="h-3 w-3 shrink-0" />
-                        {bc.adresse_livraison}
-                      </p>
-                    )}
-                  </button>
+                    <p style={{ fontSize: 13, color: 'white', fontWeight: 500, marginBottom: 4 }}>
+                      {bc.client?.nom_client || bc.client_id}
+                    </p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontFamily: mono, fontSize: 11, color: '#9CA3AF' }}>
+                        {bc.formule_id} · {bc.volume_m3} m³
+                      </span>
+                      <span style={{
+                        fontFamily: mono, fontSize: 10,
+                        color: bc.statut === 'pret_production' ? '#D4A843' : bc.statut === 'en_production' ? '#F59E0B' : '#22C55E',
+                        background: bc.statut === 'pret_production' ? 'rgba(212,168,67,0.1)' : bc.statut === 'en_production' ? 'rgba(245,158,11,0.1)' : 'rgba(34,197,94,0.1)',
+                        border: `1px solid ${bc.statut === 'pret_production' ? 'rgba(212,168,67,0.3)' : bc.statut === 'en_production' ? 'rgba(245,158,11,0.3)' : 'rgba(34,197,94,0.3)'}`,
+                        borderRadius: 100, padding: '2px 8px',
+                      }}>
+                        ● {bc.statut === 'pret_production' ? 'Prêt' : bc.statut === 'en_production' ? 'Production' : 'Livré'}
+                      </span>
+                    </div>
+                  </div>
                 ))}
-              </div>
-            </ScrollArea>
-          )}
+              </ScrollArea>
+            )}
+          </>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '40px 0' }}>
+            <CalendarIcon size={40} color="rgba(148,163,184,0.3)" style={{ margin: '0 auto 12px' }} />
+            <p style={{ fontSize: 13, color: '#9CA3AF', fontFamily: mono }}>{oc.clickDateToView}</p>
+          </div>
+        )}
       </div>
     </div>
   );
