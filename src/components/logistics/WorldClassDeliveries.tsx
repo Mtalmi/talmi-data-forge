@@ -1473,7 +1473,7 @@ export default function WorldClassDeliveries() {
                           <td style={{ ...tblCell, color: T.textSec }}>{r.chauffeur}</td>
                           <td style={monoCell}>{r.livraisons}</td>
                           <td style={monoCell}>{r.km} km</td>
-                          <td style={{ ...monoCell, color: r.revenu > 0 ? T.textPri : T.textDim }}>{r.revenu.toLocaleString('fr-MA')} DH</td>
+                          <td style={{ ...monoCell, color: r.revenu > 0 ? T.gold : T.textDim }}>{r.revenu.toLocaleString('fr-MA')} DH</td>
                           <td style={{ ...monoCell, color: T.danger }}>{r.carburant.toLocaleString('fr-MA')} DH</td>
                           <td style={{ ...monoCell, color: T.danger }}>{r.maintenance.toLocaleString('fr-MA')} DH</td>
                           <td style={{ ...monoCell, color: r.tempsMort === 'MAINTENANCE' ? T.danger : T.textDim }}>{r.tempsMort}</td>
