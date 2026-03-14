@@ -783,7 +783,12 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                   fontFamily: 'DM Sans, sans-serif',
                 }}
               >
-                {tab.label}
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  {'hasPulse' in tab && tab.hasPulse && (
+                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#EF4444', display: 'inline-block', animation: 'survPulse 2s infinite', flexShrink: 0 }} />
+                  )}
+                  {tab.label}
+                </span>
               </button>
             );
           })}
