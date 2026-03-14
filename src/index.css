@@ -4740,7 +4740,7 @@ textarea.valid {
 }
 .recharts-area-curve,
 .recharts-line-curve {
-  filter: drop-shadow(0 0 4px hsl(var(--primary) / 0.3));
+  filter: drop-shadow(0 0 4px rgba(212, 168, 67, 0.3));
 }
 .recharts-bar-rectangle path {
   transition:
@@ -4750,6 +4750,18 @@ textarea.valid {
 .recharts-bar-rectangle:hover path {
   filter: brightness(1.2);
   opacity: 0.95;
+}
+
+/* ─── Chart container inset depth (Bloomberg terminal) ─── */
+.recharts-responsive-container,
+.recharts-wrapper {
+  border-radius: 4px;
+}
+
+/* ─── Gold border-top glow on cards ─── */
+[style*="border-top"][style*="D4A843"],
+[style*="border-top"][style*="d4a843"] {
+  box-shadow: 0 -1px 8px rgba(212, 168, 67, 0.08);
 }
 
 /* ─── Section reveal animation ─── */
