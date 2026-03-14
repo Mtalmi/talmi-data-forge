@@ -1176,9 +1176,9 @@ export default function Dashboard() {
             </div>
 
             {/* ── Production Chart ── */}
-            <div className="flex gap-3 px-5 pb-4 pt-3 z-10 relative" style={{ minHeight: 320 }}>
+            <div className="flex gap-3 px-5 pb-4 pt-3 z-10 relative" style={{ minHeight: 320, alignItems: 'stretch' }}>
               {/* Chart panel */}
-              <div className="flex-[4] min-w-0 bg-gradient-to-b from-white/[0.03] to-transparent border border-white/[0.06] rounded-xl p-5 h-full relative overflow-hidden">
+              <div className="flex-[4] min-w-0 bg-gradient-to-b from-white/[0.03] to-transparent border border-white/[0.06] rounded-xl p-5 relative overflow-hidden" style={{ display: 'flex', flexDirection: 'column' }}>
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 50 }} />
                 <div className="flex justify-between items-center mb-1">
                   <div>
