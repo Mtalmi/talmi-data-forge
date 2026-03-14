@@ -1109,131 +1109,150 @@ export default function WorldClassClients() {
         {/* ═══════════════════════════════════════════════ */}
         {pageTab === 'analytique' && (
           <div key="analytique" style={{ display: 'flex', flexDirection: 'column', gap: 40, animation: 'tab-fade-in 200ms ease forwards' }}>
-            {/* Revenue Trend — full width at top */}
+
+            {/* ── ROW 1: REVENUE HEATMAP ── */}
             <section>
-              <SectionHeader icon={Banknote} label="Évolution CA Clients" right={
-                <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: '#D4A843' }}>{totalNewCA}K DH</span>
-              } />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, borderTop: '2px solid #D4A843', paddingTop: 16 }}>
+                <span style={{ color: '#D4A843', fontFamily: MONO, fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '2px' }}>✦ CARTE DE REVENUS</span>
+                <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(212,168,67,0.3), transparent 80%)' }} />
+              </div>
               <Card goldBorder>
-                <ResponsiveContainer width="100%" height={240}>
-                  <AreaChart data={trendData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="caGradGod" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#D4A843" stopOpacity={0.12} />
-                        <stop offset="100%" stopColor="#D4A843" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,168,67,0.08)" vertical={false} />
-                    <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 11, fontFamily: MONO }} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 10, fontFamily: MONO }} tickFormatter={v => `${v}K`} />
-                    <RechartsTooltip content={<DarkTooltip suffix="K DH" />} cursor={{ stroke: `${T.gold}40` }} />
-                    <Area
-                      dataKey="ca"
-                      name="CA"
-                      type="monotone"
-                      stroke="#D4A843"
-                      strokeWidth={2.5}
-                      fill="url(#caGradGod)"
-                      animationDuration={1200}
-                      dot={(props: any) => {
-                        const { cx, cy, index } = props;
-                        const isLast = index === trendData.length - 1;
-                        if (isLast) {
-                          return (
-                            <g key={`pulse-${index}`}>
-                              <circle cx={cx} cy={cy} r={5} fill="#D4A843" />
-                              <circle cx={cx} cy={cy} r={5} fill="#D4A843" opacity={0.5}>
-                                <animate attributeName="r" from="5" to="12" dur="2s" repeatCount="indefinite" />
-                                <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite" />
-                              </circle>
-                            </g>
-                          );
-                        }
-                        return <circle key={`dot-${index}`} cx={cx} cy={cy} r={4} fill="#D4A843" />;
-                      }}
-                      activeDot={{ r: 6, fill: '#D4A843', stroke: '#0F1629', strokeWidth: 2 }}
-                    />
-                    <Bar dataKey="nouveaux" name="Nouveaux clients" fill={T.info} radius={[3, 3, 0, 0]} animationDuration={1000} />
-                  </AreaChart>
-                </ResponsiveContainer>
-                {/* Summary strip */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16, paddingTop: 12, borderTop: '1px solid rgba(212,168,67,0.08)' }}>
-                  {[
-                    { label: 'PIC', value: `${trendMax?.ca || 0}K`, sub: trendMax?.month || '' },
-                    { label: 'CREUX', value: `${trendMin?.ca || 0}K`, sub: trendMin?.month || '' },
-                    { label: 'MOY.', value: `${trendAvg}K/mois`, sub: '' },
-                    { label: 'CROISSANCE', value: `${trendGrowth >= 0 ? '+' : ''}${trendGrowth}%`, sub: '' },
-                  ].map((s, i) => (
-                    <div key={i} style={{ textAlign: 'center' }}>
-                      <p style={{ fontFamily: MONO, fontSize: 9, color: '#9CA3AF', letterSpacing: '1px', marginBottom: 4 }}>{s.label}</p>
-                      <p style={{ fontFamily: MONO, fontSize: 14, fontWeight: 600, color: '#D4A843' }}>
-                        {s.value}{s.sub && <span style={{ fontSize: 10, color: '#9CA3AF', marginLeft: 4 }}>· {s.sub}</span>}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                <RevenueHeatmap />
               </Card>
             </section>
 
-            {/* Top clients + Segments side by side */}
+            {/* ── ROW 2: CHARTS ── */}
             <section>
               <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 24 }}>
+                {/* Left: CA Evolution */}
                 <Card goldBorder>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                    <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, fontFamily: MONO }}>Top Clients par CA</p>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <span style={{ fontFamily: MONO, fontWeight: 600, color: '#D4A843', fontSize: 14 }}>{Math.round(totalCA / 1000)}K DH</span>
-                      <span style={{ border: '1px solid #D4A843', color: '#D4A843', fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 999 }}>Top {topClients.length}</span>
-                    </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                    <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, fontFamily: MONO }}>Évolution CA Clients</p>
+                    <span style={{ fontFamily: MONO, fontWeight: 600, color: '#D4A843', fontSize: 14 }}>{Math.round(totalCA / 1000)}K DH</span>
                   </div>
-                  {topClients.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={220}>
-                      <BarChart data={topClients} layout="vertical" margin={{ top: 0, right: 50, left: 10, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id="barGoldGrad" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stopColor="#C49A3C" />
-                            <stop offset="100%" stopColor="#D4A843" />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} horizontal={false} />
-                        <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#9CA3AF', fontSize: 10, fontFamily: MONO }} tickFormatter={v => `${v}K`} />
-                        <YAxis dataKey="client" type="category" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 13, fontFamily: MONO }} width={120} />
-                        <RechartsTooltip content={<DarkTooltip suffix=" K DH" />} cursor={{ fill: `${T.gold}08` }} />
-                        <Bar dataKey="ca" name="CA" radius={[0, 6, 6, 0]} animationDuration={1000} fill="url(#barGoldGrad)" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  ) : (
-                    <div style={{ minHeight: 180, maxHeight: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
-                  )}
+                  <ResponsiveContainer width="100%" height={220}>
+                    <AreaChart data={trendData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="caGradAnalytique" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#D4A843" stopOpacity={0.12} />
+                          <stop offset="100%" stopColor="#D4A843" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,168,67,0.08)" vertical={false} />
+                      <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 11, fontFamily: MONO }} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 10, fontFamily: MONO }} tickFormatter={(v: number) => `${v}K`} />
+                      <RechartsTooltip content={<DarkTooltip suffix="K DH" />} cursor={{ stroke: 'rgba(212,168,67,0.4)', strokeDasharray: '4 4' }} />
+                      <Area dataKey="ca" name="CA" type="monotone" stroke="#D4A843" strokeWidth={2.5} fill="url(#caGradAnalytique)" animationDuration={1200}
+                        dot={(props: any) => {
+                          const { cx, cy, index } = props;
+                          const isLast = index === trendData.length - 1;
+                          if (isLast) {
+                            return (
+                              <g key={`pulse-a-${index}`}>
+                                <circle cx={cx} cy={cy} r={5} fill="#D4A843" />
+                                <circle cx={cx} cy={cy} r={5} fill="#D4A843" opacity={0.5}>
+                                  <animate attributeName="r" from="5" to="12" dur="2s" repeatCount="indefinite" />
+                                  <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite" />
+                                </circle>
+                              </g>
+                            );
+                          }
+                          return <circle key={`dot-a-${index}`} cx={cx} cy={cy} r={3.5} fill="#D4A843" />;
+                        }}
+                        activeDot={{ r: 6, fill: '#D4A843', stroke: '#0F1629', strokeWidth: 2 }}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                  {/* Summary strip */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 14, paddingTop: 10, borderTop: '1px solid rgba(212,168,67,0.08)' }}>
+                    {[
+                      { label: 'PIC', value: `${trendMax?.ca || 1200}K`, sub: trendMax?.month || 'Jan' },
+                      { label: 'CREUX', value: `${trendMin?.ca || 300}K`, sub: trendMin?.month || 'Oct' },
+                      { label: 'MOY.', value: `${trendAvg || 750}K/mois`, sub: '' },
+                      { label: 'CROISSANCE', value: `${trendGrowth >= 0 ? '+' : ''}${trendGrowth || 12}%`, sub: '' },
+                    ].map((s, i) => (
+                      <div key={i} style={{ textAlign: 'center' }}>
+                        <p style={{ fontFamily: MONO, fontSize: 9, color: '#9CA3AF', letterSpacing: '1px', marginBottom: 4 }}>{s.label}</p>
+                        <p style={{ fontFamily: MONO, fontSize: 12, fontWeight: 600, color: '#D4A843' }}>
+                          {s.value}{s.sub && <span style={{ fontSize: 10, color: '#9CA3AF', marginLeft: 4 }}>· {s.sub}</span>}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </Card>
 
-                <Card goldBorder>
-                  <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginBottom: 16, fontFamily: MONO }}>Segmentation</p>
-                  {segments.length > 0 ? (
-                    <>
-                      <ResponsiveContainer width="100%" height={160}>
-                        <PieChart>
-                          <Pie data={segments} cx="50%" cy="50%" innerRadius={52} outerRadius={72} dataKey="value" animationDuration={600} label={false}>
-                            {segments.map((seg, i) => <Cell key={i} fill={seg.color} />)}
-                          </Pie>
-                          <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: MONO, fontSize: 28, fontWeight: 100, fill: '#D4A843' }}>{totalClients}</text>
-                          <text x="50%" y="60%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 10, fill: T.textSec, fontFamily: MONO }}>clients</text>
-                        </PieChart>
+                {/* Right: stacked Top Clients + Segmentation */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                  <Card goldBorder>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                      <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, fontFamily: MONO }}>Top Clients par CA</p>
+                      <span style={{ border: '1px solid #D4A843', color: '#D4A843', fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 999 }}>Top {topClients.length}</span>
+                    </div>
+                    {topClients.length > 0 ? (
+                      <ResponsiveContainer width="100%" height={180}>
+                        <BarChart data={topClients} layout="vertical" margin={{ top: 0, right: 40, left: 10, bottom: 0 }}>
+                          <defs>
+                            <linearGradient id="barGoldGrad2" x1="0" y1="0" x2="1" y2="0">
+                              <stop offset="0%" stopColor="#C49A3C" />
+                              <stop offset="100%" stopColor="#D4A843" />
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} horizontal={false} />
+                          <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#9CA3AF', fontSize: 10, fontFamily: MONO }} tickFormatter={(v: number) => `${v}K`} />
+                          <YAxis dataKey="client" type="category" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 12, fontFamily: MONO }} width={110} />
+                          <RechartsTooltip content={<DarkTooltip suffix=" K DH" />} cursor={{ fill: 'rgba(212,168,67,0.04)' }} />
+                          <Bar dataKey="ca" name="CA" radius={[0, 6, 6, 0]} animationDuration={1000} fill="url(#barGoldGrad2)" />
+                        </BarChart>
                       </ResponsiveContainer>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 8 }}>
-                        {segments.map(seg => (
-                          <div key={seg.name} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                            <div style={{ width: 8, height: 8, borderRadius: 2, background: seg.color, flexShrink: 0 }} />
-                            <span style={{ color: T.textSec, fontSize: 12, fontFamily: MONO }}>{seg.name}</span>
-                            <span style={{ fontFamily: MONO, fontSize: 10, color: seg.color, marginLeft: 'auto' }}>{seg.value}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </>
-                  ) : (
-                    <div style={{ minHeight: 180, maxHeight: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
-                  )}
-                </Card>
+                    ) : (
+                      <div style={{ minHeight: 140, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
+                    )}
+                  </Card>
+
+                  <Card goldBorder>
+                    <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginBottom: 12, fontFamily: MONO }}>Segmentation</p>
+                    {segments.length > 0 ? (
+                      <>
+                        <ResponsiveContainer width="100%" height={130}>
+                          <PieChart>
+                            <Pie data={segments} cx="50%" cy="50%" innerRadius={42} outerRadius={60} dataKey="value" animationDuration={600} label={false}>
+                              {segments.map((seg, i) => <Cell key={i} fill={seg.color} />)}
+                            </Pie>
+                            <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: MONO, fontSize: 24, fontWeight: 100, fill: '#D4A843' }}>{totalClients}</text>
+                            <text x="50%" y="60%" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 9, fill: T.textSec, fontFamily: MONO }}>clients</text>
+                          </PieChart>
+                        </ResponsiveContainer>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, marginTop: 6 }}>
+                          {segments.map(seg => (
+                            <div key={seg.name} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                              <div style={{ width: 7, height: 7, borderRadius: 2, background: seg.color, flexShrink: 0 }} />
+                              <span style={{ color: T.textSec, fontSize: 11, fontFamily: MONO }}>{seg.name}</span>
+                              <span style={{ fontFamily: MONO, fontSize: 10, color: seg.color, marginLeft: 'auto' }}>{seg.value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <div style={{ minHeight: 140, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
+                    )}
+                  </Card>
+                </div>
+              </div>
+            </section>
+
+            {/* ── ROW 3: AI INSIGHT ── */}
+            <section>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16, borderTop: '2px solid #D4A843', paddingTop: 16 }}>
+                <span style={{ color: '#D4A843', fontFamily: MONO, fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '2px' }}>✦ INSIGHT IA — ANALYSE PORTEFEUILLE</span>
+                <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(212,168,67,0.3), transparent 80%)' }} />
+              </div>
+              <div style={{ background: 'rgba(212,168,67,0.02)', borderLeft: '3px solid #D4A843', borderRadius: '0 12px 12px 0', padding: 20 }}>
+                <p style={{ fontSize: 14, lineHeight: 1.8, color: '#94A3B8' }}>
+                  Le portefeuille est concentré : <span style={{ color: '#F1F5F9', fontWeight: 500 }}>2 clients</span> (<span style={{ color: '#F1F5F9', fontWeight: 500 }}>TGCC</span> + <span style={{ color: '#F1F5F9', fontWeight: 500 }}>Constructions Modernes</span>) représentent <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>62%</span> du CA. La croissance de <span style={{ color: '#F1F5F9', fontWeight: 500 }}>Saudi Readymix</span> (<span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>+100%</span> en mars) compense partiellement le déclin de <span style={{ color: '#F1F5F9', fontWeight: 500 }}>Ciments & Béton du Sud</span> (<span style={{ fontFamily: MONO, color: '#EF4444', fontWeight: 600 }}>-33%</span>). <span style={{ color: '#F1F5F9', fontWeight: 500 }}>Sigma Bâtiment</span> est fonctionnellement perdu — dernier CA en décembre. Recommandation : diversifier avec <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>2-3</span> nouveaux comptes Mid-Market pour réduire la dépendance aux <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>2</span> clients majeurs.
+                </p>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
+                  <span style={{ background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', fontSize: 11, borderRadius: 9999, padding: '2px 10px', fontWeight: 600, fontFamily: MONO }}>✨ Généré par IA · Claude Opus</span>
+                </div>
               </div>
             </section>
           </div>
