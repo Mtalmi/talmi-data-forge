@@ -1436,6 +1436,7 @@ export default function WorldClassDeliveries() {
                           <td style={{ ...monoCell, color: r.tempsMort === 'MAINTENANCE' ? T.danger : T.textDim }}>{r.tempsMort}</td>
                           <td style={{ ...monoCell, color: r.profit >= 0 ? T.success : T.danger, fontWeight: 700 }}>{r.profit.toLocaleString('fr-MA')} DH</td>
                           <td style={{ ...monoCell, color: T.gold, fontWeight: 700 }}>{r.dhKm > 0 ? `${r.dhKm} DH/km` : '—'}</td>
+                          <td style={{ ...monoCell, color: r.retourVideColor }}>{r.retourVide}</td>
                           <td style={tblCell}>
                             {r.badge && <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: `${r.badgeColor}18`, color: r.badgeColor, border: `1px solid ${r.badgeColor}40` }}>{r.badge}</span>}
                           </td>
