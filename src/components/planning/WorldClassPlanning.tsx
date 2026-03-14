@@ -351,12 +351,18 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick }: { slot: { pro
 
    if (!slot) {
     return (
-      <div style={{
-        opacity: visible ? 1 : 0, transition: 'opacity 500ms ease-out',
-        border: '1px dashed rgba(212, 168, 67, 0.2)', borderRadius: 8, padding: '10px 12px',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 58,
-      }}>
-        <span style={{ color: 'rgba(212, 168, 67, 0.4)', fontSize: 10 }}>Disponible</span>
+      <div
+        style={{
+          opacity: visible ? 1 : 0, transition: 'all 500ms ease-out',
+          border: '1px dashed rgba(212, 168, 67, 0.2)', borderRadius: 8, padding: '10px 12px',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 58,
+          cursor: 'pointer', background: hov ? 'rgba(212,168,67,0.05)' : 'transparent',
+        }}
+        onMouseEnter={() => setHov(true)}
+        onMouseLeave={() => setHov(false)}
+      >
+        <span style={{ color: 'rgba(212, 168, 67, 0.5)', fontSize: 20, lineHeight: 1, opacity: hov ? 1 : 0, transition: 'opacity 200ms' }}>+</span>
+        <span style={{ color: 'rgba(212, 168, 67, 0.4)', fontSize: 10, marginTop: hov ? 2 : 0 }}>Disponible</span>
       </div>
     );
   }
