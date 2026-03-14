@@ -689,7 +689,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
         {/* ═══════════════════════════════════════════════════
             ZONE 1: DISPATCH EN DIRECT
             ═══════════════════════════════════════════════════ */}
-        <section ref={dispatchRef}>
+        <div ref={dispatchRef}>
           <ZoneHeader
             icon="⚡"
             label="DISPATCH EN DIRECT"
