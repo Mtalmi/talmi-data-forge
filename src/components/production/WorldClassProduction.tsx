@@ -1053,9 +1053,10 @@ export default function WorldClassProduction() {
                     padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500,
                     background: 'rgba(16,185,129,0.15)',
                     color: '#34d399',
+                    boxShadow: '0 0 10px rgba(34,197,94,0.25)',
                   }}>Excellent</span>
                 </div>
-                <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 48, fontWeight: 400, color: '#fff' }}>96.8%</p>
+                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 48, fontWeight: 200, color: '#D4A843' }}>96.8%</p>
               </div>
 
               <div style={{

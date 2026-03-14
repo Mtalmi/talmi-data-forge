@@ -71,16 +71,35 @@ export function ProductionBriefingCard() {
         {hasBriefing ? (
           <>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 10 }}>
-              {[
-                'Production stable: 12 batches livrés sur 15 planifiés. Rendement ciment optimal à 98.2%.',
-                '⚠ Attention: léger écart formule B30 (affaissement +8mm). Vérifier calibrage doseur eau avant prochain batch.',
-                'Recommandation: Stock sable à surveiller (72% capacité). Pré-commander si tendance maintenue.',
-              ].map((line, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                  <span style={{ color: '#D4A843', fontSize: 18, lineHeight: 1, flexShrink: 0, marginTop: 1 }}>•</span>
-                  <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, lineHeight: 1.7, margin: 0 }}>{line}</p>
-                </div>
-              ))}
+              {(() => {
+                const lines = [
+                  { text: 'Production stable: 12 batches livrés sur 15 planifiés. Rendement ciment optimal à 98.2%.', type: 'normal' },
+                  { text: '⚠ Attention: léger écart formule B30 (affaissement +8mm). Vérifier calibrage doseur eau avant prochain batch.', type: 'warning' },
+                  { text: 'Recommandation: Stock sable à surveiller (72% capacité). Pré-commander si tendance maintenue.', type: 'recommendation' },
+                ];
+                return lines.map((line, i) => {
+                  if (line.type === 'recommendation') {
+                    return (
+                      <div key={i} style={{ background: 'rgba(212,168,67,0.04)', borderLeft: '3px solid #D4A843', padding: 10, marginTop: 6, borderRadius: '0 6px 6px 0' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                          <span style={{ color: '#D4A843', fontSize: 18, lineHeight: 1, flexShrink: 0, marginTop: 1 }}>•</span>
+                          <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, lineHeight: 1.7, margin: 0 }}>{line.text}</p>
+                        </div>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                      <span style={{ color: '#D4A843', fontSize: 18, lineHeight: 1, flexShrink: 0, marginTop: 1 }}>•</span>
+                      <p style={{ color: line.type === 'warning' ? '#F59E0B' : 'rgba(255,255,255,0.85)', fontSize: 14, lineHeight: 1.7, margin: 0 }}>
+                        {line.type === 'warning' ? (
+                          <><span style={{ color: '#F59E0B', fontWeight: 600 }}>⚠ Attention:</span> {line.text.replace('⚠ Attention: ', '')}</>
+                        ) : line.text}
+                      </p>
+                    </div>
+                  );
+                });
+              })()}
             </div>
             {briefing.generated_at && (
               <p style={{ color: 'rgba(212,168,67,0.4)', fontSize: 12, margin: 0, textAlign: 'right' }}>
