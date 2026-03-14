@@ -186,8 +186,8 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
             <div style={{ padding: '12px 16px', fontSize: 11, textAlign: 'center' }}>
               <span style={{
                 padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 600,
-                background: 'rgba(96,165,250,0.12)', color: '#60A5FA',
-                border: '1px solid rgba(96,165,250,0.2)',
+                background: 'rgba(212,168,67,0.15)', color: '#D4A843',
+                border: '1px solid rgba(212,168,67,0.4)',
               }}>
                 {row.toupie}
               </span>
