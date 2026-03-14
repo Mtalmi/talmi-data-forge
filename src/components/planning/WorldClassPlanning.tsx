@@ -991,10 +991,11 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                   <div style={{ display: 'flex', alignItems: 'center', gap: 2, background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: 2 }}>
                     {(['standard', 'rentabilite'] as const).map(mode => (
                       <button key={mode} onClick={() => setScheduleViewMode(mode)} style={{
-                        padding: '4px 12px', borderRadius: 6, border: 'none', cursor: 'pointer',
+                        padding: '4px 12px', borderRadius: 6, cursor: 'pointer',
                         fontSize: 11, fontWeight: 600,
-                        background: scheduleViewMode === mode ? 'rgba(212,168,67,0.15)' : 'transparent',
+                        background: scheduleViewMode === mode ? 'rgba(212,168,67,0.1)' : 'transparent',
                         color: scheduleViewMode === mode ? '#D4A843' : '#64748B',
+                        border: scheduleViewMode === mode ? '1px solid #D4A843' : '1px solid transparent',
                         transition: 'all 150ms',
                       }}>
                         {mode === 'standard' ? 'Standard' : 'Rentabilité'}
