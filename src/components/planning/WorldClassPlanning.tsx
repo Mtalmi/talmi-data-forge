@@ -857,6 +857,139 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
           </div>
         </section>
 
+        {/* ── SECTION: AGENT IA PRÉDICTION RETARDS ── */}
+        <section>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <span style={{ color: '#D4A843', fontSize: 14, animation: 'tbos-pulse 3s ease-in-out infinite' }}>✦</span>
+              <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>AGENT IA: PRÉDICTION RETARDS</span>
+            </div>
+            <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>Généré par IA · Claude Opus</span>
+          </div>
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
+            border: `1px solid ${T.cardBorder}`,
+            borderTop: '2px solid #D4A843',
+            borderLeft: '3px solid #D4A843',
+            borderRadius: 12, padding: 20,
+          }}>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-start gap-3">
+                <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
+                <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                  <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-014 Saudi Readymix</span>: probabilité retard <span style={{ color: '#F59E0B', fontWeight: 600 }}>35%</span> — distance 20km, trafic historique créneau 13h élevé, temps chargement F-B25. Recommandation: <span style={{ color: '#F59E0B', fontWeight: 600 }}>avancer départ de 15 min</span>.
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
+                <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                  <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-015 BTP Maroc</span>: probabilité retard <span style={{ color: '#34d399', fontWeight: 600 }}>8%</span> — client proche (4km), créneau 15h fluide. Aucune action requise.
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444' }} />
+                <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                  <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-013 Constructions Modernes (80m³)</span>: 2 rotations nécessaires. Rotation 2 risque retard si Rotation 1 dépasse <span style={{ color: '#EF4444', fontWeight: 600 }}>45 min sur site</span>. Pré-alerter le chantier.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2 mt-4">
+              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>1 action requise</span>
+              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 89%</span>
+            </div>
+          </div>
+        </section>
+
+        {/* ── SECTION: AGENT IA OPTIMISATION FLOTTE ── */}
+        <section>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <span style={{ color: '#D4A843', fontSize: 14, animation: 'tbos-pulse 3s ease-in-out infinite' }}>✦</span>
+              <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>AGENT IA: OPTIMISATION FLOTTE</span>
+            </div>
+            <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>Généré par IA · Claude Opus</span>
+          </div>
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
+            border: `1px solid ${T.cardBorder}`,
+            borderTop: '2px solid #D4A843',
+            borderLeft: '3px solid #D4A843',
+            borderRadius: 12, padding: 20,
+          }}>
+            <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.8 }}>
+              Analyse hebdomadaire flotte: <span style={{ color: '#fff', fontWeight: 600 }}>TOU-02 sous-utilisée</span> (3 rotations/jour vs capacité 5). <span style={{ color: '#F59E0B', fontWeight: 600 }}>TOU-01 en surutilisation</span> (5.2 rotations/jour moyenne). Recommandation: réaffecter livraison Alliances (Lundi 13h) de TOU-01 à TOU-02. Gain: <span style={{ color: '#34d399', fontWeight: 600 }}>2h disponibilité TOU-01</span> pour maintenance préventive courroie (alerte maintenance active). Coût carburant flotte cette semaine: <span style={{ color: '#fff', fontWeight: 600 }}>4,200 DH</span> (<span style={{ color: '#34d399', fontWeight: 600 }}>↘ -8% vs sem. dern.</span>).
+            </p>
+            <div className="flex gap-2 mt-4">
+              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(16,185,129,0.12)', color: '#34d399' }}>Économie flotte: 340 DH/sem</span>
+              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>Maintenance: 1 alerte</span>
+            </div>
+          </div>
+        </section>
+
+        {/* ── SECTION: PLANNING CHRONOLOGIQUE ── */}
+        <section>
+          <SectionHeader icon={Clock} label="Planning Chronologique" />
+          <Card style={{ padding: 0, overflow: 'hidden' }}>
+            <div style={{
+              display: 'grid', gridTemplateColumns: '1.2fr 1.2fr 1fr 1fr 0.8fr 0.8fr 0.8fr 0.8fr',
+              borderBottom: `1px solid ${T.cardBorder}`, background: `${T.cardBorder}40`,
+            }}>
+              {['BL', 'Client', 'Formule', 'Montant', 'Volume', 'Heure', 'Camion', 'Statut'].map(h => (
+                <div key={h} style={{
+                  padding: '10px 14px',
+                  color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em',
+                  borderLeft: h !== 'BL' ? `1px solid ${T.cardBorder}` : 'none',
+                  textAlign: ['Montant', 'Volume'].includes(h) ? 'right' : ['Heure', 'Statut'].includes(h) ? 'center' : 'left',
+                }}>{h}</div>
+              ))}
+            </div>
+            {[
+              { bl: 'BL-2602-011', client: 'Ciments du Maroc', formule: 'B25', montant: '38 250 DH', volume: '45 m³', heure: '07:00', camion: 'TOU-01', statut: 'En route', statutColor: T.success },
+              { bl: 'BL-2602-012', client: 'ONCF', formule: 'B30', montant: '19 500 DH', volume: '30 m³', heure: '08:00', camion: 'TOU-02', statut: 'En Chargement', statutColor: T.info },
+              { bl: 'BL-2602-013', client: 'Constructions Modernes', formule: 'B20', montant: '40 000 DH', volume: '80 m³', heure: '09:30', camion: 'TOU-01', statut: 'Planifié', statutColor: T.textDim },
+              { bl: 'BL-2602-014', client: 'Saudi Readymix', formule: 'B25', montant: '42 500 DH', volume: '50 m³', heure: '13:00', camion: 'TOU-03', statut: 'Planifié', statutColor: T.textDim },
+              { bl: 'BL-2602-015', client: 'BTP Maroc', formule: 'B25', montant: '13 000 DH', volume: '20 m³', heure: '15:00', camion: 'TOU-02', statut: 'Planifié', statutColor: T.textDim },
+            ].map((row, i) => (
+              <div key={i} style={{
+                display: 'grid', gridTemplateColumns: '1.2fr 1.2fr 1fr 1fr 0.8fr 0.8fr 0.8fr 0.8fr',
+                borderTop: i > 0 ? `1px solid ${T.cardBorder}60` : 'none',
+                transition: 'background 150ms',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255, 215, 0, 0.04)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+              >
+                <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: T.gold }}>{row.bl}</div>
+                <div style={{ padding: '10px 14px', fontSize: 12, color: T.textPri, fontWeight: 600, borderLeft: `1px solid ${T.cardBorder}60` }}>{row.client}</div>
+                <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: PRODUCT_COLORS[row.formule] || T.gold, borderLeft: `1px solid ${T.cardBorder}60` }}>{row.formule}</div>
+                <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: T.textPri, textAlign: 'right', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.montant}</div>
+                <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: T.textPri, textAlign: 'right', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.volume}</div>
+                <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: T.textSec, textAlign: 'center', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.heure}</div>
+                <div style={{ padding: '10px 14px', fontSize: 11, textAlign: 'center', borderLeft: `1px solid ${T.cardBorder}60` }}>
+                  <span style={{ padding: '2px 8px', borderRadius: 999, background: `${T.info}18`, color: T.info, fontSize: 10, fontWeight: 600 }}>{row.camion}</span>
+                </div>
+                <div style={{ padding: '10px 14px', fontSize: 11, textAlign: 'center', borderLeft: `1px solid ${T.cardBorder}60` }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: row.statutColor }} />
+                    <span style={{ fontSize: 10, fontWeight: 600, color: row.statutColor }}>{row.statut}</span>
+                  </span>
+                </div>
+              </div>
+            ))}
+            <div style={{
+              padding: '12px 14px', borderTop: `1px solid ${T.cardBorder}`,
+              background: `${T.cardBorder}40`,
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: T.gold }}>Total journée:</span>
+              <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: T.textPri }}>153 250 DH</span>
+                <span style={{ fontSize: 11, color: T.textSec }}>5 livraisons</span>
+                <span style={{ fontSize: 11, color: T.textSec }}>225 m³</span>
+                <span style={{ fontSize: 11, fontWeight: 600, color: T.success }}>Marge moyenne: 36%</span>
+              </div>
+            </div>
+          </Card>
+        </section>
 
         <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ color: T.textDim, fontSize: 11 }}>TBOS Planning & Expédition v2.0 — Dernière mise à jour: {new Date().toLocaleString('fr-FR')}</span>
