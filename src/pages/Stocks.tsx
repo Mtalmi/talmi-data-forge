@@ -235,6 +235,12 @@ export default function Stocks() {
 
           {/* ── CONSOMMATION TEMPS RÉEL ── */}
           <ConsommationTempsReel />
+
+          {/* ── STOCKOUT COUNTDOWN TIMELINE ── */}
+          <StockoutCountdownTimeline />
+
+          {/* ── SUPPLY CHAIN MAP ── */}
+          <SupplyChainMap />
         </>
       } />
 
