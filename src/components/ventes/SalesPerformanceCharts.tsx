@@ -56,7 +56,7 @@ function StatChip({ value, label, color, subtext }: { value: number; label: stri
       background: 'rgba(255,255,255,0.02)',
       border: '1px solid rgba(255,255,255,0.08)',
     }}>
-      <p style={{ fontSize: '1.25rem', fontWeight: 200, fontFamily: 'JetBrains Mono, monospace', color }}>
+      <p style={{ fontSize: 28, fontWeight: 200, fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", color }}>
         {animated >= 1000 ? `${(animated / 1000).toFixed(1)}K` : animated}
       </p>
       <p style={{ fontSize: 10, color: 'rgba(148,163,184,0.4)', fontWeight: 500, textTransform: 'uppercase' as const, letterSpacing: '0.1em', marginTop: 4 }}>{label}</p>
