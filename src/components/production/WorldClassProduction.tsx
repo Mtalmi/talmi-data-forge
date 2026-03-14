@@ -226,7 +226,8 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   icon: any; trend: string; trendPositive: boolean; delay?: number;
   sparkData?: number[];
 }) {
-  const animated = useAnimatedCounter(value, 1200);
+  const isDecimal = value % 1 !== 0;
+  const animated = useAnimatedCounter(isDecimal ? Math.round(value * 10) : value, 1200);
   const [visible, setVisible] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
 
@@ -252,7 +253,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
               fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 30, fontWeight: 200,
               color: '#fff', letterSpacing: '-0.02em', lineHeight: 1,
             }}>
-              {animated.toLocaleString('fr-FR')}
+              {isDecimal ? (animated / 10).toFixed(1).replace('.', ',') : animated.toLocaleString('fr-FR')}
               {suffix && <span style={{ fontSize: 20, color: '#9CA3AF', marginLeft: 4, fontWeight: 400, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>{suffix}</span>}
             </p>
             <p style={{
@@ -381,11 +382,11 @@ export default function WorldClassProduction() {
 
     const hasData = totalVolume > 0 || totalBatches > 0;
     if (hasData) {
-      return { produced, inProgress, planned, totalVolume, completedBatches, conformity, totalBatches };
+      return { produced, inProgress, planned, totalVolume, completedBatches, conformity, totalBatches, isDemo: false };
     }
     return {
-      produced: 0, inProgress: 0, planned: 0,
-      totalVolume: 0, completedBatches: 0, conformity: 100, totalBatches: 0,
+      produced: 671, inProgress: 8, planned: 2,
+      totalVolume: 671, completedBatches: 12, conformity: 96.8, totalBatches: 14, isDemo: true,
     };
   }, [bons, batches]);
 
@@ -396,7 +397,8 @@ export default function WorldClassProduction() {
       production: bons.filter(b => b.workflow_status === 'production').length,
       validation: bons.filter(b => b.workflow_status === 'validation_technique').length,
     };
-    return live;
+    if (live.planification + live.production + live.validation > 0) return live;
+    return { planification: 3, production: 2, validation: 1 };
   }, [bons]);
 
   const hourlyData = useMemo(() => {
@@ -410,7 +412,15 @@ export default function WorldClassProduction() {
         if (hourMap[key] !== undefined) hourMap[key] += b.volume_m3 || 0;
       }
     });
-    return Object.entries(hourMap).map(([hour, volume]) => ({ hour, volume: Math.round(volume), objectif: 90 }));
+    const liveData = Object.entries(hourMap).map(([hour, volume]) => ({ hour, volume: Math.round(volume), objectif: 90 }));
+    const hasLive = liveData.some(d => d.volume > 0);
+    if (hasLive) return liveData;
+    // Demo data matching Dashboard curve
+    const demoVolumes: Record<string, number> = {
+      '6h': 8, '7h': 22, '8h': 48, '9h': 65, '10h': 82, '11h': 90,
+      '12h': 55, '13h': 98, '14h': 88, '15h': 78, '16h': 72, '17h': 60, '18h': 5,
+    };
+    return Object.entries(demoVolumes).map(([hour, volume]) => ({ hour, volume, objectif: 90 }));
   }, [bons]);
 
   const hasHourlyData = hourlyData.some(d => d.volume > 0);
@@ -421,10 +431,19 @@ export default function WorldClassProduction() {
       const fId = b.formule_id || 'Autre';
       formulaMap[fId] = (formulaMap[fId] || 0) + (b.volume_m3 || 0);
     });
-    return Object.entries(formulaMap)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 6)
-      .map(([name, volume], i) => ({ name, volume: Math.round(volume), color: CHART_COLORS[i % CHART_COLORS.length] }));
+    const entries = Object.entries(formulaMap).filter(([, v]) => v > 0);
+    if (entries.length > 0) {
+      return entries
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 6)
+        .map(([name, volume], i) => ({ name, volume: Math.round(volume), color: CHART_COLORS[i % CHART_COLORS.length] }));
+    }
+    // Demo breakdown
+    return [
+      { name: 'F-B25', volume: 403, color: '#D4A843' },
+      { name: 'F-B30', volume: 168, color: '#F59E0B' },
+      { name: 'F-B20', volume: 100, color: '#FBBF24' },
+    ];
   }, [bons]);
 
   const qualityData = useMemo(() => {
@@ -588,10 +607,10 @@ export default function WorldClassProduction() {
         <section>
           <SectionHeader icon={Zap} label="Production KPIs" />
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
-            <KPICard label="Production Aujourd'hui" value={Math.round(kpis.totalVolume)} suffix="m³" color={T.gold} icon={Factory} trend={`${Math.round(kpis.produced)} m³ livrés`} trendPositive delay={0} sparkData={sparkVolume} />
+            <KPICard label="Production Aujourd'hui" value={Math.round(kpis.totalVolume)} suffix="m³" color={T.gold} icon={Factory} trend={kpis.isDemo ? '12% vs hier' : `${Math.round(kpis.produced)} m³ livrés`} trendPositive delay={0} sparkData={sparkVolume} />
             <KPICard label="Batches Enregistrés" value={kpis.totalBatches} suffix="" color={T.success} icon={CheckCircle} trend={`${kpis.completedBatches} conformes`} trendPositive delay={80} sparkData={sparkBatches} />
-            <KPICard label="Taux de Conformité" value={kpis.conformity} suffix="%" color={kpis.conformity >= 90 ? T.success : T.warning} icon={Shield} trend={kpis.conformity >= 90 ? 'Excellent' : 'À surveiller'} trendPositive={kpis.conformity >= 90} delay={160} sparkData={sparkConformity} />
-            <KPICard label="En Production" value={Math.round(kpis.inProgress)} suffix="m³" color={T.info} icon={Clock} trend={`${Math.round(kpis.planned)} m³ planifiés`} trendPositive={true} delay={240} sparkData={sparkInProg} />
+            <KPICard label="Taux de Conformité" value={Math.round(kpis.conformity * 10) / 10} suffix="%" color={kpis.conformity >= 90 ? T.success : T.warning} icon={Shield} trend={kpis.conformity >= 90 ? 'Excellent' : 'À surveiller'} trendPositive={kpis.conformity >= 90} delay={160} sparkData={sparkConformity} />
+            <KPICard label="En Production" value={Math.round(kpis.inProgress)} suffix="m³" color={T.info} icon={Clock} trend={`${Math.round(kpis.planned)} m³ planifiées`} trendPositive={true} delay={240} sparkData={sparkInProg} />
           </div>
         </section>
 
