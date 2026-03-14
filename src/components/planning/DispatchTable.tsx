@@ -104,6 +104,7 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
   ];
 
   return (
+    <>
     <div style={{
       background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
       border: '1px solid rgba(245, 158, 11, 0.15)',
