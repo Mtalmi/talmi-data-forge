@@ -415,10 +415,15 @@ export function FacturesTable({
                     )}
                   </TableCell>
                   <TableCell className="text-center">
-                    <Badge variant="outline" className={cn("gap-1 mx-auto", statusConfig.color)}>
-                      {statusConfig.icon}
-                      {statusConfig.label}
-                    </Badge>
+                    {facture.statut === 'payee' ? (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, border: '1px solid #22C55E', color: '#22C55E', background: 'rgba(34,197,94,0.08)', fontFamily: 'ui-monospace, monospace', fontSize: 11, borderRadius: 100, padding: '2px 10px' }}>
+                        {statusConfig.icon} {statusConfig.label}
+                      </span>
+                    ) : (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, border: '1px solid #F59E0B', color: '#F59E0B', background: 'rgba(245,158,11,0.08)', fontFamily: 'ui-monospace, monospace', fontSize: 11, borderRadius: 100, padding: '2px 10px' }}>
+                        {statusConfig.icon} {statusConfig.label}
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center gap-1 justify-center">
