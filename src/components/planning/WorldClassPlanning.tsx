@@ -348,21 +348,21 @@ function ScheduleBlock({ slot, delay = 0, riskyClients }: { slot: { product: str
   const [hov, setHov] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
 
-  if (!slot) {
+   if (!slot) {
     return (
       <div style={{
         opacity: visible ? 1 : 0, transition: 'opacity 500ms ease-out',
-        border: '1px dashed rgba(245, 158, 11, 0.1)', borderRadius: 8, padding: '10px 12px',
+        border: '1px dashed rgba(212, 168, 67, 0.2)', borderRadius: 8, padding: '10px 12px',
         display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 58,
       }}>
-        <span style={{ color: T.textDim, fontSize: 10 }}>Disponible</span>
+        <span style={{ color: 'rgba(212, 168, 67, 0.4)', fontSize: 10 }}>Disponible</span>
       </div>
     );
   }
 
-  const color = PRODUCT_COLORS[slot.product] || T.gold;
+  const color = '#D4A843';
   const isRisky = riskyClients?.has(slot.client.toLowerCase()) ?? false;
-  const dotColor = isRisky ? T.danger : T.success;
+  const dotColor = isRisky ? T.danger : '#D4A843';
 
   return (
     <div
@@ -387,7 +387,7 @@ function ScheduleBlock({ slot, delay = 0, riskyClients }: { slot: { product: str
         background: dotColor,
         boxShadow: `0 0 4px ${dotColor}60`,
       }} />
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 800, color, marginBottom: 2 }}>{slot.product}</p>
+      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 800, color: '#D4A843', marginBottom: 2, display: 'inline-block', padding: '1px 6px', borderRadius: 4, background: 'rgba(212,168,67,0.2)', border: '1px solid rgba(212,168,67,0.5)' }}>{slot.product}</p>
       <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: T.textPri }}>{slot.volume} m³</p>
       <p style={{ fontSize: 10, color: T.textDim, marginTop: 2 }}>{slot.client}</p>
     </div>
@@ -957,7 +957,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
               {/* 2. Weekly Schedule */}
               <div>
                 <SectionHeader icon={CalendarDays} label="Planning Hebdomadaire" />
-                <Card style={{ padding: 0, overflow: 'hidden', overflowX: 'auto' }}>
+                <Card style={{ padding: 0, overflow: 'hidden', overflowX: 'auto', borderTop: '2px solid #D4A843' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '80px repeat(6, minmax(120px, 1fr))', gap: 0, minWidth: 800 }}>
                     <div style={{ padding: '10px 14px', background: `${T.cardBorder}40`, borderBottom: `1px solid ${T.cardBorder}` }} />
                     {weekDays.map(d => (
@@ -1011,17 +1011,59 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                       ))}
                     </div>
                   </Card>
-                  <div>
+                  <div style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', borderRadius: 12, padding: 16 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
                       <Clock size={14} color={T.gold} />
                       <span style={{ color: T.textSec, fontSize: 12, fontWeight: 600 }}>Prochaines Livraisons</span>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 400, overflowY: 'auto' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 420, overflowY: 'auto' }}>
                       {(liveDeliveries.length > 0 ? liveDeliveries : deliveries).map((d, i) => (
                         <DeliveryCard key={i} d={d} delay={i * 70} routeData={routeDataMap[(d as any).bl_id || '']} weatherIndex={i} />
                       ))}
                     </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Compact AI Insight Strip for Planning */}
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.06) 0%, rgba(212, 168, 67, 0.01) 100%)',
+                border: `1px solid ${T.cardBorder}`,
+                borderTop: '2px solid #D4A843',
+                borderRadius: 12, overflow: 'hidden',
+              }}>
+                <div style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '10px 18px',
+                  background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
+                  borderBottom: `1px solid ${T.cardBorder}`,
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ color: '#D4A843', fontSize: 14, animation: 'tbos-pulse 3s ease-in-out infinite' }}>✦</span>
+                    <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em' }}>INTELLIGENCE IA</span>
+                  </div>
+                  <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>Généré par IA · Claude Opus</span>
+                </div>
+                {[
+                  { dot: '#F59E0B', text: 'Capacité: Mercredi 11 — 4 livraisons, 202 m³ (capacité 96%). Risque saturation.' },
+                  { dot: '#34d399', text: 'Tendance: Volume semaine +8% vs sem. dern. Pic prévu jeudi (193 m³).' },
+                ].map((ins, i) => (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    padding: '10px 18px',
+                    borderTop: i > 0 ? `1px solid ${T.cardBorder}60` : 'none',
+                  }}>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: ins.dot, flexShrink: 0 }} />
+                    <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, lineHeight: 1.4, flex: 1 }}>{ins.text}</span>
+                  </div>
+                ))}
+                <div style={{ padding: '8px 18px', borderTop: `1px solid ${T.cardBorder}`, background: `${T.cardBorder}20` }}>
+                  <button
+                    onClick={() => setActiveTab('ia')}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#D4A843', fontSize: 11, fontWeight: 600, padding: 0 }}
+                  >
+                    Voir toute l'intelligence →
+                  </button>
                 </div>
               </div>
             </div>
