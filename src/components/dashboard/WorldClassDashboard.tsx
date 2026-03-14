@@ -1007,15 +1007,15 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                 <div>
                   <div className="text-[14px] font-medium text-white/90">Production Journalière</div>
                   <div className="flex items-center gap-2 text-[11px] mt-1">
-                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: T.dotOk }} /> {qualityData[0].ok} OK</span>
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: T.dotOk }} /> <span style={{ color: '#22C55E' }}>{qualityData[0].ok} OK</span></span>
                     <span className="text-slate-700">·</span>
-                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: T.dotWarn }} /> {qualityData[0].var} Var</span>
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: T.dotWarn }} /> <span style={{ color: '#F59E0B' }}>{qualityData[0].var} Var</span></span>
                     <span className="text-slate-700">·</span>
-                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: T.dotCrit }} /> {qualityData[0].crit} Crit</span>
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: T.dotCrit }} /> <span style={{ color: 'rgba(148,163,184,0.4)' }}>{qualityData[0].crit} Crit</span></span>
                   </div>
                 </div>
                 <div>
-                  <span className="text-3xl font-extralight font-mono tracking-tight tabular-nums" style={{ color: '#D4A843', fontWeight: '500', textShadow: '0 0 12px rgba(212,168,67,0.2)' }}>{prodTotal}</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '36px', color: '#D4A843', textShadow: '0 0 12px rgba(212,168,67,0.2)', letterSpacing: '-0.02em' }}>{prodTotal}</span>
                   <span className="text-sm font-light text-white/40 ml-1">m³</span>
                 </div>
               </div>
