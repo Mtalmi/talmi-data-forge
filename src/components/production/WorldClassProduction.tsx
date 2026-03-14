@@ -221,10 +221,10 @@ function useProductionLiveData() {
 // ─────────────────────────────────────────────────────
 // KPI CARD — Premium style matching Dashboard
 // ─────────────────────────────────────────────────────
-function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive, delay = 0, sparkData }: {
+function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive, delay = 0, sparkData, weekComparison }: {
   label: string; value: number; suffix: string; color: string;
   icon: any; trend: string; trendPositive: boolean; delay?: number;
-  sparkData?: number[];
+  sparkData?: number[]; weekComparison?: string;
 }) {
   const isDecimal = value % 1 !== 0;
   const animated = useAnimatedCounter(isDecimal ? Math.round(value * 10) : value, 1200);
@@ -263,6 +263,9 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
             }}>
               {trendPositive ? '↗' : '↘'} {trend}
             </p>
+            {weekComparison && (
+              <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>{weekComparison}</p>
+            )}
             {sparkData && sparkData.length > 1 && (
               <MiniSparkline data={sparkData} color={T.gold} />
             )}
@@ -412,7 +415,7 @@ export default function WorldClassProduction() {
         if (hourMap[key] !== undefined) hourMap[key] += b.volume_m3 || 0;
       }
     });
-    const liveData = Object.entries(hourMap).map(([hour, volume]) => ({ hour, volume: Math.round(volume), objectif: 90 }));
+    const liveData = Object.entries(hourMap).map(([hour, volume]) => ({ hour, volume: Math.round(volume), objectif: 90, lastWeek: 0 }));
     const hasLive = liveData.some(d => d.volume > 0);
     if (hasLive) return liveData;
     // Demo data matching Dashboard curve
@@ -420,7 +423,11 @@ export default function WorldClassProduction() {
       '6h': 8, '7h': 22, '8h': 48, '9h': 65, '10h': 82, '11h': 90,
       '12h': 55, '13h': 98, '14h': 88, '15h': 78, '16h': 72, '17h': 60, '18h': 5,
     };
-    return Object.entries(demoVolumes).map(([hour, volume]) => ({ hour, volume, objectif: 90 }));
+    const lastWeekVolumes: Record<string, number> = {
+      '6h': 5, '7h': 18, '8h': 40, '9h': 55, '10h': 72, '11h': 80,
+      '12h': 48, '13h': 85, '14h': 78, '15h': 68, '16h': 62, '17h': 50, '18h': 3,
+    };
+    return Object.entries(demoVolumes).map(([hour, volume]) => ({ hour, volume, objectif: 90, lastWeek: lastWeekVolumes[hour] || 0 }));
   }, [bons]);
 
   const hasHourlyData = hourlyData.some(d => d.volume > 0);
@@ -618,10 +625,10 @@ export default function WorldClassProduction() {
         <section>
           <SectionHeader icon={Zap} label="Production KPIs" />
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
-            <KPICard label="Production Aujourd'hui" value={Math.round(kpis.totalVolume)} suffix="m³" color={T.gold} icon={Factory} trend={kpis.isDemo ? '12% vs hier' : `${Math.round(kpis.produced)} m³ livrés`} trendPositive delay={0} sparkData={sparkVolume} />
-            <KPICard label="Batches Enregistrés" value={kpis.totalBatches} suffix="" color={T.success} icon={CheckCircle} trend={`${kpis.completedBatches} conformes`} trendPositive delay={80} sparkData={sparkBatches} />
-            <KPICard label="Taux de Conformité" value={Math.round(kpis.conformity * 10) / 10} suffix="%" color={kpis.conformity >= 90 ? T.success : T.warning} icon={Shield} trend={kpis.conformity >= 90 ? 'Excellent' : 'À surveiller'} trendPositive={kpis.conformity >= 90} delay={160} sparkData={sparkConformity} />
-            <KPICard label="En Production" value={Math.round(kpis.inProgress)} suffix="m³" color={T.info} icon={Clock} trend={`${Math.round(kpis.planned)} m³ planifiées`} trendPositive={true} delay={240} sparkData={sparkInProg} />
+            <KPICard label="Production Aujourd'hui" value={Math.round(kpis.totalVolume)} suffix="m³" color={T.gold} icon={Factory} trend={kpis.isDemo ? '12% vs hier' : `${Math.round(kpis.produced)} m³ livrés`} trendPositive delay={0} sparkData={sparkVolume} weekComparison="vs sem. dernière: +8%" />
+            <KPICard label="Batches Enregistrés" value={kpis.totalBatches} suffix="" color={T.success} icon={CheckCircle} trend={`${kpis.completedBatches} conformes`} trendPositive delay={80} sparkData={sparkBatches} weekComparison="vs sem. dernière: +8%" />
+            <KPICard label="Taux de Conformité" value={Math.round(kpis.conformity * 10) / 10} suffix="%" color={kpis.conformity >= 90 ? T.success : T.warning} icon={Shield} trend={kpis.conformity >= 90 ? 'Excellent' : 'À surveiller'} trendPositive={kpis.conformity >= 90} delay={160} sparkData={sparkConformity} weekComparison="vs sem. dernière: +8%" />
+            <KPICard label="En Production" value={Math.round(kpis.inProgress)} suffix="m³" color={T.info} icon={Clock} trend={`${Math.round(kpis.planned)} m³ planifiées`} trendPositive={true} delay={240} sparkData={sparkInProg} weekComparison="vs sem. dernière: +8%" />
           </div>
         </section>
 
@@ -846,6 +853,7 @@ export default function WorldClassProduction() {
                 </div>
               </div>
               {hasHourlyData ? (
+                <>
                 <ResponsiveContainer width="100%" height={220}>
                   <AreaChart data={hourlyData}>
                     <defs>
@@ -858,9 +866,21 @@ export default function WorldClassProduction() {
                     <YAxis tick={{ fill: 'rgba(255,255,255,0.25)', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} width={35} domain={[0, 'auto']} />
                     <Tooltip content={<GoldTooltip unit=" m³" />} />
                     <ReferenceLine y={90} stroke="rgba(255,255,255,0.20)" strokeDasharray="6 4" label={{ value: 'Objectif', position: 'right', fill: 'rgba(255,255,255,0.25)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} />
-                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2} fill="url(#prodGold)" dot={false} activeDot={{ r: 5, fill: T.gold }} animationDuration={1200} />
+                    <Area type="monotone" dataKey="lastWeek" stroke="rgba(212,168,67,0.25)" strokeWidth={1.5} strokeDasharray="6 4" fill="none" dot={false} activeDot={false} animationDuration={1200} name="Sem. dernière" />
+                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2} fill="url(#prodGold)" dot={false} activeDot={{ r: 5, fill: T.gold }} animationDuration={1200} name="Aujourd'hui" />
                   </AreaChart>
                 </ResponsiveContainer>
+                <div className="flex items-center gap-4 mt-2" style={{ paddingLeft: 36 }}>
+                  <div className="flex items-center gap-1.5">
+                    <div style={{ width: 16, height: 0, borderTop: '2px solid #D4A843' }} />
+                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>Aujourd'hui</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div style={{ width: 16, height: 0, borderTop: '1.5px dashed rgba(212,168,67,0.25)' }} />
+                    <span style={{ fontSize: 11, color: 'rgba(212,168,67,0.45)' }}>Semaine dernière</span>
+                  </div>
+                </div>
+                </>
               ) : (
                 <div style={{ height: 220, position: 'relative' }}>
                   <ResponsiveContainer width="100%" height={220}>
