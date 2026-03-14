@@ -1103,119 +1103,15 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
         {/* ── COST IMPACT SIMULATOR ── */}
         <CostImpactSimulator />
 
-        {/* ── PLAN DE RÉAPPROVISIONNEMENT + ALERTES — Two-column layout ── */}
+        {/* ── SMART REORDER QUEUE + ALERTES ── */}
         <div style={{ display: 'flex', gap: 24 }}>
-          {/* LEFT — 60% Plan de Réapprovisionnement IA */}
-          <div style={{ flex: '0 0 60%', minWidth: 0 }}>
-            {/* Section title with gold monospace */}
-            <div style={{ borderTop: '2px solid #D4A843', paddingTop: 12, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
-              <ShoppingCart size={16} color="#D4A843" />
-              <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', letterSpacing: '2px', fontSize: 12, color: '#D4A843', fontWeight: 600 }}>
-                ✦ PLAN DE RÉAPPROVISIONNEMENT IA
-              </span>
-              <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(212,168,67,0.4), transparent 80%)' }} />
-            </div>
-            {(() => {
-              const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
-              // Sort: critique first, then by urgency
-              const urgRank: Record<string, number> = { critique: 3, urgent: 3, 'modéré': 2, ok: 1 };
-              const items = [...REORDER_RECS].sort((a, b) => (urgRank[b.urgency] || 0) - (urgRank[a.urgency] || 0));
-              if (items.length === 0) {
-                return (
-                  <Card style={{ textAlign: 'center', padding: '40px 20px' }}>
-                    <p style={{ color: T.textDim, fontSize: 13 }}>Tous les stocks sont à niveau optimal</p>
-                  </Card>
-                );
-              }
-              return (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
-                  {items.map((item, idx) => {
-                    const isCritique = item.urgency === 'critique' || item.urgency === 'urgent';
-                    const isModere = item.urgency === 'modéré';
-                    const urgColor = isCritique ? '#ef4444' : isModere ? '#f59e0b' : '#22c55e';
-                    const urgBg = isCritique ? 'rgba(239,68,68,0.15)' : isModere ? 'rgba(245,158,11,0.15)' : 'rgba(34,197,94,0.15)';
-                    const urgBorder = isCritique ? 'rgba(239,68,68,0.4)' : isModere ? 'rgba(245,158,11,0.4)' : 'rgba(34,197,94,0.4)';
-                    const topBorderColor = isCritique ? '#EF4444' : '#F59E0B';
-                    const days = item.days_remaining;
-                    const daysNum = days !== null ? Number(days) : null;
-                    const autoColor = daysNum === null ? '#9CA3AF' : daysNum < 7 ? '#EF4444' : daysNum <= 8 ? '#F59E0B' : '#22C55E';
-                    return (
-                      <div key={item.id} style={{
-                        background: isCritique ? 'rgba(239,68,68,0.04)' : 'rgba(255,255,255,0.04)',
-                        borderTop: `2px solid ${topBorderColor}`,
-                        border: '1px solid rgba(255,255,255,0.08)',
-                        borderTopWidth: 2,
-                        borderTopColor: topBorderColor,
-                        borderRadius: 14, padding: '18px 16px',
-                        display: 'flex', flexDirection: 'column', minHeight: 200,
-                        position: 'relative',
-                        opacity: 0,
-                        animation: isCritique
-                          ? `fadeSlideIn 500ms ${idx * 80}ms forwards, critiqueGlow 2s ease-in-out ${idx * 80 + 500}ms infinite`
-                          : `fadeSlideIn 500ms ${idx * 80}ms forwards`,
-                      }}>
-                        <div style={{ marginBottom: 12 }}>
-                          <span style={{ fontWeight: 600, fontSize: 18, color: '#fff' }}>{item.materiau}</span>
-                          <span style={{
-                            position: 'absolute', top: 16, right: 16,
-                            padding: '3px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
-                            background: urgBg, color: urgColor, border: `1px solid ${urgBorder}`,
-                            animation: isCritique ? 'tbos-pulse 2s infinite' : 'none',
-                          }}>
-                            {item.urgency.toUpperCase()}
-                          </span>
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
-                            <span style={{ color: T.textDim }}>Qté recommandée</span>
-                            <span style={{ fontFamily: MONO, fontWeight: 600, fontSize: 15, color: '#D4A843' }}>
-                              {Number(item.recommended_qty).toLocaleString('fr-FR')} {item.unite}
-                            </span>
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, alignItems: 'center' }}>
-                            <span style={{ color: T.textDim, display: 'flex', alignItems: 'center', gap: 4 }}>
-                              <Package size={11} style={{ opacity: 0.5 }} />Fournisseur
-                            </span>
-                            <span style={{ fontFamily: MONO, color: '#fff', fontWeight: 400 }}>{item.fournisseur || 'À définir'}</span>
-                          </div>
-                          {days !== null && !isCritique && (
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
-                              <span style={{ color: T.textDim }}>Autonomie</span>
-                              <span style={{ fontFamily: MONO, fontWeight: 600, color: autoColor }}>
-                                {Math.round(Number(days) * 10) / 10}j
-                              </span>
-                            </div>
-                          )}
-                          {isCritique && days !== null && (
-                            <CritiqueCountdown daysRemaining={Number(days)} />
-                          )}
-                        </div>
-                        <button
-                          onClick={() => toast.success(`Commande ${item.materiau} — ${Number(item.recommended_qty).toLocaleString('fr-FR')} ${item.unite} ajoutée à la file d'attente.`)}
-                          style={{
-                            marginTop: 'auto', padding: '10px 0', borderRadius: 8, width: '100%',
-                            background: isCritique ? '#EF4444' : '#D4A843',
-                            border: 'none',
-                            color: isCritique ? '#fff' : '#0F1629',
-                            fontWeight: 600, fontSize: 12, cursor: 'pointer',
-                            fontFamily: MONO,
-                            transition: 'all 150ms',
-                          }}
-                          onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.15)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
-                          onMouseLeave={e => { e.currentTarget.style.filter = 'brightness(1)'; e.currentTarget.style.transform = 'scale(1)'; }}
-                        >
-                          Créer Commande
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })()}
+          {/* LEFT — 65% Smart Reorder Queue */}
+          <div style={{ flex: '0 0 65%', minWidth: 0 }}>
+            <SmartReorderQueue />
           </div>
 
-          {/* RIGHT — 40% Alertes Stock */}
-          <div style={{ flex: '0 0 calc(40% - 24px)', position: 'sticky', top: 16, alignSelf: 'flex-start', maxHeight: 'calc(100vh - 120px)', overflowY: 'auto' }}>
+          {/* RIGHT — 35% Alertes Stock */}
+          <div style={{ flex: '0 0 calc(35% - 24px)', position: 'sticky', top: 16, alignSelf: 'flex-start', maxHeight: 'calc(100vh - 120px)', overflowY: 'auto' }}>
             {(() => {
               const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
               const dbAlerts = STOCK_ALERTS_DB;
