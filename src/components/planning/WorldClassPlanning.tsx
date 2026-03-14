@@ -684,7 +684,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
       />
 
       {/* ── PAGE CONTENT ── */}
-      <div style={{ width: '100%', padding: '24px 16px', display: 'flex', flexDirection: 'column', gap: 40 }} className="sm:!px-6">
+      <div style={{ width: '100%', padding: '24px 16px', display: 'flex', flexDirection: 'column', gap: 0 }} className="sm:!px-6">
 
         {/* ═══════════════════════════════════════════════════
             ZONE 1: DISPATCH EN DIRECT
