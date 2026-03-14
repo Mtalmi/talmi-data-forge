@@ -122,9 +122,9 @@ function SectionHeader({ icon: Icon, label, right }: { icon: any; label: string;
   );
 }
 
-function IABadge() {
+function IABadge({ small }: { small?: boolean } = {}) {
   return (
-    <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', padding: '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4, background: 'rgba(212,168,67,0.06)' }}>
+    <span style={{ fontFamily: MONO, fontSize: small ? 10 : 11, color: '#D4A843', padding: small ? '3px 6px' : '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4, background: 'rgba(212,168,67,0.06)' }}>
       Généré par IA · Claude Opus
     </span>
   );
