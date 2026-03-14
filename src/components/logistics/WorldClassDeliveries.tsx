@@ -1418,7 +1418,7 @@ export default function WorldClassDeliveries() {
 
             {/* 3c. SANTÉ FLOTTE */}
             <section>
-              <SectionHeader icon={Truck} label="Santé Flotte IA" />
+              <SectionHeader icon={Truck} label="✦ Santé Flotte IA" />
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
                 {FLEET_HEALTH_DATA.map((v, i) => <FleetHealthCard key={v.name} v={v} delay={i * 100} />)}
               </div>
