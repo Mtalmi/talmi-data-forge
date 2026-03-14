@@ -21,6 +21,16 @@ interface MainLayoutProps {
   hideBottomNav?: boolean;
 }
 
+function ConversionNote() {
+  const { isConverted } = useUnits();
+  if (!isConverted) return null;
+  return (
+    <div style={{ textAlign: 'center', padding: '8px 0', fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 9, color: 'rgba(156,163,175,0.4)' }}>
+      Valeurs converties — données sources en unités métriques MENA
+    </div>
+  );
+}
+
 export default function MainLayout({ children, hideBottomNav = false }: MainLayoutProps) {
   const { isMobile } = useDeviceType();
   const showMobileNav = isMobile;
