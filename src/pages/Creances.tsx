@@ -137,7 +137,7 @@ function AIEarlyWarningBanner({ warnings }: { warnings: { message: string; clien
                 }}>
                   <p style={{ fontSize: 12, color: '#ef4444', fontWeight: 600, marginBottom: 4 }}>⚠ {w.message}</p>
                   <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>
-                    Client: <span style={{ fontWeight: 700, color: w.client.includes('Sigma') ? '#EF4444' : '#F1F5F9' }}>{w.client}</span>
+                    Client: <span style={{ fontWeight: 700, color: w.client.includes('Sigma') ? '#EF4444' : '#F1F5F9', display: 'inline-flex', alignItems: 'center' }}>{w.client.includes('Sigma') && <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#EF4444', marginRight: 5, boxShadow: '0 0 4px rgba(239,68,68,0.4)' }} />}{w.client}</span>
                   </p>
                   <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>
                     <span style={{ color: '#D4A843', fontWeight: 600 }}>Action →</span> {w.action}

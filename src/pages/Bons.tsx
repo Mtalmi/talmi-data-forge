@@ -1239,7 +1239,7 @@ export default function Bons() {
                           <tr key={i} style={{ borderBottom: `1px solid ${T.cardBorder}`, borderLeft: r.flagged ? `3px solid ${T.danger}` : 'none', background: i % 2 === 1 ? 'rgba(212,168,67,0.03)' : 'transparent', transition: 'background 150ms' }}
                             onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }}
                             onMouseLeave={e => { e.currentTarget.style.background = i % 2 === 1 ? 'rgba(212,168,67,0.03)' : 'transparent'; }}>
-                            <td style={{ padding: '8px 12px', fontSize: 12, color: T.textPri, fontWeight: 600 }}>{r.client}</td>
+                            <td style={{ padding: '8px 12px', fontSize: 12, color: T.textPri, fontWeight: 600 }}><span style={{ display: 'inline-flex', alignItems: 'center' }}>{r.client === 'Sigma Bâtiment' ? <><span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#EF4444', marginRight: 5, boxShadow: '0 0 4px rgba(239,68,68,0.4)' }} />{r.client}</> : r.client}</span></td>
                             <td style={{ padding: '8px 12px', fontFamily: MONO, fontSize: 12, color: T.textSec }}>{r.livres}</td>
                             <td style={{ padding: '8px 12px', fontFamily: MONO, fontSize: 12, color: T.success }}>{r.payes}</td>
                             <td style={{ padding: '8px 12px', fontFamily: MONO, fontSize: 12, color: r.attente > 0 ? T.warning : T.textDim }}>{r.attente}</td>
