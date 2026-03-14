@@ -160,7 +160,13 @@ function MiniSparkline({ data, color = T.gold }: { data: number[]; color?: strin
 
   return (
     <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="mt-2">
-      <polygon points={areaPoints} fill="rgba(212,168,67,0.1)" />
+      <defs>
+        <linearGradient id={`sparkGrad-${color.replace(/[^a-zA-Z0-9]/g,'')}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="rgba(212,168,67,0.08)" />
+          <stop offset="100%" stopColor="rgba(212,168,67,0)" />
+        </linearGradient>
+      </defs>
+      <polygon points={areaPoints} fill={`url(#sparkGrad-${color.replace(/[^a-zA-Z0-9]/g,'')})`} />
       <polyline
         points={points}
         fill="none"
