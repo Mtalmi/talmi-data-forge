@@ -98,6 +98,7 @@ export function ClientChurnPredictorCard() {
           <span style={{ color: T.gold, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: MONO }}>
             Agent IA: Prédiction Attrition Clients
           </span>
+          <WhatsAppBadge />
           <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
         </div>
         <span style={{
