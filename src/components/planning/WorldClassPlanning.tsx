@@ -1164,22 +1164,28 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                 name="PRÉDICTION RETARDS"
                 content={
                   <div className="flex flex-col gap-4">
+                    <p style={{ color: '#fff', fontSize: 15, fontWeight: 700, lineHeight: 1.4 }}>BL-2602-014 Saudi Readymix — probabilité retard 35%</p>
                     <div className="flex items-start gap-3">
                       <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
-                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-014 Saudi Readymix</span>: probabilité retard <span style={{ color: '#F59E0B', fontWeight: 600 }}>35%</span> — distance 20km, trafic historique créneau 13h élevé, temps chargement F-B25. Recommandation: <span style={{ color: '#F59E0B', fontWeight: 600 }}>avancer départ de 15 min</span>.
+                      <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.7 }}>
+                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-014 Saudi Readymix</span>: distance 20km, trafic historique créneau 13h élevé, temps chargement F-B25.
                       </p>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
-                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
+                      <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.7 }}>
                         <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-015 BTP Maroc</span>: probabilité retard <span style={{ color: '#34d399', fontWeight: 600 }}>8%</span> — client proche (4km), créneau 15h fluide. Aucune action requise.
                       </p>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444' }} />
-                      <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-013 Constructions Modernes (80m³)</span>: 2 rotations nécessaires. Rotation 2 risque retard si Rotation 1 dépasse <span style={{ color: '#EF4444', fontWeight: 600 }}>45 min sur site</span>. Pré-alerter le chantier.
+                      <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.7 }}>
+                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-013 Constructions Modernes (80m³)</span>: 2 rotations nécessaires. Rotation 2 risque retard si Rotation 1 dépasse <span style={{ color: '#EF4444', fontWeight: 600 }}>45 min sur site</span>.
+                      </p>
+                    </div>
+                    <div style={{ background: 'rgba(212,168,67,0.05)', borderLeft: '3px solid #D4A843', padding: 12, borderRadius: '0 8px 8px 0', marginTop: 8 }}>
+                      <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.6 }}>
+                        <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation:</span> Avancer départ BL-2602-014 de 15 min. Pré-alerter chantier Constructions Modernes sur temps de déchargement.
                       </p>
                     </div>
                     <div className="flex gap-2 mt-2">
