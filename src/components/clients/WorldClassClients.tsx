@@ -344,13 +344,13 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
         </div>
 
         {/* Col 4: Score + Status + Solde + Trend + Chevron */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 12, paddingRight: 16, padding: '12px 16px 12px 8px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-            <p style={{ color: '#9CA3AF', fontSize: 9, fontFamily: MONO, letterSpacing: '1.5px', marginBottom: 4 }}>SCORE SANTÉ</p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 14, paddingRight: 16, padding: '12px 16px 12px 8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <p style={{ color: '#9CA3AF', fontSize: 9, fontFamily: MONO, letterSpacing: '1.5px', whiteSpace: 'nowrap' }}>SCORE SANTÉ</p>
             <HealthGauge score={healthScore} />
           </div>
           <Badge label={client.status} color={isInactif ? T.warning : T.success} bg={isInactif ? `${T.warning}18` : `${T.success}18`} pulse={isInactif} />
-          <p style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: client.solde === 0 ? T.success : T.danger }}>
+          <p style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: client.solde === 0 ? T.success : T.danger, whiteSpace: 'nowrap' }}>
             {client.solde === 0 ? '0 DH' : `${(client.solde / 1000).toFixed(0)}K DH`}
           </p>
           {trend && (
