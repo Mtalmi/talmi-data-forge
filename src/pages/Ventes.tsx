@@ -663,6 +663,7 @@ export default function Ventes() {
           {mainTab === 'analytics' && (
             <div style={{ animation: 'fade-in 200ms ease-out' }} className="space-y-6">
               <SalesPerformanceCharts bcList={bcList} devisList={devisList} />
+              <AnalytiqueExtended />
             </div>
           )}
 
