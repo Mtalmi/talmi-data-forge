@@ -851,7 +851,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                   ))}
                 </div>
               </div>
-              <div style={{ flex: '1 1 200px', textAlign: 'center' }}>
+              <div style={{ flex: '1 1 200px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
                 <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6 }}>REVENU JOURNÉE</p>
                 <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 36, fontWeight: 200, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em' }}>153,250 <span style={{ fontSize: 16, color: '#9CA3AF' }}>DH</span></p>
                 <p style={{ fontSize: 11, color: T.textSec, marginTop: 6 }}>5 livraisons · 225 m³</p>
