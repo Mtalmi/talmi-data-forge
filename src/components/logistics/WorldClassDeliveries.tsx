@@ -375,12 +375,12 @@ function PipelineCard({ label, count, color, aiRisk, delay = 0 }: { label: strin
 // PROFIT DATA
 // ─────────────────────────────────────────────────────
 const PROFIT_DATA = [
-  { toupie: 'T-04', chauffeur: 'Youssef Benali', livraisons: 3, km: 127, revenu: 18200, carburant: -2400, maintenance: -800, tempsMort: '15 min', profit: 15000, dhKm: 118, badge: 'TOP', badgeColor: T.success },
-  { toupie: 'T-07', chauffeur: 'Karim Idrissi', livraisons: 2, km: 98, revenu: 12460, carburant: -1850, maintenance: -600, tempsMort: '22 min', profit: 10010, dhKm: 102, badge: '', badgeColor: T.success },
-  { toupie: 'T-12', chauffeur: 'Mehdi Tazi', livraisons: 1, km: 45, revenu: 8300, carburant: -950, maintenance: -400, tempsMort: '0 min', profit: 6950, dhKm: 154, badge: 'EFFICACE', badgeColor: T.gold },
-  { toupie: 'T-09', chauffeur: '—', livraisons: 0, km: 0, revenu: 0, carburant: 0, maintenance: -1200, tempsMort: 'MAINTENANCE', profit: -1200, dhKm: 0, badge: 'ARRÊT', badgeColor: T.danger },
+  { toupie: 'T-04', chauffeur: 'Youssef Benali', livraisons: 3, km: 127, revenu: 18200, carburant: -2400, maintenance: -800, tempsMort: '15 min', profit: 15000, dhKm: 118, badge: 'TOP', badgeColor: T.success, retourVide: '48%', retourVideColor: T.warning },
+  { toupie: 'T-07', chauffeur: 'Karim Idrissi', livraisons: 2, km: 98, revenu: 12460, carburant: -1850, maintenance: -600, tempsMort: '22 min', profit: 10010, dhKm: 102, badge: '', badgeColor: T.success, retourVide: '31%', retourVideColor: T.warning },
+  { toupie: 'T-12', chauffeur: 'Mehdi Tazi', livraisons: 1, km: 45, revenu: 8300, carburant: -950, maintenance: -400, tempsMort: '0 min', profit: 6950, dhKm: 154, badge: 'EFFICACE', badgeColor: T.gold, retourVide: '0%', retourVideColor: T.success },
+  { toupie: 'T-09', chauffeur: '—', livraisons: 0, km: 0, revenu: 0, carburant: 0, maintenance: -1200, tempsMort: 'MAINTENANCE', profit: -1200, dhKm: 0, badge: 'ARRÊT', badgeColor: T.danger, retourVide: '—', retourVideColor: T.textDim },
 ];
-const PROFIT_TOTALS = { toupie: 'TOTAL FLOTTE', chauffeur: '—', livraisons: 6, km: 270, revenu: 38960, carburant: -5200, maintenance: -3000, tempsMort: '—', profit: 30760, dhKm: 114 };
+const PROFIT_TOTALS = { toupie: 'TOTAL FLOTTE', chauffeur: '—', livraisons: 6, km: 270, revenu: 38960, carburant: -5200, maintenance: -3000, tempsMort: '—', profit: 30760, dhKm: 114, retourVide: '38%', retourVideColor: T.warning };
 
 // ─────────────────────────────────────────────────────
 // WEEKLY PERFORMANCE DATA
