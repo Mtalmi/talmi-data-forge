@@ -804,7 +804,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
               </Card>
             </div>
           </div>
-        </section>
+        </div>
 
         {/* ═══════════════════════════════════════════════════
             ZONE 2: PLANNING & CAPACITÉ
