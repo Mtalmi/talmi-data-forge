@@ -879,26 +879,29 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                             {item.daysLeft <= 1 ? '🔴 Demain' : item.daysLeft <= 3 ? `⚠️ ${item.daysLeft}j` : `${item.daysLeft}j`}
                           </span>
                           {item.daysLeft <= 3 ? (
-                            <button
+                            <span
+                              role="button"
+                              tabIndex={0}
                               style={{
+                                display: 'inline-block',
                                 borderWidth: '1px',
                                 borderStyle: 'solid',
                                 borderColor: '#D4A843',
                                 color: '#D4A843',
                                 background: 'transparent',
                                 borderRadius: '6px',
-                                fontSize: '11px',
+                                fontSize: '13px',
                                 fontWeight: 500,
                                 padding: '4px 12px',
-                                transition: 'all 0.2s ease',
                                 cursor: 'pointer',
+                                lineHeight: '1.4',
                               }}
-                              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.08)'; }}
-                              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(212,168,67,0.08)'; }}
+                              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
                               onClick={() => fireCommanderToast(item.name, item.daysLeft)}
                             >
                               Commander
-                            </button>
+                            </span>
                           ) : (
                             <span className="text-[10px] text-emerald-500 flex-shrink-0">✓</span>
                           )}
@@ -1119,26 +1122,29 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                             {item.daysLeft <= 1 ? '🔴 Demain' : item.daysLeft <= 3 ? `⚠️ ${item.daysLeft}j` : `${item.daysLeft}j`}
                           </span>
                           {item.daysLeft <= 3 ? (
-                            <button
+                            <span
+                              role="button"
+                              tabIndex={0}
                               style={{
+                                display: 'inline-block',
                                 borderWidth: '1px',
                                 borderStyle: 'solid',
                                 borderColor: '#D4A843',
                                 color: '#D4A843',
                                 background: 'transparent',
                                 borderRadius: '6px',
-                                fontSize: '11px',
+                                fontSize: '13px',
                                 fontWeight: 500,
                                 padding: '4px 12px',
-                                transition: 'all 0.2s ease',
                                 cursor: 'pointer',
+                                lineHeight: '1.4',
                               }}
-                              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.08)'; }}
-                              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(212,168,67,0.08)'; }}
+                              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
                               onClick={() => fireCommanderToast(item.name, item.daysLeft)}
                             >
                               Commander
-                            </button>
+                            </span>
                           ) : (
                             <span className="text-[10px] text-emerald-500 flex-shrink-0">✓</span>
                           )}
