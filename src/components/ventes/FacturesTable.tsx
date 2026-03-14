@@ -253,22 +253,19 @@ export function FacturesTable({
             className="pl-9"
           />
         </div>
-        <div className="flex flex-wrap gap-2 text-sm">
-          <Badge variant="outline" className="gap-1">
-            <Receipt className="h-3 w-3" />
+        <div className="flex flex-wrap gap-3 items-center text-sm">
+          <span style={{ fontFamily: 'ui-monospace, monospace', color: '#9CA3AF', fontSize: 13 }}>
             {filteredFactures.length} {ft.invoices}
-          </Badge>
-          <Badge variant="outline" className="gap-1 bg-success/10 text-success border-success/30">
-            <CheckCircle className="h-3 w-3" />
+          </span>
+          <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: '#22C55E', border: '1px solid #22C55E', borderRadius: 100, padding: '2px 10px', background: 'transparent' }}>
             {paidCount} {ft.paid}
-          </Badge>
-          <Badge variant="outline" className="gap-1 bg-warning/10 text-warning border-warning/30">
-            <Clock className="h-3 w-3" />
+          </span>
+          <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: '#F59E0B', border: '1px solid #F59E0B', borderRadius: 100, padding: '2px 10px', background: 'transparent' }}>
             {pendingCount} {ft.pending}
-          </Badge>
-          <Badge variant="secondary" className="font-mono">
+          </span>
+          <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 600, color: '#D4A843', fontSize: 14 }}>
             {Number(totalHT).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DH HT
-          </Badge>
+          </span>
         </div>
       </div>
 
