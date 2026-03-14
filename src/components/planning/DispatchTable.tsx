@@ -81,15 +81,24 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
 
   const uniqueToupies = new Set(rows.map(r => r.toupie).filter(t => t !== '—'));
 
+  const PROMESSE_DATA: Record<string, { time: string; badge: string; type: 'green' | 'red' | 'muted' }> = {
+    '2602-011': { time: '07:30', badge: '✓ -8 min', type: 'green' },
+    '2602-012': { time: '09:30', badge: '✓ -2 min', type: 'green' },
+    '2602-013': { time: '10:30', badge: '⚠ +25 min', type: 'red' },
+    '2602-014': { time: '13:30', badge: '—', type: 'muted' },
+    '2602-015': { time: '15:30', badge: '—', type: 'muted' },
+  };
+
   const COLS = [
     { key: 'bl', label: 'BL', width: '10%', align: 'left' as const },
-    { key: 'client', label: 'CLIENT', width: '22%', align: 'left' as const },
-    { key: 'formule', label: 'FORMULE', width: '10%', align: 'center' as const },
-    { key: 'vol', label: 'VOL', width: '9%', align: 'center' as const },
+    { key: 'client', label: 'CLIENT', width: '20%', align: 'left' as const },
+    { key: 'formule', label: 'FORMULE', width: '9%', align: 'center' as const },
+    { key: 'vol', label: 'VOL', width: '8%', align: 'center' as const },
     { key: 'toupie', label: 'TOUPIE', width: '10%', align: 'center' as const },
-    { key: 'depart', label: 'DÉPART', width: '10%', align: 'center' as const },
-    { key: 'eta', label: 'ETA', width: '10%', align: 'center' as const },
-    { key: 'statut', label: 'STATUT', width: '19%', align: 'right' as const },
+    { key: 'depart', label: 'DÉPART', width: '9%', align: 'center' as const },
+    { key: 'eta', label: 'ETA', width: '9%', align: 'center' as const },
+    { key: 'promesse', label: 'PROMESSE', width: '90px', align: 'center' as const },
+    { key: 'statut', label: 'STATUT', width: '1fr', align: 'right' as const },
   ];
 
   return (
@@ -286,6 +295,27 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
             {/* ETA */}
             <div style={{ padding: '12px 16px', fontSize: 12, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', color: isEnRoute ? '#10B981' : '#94A3B8', textAlign: 'center', fontWeight: isEnRoute ? 600 : 400 }}>
               {row.eta}
+            </div>
+            {/* PROMESSE */}
+            <div style={{ padding: '12px 8px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
+              {(() => {
+                const p = PROMESSE_DATA[row.bl];
+                if (!p) return <span style={{ color: '#4A5568', fontSize: 11 }}>—</span>;
+                return (
+                  <>
+                    <span style={{ fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', color: '#94A3B8', fontWeight: 500 }}>{p.time}</span>
+                    {p.type === 'muted' ? (
+                      <span style={{ fontSize: 10, color: '#4A5568' }}>—</span>
+                    ) : (
+                      <span style={{
+                        fontSize: 10, fontWeight: 600, padding: '1px 6px', borderRadius: 999,
+                        background: p.type === 'green' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
+                        color: p.type === 'green' ? '#22C55E' : '#EF4444',
+                      }}>{p.badge}</span>
+                    )}
+                  </>
+                );
+              })()}
             </div>
             {/* STATUT */}
             <div style={{ padding: '12px 16px', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
