@@ -411,7 +411,15 @@ export default function WorldClassProduction() {
         if (hourMap[key] !== undefined) hourMap[key] += b.volume_m3 || 0;
       }
     });
-    return Object.entries(hourMap).map(([hour, volume]) => ({ hour, volume: Math.round(volume), objectif: 90 }));
+    const liveData = Object.entries(hourMap).map(([hour, volume]) => ({ hour, volume: Math.round(volume), objectif: 90 }));
+    const hasLive = liveData.some(d => d.volume > 0);
+    if (hasLive) return liveData;
+    // Demo data matching Dashboard curve
+    const demoVolumes: Record<string, number> = {
+      '6h': 8, '7h': 22, '8h': 48, '9h': 65, '10h': 82, '11h': 90,
+      '12h': 55, '13h': 98, '14h': 88, '15h': 78, '16h': 72, '17h': 60, '18h': 5,
+    };
+    return Object.entries(demoVolumes).map(([hour, volume]) => ({ hour, volume, objectif: 90 }));
   }, [bons]);
 
   const hasHourlyData = hourlyData.some(d => d.volume > 0);
