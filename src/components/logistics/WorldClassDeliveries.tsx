@@ -179,10 +179,10 @@ function ScoreRing({ score, size = 72 }: { score: number; size?: number }) {
 // FLEET HEALTH DATA
 // ─────────────────────────────────────────────────────
 const FLEET_HEALTH_DATA = [
-  { name: 'T-04 Toupie 8m³', score: 92, insight: 'RAS — véhicule optimal', fullDiag: 'Moteur: optimal · Pneus: 85% · Vidange: OK (il y a 12j) · Batterie: 98% · Freins: 90%', revenue: '18,200 DH', driver: 'Youssef Benali', driverStats: '3 livr. · 127 km · score 92' },
-  { name: 'T-07 Toupie 10m³', score: 74, insight: 'Vidange recommandée dans 5j', fullDiag: 'Moteur: bon · Pneus: 72% · Vidange: URGENT (dans 5j / 800km) · Batterie: 91% · Freins: 78%', revenue: '12,460 DH', driver: 'Karim Idrissi', driverStats: '2 livr. · 98 km · score 87' },
-  { name: 'T-09 Toupie 8m³', score: 58, insight: '⚠ Pneus à vérifier — usure détectée', fullDiag: 'Moteur: attention · Pneus: 35% CRITIQUE · Vidange: OK · Batterie: 84% · Freins: 65% — vibrations détectées', revenue: '0 DH', driver: '—', driverStats: 'En maintenance depuis 10/03' },
-  { name: 'T-12 Toupie 8m³', score: 86, insight: 'Visite technique dans 3 semaines', fullDiag: 'Moteur: optimal · Pneus: 80% · Vidange: OK · Batterie: 95% · Freins: 88% · VT prévue 28/03', revenue: '8,300 DH', driver: 'Mehdi Tazi', driverStats: '1 livr. · 45 km · score 94' },
+  { name: 'T-04 Toupie 8m³', score: 92, insight: 'RAS — véhicule optimal', fullDiag: 'Moteur: optimal · Pneus: 85% · Vidange: OK (il y a 12j) · Batterie: 98% · Freins: 90%', revenue: '18,200 DH', driver: 'Youssef Benali', driverStats: '3 livr. · 127 km · score 92', maintenance: { text: 'Prochaine maintenance: vidange dans 1,200 km (estimé 18 mars)', color: T.textDim } },
+  { name: 'T-07 Toupie 10m³', score: 74, insight: 'Vidange recommandée dans 5j', fullDiag: 'Moteur: bon · Pneus: 72% · Vidange: URGENT (dans 5j / 800km) · Batterie: 91% · Freins: 78%', revenue: '12,460 DH', driver: 'Karim Idrissi', driverStats: '2 livr. · 98 km · score 87', maintenance: { text: 'Prochaine maintenance: vidange dans 400 km (estimé 16 mars) ⚠', color: T.warning } },
+  { name: 'T-09 Toupie 8m³', score: 58, insight: '⚠ Pneus à vérifier — usure détectée', fullDiag: 'Moteur: attention · Pneus: 35% CRITIQUE · Vidange: OK · Batterie: 84% · Freins: 65% — vibrations détectées', revenue: '0 DH', driver: '—', driverStats: 'En maintenance depuis 10/03', maintenance: { text: 'En maintenance: pneus en remplacement — retour estimé 15 mars 08:00', color: T.danger } },
+  { name: 'T-12 Toupie 8m³', score: 86, insight: 'Visite technique dans 3 semaines', fullDiag: 'Moteur: optimal · Pneus: 80% · Vidange: OK · Batterie: 95% · Freins: 88% · VT prévue 28/03', revenue: '8,300 DH', driver: 'Mehdi Tazi', driverStats: '1 livr. · 45 km · score 94', maintenance: { text: 'Prochaine maintenance: visite technique dans 3 semaines ✓', color: T.textDim } },
 ];
 
 function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; delay?: number }) {
@@ -226,6 +226,10 @@ function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; del
           <p style={{ fontFamily: MONO, fontSize: 12, color: T.textPri, textAlign: 'center', margin: '0 0 2px' }}>{v.driver}</p>
           <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textAlign: 'center', margin: 0 }}>{v.driverStats}</p>
         </div>
+        {/* Maintenance prédictive */}
+        {(v as any).maintenance && (
+          <p style={{ fontFamily: MONO, fontSize: 10, color: (v as any).maintenance.color, textAlign: 'center', margin: '6px 0 0', lineHeight: 1.4 }}>{(v as any).maintenance.text}</p>
+        )}
       </div>
     </div>
   );
@@ -235,9 +239,9 @@ function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; del
 // SEEDED DELIVERIES
 // ─────────────────────────────────────────────────────
 const SEEDED_DELIVERIES = [
-  { bl_id: 'BL-2024-A8F3', client_id: 'Résidences Atlas', formule_id: 'B30', volume_m3: 12, camion_assigne: 'T-04', chauffeur_nom: 'Youssef Benali', workflow_status: 'production', heure_prevue: '10:30', _destination: 'Chantier Maarif — Casablanca', _eta: '≈ 14 min', _delay: '+14 min', _freshness: { min: 47, max: 90, mixTime: '09:15', label: '⏱ 47 min' }, _weather: { text: '☀ 34°C', color: T.warning }, _freshAlert: '⚠ Chaleur + retard — risque qualité béton' },
-  { bl_id: 'BL-2024-C1D7', client_id: 'Groupe Addoha', formule_id: 'B25', volume_m3: 8, camion_assigne: 'T-07', chauffeur_nom: 'Karim Idrissi', workflow_status: 'validation_technique', heure_prevue: '08:15', _destination: 'Résidence Rabat Center', _eta: 'Livré à 09:02', _freshness: { min: 52, max: 90, mixTime: '', label: '✓ Livré à 52 min', done: true }, _weather: { text: '☀ 30°C', color: T.textSec }, _feedback: { stars: 4, attente: '12 min', conforme: true } },
-  { bl_id: 'BL-2024-E5B2', client_id: 'Saham Immobilier', formule_id: 'B35', volume_m3: 10, camion_assigne: 'T-12', chauffeur_nom: 'Mehdi Tazi', workflow_status: 'planification', heure_prevue: '14:00', _destination: 'Marina Kénitra — Lot 7', _eta: 'Départ prévu 13:45', _freshness: { min: 90, max: 90, mixTime: '13:30', label: '⏱ 90 min', planned: true }, _weather: { text: '☀ 38°C', color: T.danger, tooltip: 'Température élevée — temps de prise réduit. Adjuvant retardateur recommandé.' } },
+  { bl_id: 'BL-2024-A8F3', client_id: 'Résidences Atlas', formule_id: 'B30', volume_m3: 12, camion_assigne: 'T-04', chauffeur_nom: 'Youssef Benali', workflow_status: 'production', heure_prevue: '10:30', _destination: 'Chantier Maarif — Casablanca', _eta: '≈ 14 min', _delay: '+14 min', _freshness: { min: 47, max: 90, mixTime: '09:15', label: '⏱ 47 min' }, _weather: { text: '☀ 34°C', color: T.warning }, _freshAlert: '⚠ Chaleur + retard — risque qualité béton', _pnl: { type: 'estimé', revenu: '6,200', matiere: '3,100', fuel: '480', chauffeur: '350', net: '2,270', pct: '36.6' } },
+  { bl_id: 'BL-2024-C1D7', client_id: 'Groupe Addoha', formule_id: 'B25', volume_m3: 8, camion_assigne: 'T-07', chauffeur_nom: 'Karim Idrissi', workflow_status: 'validation_technique', heure_prevue: '08:15', _destination: 'Résidence Rabat Center', _eta: 'Livré à 09:02', _freshness: { min: 52, max: 90, mixTime: '', label: '✓ Livré à 52 min', done: true }, _weather: { text: '☀ 30°C', color: T.textSec }, _feedback: { stars: 4, attente: '12 min', conforme: true }, _pnl: { type: 'réel', revenu: '4,800', matiere: '2,400', fuel: '320', chauffeur: '280', net: '1,800', pct: '37.5' } },
+  { bl_id: 'BL-2024-E5B2', client_id: 'Saham Immobilier', formule_id: 'B35', volume_m3: 10, camion_assigne: 'T-12', chauffeur_nom: 'Mehdi Tazi', workflow_status: 'planification', heure_prevue: '14:00', _destination: 'Marina Kénitra — Lot 7', _eta: 'Départ prévu 13:45', _freshness: { min: 90, max: 90, mixTime: '13:30', label: '⏱ 90 min', planned: true }, _weather: { text: '☀ 38°C', color: T.danger, tooltip: 'Température élevée — temps de prise réduit. Adjuvant retardateur recommandé.' }, _pnl: { type: 'estimé', revenu: '5,500', matiere: '2,750', fuel: '400', chauffeur: '300', net: '2,050', pct: '37.3' } },
 ];
 
 function getStatusDisplay(ws: string | null) {
@@ -341,6 +345,12 @@ function DeliveryCard({ d, index }: { d: any; index: number }) {
           <span>Temps d'attente: {fb.attente}</span>
           <span>·</span>
           <span>Conformité béton: {fb.conforme ? <span style={{ color: T.success }}>✓</span> : <span style={{ color: T.danger }}>✗</span>}</span>
+        </div>
+      )}
+      {/* P&L micro-row */}
+      {d._pnl && (
+        <div style={{ marginTop: 8, paddingTop: 6, borderTop: `1px solid ${T.cardBorder}`, fontFamily: MONO, fontSize: 10, color: T.textDim, lineHeight: 1.6 }}>
+          P&L {d._pnl.type}: {d._pnl.revenu} DH revenu − {d._pnl.matiere} matière − {d._pnl.fuel} fuel − {d._pnl.chauffeur} chauffeur = <span style={{ color: T.success }}>{d._pnl.net} DH net</span> (<span style={{ color: T.success }}>{d._pnl.pct}%</span>)
         </div>
       )}
     </div>
@@ -1060,7 +1070,7 @@ function IntelligenceIATab() {
         </div>
 
         <RecommendationBox text={
-          <>T-09 en arrêt maintenance génère une perte sèche de <strong style={{ color: T.danger }}>1,200 DH/jour</strong>. Retour en service estimé demain 08:00. Impact : les 3 livraisons prévues demain pour T-09 sont réaffectées à T-04 et T-12. Le ratio profit/km de la flotte peut atteindre <strong style={{ color: T.gold }}>135 DH/km</strong> si T-09 revient en service et que les livraisons longue distance sont affectées à T-12.</>
+          <>T-09 en arrêt maintenance génère une perte sèche de <strong style={{ color: T.danger }}>1,200 DH/jour</strong>. Retour en service estimé demain 08:00. Impact : les 3 livraisons prévues demain pour T-09 sont réaffectées à T-04 et T-12. Le ratio profit/km de la flotte peut atteindre <strong style={{ color: T.gold }}>135 DH/km</strong> si T-09 revient en service et que les livraisons longue distance sont affectées à T-12. Revenus non-réclamés détectés : <strong style={{ color: T.danger }}>12,400 DH</strong> de surestaries + <strong style={{ color: T.danger }}>4,200 DH</strong> retour béton Sigma Bâtiment non-facturé = <strong style={{ color: T.gold }}>16,600 DH de manque à gagner</strong>. Action immédiate recommandée.</>
         } />
       </Card>
 
@@ -1495,6 +1505,165 @@ export default function WorldClassDeliveries() {
               </Card>
             </section>
 
+            {/* ═══ RETOUR BÉTON TRACKER ═══ */}
+            <section>
+              <SectionHeader icon={AlertTriangle} label="✦ Suivi Retours Béton — Pertes Évitables" />
+              <Card style={{ borderTop: `2px solid ${T.success}` }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 20 }}>
+                  <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '16px 14px', borderTop: `2px solid ${T.success}` }}>
+                    <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 8 }}>RETOURS CE MOIS</p>
+                    <p style={{ fontFamily: MONO, fontSize: 28, fontWeight: 200, color: T.success, margin: 0, lineHeight: 1 }}>0</p>
+                    <p style={{ fontSize: 11, color: T.success, marginTop: 6 }}>objectif: 0</p>
+                  </div>
+                  <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '16px 14px', borderTop: `2px solid ${T.success}` }}>
+                    <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 8 }}>PERTES ÉVITÉES</p>
+                    <p style={{ fontFamily: MONO, fontSize: 28, fontWeight: 200, color: T.success, margin: 0, lineHeight: 1 }}>0 DH</p>
+                    <p style={{ fontSize: 11, color: T.textDim, marginTop: 6 }}>vs 4,200 DH mois dernier</p>
+                  </div>
+                  <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '16px 14px', borderTop: `2px solid ${T.success}` }}>
+                    <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 8 }}>TAUX RETOUR</p>
+                    <p style={{ fontFamily: MONO, fontSize: 28, fontWeight: 200, color: T.success, margin: 0, lineHeight: 1 }}>0%</p>
+                    <p style={{ fontSize: 11, color: T.success, marginTop: 6 }}>−100% vs M-1 ✓</p>
+                  </div>
+                </div>
+
+                <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: '1.5px', textTransform: 'uppercase' as const, marginBottom: 12 }}>HISTORIQUE RETOURS (6 DERNIERS MOIS)</p>
+                <div style={{ overflowX: 'auto', marginBottom: 16 }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead><tr>
+                      {['DATE', 'CLIENT', 'VOLUME', 'CAUSE', 'PERTE', 'FACTURABLE'].map(h => <th key={h} style={{ fontFamily: MONO, fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '0.15em', padding: '10px 12px', borderBottom: `1px solid ${T.cardBorder}`, textAlign: 'left' }}>{h}</th>)}
+                    </tr></thead>
+                    <tbody>
+                      {[
+                        { date: '06/03', client: 'Sigma Bâtiment', volume: '8 m³ F-B25', cause: 'Chantier non-prêt', perte: '4,200 DH', facturable: 'Non-facturé', fColor: T.danger },
+                        { date: '14/02', client: 'BTP Maroc', volume: '6 m³ F-B20', cause: 'Accès bloqué', perte: '2,800 DH', facturable: 'Facturé', fColor: T.success },
+                        { date: '22/01', client: 'Saudi Readymix', volume: '10 m³ F-B30', cause: 'Client absent', perte: '6,100 DH', facturable: 'Non-facturé', fColor: T.danger },
+                      ].map((r, i) => (
+                        <tr key={i} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)', borderBottom: `1px solid rgba(30,45,74,0.5)` }}>
+                          <td style={{ padding: '10px 12px', fontFamily: MONO, fontSize: 11, color: T.textSec }}>{r.date}</td>
+                          <td style={{ padding: '10px 12px', fontSize: 12, color: T.textPri }}>{r.client}</td>
+                          <td style={{ padding: '10px 12px', fontFamily: MONO, fontSize: 11, color: T.gold }}>{r.volume}</td>
+                          <td style={{ padding: '10px 12px', fontSize: 11, color: T.textSec }}>{r.cause}</td>
+                          <td style={{ padding: '10px 12px', fontFamily: MONO, fontSize: 11, fontWeight: 200, color: T.danger }}>{r.perte}</td>
+                          <td style={{ padding: '10px 12px' }}><span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: r.fColor === T.success ? 'rgba(34,197,94,0.12)' : 'rgba(239,68,68,0.12)', color: r.fColor, border: `1px solid ${r.fColor}40` }}>{r.facturable}</span></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <RecommendationBox text={
+                  <>Tendance positive : <strong style={{ color: T.success }}>0 retour ce mois</strong> vs 1 en février et 1 en janvier. Le retour Sigma Bâtiment du 06/03 (<strong style={{ color: T.danger }}>4,200 DH</strong>) n'a pas été facturé — relance recommandée. Sur 6 mois, <strong style={{ color: T.gold }}>62% des retours</strong> sont causés par "chantier non-prêt". Solution : activer la confirmation chantier avant départ (voir ci-dessous).</>
+                } />
+                <div style={{ marginTop: 10 }}><IABadge /></div>
+              </Card>
+            </section>
+
+            {/* ═══ CONFIRMATION CHANTIER ═══ */}
+            <section>
+              <SectionHeader icon={CheckCircle} label="✦ Confirmation Chantier — Pré-Livraison" />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {/* Card 1 — Résidences Atlas: none confirmed */}
+                <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderLeft: `3px solid ${T.danger}`, borderRadius: 10, padding: '16px 20px' }}>
+                  <p style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: T.textPri, marginBottom: 10 }}>BL-2024-A8F3 — Résidences Atlas</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 10, fontFamily: MONO, fontSize: 11 }}>
+                    <span style={{ color: T.warning }}>☐ Pompe sur site — <span style={{ color: T.warning }}>Non confirmé</span></span>
+                    <span style={{ color: T.warning }}>☐ Accès chantier dégagé — <span style={{ color: T.warning }}>Non confirmé</span></span>
+                    <span style={{ color: T.warning }}>☐ Responsable présent — <span style={{ color: T.warning }}>Non confirmé</span></span>
+                  </div>
+                  <p style={{ fontFamily: MONO, fontSize: 10, color: T.danger, lineHeight: 1.5, marginBottom: 10 }}>⚠ RISQUE: Aucune confirmation reçue — retard départ recommandé jusqu'à confirmation. Coût potentiel retour: 4,800 DH</p>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button style={{ padding: '7px 14px', background: T.gold, border: 'none', borderRadius: 6, color: '#0F1629', fontWeight: 700, fontSize: 11, cursor: 'pointer', fontFamily: MONO }}>Envoyer Rappel SMS</button>
+                    <button style={{ padding: '7px 14px', background: 'transparent', border: `1px solid ${T.gold}`, borderRadius: 6, color: T.gold, fontWeight: 700, fontSize: 11, cursor: 'pointer', fontFamily: MONO }}>Appeler Chantier</button>
+                  </div>
+                </div>
+
+                {/* Card 2 — Groupe A: fully confirmed */}
+                <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderLeft: `3px solid ${T.success}`, borderRadius: 10, padding: '16px 20px' }}>
+                  <p style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: T.textPri, marginBottom: 10 }}>BL-2024-C1D7 — Groupe Addoha</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 10, fontFamily: MONO, fontSize: 11 }}>
+                    <span style={{ color: T.success }}>✓ Pompe sur site</span>
+                    <span style={{ color: T.success }}>✓ Accès dégagé</span>
+                    <span style={{ color: T.success }}>✓ Responsable: M. Idrissi confirmé à 06:45</span>
+                  </div>
+                  <p style={{ fontFamily: MONO, fontSize: 10, color: T.success }}>✓ CONFIRMÉ — Chantier prêt</p>
+                </div>
+
+                {/* Card 3 — Saham Im: partial */}
+                <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderLeft: `3px solid ${T.warning}`, borderRadius: 10, padding: '16px 20px' }}>
+                  <p style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: T.textPri, marginBottom: 10 }}>BL-2024-E5B2 — Saham Immobilier</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 10, fontFamily: MONO, fontSize: 11 }}>
+                    <span style={{ color: T.warning }}>☐ Pompe sur site</span>
+                    <span style={{ color: T.success }}>✓ Accès dégagé</span>
+                    <span style={{ color: T.warning }}>☐ Responsable présent</span>
+                  </div>
+                  <p style={{ fontFamily: MONO, fontSize: 10, color: T.warning }}>⚠ Confirmation partielle — départ prévu 14:00, relance envoyée à 12:00</p>
+                </div>
+              </div>
+            </section>
+
+            {/* ═══ SURESTARIES ═══ */}
+            <section>
+              <SectionHeader icon={Clock} label="✦ Surestaries — Temps d'Attente Facturable" />
+              <Card style={{ borderTop: `2px solid ${T.gold}` }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 20 }}>
+                  <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '16px 14px', borderTop: `2px solid ${T.gold}` }}>
+                    <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 8 }}>ATTENTE TOTALE JOUR</p>
+                    <p style={{ fontFamily: MONO, fontSize: 28, fontWeight: 200, color: T.warning, margin: 0, lineHeight: 1 }}>47 min</p>
+                    <p style={{ fontSize: 11, color: T.textDim, marginTop: 6 }}>seuil: 20 min/livraison</p>
+                  </div>
+                  <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '16px 14px', borderTop: `2px solid ${T.danger}` }}>
+                    <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 8 }}>FACTURABLE NON-RÉCLAMÉ</p>
+                    <p style={{ fontFamily: MONO, fontSize: 28, fontWeight: 200, color: T.danger, margin: 0, lineHeight: 1 }}>2,800 DH</p>
+                    <p style={{ fontSize: 11, color: T.textDim, marginTop: 6 }}>ce mois</p>
+                  </div>
+                  <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '16px 14px', borderTop: `2px solid ${T.success}` }}>
+                    <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 8 }}>FACTURÉ CE MOIS</p>
+                    <p style={{ fontFamily: MONO, fontSize: 28, fontWeight: 200, color: T.success, margin: 0, lineHeight: 1 }}>1,200 DH</p>
+                    <p style={{ fontSize: 11, color: T.textDim, marginTop: 6 }}>3 surestaries</p>
+                  </div>
+                </div>
+
+                <div style={{ overflowX: 'auto', marginBottom: 16 }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead><tr>
+                      {['LIVRAISON', 'CLIENT', 'ATTENTE', 'SEUIL', 'DÉPASSEMENT', 'MONTANT', 'STATUT'].map(h => <th key={h} style={{ fontFamily: MONO, fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '0.15em', padding: '10px 12px', borderBottom: `1px solid ${T.cardBorder}`, textAlign: 'left' }}>{h}</th>)}
+                    </tr></thead>
+                    <tbody>
+                      {[
+                        { bl: 'BL-2024-C1D7', client: 'Groupe A', attente: '12 min', seuil: '20 min', depassement: '—', montant: '0 DH', statut: 'Sous seuil', sColor: T.success, flagged: false },
+                        { bl: 'BL-2024-A8F3', client: 'Résidences Atlas', attente: '22 min', seuil: '20 min', depassement: '+2 min', montant: '400 DH', statut: 'À facturer', sColor: T.warning, flagged: false },
+                        { bl: '13/03 BL', client: 'TGCC', attente: '35 min', seuil: '20 min', depassement: '+15 min', montant: '1,500 DH', statut: 'Facturé', sColor: T.success, flagged: false },
+                        { bl: '10/03 BL', client: 'Saudi Readymix', attente: '28 min', seuil: '20 min', depassement: '+8 min', montant: '800 DH', statut: 'Non-facturé', sColor: T.danger, flagged: true },
+                        { bl: '09/03 BL', client: 'Sigma Bâtiment', attente: '45 min', seuil: '20 min', depassement: '+25 min', montant: '2,500 DH', statut: 'Non-facturé', sColor: T.danger, flagged: true },
+                      ].map((r, i) => (
+                        <tr key={i} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)', borderBottom: `1px solid rgba(30,45,74,0.5)`, borderLeft: r.flagged ? `3px solid ${T.danger}` : 'none', transition: 'background 150ms' }}
+                          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.06)')}
+                          onMouseLeave={e => (e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)')}>
+                          <td style={{ padding: '10px 12px', fontFamily: MONO, fontSize: 11, color: T.gold }}>{r.bl}</td>
+                          <td style={{ padding: '10px 12px', fontSize: 12, color: T.textPri }}>{r.client}</td>
+                          <td style={{ padding: '10px 12px', fontFamily: MONO, fontSize: 11, color: T.textSec }}>{r.attente}</td>
+                          <td style={{ padding: '10px 12px', fontFamily: MONO, fontSize: 11, color: T.textDim }}>{r.seuil}</td>
+                          <td style={{ padding: '10px 12px', fontFamily: MONO, fontSize: 11, color: r.depassement === '—' ? T.textDim : T.warning }}>{r.depassement}</td>
+                          <td style={{ padding: '10px 12px', fontFamily: MONO, fontSize: 11, fontWeight: 200, color: r.montant === '0 DH' ? T.textDim : T.gold }}>{r.montant}</td>
+                          <td style={{ padding: '10px 12px' }}><span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: r.sColor === T.success ? 'rgba(34,197,94,0.12)' : r.sColor === T.warning ? 'rgba(245,158,11,0.12)' : 'rgba(239,68,68,0.12)', color: r.sColor, border: `1px solid ${r.sColor}40` }}>{r.statut}</span></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <button style={{ padding: '9px 20px', background: T.gold, border: 'none', borderRadius: 8, color: '#0F1629', fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: MONO, marginBottom: 16 }}>
+                  Facturer Tout
+                </button>
+
+                <RecommendationBox text={
+                  <><strong style={{ color: T.gold }}>12,400 DH</strong> de surestaries non-facturées sur 30 jours. Sigma Bâtiment concentre <strong style={{ color: T.danger }}>45% du temps d'attente excessif</strong> (2 occurrences, 73 min total). Recommandation : (1) Facturer immédiatement les <strong style={{ color: T.gold }}>3,300 DH</strong> de surestaries Sigma Bâtiment et Saudi Readymix. (2) Instaurer confirmation chantier obligatoire pour réduire les temps d'attente de 40%.</>
+                } />
+                <div style={{ marginTop: 10 }}><IABadge /></div>
+              </Card>
+            </section>
+
             {/* 3h. PERFORMANCE HEBDOMADAIRE */}
             <section>
               <SectionHeader icon={TrendingUp} label="Performance Hebdomadaire" />
@@ -1564,6 +1733,7 @@ export default function WorldClassDeliveries() {
                      { color: T.warning, text: 'Fraîcheur béton: livraison Résidences Atlas à 47 min/90 min — surveiller. Si retard dépasse 25 min supplémentaires, préparer batch de remplacement.', pulse: false },
                      { color: T.danger, text: 'T-09 en maintenance — pneus à remplacer. Retour prévu demain 08:00. 3 livraisons T-09 réaffectées.', pulse: false },
                      { color: T.success, text: 'Carburant flotte : T-04 34% (ravitaillement ce soir), T-07 62% ✓, T-12 78% ✓', pulse: false },
+                     { color: T.danger, text: 'Surestaries non-facturées: 3,300 DH (Sigma Bâtiment 2,500 DH + Saudi Readymix 800 DH) — facturer avant fin de semaine', pulse: false },
                   ].map((item, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
                       <div style={{ width: 8, height: 8, borderRadius: '50%', background: item.color, marginTop: 4, flexShrink: 0, animation: item.pulse ? 'tbos-pulse 1.5s ease-in-out infinite' : 'none' }} />
