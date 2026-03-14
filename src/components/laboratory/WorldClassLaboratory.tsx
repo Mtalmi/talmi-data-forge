@@ -1966,7 +1966,7 @@ function IntelligenceIATab() {
               {certRows.map((r, i) => {
                 const isWarning = r.statut === 'À renouveler';
                 return (
-                  <tr key={i} style={{ ...altRow(i), borderLeft: isWarning ? '3px solid #F59E0B' : 'none' }}>
+                  <tr key={i} style={{ ...altRow(i), borderLeft: isWarning ? '3px solid #F59E0B' : 'none' }} onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }} onMouseLeave={e => { e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)'; }}>
                     <td style={{ ...monoCell, color: T.gold }}>{r.norme}</td>
                     <td style={{ ...tblCell, color: T.textSec }}>{r.desc}</td>
                     <td style={tblCell}>
