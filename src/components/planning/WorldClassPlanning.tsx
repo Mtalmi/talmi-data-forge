@@ -506,6 +506,17 @@ function DeliveryCard({ d, delay = 0, routeData, weatherIndex = 0 }: { d: typeof
               <span style={{ fontSize: 10, color: T.success, fontWeight: 600 }}>🚛 En route · ETA {new Date(Date.now() + 25 * 60000).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
             )}
           </div>
+          {(() => {
+            const ytdData: Record<string, string> = {
+              'Ciments du Maroc': '248,000 DH YTD · 14 livraisons',
+              'ONCF': '186,000 DH YTD · 8 livraisons',
+              'Addoha Group': '124,000 DH YTD · 7 livraisons',
+              'TGCC': '42,000 DH YTD · 3 livraisons',
+              'Alliances': '95,000 DH YTD · 6 livraisons',
+            };
+            const ytd = ytdData[d.client];
+            return ytd ? <p style={{ color: '#9CA3AF', fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', marginTop: 4 }}>{ytd}</p> : null;
+          })()}
         </div>
         <Badge label={d.status} color={d.statusColor} bg={`${d.statusColor}18`} pulse={isEnRoute} />
       </div>
@@ -702,6 +713,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dispatch');
   const [scheduleViewMode, setScheduleViewMode] = useState<'standard' | 'rentabilite'>('standard');
+  const [deliverySort, setDeliverySort] = useState<'heure' | 'revenu' | 'satisfaction'>('heure');
   const dispatchRef = useRef<HTMLDivElement | null>(null);
   const kpisRef = useRef<HTMLDivElement | null>(null);
   const semaineRef = useRef<HTMLDivElement | null>(null);
@@ -1068,9 +1080,28 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                     </div>
                   </Card>
                   <div style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', borderRadius: 12, padding: 16 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-                      <Clock size={14} color={T.gold} />
-                      <span style={{ color: T.textSec, fontSize: 12, fontWeight: 600 }}>Prochaines Livraisons</span>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <Clock size={14} color={T.gold} />
+                        <span style={{ color: T.textSec, fontSize: 12, fontWeight: 600 }}>Prochaines Livraisons</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        {(['heure', 'revenu', 'satisfaction'] as const).map(s => (
+                          <span
+                            key={s}
+                            onClick={() => setDeliverySort(s)}
+                            style={{
+                              fontSize: 11, cursor: 'pointer', paddingBottom: 2,
+                              color: deliverySort === s ? '#D4A843' : '#9CA3AF',
+                              borderBottom: deliverySort === s ? '1px solid #D4A843' : '1px solid transparent',
+                              fontWeight: deliverySort === s ? 600 : 400,
+                              transition: 'all 150ms',
+                            }}
+                          >
+                            {s.charAt(0).toUpperCase() + s.slice(1)}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 420, overflowY: 'auto' }}>
                       {(liveDeliveries.length > 0 ? liveDeliveries : deliveries).map((d, i) => (
