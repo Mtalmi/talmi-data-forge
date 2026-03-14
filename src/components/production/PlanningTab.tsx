@@ -198,6 +198,7 @@ function CapacityBar({ chips }: { chips: PlanningChip[] }) {
   const pct = Math.min(100, (totalVolume / DAILY_CAPACITY) * 100);
   const isHigh = pct > 70;
   const isCritical = pct > 90;
+  const barGradient = isCritical ? 'linear-gradient(90deg, #EF4444, #DC2626)' : 'linear-gradient(90deg, #D4A843, #E8C96A)';
   const barColor = isCritical ? '#EF4444' : isHigh ? '#F59E0B' : T.gold;
 
   return (
@@ -207,7 +208,7 @@ function CapacityBar({ chips }: { chips: PlanningChip[] }) {
           Capacité
         </span>
         <span style={{
-          fontFamily: 'ui-monospace, monospace', fontSize: 9, fontWeight: 600,
+          fontFamily: 'ui-monospace, monospace', fontSize: 11, fontWeight: 600,
           color: barColor, letterSpacing: '-0.02em',
         }}>
           {totalVolume}/{DAILY_CAPACITY}m³
@@ -220,7 +221,7 @@ function CapacityBar({ chips }: { chips: PlanningChip[] }) {
         <div style={{
           height: '100%', borderRadius: 2,
           width: `${pct}%`,
-          background: `linear-gradient(90deg, ${barColor}90, ${barColor})`,
+          background: barGradient,
           transition: 'width 1s cubic-bezier(0.4,0,0.2,1)',
           boxShadow: isHigh ? `0 0 8px ${barColor}40` : 'none',
         }} />
