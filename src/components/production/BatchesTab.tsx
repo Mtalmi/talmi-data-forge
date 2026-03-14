@@ -455,17 +455,17 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                           onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                         >
                           <div className="flex items-center justify-between mb-1">
-                            <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 500, color: '#fff' }}>{item.bl_id}</span>
+                            <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 500, color: '#D4A843' }}>{item.bl_id}</span>
                             <div className="flex items-center gap-2">
                               {pct ? (
-                                <span style={{ fontFamily: mono, fontSize: 11, color: '#60a5fa' }}>{pct}</span>
+                                <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#60a5fa' }}>{pct}</span>
                               ) : (
                                 <span style={{ color: '#34d399', fontSize: 11 }}>✓</span>
                               )}
-                              <span style={{ fontFamily: mono, fontSize: 10, color: 'rgba(255,255,255,0.20)' }}>{item.heure}</span>
+                              <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#D4A843' }}>{item.heure}</span>
                             </div>
                           </div>
-                          <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.40)' }}>{item.formule} · {item.volume} m³ · {item.client}</p>
+                          <p style={{ fontSize: 11, color: '#9CA3AF' }}><span style={{ color: '#D4A843' }}>{item.formule}</span> · {item.volume} m³ · {item.client}</p>
                         </div>
                       );
                     })
