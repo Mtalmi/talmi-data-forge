@@ -387,7 +387,7 @@ function ScheduleBlock({ slot, delay = 0, riskyClients }: { slot: { product: str
         background: dotColor,
         boxShadow: `0 0 4px ${dotColor}60`,
       }} />
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 800, color, marginBottom: 2 }}>{slot.product}</p>
+      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 800, color: '#D4A843', marginBottom: 2, display: 'inline-block', padding: '1px 6px', borderRadius: 4, background: 'rgba(212,168,67,0.2)', border: '1px solid rgba(212,168,67,0.5)' }}>{slot.product}</p>
       <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: T.textPri }}>{slot.volume} m³</p>
       <p style={{ fontSize: 10, color: T.textDim, marginTop: 2 }}>{slot.client}</p>
     </div>
