@@ -257,21 +257,22 @@ export function BcTable({
     
     const date = parseISO(bc.date_livraison_souhaitee);
     const priority = getBcPriority(bc);
-    const isOverdue = isPast(date) && !isToday(date) && bc.statut === 'pret_production';
+    const isOverdue = isPast(date) && !isToday(date);
+    const now = new Date();
+    const diffDays = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    const isWithin3Days = diffDays >= 0 && diffDays <= 3;
     
+    const dateColor = isOverdue ? '#EF4444' : isWithin3Days ? '#F59E0B' : '#9CA3AF';
+
     return (
-      <span className={cn(
-        "text-xs font-mono",
-        isOverdue && "text-red-400 font-medium",
-        priority.isUrgent && bc.statut === 'pret_production' && "font-medium"
-      )}>
+      <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: dateColor, fontWeight: isOverdue ? 500 : 400 }}>
         {isToday(date) ? (
-          <span className="flex items-center gap-1 text-[#D4A843] font-medium">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#D4A843] animate-pulse" />
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#D4A843', fontWeight: 500, justifyContent: 'center' }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#D4A843', animation: 'pulse 2s ease-in-out infinite' }} />
             Auj.
           </span>
         ) : isTomorrow(date) ? (
-          <span className="text-warning">Demain</span>
+          <span style={{ color: '#F59E0B' }}>Demain</span>
         ) : (
           format(date, 'dd/MM/yy')
         )}
