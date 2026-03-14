@@ -368,8 +368,8 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
 
       {/* Fleet summary bar */}
       <div style={{ padding: '12px 8px 8px', borderTop: '1px solid rgba(212,168,67,0.2)' }}>
-        <p style={{ color: '#fff', fontSize: 13, fontWeight: 600, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', textAlign: 'center' }}>
-          Flotte: 153,250 DH · Coût: 8,400 DH · Marge: 94.5%
+        <p style={{ color: '#fff', fontSize: 13, fontWeight: 600, fontFamily: 'ui-monospace, monospace', textAlign: 'center' }}>
+          Flotte: <span style={{ color: '#D4A843' }}>153,250 DH</span> · Coût: <span style={{ color: '#D4A843' }}>8,400 DH</span> · Marge: <span style={{ color: '#22C55E' }}>94.5%</span>
         </p>
       </div>
       
