@@ -138,7 +138,7 @@ function useAnimatedCounter(target: number, duration = 1200) {
     const start = performance.now();
     const animate = (now: number) => {
       const p = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
+      const eased = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
       setValue(Math.round(eased * target));
       if (p < 1) rafRef.current = requestAnimationFrame(animate);
     };
