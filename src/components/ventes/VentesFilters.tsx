@@ -171,21 +171,27 @@ export function VentesFilters({
         )}
 
         <div className="flex items-center gap-2 ml-auto">
-          <Button
-            variant={autoRefreshEnabled ? 'secondary' : 'ghost'}
-            size="sm"
+          <button
             onClick={onAutoRefreshToggle}
-            className={cn(
-              "gap-2 text-xs",
-              autoRefreshEnabled && "bg-success/10 text-success hover:bg-success/20"
-            )}
+            style={{
+              border: autoRefreshEnabled ? '1px solid #22C55E' : '1px solid rgba(255,255,255,0.1)',
+              color: autoRefreshEnabled ? '#22C55E' : '#9CA3AF',
+              background: autoRefreshEnabled ? 'rgba(34,197,94,0.06)' : 'transparent',
+              borderRadius: 8,
+              padding: '6px 14px',
+              cursor: 'pointer',
+              fontSize: 12,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+            }}
           >
             <div className={cn(
               "h-2 w-2 rounded-full",
               autoRefreshEnabled ? "bg-success animate-pulse" : "bg-muted-foreground"
             )} />
             {c.auto}
-          </Button>
+          </button>
           
           <Button
             variant="ghost"
