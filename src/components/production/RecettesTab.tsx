@@ -139,7 +139,7 @@ function FormulaCard({ f }: { f: Formula }) {
       {/* Header */}
       <div className="flex items-start justify-between" style={{ background: T.cardBg, padding: '16px 24px', borderBottom: `1px solid ${T.cardBorder}` }}>
         <div>
-          <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 28, fontWeight: 200, color: '#D4A843' }}>{f.code}</p>
+          <span style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '28px', display: 'block' }}>{f.code}</span>
           <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.50)', marginTop: 2 }}>{f.name}</p>
         </div>
         <span style={{
