@@ -14,16 +14,7 @@ import { StockAdjustmentDialog } from '@/components/stocks/StockAdjustmentDialog
 import { RecentReceptionsCard } from '@/components/stocks/RecentReceptionsCard';
 import { QualityStockEntryDialog } from '@/components/stocks/QualityStockEntryDialog';
 import { PendingReceptionsWidget } from '@/components/stocks/PendingReceptionsWidget';
-import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import {
   Warehouse,
   RefreshCw,
@@ -33,16 +24,12 @@ import {
   ArrowDown,
   Minus,
   TrendingDown,
-  Shield,
-  Lock,
-  Activity,
 } from 'lucide-react';
 import { format, subDays, startOfDay } from 'date-fns';
-import { cn } from '@/lib/utils';
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-// ─── DESIGN TOKENS (unified) ───
+const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
 const T = {
   gold: '#FFD700',
   cardBg: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
@@ -51,25 +38,29 @@ const T = {
   textDim: '#64748B',
 };
 
-// ─── SECTION HEADER ───
-function SectionHeader({ icon: Icon, label }: { icon: any; label: string }) {
+const goldOutlineBtn: React.CSSProperties = {
+  border: '1px solid #D4A843', color: '#D4A843', background: 'transparent',
+  borderRadius: 8, padding: '8px 20px', cursor: 'pointer',
+  fontSize: 13, fontFamily: MONO, fontWeight: 500,
+  display: 'inline-flex', alignItems: 'center', gap: 6,
+};
+
+const goldFilledBtn: React.CSSProperties = {
+  background: '#D4A843', color: '#0F1629', border: 'none',
+  borderRadius: 8, padding: '8px 24px', cursor: 'pointer',
+  fontSize: 14, fontWeight: 600, fontFamily: MONO,
+};
+
+// Live clock component
+function LiveClock() {
+  const [now, setNow] = useState(new Date());
+  useEffect(() => { const id = setInterval(() => setNow(new Date()), 1000); return () => clearInterval(id); }, []);
   return (
-    <div className="flex items-center gap-2.5 mb-4">
-      <Icon size={16} strokeWidth={1.5} style={{ color: T.gold, flexShrink: 0 }} />
-      <span style={{
-        color: T.gold, fontWeight: 700, fontSize: 12,
-        textTransform: 'uppercase', letterSpacing: '0.2em', whiteSpace: 'nowrap',
-      }}>{label}</span>
-      <div className="flex-1 h-px" style={{ background: `linear-gradient(90deg, ${T.gold}33 0%, transparent 80%)` }} />
-    </div>
+    <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF', whiteSpace: 'nowrap' }}>
+      {now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+    </span>
   );
 }
-
-// ─── TABLE HEADER CELL STYLE ───
-const thStyle: React.CSSProperties = {
-  fontSize: 11, fontWeight: 600, textTransform: 'uppercase',
-  letterSpacing: '0.1em', color: T.textSec,
-};
 
 export default function Stocks() {
   const { t, lang } = useI18n();
@@ -78,21 +69,14 @@ export default function Stocks() {
   const { previewRole } = usePreviewRole();
   const effectiveCentraliste = isCentraliste || previewRole === 'centraliste';
   const {
-    stocks,
-    mouvements,
-    consumptionStats,
-    loading,
-    fetchStocks,
-    fetchMouvements,
-    getCriticalStocks,
+    stocks, mouvements, consumptionStats, loading,
+    fetchStocks, fetchMouvements, getCriticalStocks,
   } = useStocks();
   const { autonomy, getAutonomyForMaterial, getCriticalMaterials } = useStockAutonomy();
 
-  // Wizard external open trigger
   const [wizardOpen, setWizardOpen] = useState(false);
-
-  // Sparkline data: 7-day daily net stock per material
   const [sparklines, setSparklines] = useState<Record<string, number[]>>({});
+
   const fetchSparklines = useCallback(async () => {
     try {
       const sevenAgo = startOfDay(subDays(new Date(), 7)).toISOString();
@@ -102,7 +86,6 @@ export default function Stocks() {
         .gte('created_at', sevenAgo)
         .order('created_at', { ascending: true });
       if (!data) return;
-      // Group by material → day → net change
       const byMat: Record<string, Record<string, number>> = {};
       data.forEach(m => {
         const mat = m.materiau;
@@ -111,7 +94,6 @@ export default function Stocks() {
         const sign = m.type_mouvement === 'consommation' || m.type_mouvement === 'sortie' ? -1 : 1;
         byMat[mat][day] = (byMat[mat][day] || 0) + m.quantite * sign;
       });
-      // Build cumulative series per material
       const result: Record<string, number[]> = {};
       for (const [mat, days] of Object.entries(byMat)) {
         const sorted = Object.entries(days).sort(([a], [b]) => a.localeCompare(b));
@@ -123,76 +105,18 @@ export default function Stocks() {
   }, []);
   useEffect(() => { fetchSparklines(); }, [fetchSparklines]);
 
-
   const canViewStocks = isCeo || isSuperviseur || isAgentAdministratif || isResponsableTechnique;
   const canCreateStockReception = isCeo || isSuperviseur || isAgentAdministratif;
   const canCreateStockAdjustment = isCeo || isSuperviseur || isAgentAdministratif;
   const canCreateQualityEntry = isCeo || isSuperviseur || isResponsableTechnique;
   const canValidatePendingReception = isCeo || isSuperviseur || isAgentAdministratif;
-  const isReadOnly = false; // No read-only mode needed — blocked users simply can't access
 
-  // Hard redirect if Centraliste tries to access Stocks
   if (!authLoading && effectiveCentraliste) {
     return <AccessDenied module="Stocks" reason="Le module Stocks est interdit aux Centralistes pour garantir la séparation des pouvoirs et prévenir la fraude matière." />;
   }
-  
+
   const criticalStocks = getCriticalStocks();
-  
-  // Smart reorder: materials with < 3 days autonomy (real or mock)
-  const criticalAutonomyMaterials = (() => {
-    const real = getCriticalMaterials().map(a => {
-      const stock = stocks.find(s => s.materiau === a.materiau);
-      return {
-        materiau: a.materiau,
-        daysRemaining: a.daysRemaining,
-        quantite_actuelle: a.quantite_actuelle,
-        seuil_alerte: a.seuil_alerte,
-        unite: a.unite,
-        capacite_max: stock?.capacite_max || null,
-      };
-    });
-    if (real.length > 0) return real;
-    // Fallback: check raw stock levels for materials below 15% capacity
-    return stocks
-      .filter(s => s.capacite_max && (s.quantite_actuelle / s.capacite_max) < 0.15)
-      .map(s => ({
-        materiau: s.materiau,
-        daysRemaining: 1,
-        quantite_actuelle: s.quantite_actuelle,
-        seuil_alerte: s.seuil_alerte,
-        unite: s.unite,
-        capacite_max: s.capacite_max,
-      }));
-  })();
 
-  const handleRefresh = () => {
-    fetchStocks();
-    fetchMouvements();
-  };
-
-  const getMovementIcon = (type: string) => {
-    switch (type) {
-      case 'reception':
-        return <ArrowUp className="h-4 w-4 text-success" />;
-      case 'consommation':
-        return <ArrowDown className="h-4 w-4 text-destructive" />;
-      default:
-        return <Minus className="h-4 w-4 text-muted-foreground" />;
-    }
-  };
-
-  const getMovementLabel = (type: string) => {
-    switch (type) {
-      case 'reception':
-        return t.pages.stocks.reception;
-      case 'consommation':
-        return t.pages.stocks.consumption;
-      default:
-        return t.pages.stocks.adjustment;
-    }
-  };
-
-  // Mock autonomy fallbacks when no consumption data exists
   const MOCK_AUTONOMY: Record<string, number> = {
     'Adjuvant': 1, 'Ciment': 5, 'Eau': 3, 'Gravette': 6, 'Sable': 8,
   };
@@ -202,7 +126,6 @@ export default function Stocks() {
     if (auto && auto.daysRemaining > 0 && auto.daysRemaining < 365) return auto.daysRemaining;
     const stat = consumptionStats.find(s => s.materiau === materiau);
     if (stat?.days_remaining && stat.days_remaining > 0 && stat.days_remaining < 365) return stat.days_remaining;
-    // Fallback to mock data for demo
     return MOCK_AUTONOMY[materiau];
   };
 
@@ -218,36 +141,71 @@ export default function Stocks() {
     return auto?.avgDailyUsage;
   };
 
-  const formatDaysRemaining = (days: number | undefined): string => {
-    if (days === undefined) return '—';
-    if (days > 365) return '—';
-    return `~${Math.round(days * 10) / 10}j`;
-  };
-
-  const truncateRef = (ref: string | null | undefined): string => {
-    if (!ref) return '—';
-    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}/i;
-    if (uuidPattern.test(ref)) return ref.substring(0, 8) + '…';
-    return ref.length > 16 ? ref.substring(0, 16) + '…' : ref;
+  const handleRefresh = () => {
+    fetchStocks();
+    fetchMouvements();
   };
 
   return (
     <MainLayout>
       <WorldClassStocks onNewMovement={() => setWizardOpen(true)} silosContent={
         <>
+          {/* ── HEADER — moved to TOP of silos tab ── */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #D4A843, #B8860B)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Warehouse size={18} color="#0B1120" strokeWidth={2.5} />
+              </div>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ color: T.textSec, fontWeight: 700, fontSize: 13 }}>TBOS</span>
+                  <span style={{ color: T.gold, fontWeight: 800, fontSize: 13 }}>{t.pages.stocks.title}</span>
+                </div>
+                <p style={{ color: T.textDim, fontSize: 10 }}>{t.pages.stocks.subtitle}</p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <button onClick={handleRefresh} style={goldOutlineBtn}>
+                <RefreshCw size={14} />
+                {t.common.refresh}
+              </button>
+
+              {authLoading ? (
+                <>
+                  <Skeleton className="w-32 h-9 rounded-md" />
+                  <Skeleton className="w-32 h-9 rounded-md" />
+                </>
+              ) : (
+                <>
+                  {canCreateQualityEntry && (
+                    <QualityStockEntryDialog stocks={stocks} onRefresh={handleRefresh} />
+                  )}
+                  {canAddStockReception && (
+                    <TwoStepReceptionWizard stocks={stocks} onRefresh={handleRefresh} externalOpen={wizardOpen} onExternalOpenChange={setWizardOpen} />
+                  )}
+                  {canAdjustStockManually && (
+                    <StockAdjustmentDialog stocks={stocks} onRefresh={handleRefresh} />
+                  )}
+                </>
+              )}
+
+              <LiveClock />
+            </div>
+          </div>
+
           {/* ── SILO DASHBOARD ── */}
           {loading ? (
-            <div className="p-12 text-center">
+            <div style={{ padding: 48, textAlign: 'center' }}>
               <Loader2 className="h-8 w-8 mx-auto animate-spin" style={{ color: '#64748B' }} />
             </div>
           ) : (
             <section>
-              <div className="flex items-center gap-2.5 mb-4">
-                <TrendingDown size={16} strokeWidth={1.5} style={{ color: '#FFD700', flexShrink: 0 }} />
-                <span style={{ color: '#FFD700', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em', whiteSpace: 'nowrap' }}>
-                  {t.pages.stocks.siloLevels}
+              {/* Section title — gold monospace with borderTop */}
+              <div style={{ borderTop: '2px solid #D4A843', paddingTop: 12, marginBottom: 16 }}>
+                <span style={{ fontFamily: MONO, letterSpacing: '2px', fontSize: 12, color: '#D4A843', fontWeight: 600 }}>
+                  NIVEAUX DES SILOS
                 </span>
-                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, #FFD70033 0%, transparent 80%)' }} />
               </div>
               <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A', borderRadius: 12, padding: 20 }}>
                 <div className="flex flex-nowrap justify-evenly gap-6 overflow-x-auto">
@@ -269,96 +227,28 @@ export default function Stocks() {
               </div>
             </section>
           )}
+
           {/* ── SMART REORDER BANNER (AI) ── */}
           <SmartReorderBanner />
+
+          {/* ── CONSOMMATION TEMPS RÉEL ── */}
+          <ConsommationTempsReel />
         </>
       } />
-      <div className="space-y-6" style={{ width: '100%', padding: '32px 24px' }}>
 
-        {/* ── HEADER — transparent, no card wrapper ── */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #D4A843, #B8860B)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Warehouse size={18} color="#0B1120" strokeWidth={2.5} />
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span style={{ color: T.textSec, fontWeight: 700, fontSize: 13 }}>TBOS</span>
-                <span style={{ color: T.gold, fontWeight: 800, fontSize: 13 }}>{t.pages.stocks.title}</span>
-              </div>
-              <p style={{ color: T.textDim, fontSize: 10 }}>{t.pages.stocks.subtitle}</p>
-            </div>
-          </div>
-
-          {/* Action buttons — floating in header row */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleRefresh}
-              style={{
-                padding: '6px 16px', borderRadius: 8,
-                background: 'transparent', border: '1px solid rgba(255,255,255,0.12)',
-                color: T.textSec, fontSize: 13, fontWeight: 600,
-                display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer',
-              }}
-            >
-              <RefreshCw size={14} />
-              <span className="hidden sm:inline">{t.common.refresh}</span>
-            </button>
-
-            {authLoading ? (
-              <>
-                <Skeleton className="w-32 h-9 rounded-md" />
-                <Skeleton className="w-32 h-9 rounded-md" />
-              </>
-            ) : (
-              <>
-                {canCreateQualityEntry && (
-                  <QualityStockEntryDialog stocks={stocks} onRefresh={handleRefresh} />
-                )}
-                {canAddStockReception && (
-                  <TwoStepReceptionWizard stocks={stocks} onRefresh={handleRefresh} externalOpen={wizardOpen} onExternalOpenChange={setWizardOpen} />
-                )}
-                {canAdjustStockManually && (
-                  <StockAdjustmentDialog stocks={stocks} onRefresh={handleRefresh} />
-                )}
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Read-Only Warning for Centraliste */}
-        {isReadOnly && (
-          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 16, display: 'flex', alignItems: 'center', gap: 16 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(255,215,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Lock size={16} color={T.gold} />
-            </div>
-            <div>
-              <h3 className="font-semibold flex items-center gap-2" style={{ color: T.textSec, fontSize: 13 }}>
-                <Shield className="h-4 w-4" />
-                {t.pages.stocks.readOnlyMode}
-              </h3>
-              <p style={{ color: T.textDim, fontSize: 11 }}>
-                {t.pages.stocks.readOnlyDescription}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Pending Receptions Queue */}
+      {/* Pending Receptions Queue */}
+      <div style={{ width: '100%', padding: '0 24px 32px' }}>
         {canValidatePendingReception && (
           <PendingReceptionsWidget onRefresh={handleRefresh} />
         )}
-
-        {/* Recent Receptions Indicator */}
         <RecentReceptionsCard mouvements={mouvements} />
 
-        {/* Critical Alerts Banner */}
         {criticalStocks.length > 0 && (
-          <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 12, padding: 16, display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 12, padding: 16, display: 'flex', alignItems: 'center', gap: 16, marginTop: 16 }}>
             <div className="animate-pulse" style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(239,68,68,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <AlertTriangle size={20} color="#EF4444" />
             </div>
-            <div className="flex-1">
+            <div style={{ flex: 1 }}>
               <h3 style={{ fontWeight: 700, color: '#EF4444', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: 12 }}>
                 {t.pages.stocks.criticalOrderRequired}
               </h3>
@@ -366,28 +256,81 @@ export default function Stocks() {
                 {criticalStocks.map(s => s.materiau).join(', ')} - {t.pages.stocks.belowAlertThreshold}
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              {criticalStocks.map(s => {
-                const days = getDaysRemaining(s.materiau);
-                return (
-                  <div key={s.materiau} style={{ textAlign: 'center', padding: '4px 12px', borderRadius: 8, background: 'rgba(239,68,68,0.15)' }}>
-                    <p style={{ fontSize: 10, color: T.textDim }}>{s.materiau}</p>
-                    <p style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: '#EF4444', fontSize: 13 }}>
-                      {formatDaysRemaining(days)}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
           </div>
         )}
-
-
-
-
-
       </div>
     </MainLayout>
   );
 }
 
+// ─────────────────────────────────────────────────────
+// CONSOMMATION TEMPS RÉEL — new section
+// ─────────────────────────────────────────────────────
+function ConsommationTempsReel() {
+  const MONO_FULL = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
+
+  const materials = [
+    { name: 'Adjuvant', pct: 120, color: '#EF4444' },
+    { name: 'Ciment', pct: 85, color: '#F59E0B' },
+    { name: 'Eau', pct: 92, color: '#F59E0B' },
+    { name: 'Gravette', pct: 65, color: '#D4A843' },
+    { name: 'Sable', pct: 70, color: '#D4A843' },
+  ];
+
+  return (
+    <div>
+      <div style={{ borderTop: '2px solid #D4A843', paddingTop: 12, marginBottom: 16 }}>
+        <span style={{ fontFamily: MONO_FULL, letterSpacing: '2px', fontSize: 12, color: '#D4A843', fontWeight: 600 }}>
+          ✦ CONSOMMATION TEMPS RÉEL
+        </span>
+      </div>
+
+      <div style={{
+        background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
+        border: '1px solid rgba(212,168,67,0.15)',
+        borderRadius: 12, padding: 20,
+      }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {materials.map((m) => (
+            <div key={m.name} style={{ display: 'grid', gridTemplateColumns: '100px 1fr 140px', alignItems: 'center', gap: 16 }}>
+              <span style={{ fontFamily: MONO_FULL, fontSize: 12, color: '#fff', fontWeight: 500 }}>{m.name}</span>
+              <div style={{ height: 8, borderRadius: 4, background: 'rgba(255,255,255,0.06)', overflow: 'hidden', position: 'relative' }}>
+                <div style={{
+                  height: '100%',
+                  width: `${Math.min(m.pct, 100)}%`,
+                  background: m.color,
+                  borderRadius: 4,
+                  transition: 'width 800ms ease-out',
+                }} />
+                {m.pct > 100 && (
+                  <div style={{
+                    position: 'absolute', top: 0, right: 0, bottom: 0,
+                    width: `${Math.min(m.pct - 100, 20)}%`,
+                    background: '#EF4444',
+                    borderRadius: '0 4px 4px 0',
+                    animation: 'tbos-pulse 2s infinite',
+                  }} />
+                )}
+              </div>
+              <span style={{
+                fontFamily: MONO_FULL, fontSize: 11, textAlign: 'right',
+                color: m.pct > 100 ? '#EF4444' : m.pct > 80 ? '#F59E0B' : '#D4A843',
+                fontWeight: 600,
+              }}>
+                {m.pct}% de la moyenne
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Summary line */}
+        <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid rgba(212,168,67,0.1)' }}>
+          <p style={{ fontFamily: MONO_FULL, fontSize: 12, color: '#9CA3AF', lineHeight: 1.6 }}>
+            Consommation totale aujourd'hui : <span style={{ color: '#D4A843', fontWeight: 600 }}>78%</span> de la capacité moyenne.
+            Adjuvant en <span style={{ color: '#EF4444', fontWeight: 600 }}>surconsommation +20%</span> — lié aux <span style={{ color: '#D4A843' }}>3</span> batches F-B25 supplémentaires.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
