@@ -89,6 +89,26 @@ export default function Dashboard() {
   const [showLancerToast, setShowLancerToast] = useState(false);
   const [lancerToastVisible, setLancerToastVisible] = useState(false);
   const [midPanelView, setMidPanelView] = useState<'data' | 'camera'>('data');
+  const [expandedKpi, setExpandedKpi] = useState<string | null>(null);
+  const [cameraTime, setCameraTime] = useState('');
+
+  // Camera ticking timestamp
+  useEffect(() => {
+    const tick = () => {
+      const n = new Date();
+      setCameraTime(`${n.getHours().toString().padStart(2,'0')}:${n.getMinutes().toString().padStart(2,'0')}:${n.getSeconds().toString().padStart(2,'0')} UTC+1`);
+    };
+    tick();
+    const iv = setInterval(tick, 1000);
+    return () => clearInterval(iv);
+  }, []);
+
+  // KPI count-up values
+  const kpiProduit = useCountUp(671, 1500, 0);
+  const kpiRendement = useCountUp(94, 1500, 200);
+  const kpiQualite = useCountUp(96.2, 1500, 400, 1);
+  const kpiLivA = useCountUp(8, 1500, 600);
+  const kpiLivB = useCountUp(12, 1500, 600);
 
   const heroRef = useRef<HTMLDivElement>(null);
 
@@ -1138,8 +1158,8 @@ export default function Dashboard() {
           `}</style>
 
           <div
-            className="mb-5 relative z-[1] rounded-lg overflow-hidden bg-gradient-to-br from-[#1a1f2e] to-[#141824] border border-white/[0.06] p-5"
-            style={{ boxShadow: '0 0 30px rgba(212, 168, 67, 0.05), inset 0 1px 0 rgba(255,255,255,0.04)' }}
+            className="mb-5 relative z-[1] overflow-hidden bg-gradient-to-br from-[#1a1f2e] to-[#141824] p-5"
+            style={{ border: '1px solid rgba(212,168,67,0.12)', borderRadius: '16px', boxShadow: '0 0 40px rgba(212,168,67,0.03), inset 0 1px 0 rgba(255,255,255,0.04)' }}
           >
             <div className="relative flex items-center gap-3 px-5 pt-4 pb-1 z-10">
               <Radio size={14} className="text-[#D4A843] animate-pulse" />
@@ -1171,7 +1191,7 @@ export default function Dashboard() {
                         <span className="font-medium" style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>Target</span>
                       </div>
                   </div>
-                  <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: '4px', padding: '2px 8px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: '4px', padding: '2px 8px', display: 'inline-flex', alignItems: 'center', gap: '4px', boxShadow: '0 0 12px rgba(212,168,67,0.25)' }}>
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                     <span className="text-[9px] text-emerald-400/70 font-medium">TEMPS RÉEL</span>
                   </div>
@@ -1184,6 +1204,26 @@ export default function Dashboard() {
                     onMouseLeave={handleChartMouseLeave}
                     style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.3))' }}
                   >
+                    <defs>
+                      <linearGradient id="prodAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="rgba(212,168,67,0.12)" />
+                        <stop offset="100%" stopColor="rgba(212,168,67,0)" />
+                      </linearGradient>
+                    </defs>
+                    {/* Subtle horizontal grid lines (item 4) */}
+                    {[20, 40, 60, 80, 100].map(val => {
+                      const gy = svgH - (val / allMax) * svgH * 0.85 - 5;
+                      return <line key={val} x1="0" y1={gy} x2={svgW} y2={gy} stroke="rgba(212,168,67,0.04)" strokeWidth="0.5" />;
+                    })}
+                    {/* Area fill under production line (item 3) */}
+                    <polygon
+                      fill="url(#prodAreaGrad)"
+                      points={SPARKLINE_DATA.map((d, i) => {
+                        const x = (i / (SPARKLINE_DATA.length - 1)) * svgW;
+                        const y = svgH - (d.v / allMax) * svgH * 0.85 - 5;
+                        return `${x},${y}`;
+                      }).join(' ') + ` ${svgW},${svgH} 0,${svgH}`}
+                    />
                     {/* Target line */}
                     <polyline
                       fill="none"
@@ -1209,18 +1249,30 @@ export default function Dashboard() {
                         return `${x},${y}`;
                       }).join(' ')}
                     />
-                    {/* Now line */}
-                    <line x1={(NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW} y1="0" x2={(NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW} y2={svgH} stroke="rgba(52,211,153,0.3)" strokeWidth="1" strokeDasharray="3,3" />
+                    {/* Live pulse dot at rightmost data point (item 1) */}
+                    {(() => {
+                      const li = SPARKLINE_DATA.length - 1;
+                      const lx = (li / (SPARKLINE_DATA.length - 1)) * svgW;
+                      const ly = svgH - (SPARKLINE_DATA[li].v / allMax) * svgH * 0.85 - 5;
+                      return (
+                        <foreignObject x={lx - 5} y={ly - 5} width="10" height="10">
+                          <div className="live-pulse-dot" />
+                        </foreignObject>
+                      );
+                    })()}
+                    {/* Now line — gold dashed (item 6) */}
+                    <line x1={(NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW} y1="0" x2={(NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW} y2={svgH} stroke="#D4A843" strokeWidth="1" strokeDasharray="4,4" opacity="0.3" />
                     {/* MAINTENANT label at top of now line */}
                     <text
                       x={(NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW}
                       y="4"
                       textAnchor="middle"
-                      fill="rgba(52,211,153,0.6)"
+                      fill="#D4A843"
                       fontSize="3"
                       fontFamily="ui-monospace, 'JetBrains Mono', monospace"
                       fontWeight="500"
                       letterSpacing="0.3"
+                      opacity="0.6"
                     >
                       MAINTENANT
                     </text>
@@ -1257,25 +1309,28 @@ export default function Dashboard() {
                         </text>
                       );
                     })}
-                    {/* Hover — vertical line only, no dot */}
+                    {/* Hover — crosshair vertical dashed line (item 2) */}
                     {hoveredPoint && (
-                      <line x1={hoveredPoint.x} y1="0" x2={hoveredPoint.x} y2={svgH} stroke="rgba(212,168,67,0.25)" strokeWidth="0.5" strokeDasharray="2,2" />
+                      <line x1={hoveredPoint.x} y1="0" x2={hoveredPoint.x} y2={svgH} stroke="#D4A843" strokeWidth="0.5" strokeDasharray="3,3" opacity="0.4" />
                     )}
                     <rect x="0" y="0" width={svgW} height={svgH} fill="transparent" />
                   </svg>
                 </div>
-                  {/* Hover tooltip */}
+                  {/* Hover tooltip (item 2 — enhanced) */}
                   {hoveredPoint && chartMousePos && (
                     <div
-                      className="absolute pointer-events-none z-20 rounded-md px-2 py-1 font-mono text-[11px] text-white shadow-lg"
+                      className="absolute pointer-events-none z-20 font-mono text-[11px] text-white shadow-lg"
                       style={{
                         left: chartMousePos.x + 12,
-                        top: chartMousePos.y - 40,
-                        background: '#0f1729',
-                        border: '1px solid rgba(212,168,67,0.4)',
+                        top: chartMousePos.y - 50,
+                        background: '#1A1F2E',
+                        border: '1px solid rgba(212,168,67,0.3)',
+                        borderRadius: '8px',
+                        padding: '8px 12px',
                       }}
                     >
-                      <div className="font-semibold" style={{ color: '#D4A843' }}>{hoveredPoint.h} — {hoveredPoint.v} m³/h</div>
+                      <div className="font-semibold" style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace' }}>{hoveredPoint.h}</div>
+                      <div className="text-white text-[12px]">{hoveredPoint.v} m³/h</div>
                       <div className="text-[10px]" style={{ color: hoveredPoint.diffPct >= 0 ? 'rgba(52,211,153,0.9)' : 'rgba(248,113,113,0.9)' }}>
                         {hoveredPoint.diffPct >= 0 ? '▲' : '▼'} {hoveredPoint.diffPct >= 0 ? '+' : ''}{hoveredPoint.diffPct}% vs target
                       </div>
@@ -1286,8 +1341,8 @@ export default function Dashboard() {
 
               {/* Performance / Camera panel */}
               <div className="flex-[3.5] border-l border-white/[0.04] pl-3 ml-2 min-w-0 flex flex-col">
-                <div className="flex-1 rounded-lg p-4 flex flex-col relative overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(15,20,35,0.95) 0%, rgba(10,15,25,0.98) 100%)', border: '1px solid rgba(255,255,255,0.04)', minHeight: '200px' }}>
-                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 50 }} />
+                <div className="flex-1 rounded-lg p-4 flex flex-col relative overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(15,20,35,0.95) 0%, rgba(10,15,25,0.98) 100%)', border: '1px solid rgba(255,255,255,0.04)', borderTop: '2px solid #D4A843', minHeight: '200px' }}>
+                  <div style={{ position: 'absolute', top: 2, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 50 }} />
                   {/* Header with toggle */}
                   <div className="flex items-center justify-between mb-1">
                     <div className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
@@ -1295,7 +1350,7 @@ export default function Dashboard() {
                     </div>
                     <div className="flex items-center gap-2">
                       {midPanelView === 'data' && (
-                        <span className="text-[9px] text-emerald-400 font-medium" style={{ boxShadow: '0 0 12px rgba(34,197,94,0.3)', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: '4px', padding: '2px 8px' }}>
+                        <span className="text-[9px] text-emerald-400 font-medium" style={{ boxShadow: '0 0 10px rgba(34,197,94,0.25)', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: '4px', padding: '2px 8px' }}>
                           EN AVANCE
                         </span>
                       )}
@@ -1325,44 +1380,64 @@ export default function Dashboard() {
                       <>
                         {/* Top row: Primary KPIs */}
                         <div className="grid grid-cols-2 gap-3 mt-3">
-                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden">
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden cursor-pointer" onClick={() => setExpandedKpi(expandedKpi === 'produit' ? null : 'produit')}>
                             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Produit</div>
-                            <div className="text-xl text-white font-semibold font-mono">671 <span className="text-sm text-muted-foreground/40">m³</span></div>
+                            <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '38px', color: 'white', lineHeight: 1.1 }}>{kpiProduit} <span className="text-sm text-muted-foreground/40">m³</span></div>
                             <div className="text-[10px] text-muted-foreground/40 mb-1.5">sur 800 m³ objectif</div>
                             <div className="h-[4px] rounded-full bg-white/[0.06] w-full">
-                              <div className="h-full rounded-full" style={{ width: '84%', background: '#D4A843', boxShadow: '0 0 8px rgba(212, 168, 67, 0.25)' }} />
+                              <div className="h-full rounded-full" style={{ width: '84%', background: 'linear-gradient(90deg, #D4A843, #E8C96A)', boxShadow: '0 0 8px rgba(212, 168, 67, 0.25)', animation: 'progressGrow 1.2s ease forwards' }} />
+                            </div>
+                            <div style={{ maxHeight: expandedKpi === 'produit' ? '120px' : '0', overflow: 'hidden', transition: 'max-height 300ms ease' }}>
+                              <div style={{ fontSize: '12px', color: '#9CA3AF', padding: '8px 12px', borderTop: '1px solid rgba(212,168,67,0.1)' }}>
+                                Objectif: 800 m³ · Réalisé: 671 m³ · Écart: -129 m³ · Tendance: ↗ rattrapage 15h
+                              </div>
                             </div>
                           </div>
-                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden">
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden cursor-pointer" onClick={() => setExpandedKpi(expandedKpi === 'rendement' ? null : 'rendement')}>
                             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Rendement</div>
-                            <div className="text-xl text-emerald-400 font-semibold font-mono">94%</div>
+                            <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '38px', color: '#D4A843', lineHeight: 1.1 }}>{kpiRendement}%</div>
                             <div className="text-[10px] text-muted-foreground/40"><span className="text-emerald-400">↗</span> vs 91% hier</div>
+                            <div style={{ maxHeight: expandedKpi === 'rendement' ? '120px' : '0', overflow: 'hidden', transition: 'max-height 300ms ease' }}>
+                              <div style={{ fontSize: '12px', color: '#9CA3AF', padding: '8px 12px', borderTop: '1px solid rgba(212,168,67,0.1)' }}>
+                                Hier: 91% · Moyenne 7j: 93.2% · Meilleur batch: #403-065 (98.1%)
+                              </div>
+                            </div>
                           </div>
                         </div>
                         {/* Bottom row: Secondary KPIs */}
                         <div className="grid grid-cols-2 gap-3 border-t border-white/[0.04] pt-3 mt-3 flex-1">
-                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden">
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden cursor-pointer" onClick={() => setExpandedKpi(expandedKpi === 'qualite' ? null : 'qualite')}>
                             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Qualité</div>
-                            <div className="text-xl text-white font-semibold font-mono">96.2%</div>
+                            <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '38px', color: 'white', lineHeight: 1.1 }}>{kpiQualite}%</div>
                             <div className="flex gap-1 mt-1">
                               <span className="text-xs px-1.5 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20 font-medium">2 OK</span>
                               <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium animate-pulse">1 VAR</span>
                               <span className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-white/30 font-medium">0 CRIT</span>
                             </div>
+                            <div style={{ maxHeight: expandedKpi === 'qualite' ? '120px' : '0', overflow: 'hidden', transition: 'max-height 300ms ease' }}>
+                              <div style={{ fontSize: '12px', color: '#9CA3AF', padding: '8px 12px', borderTop: '1px solid rgba(212,168,67,0.1)' }}>
+                                12 tests · 2 OK · 1 VAR (F-B30 slump +8mm) · 0 CRIT · Prochain test: 14h30
+                              </div>
+                            </div>
                           </div>
-                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden">
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden cursor-pointer" onClick={() => setExpandedKpi(expandedKpi === 'livraisons' ? null : 'livraisons')}>
                             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Livraisons</div>
-                            <div className="text-xl font-semibold font-mono" style={{ color: '#D4A843' }}>8/12</div>
+                            <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '38px', color: '#D4A843', lineHeight: 1.1 }}>{kpiLivA}/{kpiLivB}</div>
                             <div className="text-xs text-white/60 mt-1">4 restantes aujourd'hui</div>
+                            <div style={{ maxHeight: expandedKpi === 'livraisons' ? '120px' : '0', overflow: 'hidden', transition: 'max-height 300ms ease' }}>
+                              <div style={{ fontSize: '12px', color: '#9CA3AF', padding: '8px 12px', borderTop: '1px solid rgba(212,168,67,0.1)' }}>
+                                8 livrées · 4 restantes · Prochaine: BL-2603-009 Ciments du Sud 14h30
+                              </div>
+                            </div>
                           </div>
                         </div>
-                        {/* Bottom next delivery */}
+                        {/* Bottom next delivery (item 13 — clock pulse) */}
                         <div style={{ background: 'rgba(212,168,67,0.05)', border: '1px solid rgba(212,168,67,0.25)', borderRadius: '6px', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-                          <span className="text-[#D4A843]">⏱</span>
+                          <span className="text-[#D4A843]" style={{ animation: 'clockPulse 2s infinite', display: 'inline-block' }}>⏱</span>
                           <span className="text-[10px] text-muted-foreground/40" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                             Prochain: BL-2603-009 · Ciments du Sud · 14h30
                           </span>
@@ -1370,6 +1445,10 @@ export default function Dashboard() {
                       </>
                     ) : (
                       <div className="flex-1 relative overflow-hidden rounded-lg mt-2 cursor-pointer" onClick={() => window.location.href = '/surveillance'} style={{ boxShadow: '0 0 15px rgba(239, 68, 68, 0.03)' }}>
+                        {/* Scan lines (item 14) */}
+                        {[0, 1, 2].map(i => (
+                          <div key={i} className="absolute left-0 right-0 z-[1]" style={{ height: '1px', background: 'rgba(212,168,67,0.15)', animation: `cameraScanLine 4s linear infinite`, animationDelay: `${i * 1.3}s` }} />
+                        ))}
                         <div className="absolute inset-0 flex flex-col items-center justify-center z-[2] gap-4">
                           <div className="relative" style={{ width: 96, height: 96 }}>
                             <div className="absolute inset-0 rounded-full" style={{ border: '1px solid rgba(212,168,67,0.15)' }} />
@@ -1387,10 +1466,12 @@ export default function Dashboard() {
                               </span>
                             </div>
                           </div>
-                          <span className="text-sm text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Recherche du signal...</span>
-                          <span className="text-[10px] tracking-[0.08em] uppercase text-muted-foreground/30 font-medium" style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace" }}>Dernière capture: il y a 4h</span>
+                          <span className="text-sm" style={{ fontFamily: "'JetBrains Mono', monospace", color: '#D4A843', textShadow: '0 0 8px rgba(212,168,67,0.3)' }}>Recherche du signal...</span>
+                          <span className="text-[10px] tracking-[0.08em] uppercase font-medium" style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", color: '#D4A843' }}>Dernière capture: il y a 4h</span>
                         </div>
-                        <div className="absolute bottom-0 left-0 right-0 z-[3] p-2.5" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)' }}>
+                        {/* Ticking timestamp (item 15) */}
+                        <div className="absolute bottom-10 right-3 z-[4]" style={{ fontFamily: 'ui-monospace, monospace', fontSize: '11px', color: '#D4A843', opacity: 0.7 }}>{cameraTime}</div>
+                        <div className="absolute bottom-0 left-0 right-0 z-[3] p-2.5" style={{ background: 'rgba(212,168,67,0.04)', borderTop: '1px solid rgba(212,168,67,0.15)' }}>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                               <span className="text-[10px] text-white/80 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>47 m³/h</span>
@@ -1411,16 +1492,16 @@ export default function Dashboard() {
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 50 }} />
                 <div className="mb-3">
                   <div className="uppercase mb-2" style={{ fontFamily: "'JetBrains Mono', monospace", color: 'rgba(212,168,67,0.7)', letterSpacing: '2px', fontSize: '11px', fontWeight: 500 }}>File de Production</div>
-                  <div className="mb-2 p-2 rounded-lg border border-[#D4A843]/30 border-l-2 border-l-[#D4A843]/50" style={{ background: 'rgba(212,168,67,0.06)', borderLeft: '2px solid rgba(212,168,67,0.5)', boxShadow: '0 0 16px rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.25)' }}>
+                  <div className="mb-2 p-2 rounded-lg" style={{ background: 'rgba(212,168,67,0.06)', boxShadow: '0 0 16px rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.25)', borderLeft: '3px solid #D4A843', animation: 'batchBreathing 3s infinite' }}>
                     <div className="flex items-center gap-1.5 mb-1">
                       <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                       <span className="text-[10px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#403-068</span>
-                      <span className="ml-auto text-xs px-2 py-0.5 rounded font-medium" style={{ background: 'transparent', border: '1px solid #D4A843', color: '#D4A843' }}>Déchargement</span>
+                      <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '4px 12px', cursor: 'pointer', fontSize: '13px', marginLeft: 'auto' }}>Déchargement</button>
                     </div>
                     <div className="text-[8px] text-slate-400 mb-1.5">F-B25 · 8 m³ · BTP Maroc</div>
                     <div className="flex items-center gap-2">
                       <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
-                        <div className="h-1.5 rounded-full bg-[#D4A843] relative overflow-hidden" style={{ width: '72%', transition: 'width 1s ease-out' }}>
+                        <div className="h-1.5 rounded-full relative overflow-hidden" style={{ width: '72%', background: 'linear-gradient(90deg, #D4A843, #E8C96A)', animation: 'progressGrow 1s ease forwards' }}>
                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite]" />
                         </div>
                       </div>
@@ -1434,8 +1515,8 @@ export default function Dashboard() {
                     {[
                       { id: '#403-069', formula: 'F-B30 · 12 m³', client: 'Atlas BTP' },
                       { id: '#403-070', formula: 'F-B25 · 8 m³', client: 'Const. Modernes' },
-                    ].map((batch) => (
-                      <div key={batch.id} className="flex items-center gap-1.5 rounded px-2 py-1 -mx-2" style={{ cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.03)'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
+                    ].map((batch, idx) => (
+                      <div key={batch.id} className="flex items-center gap-1.5 rounded px-2 py-1 -mx-2" style={{ cursor: 'pointer', transition: 'all 0.2s', animation: `batchSlideIn 400ms ease forwards`, animationDelay: `${(idx + 1) * 100}ms`, opacity: 0 }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.03)'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
                         <span className="w-1 h-1 bg-slate-600 rounded-full" />
                         <div className="min-w-0">
                           <div className="text-[8px] text-slate-400" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{batch.id}</div>
@@ -1445,17 +1526,17 @@ export default function Dashboard() {
                     ))}
                   </div>
                 </div>
-                {/* Metrics */}
+                {/* Metrics (item 23) */}
                 <div className="mt-auto grid grid-cols-2 gap-2">
                   {[
-                    { label: 'Disponibilité', value: '97%', color: '#34D399' },
-                    { label: 'Cadence', value: '47 m³/h', color: '#C9A84C' },
-                    { label: 'Batches', value: '23', color: '#94A3B8' },
-                    { label: 'Attente', value: '12 min', color: '#FBBF24' },
+                    { label: 'Disponibilité', value: '97%' },
+                    { label: 'Cadence', value: '47 m³/h' },
+                    { label: 'Batches', value: '23' },
+                    { label: 'Attente', value: '12 min' },
                   ].map((m) => (
                     <div key={m.label} className="p-1.5 rounded" style={{ background: 'rgba(255,255,255,0.02)' }}>
                       <div className="text-[10px] uppercase tracking-wider text-white/40 block mb-0.5">{m.label}</div>
-                      <div className="text-sm font-medium text-white">{m.label === 'Cadence' ? <>{m.value.split(' ')[0]} <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>m³/h</span></> : m.value}</div>
+                      <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, color: '#D4A843' }}>{m.label === 'Cadence' ? <>{m.value.split(' ')[0]} <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>m³/h</span></> : m.value}</div>
                     </div>
                   ))}
                 </div>

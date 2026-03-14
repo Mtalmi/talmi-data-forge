@@ -290,6 +290,49 @@
   background: rgba(212, 168, 67, 0.08) !important;
 }
 
+/* ─── Live Production Pulse Dot ─── */
+@keyframes livePulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 12px #D4A843; }
+  50% { transform: scale(1.6); opacity: 0.4; box-shadow: 0 0 24px transparent; }
+}
+.live-pulse-dot {
+  width: 10px;
+  height: 10px;
+  background: #D4A843;
+  border-radius: 50%;
+  animation: livePulseDot 2s infinite;
+}
+
+/* ─── Clock pulse for next delivery ─── */
+@keyframes clockPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.6; }
+}
+
+/* ─── Active batch breathing border ─── */
+@keyframes batchBreathing {
+  0%, 100% { border-left-color: rgba(212,168,67,0.4); }
+  50% { border-left-color: rgba(212,168,67,1); }
+}
+
+/* ─── Batch queue stagger slide in ─── */
+@keyframes batchSlideIn {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* ─── Camera scan lines ─── */
+@keyframes cameraScanLine {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(100%); }
+}
+
+/* ─── KPI progress bar width animation ─── */
+@keyframes progressGrow {
+  from { width: 0%; }
+}
+
+
 /* ─── Link hover — gold underline animation ─── */
 .link-gold {
   position: relative;
