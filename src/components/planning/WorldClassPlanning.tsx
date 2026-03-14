@@ -641,7 +641,7 @@ function CollapsibleChronologique() {
             onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.03)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
             >
-              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: T.gold }}>{row.bl}</div>
+              <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'ui-monospace, monospace', fontWeight: 600, color: '#D4A843' }}>{row.bl}</div>
               <div style={{ padding: '10px 14px', fontSize: 12, color: T.textPri, fontWeight: 600, borderLeft: `1px solid ${T.cardBorder}60` }}>{row.client}</div>
               <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: PRODUCT_COLORS[row.formule] || T.gold, borderLeft: `1px solid ${T.cardBorder}60` }}>{row.formule}</div>
               <div style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: T.textPri, textAlign: 'right', borderLeft: `1px solid ${T.cardBorder}60` }}>{row.montant}</div>
