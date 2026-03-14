@@ -911,7 +911,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
         {/* ═══════════════════════════════════════════════════
             ZONE 3: INTELLIGENCE IA
             ═══════════════════════════════════════════════════ */}
-        <section ref={iaRef}>
+        <div ref={iaRef}>
           <ZoneHeader
             icon="✦"
             label="INTELLIGENCE IA"
