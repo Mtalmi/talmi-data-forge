@@ -329,6 +329,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                     padding: '4px 10px', borderRadius: 999, background: st.bg,
                     fontSize: 11, fontWeight: 500, color: st.color, whiteSpace: 'nowrap',
                     margin: '0 auto',
+                    ...(row.status === 'production' ? { border: '1px solid #D4A843', animation: 'batch-pulse 2s infinite' } : {}),
                   }}>
                     <span style={{ width: 5, height: 5, borderRadius: '50%', background: st.dot, flexShrink: 0 }} />
                     {st.label}
