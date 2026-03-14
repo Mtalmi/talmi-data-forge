@@ -549,7 +549,7 @@ function ZoneHeader({ icon, label, right }: { icon: string; label: string; right
   );
 }
 
-export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPanelOpen?: boolean }) {
+export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHeader, dispatchMain, fleetPanel, footerActions }: { fleetPanelOpen?: boolean; dispatchHeader?: React.ReactNode; dispatchMain?: React.ReactNode; fleetPanel?: React.ReactNode; footerActions?: React.ReactNode }) {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dispatch');
   const dispatchRef = useRef<HTMLDivElement | null>(null);
