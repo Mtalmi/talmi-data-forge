@@ -288,7 +288,7 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
                 <div key={v.id_camion} className={cn("p-2 rounded-lg transition-all", isOnDelivery && "border-blue-400/30")} style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: isOnDelivery ? '1px solid rgba(96, 165, 250, 0.2)' : '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', borderRadius: 12 }}>
                   <div className="flex items-center justify-between mb-1.5">
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="font-mono font-semibold text-sm text-white/80 truncate">{v.id_camion}</span>
+                      <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 500, fontSize: 14, color: '#D4A843' }}>{v.id_camion}</span>
                       {v.capacite_m3 && <span className="text-[10px] text-white/30">{v.capacite_m3}m³</span>}
                     </div>
                     <Badge variant="outline" className={cn("text-[10px] px-1.5 py-0 h-5 border", config.color)}>
