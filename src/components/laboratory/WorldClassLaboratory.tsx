@@ -1213,7 +1213,331 @@ function HistoriqueNormesTab() {
 }
 
 // ─────────────────────────────────────────────────────
-// EMPTY TAB PLACEHOLDER
+// ANALYTIQUE DATA
+// ─────────────────────────────────────────────────────
+const PERF_90J = (() => {
+  const data = [];
+  const base = new Date('2025-12-15');
+  for (let i = 0; i < 30; i++) {
+    const d = new Date(base);
+    d.setDate(d.getDate() + i * 3);
+    const conformite = 93 + Math.sin(i * 0.4) * 3 + (i > 20 ? 1.5 : 0);
+    const volume = 180 + Math.sin(i * 0.7) * 40 + Math.random() * 20;
+    data.push({
+      date: `${d.getDate()} ${['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'][d.getMonth()]}`,
+      conformite: Math.round(conformite * 10) / 10,
+      volume: Math.round(volume),
+    });
+  }
+  return data;
+})();
+
+const CONF_PAR_FORMULE = [
+  { formule: 'F-B20', affaissement: 97, resistance7j: 95, resistance28j: 98 },
+  { formule: 'F-B25', affaissement: 93, resistance7j: 96, resistance28j: 95 },
+  { formule: 'F-B30', affaissement: 96, resistance7j: 94, resistance28j: 99 },
+];
+
+const OPERATORS_A = [
+  { name: 'Youssef M.', pct: 96, score: 94 },
+  { name: 'Sarah L.',   pct: 91, score: 87 },
+  { name: 'Karim B.',   pct: 84, score: 72 },
+  { name: 'Ahmed R.',   pct: 88, score: 81 },
+];
+
+const ECART_DIST = [
+  { range: '-8%', count: 2, inTol: false },
+  { range: '-6%', count: 3, inTol: false },
+  { range: '-4%', count: 5, inTol: true },
+  { range: '-2%', count: 12, inTol: true },
+  { range: '0%',  count: 28, inTol: true },
+  { range: '+2%', count: 15, inTol: true },
+  { range: '+4%', count: 8, inTol: true },
+  { range: '+6%', count: 4, inTol: false },
+  { range: '+8%', count: 1, inTol: false },
+];
+
+const NC_COST_MONTHLY = [
+  { month: 'Oct', cost: 18500 },
+  { month: 'Nov', cost: 15200 },
+  { month: 'Déc', cost: 12800 },
+  { month: 'Jan', cost: 14100 },
+  { month: 'Fév', cost: 10500 },
+  { month: 'Mar', cost: 8900 },
+];
+
+const REJECT_DONUT = [
+  { name: 'Affaissement', value: 45, color: '#EF4444' },
+  { name: 'E/C ratio',    value: 30, color: '#F59E0B' },
+  { name: 'Température',  value: 15, color: '#D4A843' },
+  { name: 'Autre',        value: 10, color: '#4B5563' },
+];
+
+function Perf90jTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{ background: '#1A2540', border: `1px solid ${T.goldBorder}`, borderRadius: 10, padding: '10px 14px' }}>
+      <p style={{ color: T.gold, fontWeight: 700, fontSize: 12, marginBottom: 6, fontFamily: MONO }}>{label}</p>
+      {payload.map((p: any, i: number) => (
+        <p key={i} style={{ color: p.color, fontSize: 12, margin: '2px 0' }}>
+          {p.name}: <strong style={{ fontFamily: MONO }}>{p.value}{p.name === 'Conformité' ? '%' : ' m³'}</strong>
+        </p>
+      ))}
+    </div>
+  );
+}
+
+function RejectDonutTooltip({ active, payload }: any) {
+  if (!active || !payload?.length) return null;
+  const d = payload[0].payload;
+  return (
+    <div style={{ background: '#1A2540', border: `1px solid ${T.goldBorder}`, borderRadius: 10, padding: '10px 14px' }}>
+      <p style={{ color: d.color, fontWeight: 700, fontSize: 12 }}>{d.name}</p>
+      <p style={{ color: T.textPri, fontSize: 12 }}>{d.value}%</p>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
+// TAB CONTENT: ANALYTIQUE
+// ─────────────────────────────────────────────────────
+function AnalytiqueTab() {
+  const [activePieIdx, setActivePieIdx] = useState<number | null>(null);
+
+  const chartStyle: React.CSSProperties = {
+    background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
+    border: `1px solid ${T.cardBorder}`,
+    borderRadius: 14, padding: 24,
+  };
+
+  const opBarWidths = [useBarWidth(96, 0), useBarWidth(91, 80), useBarWidth(84, 160), useBarWidth(88, 240)];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+
+      {/* ROW 1: HEADLINE */}
+      <section>
+        <div style={{ ...chartStyle, borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
+          <SectionHeader icon={TrendingUp} label="✦ Performance Qualité — 90 Jours" />
+          <div style={{ display: 'flex', gap: 16, marginBottom: 12 }}>
+            {[['#D4A843', 'Conformité %'], ['#9CA3AF', 'Volume m³ (dashed)']].map(([c, l], i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <div style={{ width: 14, height: 2, background: c, borderTop: i === 1 ? '2px dashed #9CA3AF' : undefined }} />
+                <span style={{ fontSize: 11, color: T.textSec }}>{l}</span>
+              </div>
+            ))}
+          </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <AreaChart data={PERF_90J} margin={{ top: 10, right: 50, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="areaConf90" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#D4A843" stopOpacity={0.1} />
+                  <stop offset="95%" stopColor="#D4A843" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} />
+              <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 9 }} interval={4} />
+              <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[80, 100]} tickFormatter={(v: number) => `${v}%`} />
+              <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[100, 280]} tickFormatter={(v: number) => `${v}`} />
+              <RechartsTooltip content={<Perf90jTooltip />} />
+              <ReferenceLine yAxisId="left" y={95} stroke="#D4A843" strokeDasharray="8 4" strokeOpacity={0.4} label={{ value: 'OBJECTIF NM 95%', fill: '#D4A843', fontSize: 9, position: 'insideTopRight' }} />
+              <Area yAxisId="left" type="monotone" dataKey="conformite" name="Conformité" stroke="#D4A843" fill="url(#areaConf90)" strokeWidth={2.5} dot={LinePulseDot('#D4A843', PERF_90J.length)} />
+              <Area yAxisId="right" type="monotone" dataKey="volume" name="Volume" stroke="#9CA3AF" fill="transparent" strokeWidth={1.5} strokeDasharray="6 3" dot={false} />
+            </AreaChart>
+          </ResponsiveContainer>
+          <div style={{ display: 'flex', gap: 20, marginTop: 16, paddingTop: 14, borderTop: `1px solid ${T.cardBorder}`, flexWrap: 'wrap' }}>
+            {[
+              { label: 'CONFORMITÉ MOY.', value: '96.2%', color: T.gold },
+              { label: 'PIC', value: '98.7%', color: T.success },
+              { label: 'CREUX', value: '91.3%', color: T.warning },
+              { label: 'TENDANCE', value: '↑ +1.4%', color: T.success },
+              { label: 'VS TRIM. DERNIER', value: '+2.1%', color: T.success },
+            ].map((s, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF', letterSpacing: '0.05em' }}>{s.label}</span>
+                <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: s.color }}>{s.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ROW 2: BREAKDOWN */}
+      <section>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+          {/* Card 1: Conformité par formule */}
+          <Card style={{ borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
+            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 20 }}>Conformité par Formule</p>
+            {CONF_PAR_FORMULE.map((f, fi) => (
+              <div key={fi} style={{ marginBottom: 18 }}>
+                <p style={{ fontFamily: MONO, fontSize: 12, color: T.gold, fontWeight: 700, marginBottom: 8 }}>{f.formule}</p>
+                {[
+                  { label: 'Aff.', val: f.affaissement, color: '#D4A843' },
+                  { label: 'R.7j', val: f.resistance7j, color: '#E8C96A' },
+                  { label: 'R.28j', val: f.resistance28j, color: '#C49A3C' },
+                ].map((b, bi) => (
+                  <div key={bi} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
+                    <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim, width: 36 }}>{b.label}</span>
+                    <div style={{ flex: 1, height: 6, borderRadius: 99, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                      <div style={{ height: '100%', width: `${b.val}%`, background: b.color, borderRadius: 99, transition: 'width 900ms cubic-bezier(0.4,0,0.2,1)', boxShadow: b.val >= 98 ? `0 0 8px ${T.success}40` : 'none' }} />
+                    </div>
+                    <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 200, color: b.val >= 98 ? T.success : T.textPri, width: 32, textAlign: 'right' as const }}>{b.val}%</span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </Card>
+
+          {/* Card 2: Conformité par opérateur */}
+          <Card style={{ borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
+            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 20 }}>Conformité par Opérateur</p>
+            {OPERATORS_A.map((op, i) => {
+              const isLow = op.pct < 85;
+              const scoreColor = op.score >= 85 ? T.success : op.score >= 70 ? T.warning : T.danger;
+              return (
+                <div key={i} style={{ marginBottom: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
+                    <span style={{ fontSize: 12, color: T.textSec }}>{op.name}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 200, color: isLow ? T.warning : T.textPri }}>{op.pct}%</span>
+                      <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 200, color: scoreColor, padding: '1px 6px', border: `1px solid ${scoreColor}40`, borderRadius: 4 }}>IA {op.score}</span>
+                    </div>
+                  </div>
+                  <div style={{ height: 6, borderRadius: 99, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${opBarWidths[i]}%`, background: isLow ? T.warning : 'linear-gradient(90deg, #C49A3C, #D4A843)', borderRadius: 99, transition: 'width 900ms cubic-bezier(0.4,0,0.2,1)' }} />
+                  </div>
+                </div>
+              );
+            })}
+          </Card>
+
+          {/* Card 3: Distribution des écarts */}
+          <Card style={{ borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
+            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 16 }}>Distribution des Écarts</p>
+            <ResponsiveContainer width="100%" height={180}>
+              <BarChart data={ECART_DIST} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} vertical={false} />
+                <XAxis dataKey="range" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 9 }} />
+                <YAxis hide />
+                <ReferenceLine x="0%" stroke="#D4A843" strokeDasharray="4 3" strokeOpacity={0.5} />
+                <Bar dataKey="count" radius={[3,3,0,0]} isAnimationActive animationDuration={800}>
+                  {ECART_DIST.map((d, i) => <Cell key={i} fill={d.inTol ? '#D4A843' : '#EF4444'} />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, padding: '0 4px' }}>
+              <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>← sous-dosé</span>
+              <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>sur-dosé →</span>
+            </div>
+            <div style={{ marginTop: 12, padding: '8px 10px', background: 'rgba(212,168,67,0.05)', borderRadius: 8, border: `1px solid ${T.goldBorder}` }}>
+              <p style={{ fontFamily: MONO, fontSize: 11, color: T.textSec, margin: 0 }}>
+                <span style={{ color: T.gold, fontWeight: 700 }}>68%</span> des tests dans la tolérance ±3%
+              </p>
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      {/* ROW 3: EFFICIENCY */}
+      <section>
+        <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
+          {/* Card 1: Coût de non-conformité */}
+          <Card style={{ borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#EF4444' }}>
+            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 16 }}>Coût de Non-Conformité</p>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 6 }}>
+              <span style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color: T.danger }}>127,500</span>
+              <span style={{ fontFamily: MONO, fontSize: 14, color: T.danger }}>MAD</span>
+            </div>
+            <p style={{ fontSize: 12, color: T.textDim, marginBottom: 20 }}>estimé sur 12 mois</p>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+              {[
+                { label: 'Batches rejetés', value: '85,000 MAD', color: T.danger },
+                { label: 'Sur-dosage ciment', value: '374,400 MAD gain potentiel', color: T.success },
+                { label: "Temps d'arrêt", value: '42,500 MAD', color: T.warning },
+              ].map((b, i) => (
+                <div key={i} style={{ padding: '8px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: 8, border: `1px solid ${T.cardBorder}` }}>
+                  <p style={{ fontSize: 10, color: T.textDim, margin: '0 0 4px' }}>{b.label}</p>
+                  <p style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: b.color, margin: 0 }}>{b.value}</p>
+                </div>
+              ))}
+            </div>
+            <ResponsiveContainer width="100%" height={100}>
+              <AreaChart data={NC_COST_MONTHLY} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="ncCostArea" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#EF4444" stopOpacity={0.15} />
+                    <stop offset="95%" stopColor="#EF4444" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 9 }} />
+                <YAxis hide />
+                <Area type="monotone" dataKey="cost" stroke="#EF4444" fill="url(#ncCostArea)" strokeWidth={2} dot={LinePulseDot('#EF4444', NC_COST_MONTHLY.length)} />
+              </AreaChart>
+            </ResponsiveContainer>
+            <p style={{ fontFamily: MONO, fontSize: 10, color: T.success, marginTop: 6 }}>↓ Tendance à la baisse — amélioration qualité</p>
+          </Card>
+
+          {/* Card 2: Taux de rejet */}
+          <Card style={{ borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#F59E0B' }}>
+            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 16 }}>Taux de Rejet</p>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 4 }}>
+              <span style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color: T.warning }}>3.2%</span>
+            </div>
+            <p style={{ fontSize: 12, color: T.success, marginBottom: 20 }}>−0.8% vs trim. dernier ↓</p>
+            <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
+              <ResponsiveContainer width={200} height={180}>
+                <PieChart>
+                  <Pie data={REJECT_DONUT} cx={95} cy={85} innerRadius={50} outerRadius={75}
+                    dataKey="value" startAngle={90} endAngle={-270}
+                    isAnimationActive animationDuration={800}
+                    activeIndex={activePieIdx ?? undefined} activeShape={renderActiveShape}
+                    onMouseEnter={(_: any, i: number) => setActivePieIdx(i)} onMouseLeave={() => setActivePieIdx(null)}
+                  >
+                    {REJECT_DONUT.map((d, i) => <Cell key={i} fill={d.color} stroke="transparent" />)}
+                  </Pie>
+                  <RechartsTooltip content={<RejectDonutTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginTop: 8 }}>
+              {REJECT_DONUT.map((d, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: 2, background: d.color, flexShrink: 0 }} />
+                  <span style={{ flex: 1, fontSize: 11, color: T.textSec }}>{d.name}</span>
+                  <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: d.color }}>{d.value}%</span>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      {/* ROW 4: ACTION — INSIGHT IA */}
+      <section>
+        <div style={{
+          borderTopWidth: 2, borderTopStyle: 'solid' as const, borderTopColor: '#D4A843',
+          background: 'rgba(212,168,67,0.03)',
+          borderRadius: 14, padding: 24,
+          border: '1px solid rgba(212,168,67,0.15)',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Brain size={16} color={T.gold} />
+              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>✦ Insight IA — Analyse Qualité</span>
+            </div>
+            <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', padding: '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4 }}>
+              Généré par IA · Claude Opus
+            </span>
+          </div>
+          <p style={{ fontFamily: MONO, fontSize: 13, color: '#9CA3AF', lineHeight: 1.8, margin: 0 }}>
+            Analyse 90 jours : Le taux de conformité global est de 96.2%, au-dessus de l'objectif NM de 95%. Cependant, 3 tendances nécessitent attention : (1) Les non-conformités affaissement se concentrent sur le shift de nuit (67% des cas) — formation opérateurs recommandée. (2) La formule B25 montre un sur-dosage ciment systématique de <strong style={{ color: '#D4A843' }}>+24.8%</strong> vs requis — réduction de 350→330 kg/m³ économiserait <strong style={{ color: '#D4A843' }}>374,400 MAD/an</strong> sans risque qualité. (3) L'opérateur Karim B. a un taux de conformité de <strong style={{ color: '#D4A843' }}>84%</strong> vs moyenne équipe 92% — accompagnement technique recommandé cette semaine.
+          </p>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 // ─────────────────────────────────────────────────────
 function EmptyTabPlaceholder({ title, icon: Icon }: { title: string; icon: React.ElementType }) {
   return (
