@@ -387,10 +387,15 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
             borderRadius: 12, height: '100%', display: 'flex', flexDirection: 'column',
           }}>
             <div style={{ padding: '16px 16px 12px', borderBottom: `1px solid ${T.cardBorder}` }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>
-                {selectedDate ? format(selectedDate, 'EEEE dd MMMM', { locale: fr }) : 'Détail du jour'}
+              <span style={{ fontSize: 13, fontWeight: 600, color: '#fff', textTransform: 'capitalize' }}>
+                {selectedDate ? format(selectedDate, 'EEEE dd MMMM yyyy', { locale: fr }) : 'Détail du jour'}
               </span>
-              {selectedDate && selectedDayChips.length > 0 && (
+              {selectedDate && isSelectedToday && (
+                <p style={{ fontSize: 11, color: T.gold, fontFamily: 'JetBrains Mono, monospace', marginTop: 4 }}>
+                  3 livraisons · 105 m³
+                </p>
+              )}
+              {selectedDate && !isSelectedToday && selectedDayChips.length > 0 && (
                 <p style={{ fontSize: 11, color: T.gold, fontFamily: 'JetBrains Mono, monospace', marginTop: 4 }}>
                   {selectedDayChips.length} livraison{selectedDayChips.length > 1 ? 's' : ''} · {selectedDayChips.reduce((s, c) => s + c.volume, 0)}m³
                 </p>
