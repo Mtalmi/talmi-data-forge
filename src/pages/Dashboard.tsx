@@ -1413,7 +1413,7 @@ export default function Dashboard() {
                     <div className="flex items-center gap-1.5 mb-1">
                       <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                       <span className="text-[10px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#403-068</span>
-                      <span className="ml-auto text-xs px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/30 font-medium">Déchargement</span>
+                      <span className="ml-auto text-xs px-2 py-0.5 rounded font-medium" style={{ background: 'transparent', border: '1px solid #D4A843', color: '#D4A843' }}>Déchargement</span>
                     </div>
                     <div className="text-[8px] text-slate-400 mb-1.5">F-B25 · 8 m³ · BTP Maroc</div>
                     <div className="flex items-center gap-2">
@@ -1472,7 +1472,7 @@ export default function Dashboard() {
               <div className="flex flex-col items-center gap-0.5 px-3 py-2 -mx-3 -my-2 rounded-lg cursor-default transition-all duration-200 hover:bg-white/[0.03]">
                 <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/40 font-medium">Pression</span>
                 <span className="text-sm text-white font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>1,013 <span className="text-[10px] text-white/40">hPa</span></span>
-                <span className="text-[9px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded-full font-medium">Normal</span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium" style={{ background: 'rgba(212,168,67,0.1)', color: '#D4A843' }}>Normal</span>
               </div>
 
               <div className="w-px h-6 bg-white/[0.06]" />
@@ -1481,7 +1481,7 @@ export default function Dashboard() {
               <div className="flex flex-col items-center gap-0.5 px-3 py-2 -mx-3 -my-2 rounded-lg cursor-default transition-all duration-200 hover:bg-white/[0.03]">
                 <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/40 font-medium">Vent</span>
                 <span className="text-sm text-white font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>12 <span className="text-[10px] text-white/40">km/h</span></span>
-                <span className="text-[9px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded-full font-medium">Calme</span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium" style={{ background: 'rgba(212,168,67,0.1)', color: '#D4A843' }}>Calme</span>
               </div>
 
               <div className="w-px h-6 bg-white/[0.06]" />
@@ -1490,7 +1490,7 @@ export default function Dashboard() {
               <div className="flex flex-col items-center gap-0.5 px-3 py-2 -mx-3 -my-2 rounded-lg cursor-default transition-all duration-200 hover:bg-white/[0.03]">
                 <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/40 font-medium">Température</span>
                 <span className="text-sm text-white font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>22°C</span>
-                <span className="text-[9px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded-full font-medium">Optimal</span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium" style={{ background: 'rgba(212,168,67,0.1)', color: '#D4A843' }}>Optimal</span>
               </div>
 
               <div className="w-px h-6 bg-white/[0.06]" />
@@ -1499,7 +1499,7 @@ export default function Dashboard() {
               <div className="flex flex-col items-center gap-0.5 px-3 py-2 -mx-3 -my-2 rounded-lg cursor-default transition-all duration-200 hover:bg-white/[0.03]">
                 <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/40 font-medium">Humidité</span>
                 <span className="text-sm text-white font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>45%</span>
-                <span className="text-[9px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded-full font-medium">Optimal</span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium" style={{ background: 'rgba(212,168,67,0.1)', color: '#D4A843' }}>Optimal</span>
               </div>
 
               <div className="w-px h-6 bg-white/[0.06]" />
