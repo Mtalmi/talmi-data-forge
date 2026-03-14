@@ -1923,7 +1923,7 @@ function IntelligenceIATab() {
             </tr></thead>
             <tbody>
               {formulaRows.map((r, i) => (
-                <tr key={i} style={altRow(i)}>
+                <tr key={i} style={altRow(i)} onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }} onMouseLeave={e => { e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)'; }}>
                   <td style={{ ...monoCell, color: T.gold }}>{r.formule}</td>
                   <td style={monoCell}>{r.cimentActuel}</td>
                   <td style={{ ...monoCell, color: T.success }}>{r.cimentOpti}</td>
