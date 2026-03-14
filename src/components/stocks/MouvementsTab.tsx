@@ -197,7 +197,7 @@ function MovementRow({ m, index, isFirst = false }: { m: { date: string; type: s
         {m.qty}
       </span>
       <span style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF', flexShrink: 0 }}>{m.ref || '—'}</span>
-      <span style={{ color: T.textSec, fontSize: 11, flexShrink: 0, minWidth: 110 }}>{m.resp}</span>
+      <span style={{ color: '#9CA3AF', fontSize: 12, flexShrink: 0, minWidth: 110 }}>{m.resp}</span>
     </div>
   );
 }
