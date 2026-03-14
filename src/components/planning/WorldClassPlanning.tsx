@@ -451,6 +451,13 @@ function DeliveryCard({ d, delay = 0, routeData, weatherIndex = 0 }: { d: typeof
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
   const isEnRoute = d.status === 'En route';
 
+  // Rating and YTD data
+  const clientRatings: Record<string, number> = { 'Ciments du Maroc': 4.8, 'ONCF': 4.2, 'Addoha Group': 4.5, 'TGCC': 3.8, 'Alliances': 4.1, 'Jet Contractors': 4.6 };
+  const rating = clientRatings[d.client];
+
+  // Status glow
+  const statusGlow = d.status === 'En route' ? '0 0 8px rgba(34,197,94,0.2)' : d.status === 'En Chargement' ? '0 0 8px rgba(245,158,11,0.2)' : 'none';
+
   return (
     <div
       onMouseEnter={() => setHov(true)}
@@ -459,65 +466,29 @@ function DeliveryCard({ d, delay = 0, routeData, weatherIndex = 0 }: { d: typeof
         opacity: visible ? 1 : 0,
         transform: visible ? (hov ? 'translateX(4px)' : 'translateY(0)') : 'translateY(20px)',
         transition: 'all 200ms ease-out',
-        background: hov ? 'rgba(212,168,67,0.03)' : 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
-        border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`,
-        borderTop: '2px solid #D4A843',
-        borderLeft: `4px solid ${d.statusColor}`,
-        borderRadius: 10, padding: '12px 16px',
-        boxShadow: hov ? `0 4px 16px rgba(0,0,0,0.2)` : 'none',
+        background: hov ? 'rgba(212,168,67,0.03)' : `${T.cardBorder}30`,
+        border: `1px solid ${hov ? '#D4A84340' : T.cardBorder}`,
+        borderRadius: 10, padding: '14px 16px',
+        cursor: 'default',
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: 15, color: T.textPri }}>{d.client}</p>
-            {(() => {
-              const ratings: Record<string, { score: string; color: string }> = {
-                'Ciments du Maroc': { score: '4.8', color: '#D4A843' },
-                'ONCF': { score: '4.2', color: '#D4A843' },
-                'Addoha Group': { score: '4.5', color: '#D4A843' },
-                'TGCC': { score: '3.8', color: '#F59E0B' },
-                'Alliances': { score: '4.6', color: '#D4A843' },
-                'Jet Contractors': { score: '4.1', color: '#D4A843' },
-              };
-              const r = ratings[d.client];
-              return r ? <span style={{ fontSize: 10, fontWeight: 700, color: r.color }}>★ {r.score}</span> : null;
-            })()}
-            <span style={{ padding: '1px 7px', borderRadius: 999, fontSize: 10, fontWeight: 700, background: `${PRODUCT_COLORS[d.product] || T.gold}18`, color: PRODUCT_COLORS[d.product] || T.gold, border: `1px solid ${PRODUCT_COLORS[d.product] || T.gold}40` }}>{d.product}</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontWeight: 600, fontSize: 15, color: T.textPri }}>{d.client}</span>
+            {rating && <span style={{ color: rating < 4.0 ? '#F59E0B' : '#D4A843', fontSize: 11, fontWeight: 600 }}>★ {rating}</span>}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            <span style={{ color: T.textDim, fontSize: 11 }}>{d.date}</span>
-            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 13, fontWeight: 600, color: '#D4A843' }}>{d.volume} m³</span>
-            <span style={{ padding: '1px 7px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: `${T.info}18`, color: T.info, border: `1px solid ${T.info}30` }}>{d.truck}</span>
-            {(() => {
-              const mockRoutes: Record<string, { km: number; min: number }> = {
-                'BTP Maroc': { km: 8, min: 18 }, 'Ciments & Béton du Sud': { km: 15, min: 32 },
-                'Constructions Modernes': { km: 22, min: 40 }, 'Saudi Readymix': { km: 35, min: 55 },
-                'ONCF': { km: 12, min: 25 }, 'Addoha Group': { km: 18, min: 35 }, 'Addoha': { km: 18, min: 35 },
-                'TGCC': { km: 28, min: 45 }, 'Tgcc': { km: 28, min: 45 },
-                'Ciments du Maroc': { km: 10, min: 22 }, 'Alliances': { km: 14, min: 28 },
-                'Jet Contractors': { km: 20, min: 38 }, 'Jet Con.': { km: 20, min: 38 },
-              };
-              const route = routeData?.optimized_route;
-              const mock = mockRoutes[d.client];
-              const km = route?.distance_km ?? mock?.km;
-              const min = route?.estimated_duration_min ?? mock?.min;
-              return km != null ? (
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(148,163,184,0.08)', color: T.textSec, border: '1px solid rgba(148,163,184,0.15)' }}>
-                  📍 {km} km · {min} min
-                </span>
-              ) : null;
-            })()}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 3, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 12, color: T.textSec }}>{d.date}</span>
+            <span style={{ fontSize: 10, color: '#D4A843', background: 'rgba(212,168,67,0.08)', borderRadius: 4, padding: '1px 6px', fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 600 }}>{d.product}</span>
+            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 600, color: '#D4A843', fontSize: 12 }}>{d.volume} m³</span>
+            <span style={{ fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', padding: '1px 6px', borderRadius: 4, background: 'rgba(96,165,250,0.12)', color: T.info }}>{d.truck}</span>
             {(() => {
               const wb = WEATHER_BADGES[weatherIndex % WEATHER_BADGES.length];
               return (
-                <span style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 4,
-                  padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 600,
-                  background: wb.bg, border: `1px solid ${wb.dot}30`,
-                }}>
-                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: wb.dot, flexShrink: 0 }} />
-                  {wb.icon} {wb.temp}
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 10, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', padding: '1px 6px', borderRadius: 4, background: wb.bg }}>
+                  <span>{wb.icon}</span>
+                  <span style={{ color: wb.dot, fontWeight: 600, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace' }}>{wb.temp}</span>
                 </span>
               );
             })()}
@@ -540,7 +511,9 @@ function DeliveryCard({ d, delay = 0, routeData, weatherIndex = 0 }: { d: typeof
             return ytd ? <p style={{ color: '#D4A843', fontSize: 11, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', marginTop: 4 }}>{ytd}</p> : null;
           })()}
         </div>
-        <Badge label={d.status} color={d.statusColor} bg={`${d.statusColor}18`} pulse={isEnRoute} />
+        <div style={{ boxShadow: statusGlow, borderRadius: 999 }}>
+          <Badge label={d.status} color={d.statusColor} bg={`${d.statusColor}18`} pulse={isEnRoute} />
+        </div>
       </div>
     </div>
   );
