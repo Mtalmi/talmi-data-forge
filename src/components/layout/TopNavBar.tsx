@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { LanguageSwitcher } from '@/i18n/LanguageSwitcher';
+import { UnitSwitcher } from '@/i18n/UnitSwitcher';
 import { useI18n } from '@/i18n/I18nContext';
 import { useAuth } from '@/hooks/useAuth';
 import { GlobalSearch } from '@/components/search/GlobalSearch';
