@@ -67,7 +67,7 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
       bl: b.bl_id.replace('BL-', ''),
       client: b.clients?.nom_client || b.client_id,
       formule: b.formule_id.startsWith('F-') ? b.formule_id : `F-${b.formule_id}`,
-      vol: `${b.volume_m3}m³`,
+      vol: `${b.volume_m3} m³`,
       toupie: b.toupie_assignee || b.camion_assigne || '—',
       depart: b.heure_prevue || '—',
       eta: b.heure_arrivee_chantier || estimateETA(b.heure_prevue),
