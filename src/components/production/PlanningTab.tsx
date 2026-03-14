@@ -197,11 +197,20 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
     return map;
   }, [demoData]);
 
+  // Today's detail data for sidebar
+  const todayDetailItems = [
+    { id: 'td1', formule: 'F-B25', client: 'Saudi Readymix', volume: 50, heure: '08:00' },
+    { id: 'td2', formule: 'F-B25', client: 'BTP Maroc', volume: 35, heure: '10:30' },
+    { id: 'td3', formule: 'F-B20', client: 'BTP Maroc', volume: 20, heure: '14:00' },
+  ];
+
   const selectedDayChips = useMemo(() => {
     if (!selectedDate) return [];
     const dayIdx = weekDays.findIndex(d => isSameDay(d, selectedDate));
     return chipsByDayOffset[dayIdx] || [];
   }, [selectedDate, weekDays, chipsByDayOffset]);
+
+  const isSelectedToday = selectedDate && isToday(selectedDate);
 
   const weekCount = 18;
   const weekVolume = 1240;
