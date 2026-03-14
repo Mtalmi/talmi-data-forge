@@ -1019,7 +1019,7 @@ export default function Dashboard() {
                 Adjuvant insuffisant pour production prévue. Stock actuel: 200 L (6,7j). Commandes confirmées J+4 à J+7: 380 L nécessaires. Déficit: <span style={{ color: '#F59E0B', fontWeight: 600 }}>180 L</span>.
               </div>
               {/* Line 3: Cost */}
-              <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, color: '#EFormat444', marginBottom: 6 }}>
+              <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, color: '#EF4444', marginBottom: 6 }}>
                 <span style={{ color: '#EF4444' }}>Coût arrêt estimé: 85,000 MAD/jour</span> <span style={{ color: '#9CA3AF' }}>(perte production + pénalités livraison + personnel inactif)</span>
               </div>
               {/* Line 4: Solution */}
