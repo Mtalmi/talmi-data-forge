@@ -1142,9 +1142,15 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                 name="MÉTÉO"
                 content={
                   <div>
-                    <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.8 }}>
-                      Prévisions 48h: <span style={{ color: '#fff', fontWeight: 600 }}>Samedi 14 mars</span> — température <span style={{ color: '#EF4444', fontWeight: 600 }}>38°C</span> prévue à 14h. Impact béton: temps de prise réduit de <span style={{ color: '#F59E0B', fontWeight: 600 }}>20%</span>, risque fissuration élevé. Recommandations: (1) Ajouter retardateur de prise aux formules B25/B30, (2) Planifier livraisons avant 11h, (3) Alerter 3 chantiers identifiés à risque. <span style={{ color: '#fff', fontWeight: 600 }}>Dimanche 15</span>: conditions normales, aucun ajustement nécessaire.
+                    <p style={{ color: '#fff', fontSize: 15, fontWeight: 700, lineHeight: 1.4, marginBottom: 12 }}>Samedi 38°C — risque fissuration élevé</p>
+                    <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.8 }}>
+                      Prévisions 48h: <span style={{ color: '#fff', fontWeight: 600 }}>Samedi 14 mars</span> — température <span style={{ color: '#EF4444', fontWeight: 600 }}>38°C</span> prévue à 14h. Impact béton: temps de prise réduit de <span style={{ color: '#F59E0B', fontWeight: 600 }}>20%</span>. <span style={{ color: '#fff', fontWeight: 600 }}>Dimanche 15</span>: conditions normales, aucun ajustement nécessaire.
                     </p>
+                    <div style={{ background: 'rgba(212,168,67,0.05)', borderLeft: '3px solid #D4A843', padding: 12, borderRadius: '0 8px 8px 0', marginTop: 8 }}>
+                      <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.6 }}>
+                        <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation:</span> (1) Ajouter retardateur de prise aux formules B25/B30, (2) Planifier livraisons avant 11h, (3) Alerter 3 chantiers identifiés à risque.
+                      </p>
+                    </div>
                     <div className="flex gap-2 mt-4">
                       <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(239,68,68,0.12)', color: '#EF4444' }}>Risque: Élevé samedi</span>
                       <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 92%</span>
