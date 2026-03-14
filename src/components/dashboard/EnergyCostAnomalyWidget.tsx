@@ -24,15 +24,15 @@ export function EnergyCostAnomalyWidget() {
         overflow: 'hidden',
         borderRadius: 8,
         border: '1px solid rgba(245, 158, 11, 0.15)',
-        borderTop: '1px solid rgba(212,168,67,0.3)',
+        borderTop: '2px solid #EF4444',
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
         padding: 16,
         transition: 'all 200ms ease-out',
       }}
       onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.2)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-      onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(245,158,11,0.15)'; e.currentTarget.style.borderTop = '1px solid rgba(212,168,67,0.3)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(245,158,11,0.15)'; e.currentTarget.style.borderTop = '2px solid #EF4444'; e.currentTarget.style.transform = 'translateY(0)'; }}
     >
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 99, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(239,68,68,0.7), transparent)', zIndex: 99, pointerEvents: 'none' }} />
       {/* Label */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -42,7 +42,7 @@ export function EnergyCostAnomalyWidget() {
             Agent IA: Détection Anomalies
           </span>
           <span style={{ color: '#D4A843', fontSize: 11, animation: 'agentSparkle 2s ease-in-out infinite' }}>✦</span>
-          <span style={{ marginLeft: 4, display: 'inline-flex', alignItems: 'center', padding: '2px 10px', borderRadius: 12, background: 'rgba(212,168,67,0.06)', border: '1px solid rgba(212,168,67,0.25)', fontSize: 12, fontWeight: 600, color: '#D4A843' }}>
+          <span style={{ marginLeft: 4, display: 'inline-flex', alignItems: 'center', padding: '2px 10px', borderRadius: 12, background: 'rgba(212,168,67,0.06)', border: '1px solid #D4A843', fontSize: 12, fontWeight: 600, color: '#D4A843' }}>
             Confiance: 85%
           </span>
         </div>
@@ -50,17 +50,23 @@ export function EnergyCostAnomalyWidget() {
       </div>
 
       {/* Status */}
-      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px', borderRadius: 999, background: `${T.danger}18`, border: `1px solid ${T.danger}30`, marginBottom: 10, animation: 'anomalyPulse 3s ease-in-out infinite' }}>
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px', borderRadius: 999, background: `${T.danger}18`, border: `1px solid ${T.danger}30`, marginBottom: 10, animation: 'anomalyBadgePulse 2s ease-in-out infinite' }}>
         <span style={{ fontSize: 10 }}>🔴</span>
         <span style={{ fontSize: 10, fontWeight: 700, color: T.danger }}>2 Anomalies Détectées</span>
       </div>
+      <style>{`
+        @keyframes anomalyBadgePulse {
+          0%, 100% { box-shadow: 0 0 10px rgba(239,68,68,0.3); }
+          50% { box-shadow: 0 0 20px rgba(239,68,68,0.1); }
+        }
+      `}</style>
 
       {/* Anomaly list */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 10 }}>
         {anomalies.map((a, i) => (
-          <p key={i} style={{ fontSize: 10, lineHeight: 1.5, color: T.textSec, paddingLeft: 12, marginBottom: 8, borderLeft: '2px solid #D4A843', borderRadius: 2, transition: 'all 0.2s ease', cursor: 'default' }}
-            onMouseEnter={e => { e.currentTarget.style.borderLeftColor = '#D4A843'; e.currentTarget.style.background = 'rgba(212,168,67,0.03)'; }}
-            onMouseLeave={e => { e.currentTarget.style.borderLeftColor = '#D4A843'; e.currentTarget.style.background = 'transparent'; }}
+          <p key={i} style={{ fontSize: 10, lineHeight: 1.5, color: T.textSec, paddingLeft: 8, marginBottom: 6, borderLeft: '2px solid #F59E0B', borderRadius: 2, transition: 'all 0.2s ease', cursor: 'default' }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.03)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
           >
             {a}
           </p>
@@ -68,7 +74,7 @@ export function EnergyCostAnomalyWidget() {
       </div>
 
       {/* Cost */}
-      <p style={{ fontSize: 11, fontWeight: 600, color: T.danger, marginBottom: 10, fontFamily: 'JetBrains Mono, monospace', textShadow: '0 0 6px rgba(239,68,68,0.3)' }}>
+      <p style={{ fontSize: 16, fontWeight: 600, color: '#EF4444', marginBottom: 10, fontFamily: 'ui-monospace, monospace', textShadow: '0 0 8px rgba(239,68,68,0.2)' }}>
         Surcoût Estimé: 4,200 MAD/sem
       </p>
 
@@ -76,14 +82,12 @@ export function EnergyCostAnomalyWidget() {
         onClick={() => navigate('/maintenance')}
         style={{
           width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
-          padding: '8px 16px', borderRadius: 6, fontSize: 13, fontWeight: 500,
-          background: 'transparent', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)',
-          cursor: 'pointer', transition: 'all 0.2s ease',
+          padding: '8px 24px', borderRadius: 6, fontSize: 13,
+          background: 'transparent', color: '#D4A843', border: '1px solid #D4A843',
+          cursor: 'pointer',
         }}
-        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.08)'; e.currentTarget.style.borderColor = 'rgba(212,168,67,0.6)'; }}
-        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(212,168,67,0.4)'; }}
       >
-        Voir Analyse <ChevronRight size={10} />
+        Voir Analyse
       </button>
     </div>
   );

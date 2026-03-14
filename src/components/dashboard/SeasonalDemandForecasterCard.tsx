@@ -28,7 +28,12 @@ function getConfColor(c: number) {
   return T.textDim;
 }
 
-// Mock 90-day chart data (weekly points)
+function getConfBorderColor(c: number) {
+  if (c >= 80) return '#22C55E';
+  if (c >= 60) return '#F59E0B';
+  return '#EF4444';
+}
+
 const chartData = [
   { week: 'S1 Mar', forecast: 290, lastYear: 245 },
   { week: 'S2 Mar', forecast: 320, lastYear: 260 },
@@ -68,7 +73,6 @@ function useStockAlertKpi() {
           return;
         }
 
-        // Find the material with the lowest days_remaining that is within 30 days
         const critical = data.find(d => d.days_remaining != null && d.days_remaining <= 30);
 
         if (!critical) {
@@ -96,6 +100,9 @@ function useStockAlertKpi() {
 
 const headers = ['Période', 'Volume Prévu', 'vs 2025', 'Confiance', 'Facteur Principal'];
 
+// Current week index (S2 Mar = index 1 for mid-March)
+const CURRENT_WEEK_INDEX = 1;
+
 export function SeasonalDemandForecasterCard() {
   const [open, setOpen] = useState(true);
   const stockAlert = useStockAlertKpi();
@@ -107,7 +114,7 @@ export function SeasonalDemandForecasterCard() {
   ];
 
   return (
-    <div style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.03), transparent)', border: '1px solid rgba(212,168,67,0.10)', borderRadius: 8, padding: 20, overflow: 'hidden', backdropFilter: 'blur(4px)' }}>
+    <div style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.03), transparent)', border: '1px solid rgba(212,168,67,0.10)', borderTop: '2px solid #D4A843', borderRadius: 8, padding: 20, overflow: 'hidden', backdropFilter: 'blur(4px)' }}>
       {/* Header */}
       <button
         onClick={() => setOpen(!open)}
@@ -140,13 +147,15 @@ export function SeasonalDemandForecasterCard() {
           {/* KPI Summary */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 20 }}>
             {kpis.map((k, i) => {
+              const isPrev = k.label === 'Prévision 30j';
               const isCapacite = k.label === 'Capacité Disponible';
               const isStock = k.label === 'Alerte Stock';
               const valueStyle: React.CSSProperties = {
-                fontSize: 14, fontWeight: isCapacite || isStock ? 600 : 800,
-                color: isCapacite ? '#34D399' : isStock ? '#F87171' : (k.valueColor || T.textPri),
-                fontFamily: 'JetBrains Mono, monospace',
-                ...(isStock ? { textShadow: '0 0 6px rgba(248,113,113,0.2)' } : {}),
+                fontFamily: 'ui-monospace, monospace',
+                fontWeight: 200,
+                fontSize: isPrev ? 28 : isCapacite ? 28 : 16,
+                color: isPrev ? '#D4A843' : isCapacite ? '#22C55E' : '#EF4444',
+                ...(isStock ? { animation: 'stockAlertPulse 2s ease-in-out infinite' } : {}),
               };
               return (
               <div key={i} style={{
@@ -161,6 +170,12 @@ export function SeasonalDemandForecasterCard() {
               );
             })}
           </div>
+          <style>{`
+            @keyframes stockAlertPulse {
+              0%, 100% { opacity: 1; }
+              50% { opacity: 0.7; }
+            }
+          `}</style>
 
           {/* Forecast Table */}
           <div style={{ overflowX: 'auto', marginBottom: 20 }}>
@@ -180,23 +195,23 @@ export function SeasonalDemandForecasterCard() {
               <tbody>
                 {forecastTable.map((r, i) => {
                   const cc = getConfColor(r.confiance);
+                  const borderC = getConfBorderColor(r.confiance);
                   return (
                     <tr key={i}
-                      style={{ borderBottom: i < forecastTable.length - 1 ? `1px solid ${T.cardBorder}60` : 'none', transition: 'background 0.2s ease' }}
-                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.04)')}
+                      style={{ borderBottom: i < forecastTable.length - 1 ? `1px solid ${T.cardBorder}60` : 'none', transition: 'background 200ms ease' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.03)')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                     >
                       <td style={{ padding: '10px 14px', fontSize: 12, fontWeight: 600, color: T.textPri }}>{r.periode}</td>
-                      <td style={{ padding: '10px 14px', fontSize: 13, fontWeight: 700, color: T.gold, fontFamily: 'JetBrains Mono, monospace' }}>{r.volume}</td>
+                      <td style={{ padding: '10px 14px', fontSize: 13, fontWeight: 700, color: '#D4A843', fontFamily: 'ui-monospace, monospace' }}>{r.volume}</td>
                       <td style={{ padding: '10px 14px', textAlign: 'center' }}>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: r.vsColor, fontFamily: 'JetBrains Mono, monospace' }}>{r.vs}</span>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: r.vsColor, fontFamily: 'ui-monospace, monospace' }}>{r.vs}</span>
                       </td>
                       <td style={{ padding: '10px 14px', textAlign: 'center' }}>
                         <span style={{
                           display: 'inline-block', padding: '2px 8px', borderRadius: 999,
-                          fontSize: 10, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace',
-                          background: `${cc}15`, color: cc, border: '1px solid rgba(255,255,255,0.2)',
-                          boxShadow: '0 0 0 1px rgba(212,168,67,0.3)',
+                          fontSize: 10, fontWeight: 700, fontFamily: 'ui-monospace, monospace',
+                          background: `${cc}15`, color: cc, border: `1px solid ${borderC}`,
                         }}>{r.confiance}%</span>
                       </td>
                       <td style={{ padding: '10px 14px', fontSize: 11, color: T.textSec }}>{r.facteur}</td>
@@ -221,12 +236,12 @@ export function SeasonalDemandForecasterCard() {
             <p style={{ fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12, paddingLeft: 8 }}>
               Courbe de Demande — 90 jours
             </p>
-            <div style={{ width: '100%', height: 220 }}>
+            <div style={{ width: '100%', height: 220, position: 'relative' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                   <defs>
                     <linearGradient id="forecastGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#D4A843" stopOpacity={0.15} />
+                      <stop offset="0%" stopColor="#D4A843" stopOpacity={0.08} />
                       <stop offset="100%" stopColor="#D4A843" stopOpacity={0} />
                     </linearGradient>
                     <filter id="forecastGlow">
@@ -241,11 +256,35 @@ export function SeasonalDemandForecasterCard() {
                     labelStyle={{ color: '#fff', fontWeight: 600 }}
                   />
                   <ReferenceLine y={350} stroke={T.success} strokeDasharray="6 4" strokeOpacity={0.4} />
-                  <ReferenceLine x="S2 Mai" stroke={T.danger} strokeDasharray="4 3" strokeOpacity={0.6} label={{ value: 'Ramadan', fill: T.danger, fontSize: 9, position: 'top' }} />
+                  <ReferenceLine x="S2 Mai" stroke="#EF4444" strokeDasharray="4 4" strokeOpacity={0.3} label={{ value: 'RAMADAN', fill: '#EF4444', fontSize: 9, position: 'top' }} />
                   <Area type="monotone" dataKey="lastYear" name="2025" stroke={T.textDim} strokeWidth={1.5} strokeDasharray="5 3" fill="none" dot={false} />
                   <Area type="monotone" dataKey="forecast" name="Prévision 2026" stroke="#D4A843" strokeWidth={2} fill="url(#forecastGrad)" dot={false} filter="url(#forecastGlow)" />
                 </AreaChart>
               </ResponsiveContainer>
+              {/* Pulsing dot at current week */}
+              <div style={{
+                position: 'absolute',
+                top: (() => {
+                  const val = chartData[CURRENT_WEEK_INDEX]?.forecast || 320;
+                  const maxVal = Math.max(...chartData.map(d => d.forecast));
+                  const minVal = 95;
+                  return `${10 + (1 - (val - minVal) / (maxVal - minVal)) * 200}px`;
+                })(),
+                left: `${10 + ((CURRENT_WEEK_INDEX + 0.5) / chartData.length) * 90}%`,
+                width: 8, height: 8,
+                background: '#D4A843',
+                borderRadius: '50%',
+                animation: 'demandPulseDot 2s infinite',
+                pointerEvents: 'none',
+                transform: 'translate(-50%, -50%)',
+              }} />
+              <style>{`
+                @keyframes demandPulseDot {
+                  0% { transform: translate(-50%,-50%) scale(1); opacity: 1; box-shadow: 0 0 10px #D4A843; }
+                  50% { transform: translate(-50%,-50%) scale(1.5); opacity: 0.4; box-shadow: 0 0 20px transparent; }
+                  100% { transform: translate(-50%,-50%) scale(1); opacity: 1; box-shadow: 0 0 10px #D4A843; }
+                }
+              `}</style>
             </div>
             <div style={{ display: 'flex', justifyContent: 'center', gap: 20, marginTop: 6 }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 9, color: T.textSec }}>
@@ -258,17 +297,20 @@ export function SeasonalDemandForecasterCard() {
                 <span style={{ width: 12, height: 1, borderTop: `2px dashed ${T.success}`, display: 'inline-block' }} /> Capacité
               </span>
             </div>
-            {/* Bottom fade */}
             <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 48, background: 'linear-gradient(to top, rgba(10,15,26,0.6), transparent)', pointerEvents: 'none' }} />
           </div>
 
           {/* Actionable Insights */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {insights.map((ins, i) => (
+            {insights.map((ins, i) => {
+              const isRamadan = i === 1;
+              const borderTopColor = isRamadan ? '#F59E0B' : '#D4A843';
+              return (
               <div key={i} className="cursor-pointer" style={{
                 borderLeft: `4px solid ${ins.color}`,
                 background: `${ins.color}06`,
                 border: `1px solid ${ins.color}20`,
+                borderTop: `2px solid ${borderTopColor}`,
                 borderLeftWidth: 4,
                 borderLeftColor: ins.color,
                 borderRadius: '0 10px 10px 0',
@@ -282,18 +324,18 @@ export function SeasonalDemandForecasterCard() {
                   <div className="rounded-sm flex-shrink-0 mt-[3px]" style={{ width: 10, height: 10, background: '#D4A843' }} />
                   <p style={{ fontSize: 11, lineHeight: 1.7, color: T.textSec }}>
                     {(() => {
-                      // Strip leading emoji
                       const cleaned = ins.text.replace(/^[\p{Emoji}\uFE0F\u200D]+\s*/u, '');
                       const dotIdx = cleaned.indexOf('.');
-                      if (dotIdx === -1) return <span className="font-semibold">{cleaned}</span>;
+                      if (dotIdx === -1) return <span className="font-semibold" style={{ color: '#D4A843' }}>{cleaned}</span>;
                       const first = cleaned.slice(0, dotIdx + 1);
                       const rest = cleaned.slice(dotIdx + 1);
-                      return <><span className="font-semibold">{first}</span>{rest}</>;
+                      return <><span className="font-semibold" style={{ color: '#D4A843' }}>{first}</span>{rest}</>;
                     })()}
                   </p>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
