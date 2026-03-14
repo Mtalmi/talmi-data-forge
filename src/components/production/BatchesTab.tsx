@@ -134,6 +134,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
   const mono = 'JetBrains Mono, monospace';
 
   return (
+    <>
     <div className="flex flex-col gap-6">
 
       {/* ═══ 1. ACTION BUTTONS ═══ */}
