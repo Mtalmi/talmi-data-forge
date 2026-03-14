@@ -226,7 +226,8 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   icon: any; trend: string; trendPositive: boolean; delay?: number;
   sparkData?: number[];
 }) {
-  const animated = useAnimatedCounter(value, 1200);
+  const isDecimal = value % 1 !== 0;
+  const animated = useAnimatedCounter(isDecimal ? Math.round(value * 10) : value, 1200);
   const [visible, setVisible] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
 
