@@ -1244,8 +1244,8 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               <span className="text-sm text-white/80">AGENT IA : 2 livraisons en retard potentiel — <span style={{ fontWeight:'500', color:'white' }}>Constructions Modernes SA</span> (14:30) arrive à 85% de la fenêtre de livraison. BTP Maroc (16:00) non confirmé.</span>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0 ml-4">
-              <button className="text-xs px-3 py-1.5 rounded-lg hover:brightness-110 transition-colors" style={{ boxShadow: '0 0 12px rgba(245,158,11,0.35)', background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.4)', color: 'rgb(251,191,36)', fontWeight: '500' }}>Alerter Client</button>
-              <span style={{ border: '1px solid #D4A843', color: '#D4A843', borderRadius: '4px', padding: '4px 12px', fontSize: '12px', cursor: 'pointer', transition: 'all 0.2s ease' }} className="hover:bg-[#D4A843]/10 transition-colors" onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(212,168,67,0.1)'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>Ignorer</span>
+              <button style={{ border: '1px solid #D4A843', color: '#0F1629', background: '#D4A843', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>Alerter Client</button>
+              <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px' }}>Ignorer</button>
             </div>
           </div>
         )}
