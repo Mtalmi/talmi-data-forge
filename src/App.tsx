@@ -269,6 +269,7 @@ const App = () => (
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>
+  </UnitProvider>
   </I18nProvider>
 );
 
