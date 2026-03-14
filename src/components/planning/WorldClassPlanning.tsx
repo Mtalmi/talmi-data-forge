@@ -1299,33 +1299,33 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                 name="PRÉDICTION RETARDS"
                 content={
                   <div className="flex flex-col gap-4">
-                    <p style={{ color: '#fff', fontSize: 15, fontWeight: 700, lineHeight: 1.4 }}>BL-2602-014 Saudi Readymix — probabilité retard 35%</p>
+                    <p style={{ color: '#fff', fontSize: 16, fontWeight: 600, lineHeight: 1.4 }}><span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 500 }}>BL-2602-014</span> Saudi Readymix — probabilité retard <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#F59E0B', fontWeight: 700, fontSize: 18 }}>35%</span></p>
                     <div className="flex items-start gap-3">
                       <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
                       <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.7 }}>
-                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-014 Saudi Readymix</span>: distance 20km, trafic historique créneau 13h élevé, temps chargement F-B25.
+                        <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 500 }}>BL-2602-014</span> <span style={{ color: '#fff', fontWeight: 600 }}>Saudi Readymix</span>: distance 20km, trafic historique créneau 13h élevé, temps chargement F-B25.
                       </p>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
                       <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.7 }}>
-                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-015 BTP Maroc</span>: probabilité retard <span style={{ color: '#34d399', fontWeight: 600 }}>8%</span> — client proche (4km), créneau 15h fluide. Aucune action requise.
+                        <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 500 }}>BL-2602-015</span> <span style={{ color: '#fff', fontWeight: 600 }}>BTP Maroc</span>: probabilité retard <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#22C55E', fontWeight: 700 }}>8%</span> — client proche (4km), créneau 15h fluide. Aucune action requise.
                       </p>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444' }} />
                       <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.7 }}>
-                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-013 Constructions Modernes (80m³)</span>: 2 rotations nécessaires. Rotation 2 risque retard si Rotation 1 dépasse <span style={{ color: '#EF4444', fontWeight: 600 }}>45 min sur site</span>.
+                        <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 500 }}>BL-2602-013</span> <span style={{ color: '#fff', fontWeight: 600 }}>Constructions Modernes (80m³)</span>: 2 rotations nécessaires. Rotation 2 risque retard si Rotation 1 dépasse <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#EF4444', fontWeight: 700 }}>45 min sur site</span>.
                       </p>
                     </div>
-                    <div style={{ background: 'rgba(212,168,67,0.05)', borderLeft: '3px solid #D4A843', padding: 12, borderRadius: '0 8px 8px 0', marginTop: 8 }}>
+                    <div style={{ background: 'rgba(212,168,67,0.04)', borderLeft: '3px solid #D4A843', padding: 12, borderRadius: '0 6px 6px 0', marginTop: 8 }}>
                       <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.6 }}>
-                        <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation:</span> Avancer départ BL-2602-014 de 15 min. Pré-alerter chantier Constructions Modernes sur temps de déchargement.
+                        <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation:</span> Avancer départ <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 500 }}>BL-2602-014</span> de 15 min. Pré-alerter chantier Constructions Modernes sur temps de déchargement.
                       </p>
                     </div>
                     <div className="flex gap-2 mt-2">
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>1 action requise</span>
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 89%</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.06)', color: '#F59E0B', border: '1px solid #F59E0B' }}>1 action requise</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843' }}>Confiance: 89%</span>
                     </div>
                   </div>
                 }
