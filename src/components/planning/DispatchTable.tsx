@@ -116,14 +116,99 @@ export function DispatchTable({ bons, onRowClick }: DispatchTableProps) {
           <span style={{ color: '#64748B', fontSize: 11 }}>·</span>
           <span style={{ color: '#94A3B8', fontSize: 11, fontWeight: 500 }}>Dispatch en direct</span>
         </div>
-        <span style={{
-          padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600,
-          background: 'rgba(212,168,67,0.12)', color: '#D4A843',
-          border: '1px solid rgba(212,168,67,0.25)',
-        }}>
-          {uniqueToupies.size} toupies · {rows.length} livraisons
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 2, background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: 2 }}>
+            <button onClick={() => setViewMode('list')} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 6, border: 'none', cursor: 'pointer', background: viewMode === 'list' ? 'rgba(212,168,67,0.15)' : 'transparent', transition: 'background 150ms' }}>
+              <List size={13} color={viewMode === 'list' ? '#D4A843' : '#64748B'} />
+              <span style={{ fontSize: 10, fontWeight: 600, color: viewMode === 'list' ? '#D4A843' : '#64748B' }}>Vue Liste</span>
+            </button>
+            <button onClick={() => setViewMode('map')} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 6, border: 'none', cursor: 'pointer', background: viewMode === 'map' ? 'rgba(212,168,67,0.15)' : 'transparent', transition: 'background 150ms' }}>
+              <Map size={13} color={viewMode === 'map' ? '#D4A843' : '#64748B'} />
+              <span style={{ fontSize: 10, fontWeight: 600, color: viewMode === 'map' ? '#D4A843' : '#64748B' }}>Vue Carte</span>
+            </button>
+          </div>
+          <span style={{
+            padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600,
+            background: 'rgba(212,168,67,0.12)', color: '#D4A843',
+            border: '1px solid rgba(212,168,67,0.25)',
+          }}>
+            {uniqueToupies.size} toupies · {rows.length} livraisons
+          </span>
+        </div>
       </div>
+
+      {viewMode === 'map' ? (
+        <div style={{ height: 420, background: '#1A1F2E', position: 'relative', overflow: 'hidden' }}>
+          <svg width="100%" height="380" viewBox="0 0 700 380" style={{ display: 'block' }}>
+            {/* Background grid */}
+            {Array.from({ length: 14 }).map((_, i) => (
+              <line key={`vg${i}`} x1={i * 50} y1={0} x2={i * 50} y2={380} stroke="rgba(255,255,255,0.03)" strokeWidth={1} />
+            ))}
+            {Array.from({ length: 8 }).map((_, i) => (
+              <line key={`hg${i}`} x1={0} y1={i * 50} x2={700} y2={i * 50} stroke="rgba(255,255,255,0.03)" strokeWidth={1} />
+            ))}
+
+            {/* Route lines */}
+            {/* TOU-03 completed route (gray) */}
+            <line x1={350} y1={190} x2={280} y2={310} stroke="rgba(255,255,255,0.12)" strokeWidth={1.5} strokeDasharray="6 4" />
+            {/* TOU-01 active route (green) */}
+            <line x1={350} y1={190} x2={540} y2={95} stroke="rgba(16,185,129,0.4)" strokeWidth={1.5} strokeDasharray="6 4" />
+            {/* TOU-02 loading route (amber) */}
+            <line x1={350} y1={190} x2={160} y2={170} stroke="rgba(245,158,11,0.4)" strokeWidth={1.5} strokeDasharray="6 4" />
+
+            {/* Plant (TBOS) */}
+            <circle cx={350} cy={190} r={14} fill="rgba(212,168,67,0.15)" stroke="#D4A843" strokeWidth={1.5} />
+            <text x={350} y={194} textAnchor="middle" style={{ fontSize: 8, fontWeight: 700, fill: '#D4A843', letterSpacing: '0.1em' }}>TBOS</text>
+
+            {/* Client diamonds */}
+            {[
+              { x: 540, y: 70, name: 'Constructions Modernes' },
+              { x: 160, y: 140, name: 'Saudi Readymix' },
+              { x: 280, y: 330, name: 'BTP Maroc' },
+              { x: 580, y: 230, name: 'Ciments du Maroc' },
+              { x: 450, y: 300, name: 'ONCF' },
+            ].map(c => (
+              <g key={c.name}>
+                <rect x={c.x - 5} y={c.y - 5} width={10} height={10} fill="#D4A843" transform={`rotate(45 ${c.x} ${c.y})`} opacity={0.7} />
+                <text x={c.x + 12} y={c.y + 3} style={{ fontSize: 9, fill: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>{c.name}</text>
+              </g>
+            ))}
+
+            {/* TOU-01 truck (green, en route, top-right) */}
+            <g>
+              <circle cx={480} cy={120} r={10} fill="rgba(16,185,129,0.2)" stroke="#10B981" strokeWidth={1.5} />
+              <text x={480} y={123} textAnchor="middle" style={{ fontSize: 7, fontWeight: 700, fill: '#10B981' }}>🚛</text>
+              <rect x={496} y={108} width={130} height={26} rx={6} fill="rgba(15,23,42,0.9)" stroke="rgba(16,185,129,0.3)" strokeWidth={1} />
+              <text x={504} y={118} style={{ fontSize: 9, fontWeight: 700, fill: '#10B981' }}>TOU-01</text>
+              <text x={504} y={129} style={{ fontSize: 8, fill: 'rgba(255,255,255,0.5)' }}>En route · BL-2602-013</text>
+            </g>
+
+            {/* TOU-02 truck (amber, chargement, center-left) */}
+            <g>
+              <circle cx={200} cy={200} r={10} fill="rgba(245,158,11,0.2)" stroke="#F59E0B" strokeWidth={1.5} />
+              <text x={200} y={203} textAnchor="middle" style={{ fontSize: 7, fontWeight: 700, fill: '#F59E0B' }}>🚛</text>
+              <rect x={216} y={188} width={140} height={26} rx={6} fill="rgba(15,23,42,0.9)" stroke="rgba(245,158,11,0.3)" strokeWidth={1} />
+              <text x={224} y={198} style={{ fontSize: 9, fontWeight: 700, fill: '#F59E0B' }}>TOU-02</text>
+              <text x={224} y={209} style={{ fontSize: 8, fill: 'rgba(255,255,255,0.5)' }}>Chargement · BL-2602-014</text>
+            </g>
+
+            {/* TOU-03 truck (blue, livré, bottom) */}
+            <g>
+              <circle cx={300} cy={300} r={10} fill="rgba(96,165,250,0.2)" stroke="#60A5FA" strokeWidth={1.5} />
+              <text x={300} y={303} textAnchor="middle" style={{ fontSize: 7, fontWeight: 700, fill: '#60A5FA' }}>🚛</text>
+              <rect x={316} y={288} width={120} height={26} rx={6} fill="rgba(15,23,42,0.9)" stroke="rgba(96,165,250,0.3)" strokeWidth={1} />
+              <text x={324} y={298} style={{ fontSize: 9, fontWeight: 700, fill: '#60A5FA' }}>TOU-03</text>
+              <text x={324} y={309} style={{ fontSize: 8, fill: 'rgba(255,255,255,0.5)' }}>Livré · BL-2602-011</text>
+            </g>
+          </svg>
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px 20px', background: 'linear-gradient(to top, #1A1F2E, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ color: '#9CA3AF', fontSize: 12, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>
+              3 toupies actives · 2 en mission · 1 livré · Prochaine arrivée: TOU-01 ETA 10:55
+            </span>
+          </div>
+        </div>
+      ) : (
+        <>
 
       {/* Column headers */}
       <div style={{
