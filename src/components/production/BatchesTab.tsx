@@ -149,8 +149,8 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
           {[{ icon: Download, label: 'Exporter' }, { icon: RefreshCw, label: 'Actualiser' }].map(b => (
             <button key={b.label} className="flex items-center gap-2 cursor-pointer" style={{
               padding: '10px 14px', borderRadius: 8, background: 'transparent',
-              color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: 13,
-              border: '1px solid rgba(255,255,255,0.12)', fontFamily: 'DM Sans, sans-serif',
+              color: '#D4A843', fontWeight: 500, fontSize: 13,
+              border: '1px solid #D4A843', fontFamily: 'DM Sans, sans-serif',
             }}>
               <b.icon size={16} strokeWidth={1.5} /> {b.label}
             </button>
