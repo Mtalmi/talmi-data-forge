@@ -882,7 +882,7 @@ function AnalytiqueTab() {
                       <td style={{ padding: '10px 8px', textAlign: 'center', fontSize: 12, fontWeight: 200, color: T.textPri }}>{d.dhkm}</td>
                       <td style={{ padding: '10px 8px', textAlign: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-                          <span style={{ fontFamily: MONO, fontWeight: 200, fontSize: 24, color: d.score >= 95 ? T.gold : d.score >= 90 ? T.success : T.warning }}>{d.score}</span>
+                          <span style={{ fontFamily: MONO, fontWeight: 200, fontSize: 24, color: T.success }}>{d.score}</span>
                           <span style={{ fontSize: 14, color: d.badgeColor }}>{d.badge}</span>
                         </div>
                       </td>
