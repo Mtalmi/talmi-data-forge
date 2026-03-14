@@ -480,13 +480,12 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                       >
                         <div className="flex items-center justify-between mb-1">
-                          <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 500, color: '#fff' }}>{f.id}</span>
+                          <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, fontWeight: 500, color: '#D4A843' }}>{f.id}</span>
                           <div className="flex items-center gap-2">
-                            <span style={{ fontSize: 11, color: f.color }}>{f.status}</span>
-                            <span style={{ fontFamily: mono, fontSize: 10, color: 'rgba(255,255,255,0.20)' }}>{f.time}</span>
+                            <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#D4A843' }}>{f.status} {f.time}</span>
                           </div>
                         </div>
-                        <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.40)' }}>{f.formule}, {f.vol}. {f.note}</p>
+                        <p style={{ fontSize: 11, color: '#9CA3AF' }}><span style={{ color: '#D4A843' }}>{f.formule}</span>, {f.vol}. {f.note}</p>
                       </div>
                     ));
                 return feedItems;
