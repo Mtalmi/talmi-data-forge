@@ -957,7 +957,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
               {/* 2. Weekly Schedule */}
               <div>
                 <SectionHeader icon={CalendarDays} label="Planning Hebdomadaire" />
-                <Card style={{ padding: 0, overflow: 'hidden', overflowX: 'auto' }}>
+                <Card style={{ padding: 0, overflow: 'hidden', overflowX: 'auto', borderTop: '2px solid #D4A843' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '80px repeat(6, minmax(120px, 1fr))', gap: 0, minWidth: 800 }}>
                     <div style={{ padding: '10px 14px', background: `${T.cardBorder}40`, borderBottom: `1px solid ${T.cardBorder}` }} />
                     {weekDays.map(d => (
