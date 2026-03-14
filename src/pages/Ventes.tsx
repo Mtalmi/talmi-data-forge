@@ -704,6 +704,9 @@ export default function Ventes() {
               <MarginOverviewCard />
               <PipelineAnalysisCard />
               <ConversionPredictorCard />
+              <RelanceIntelligenteCard />
+              <ScoringDynamiquePrixCard />
+              <ConcentrationClientCard />
             </div>
           )}
 
