@@ -344,7 +344,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
 // ─────────────────────────────────────────────────────
 // SCHEDULE BLOCK
 // ─────────────────────────────────────────────────────
-function ScheduleBlock({ slot, delay = 0, riskyClients, onClick }: { slot: { product: string; volume: number; client: string } | null; delay?: number; riskyClients?: Set<string>; onClick?: () => void }) {
+function ScheduleBlock({ slot, delay = 0, riskyClients, onClick, rentabilite = false }: { slot: { product: string; volume: number; client: string } | null; delay?: number; riskyClients?: Set<string>; onClick?: () => void; rentabilite?: boolean }) {
   const [visible, setVisible] = useState(false);
   const [hov, setHov] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
@@ -371,6 +371,24 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick }: { slot: { pro
   const isRisky = riskyClients?.has(slot.client.toLowerCase()) ?? false;
   const dotColor = isRisky ? T.danger : '#D4A843';
 
+  // Rentabilité mode styling
+  const HIGH_MARGIN = ['ciments du maroc', 'saudi readymix', 'oncf'];
+  const LOW_MARGIN = ['tgcc', 'jet con.'];
+  const clientLower = slot.client.toLowerCase();
+  let rentaBg = 'rgba(245, 158, 11, 0.08)';
+  let rentaBorder = color;
+  if (rentabilite) {
+    if (HIGH_MARGIN.some(c => clientLower.includes(c))) {
+      rentaBg = 'rgba(34,197,94,0.08)';
+      rentaBorder = '#22C55E';
+    } else if (LOW_MARGIN.some(c => clientLower.includes(c))) {
+      rentaBg = 'rgba(245,158,11,0.08)';
+      rentaBorder = '#F59E0B';
+    } else {
+      rentaBorder = '#D4A843';
+    }
+  }
+
   return (
     <div
       onMouseEnter={() => setHov(true)}
@@ -380,9 +398,9 @@ function ScheduleBlock({ slot, delay = 0, riskyClients, onClick }: { slot: { pro
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(12px)',
         transition: 'opacity 500ms ease-out, transform 500ms ease-out, box-shadow 200ms, border-color 200ms',
-        background: 'rgba(245, 158, 11, 0.08)',
+        background: rentabilite ? rentaBg : 'rgba(245, 158, 11, 0.08)',
         border: `1px solid ${hov ? 'rgba(245, 158, 11, 0.3)' : 'rgba(245, 158, 11, 0.15)'}`,
-        borderLeft: `3px solid ${color}`,
+        borderLeft: `3px solid ${rentabilite ? rentaBorder : color}`,
         borderRadius: 8, padding: '8px 10px',
         cursor: 'pointer', minHeight: 58,
         position: 'relative',
@@ -683,6 +701,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
 
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dispatch');
+  const [scheduleViewMode, setScheduleViewMode] = useState<'standard' | 'rentabilite'>('standard');
   const dispatchRef = useRef<HTMLDivElement | null>(null);
   const kpisRef = useRef<HTMLDivElement | null>(null);
   const semaineRef = useRef<HTMLDivElement | null>(null);
@@ -971,7 +990,22 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
 
               {/* 2. Weekly Schedule */}
               <div>
-                <SectionHeader icon={CalendarDays} label="Planning Hebdomadaire" />
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 0 }}>
+                  <SectionHeader icon={CalendarDays} label="Planning Hebdomadaire" />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 2, background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: 2 }}>
+                    {(['standard', 'rentabilite'] as const).map(mode => (
+                      <button key={mode} onClick={() => setScheduleViewMode(mode)} style={{
+                        padding: '4px 12px', borderRadius: 6, border: 'none', cursor: 'pointer',
+                        fontSize: 11, fontWeight: 600,
+                        background: scheduleViewMode === mode ? 'rgba(212,168,67,0.15)' : 'transparent',
+                        color: scheduleViewMode === mode ? '#D4A843' : '#64748B',
+                        transition: 'all 150ms',
+                      }}>
+                        {mode === 'standard' ? 'Standard' : 'Rentabilité'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <Card style={{ padding: 0, overflow: 'hidden', overflowX: 'auto', borderTop: '2px solid #D4A843' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '80px repeat(6, minmax(120px, 1fr))', gap: 0, minWidth: 800 }}>
                     <div style={{ padding: '10px 14px', background: `${T.cardBorder}40`, borderBottom: `1px solid ${T.cardBorder}` }} />
@@ -993,7 +1027,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                       </div>
                       {row.slots.map((slot, si) => (
                         <div key={si} style={{ padding: 8, borderLeft: `1px solid ${T.cardBorder}` }}>
-                          <ScheduleBlock slot={slot} delay={ri * 80 + si * 30} riskyClients={riskyClients} onClick={slot ? () => setSelectedSlot({ slot, dayLabel: weekDays[si], timeLabel: row.time }) : undefined} />
+                          <ScheduleBlock slot={slot} delay={ri * 80 + si * 30} riskyClients={riskyClients} rentabilite={scheduleViewMode === 'rentabilite'} onClick={slot ? () => setSelectedSlot({ slot, dayLabel: weekDays[si], timeLabel: row.time }) : undefined} />
                         </div>
                       ))}
                     </div>
