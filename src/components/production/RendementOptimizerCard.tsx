@@ -176,7 +176,7 @@ export function RendementOptimizerCard() {
             <div>
               <p style={{
                 fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
-                fontSize: 30, fontWeight: 200, color: '#fff',
+                fontSize: 32, fontWeight: 200, color: '#D4A843',
                 WebkitFontSmoothing: 'antialiased', letterSpacing: '-0.02em', lineHeight: 1,
               }}>
                 {d.producedVolume} / {d.plannedVolume} m³
@@ -193,10 +193,10 @@ export function RendementOptimizerCard() {
             <div>
               <p style={{
                 fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
-                fontSize: 30, fontWeight: 200, color: '#fff',
+                fontSize: 32, fontWeight: 200, color: '#D4A843',
                 WebkitFontSmoothing: 'antialiased', letterSpacing: '-0.02em', lineHeight: 1,
               }}>47 m³/h</p>
-              <p style={{ color: '#34d399', fontSize: 12, fontWeight: 500, marginTop: 8 }}>↗ +3.2% vs moyenne</p>
+              <p style={{ color: '#22C55E', fontSize: 12, fontWeight: 500, marginTop: 8 }}>↗ +3.2% vs moyenne</p>
             </div>
           )}
         </MetricCard>
