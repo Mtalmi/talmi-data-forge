@@ -816,11 +816,11 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                 <p style={{ fontSize: 12, color: T.success, marginTop: 4, fontWeight: 500 }}>↗ +0.3 pts vs hier</p>
                 <div style={{ display: 'flex', gap: 6, marginTop: 10, flexWrap: 'wrap' }}>
                   {[
-                    { label: 'ON-TIME 94%', bg: 'rgba(16,185,129,0.12)', color: '#34d399' },
-                    { label: 'FLOTTE 87%', bg: 'rgba(96,165,250,0.12)', color: '#60A5FA' },
-                    { label: 'QUALITÉ 96%', bg: 'rgba(212,168,67,0.12)', color: '#D4A843' },
+                    { label: 'ON-TIME 94%', bg: 'rgba(212,168,67,0.12)' },
+                    { label: 'FLOTTE 87%', bg: 'rgba(212,168,67,0.12)' },
+                    { label: 'QUALITÉ 96%', bg: 'rgba(212,168,67,0.12)' },
                   ].map(b => (
-                    <span key={b.label} style={{ padding: '3px 8px', borderRadius: 999, fontSize: 9, fontWeight: 700, background: b.bg, color: b.color, letterSpacing: '0.08em' }}>{b.label}</span>
+                    <span key={b.label} style={{ padding: '3px 8px', borderRadius: 999, fontSize: 9, fontWeight: 700, background: b.bg, color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)', letterSpacing: '0.08em' }}>{b.label}</span>
                   ))}
                 </div>
               </div>

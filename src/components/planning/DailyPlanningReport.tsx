@@ -391,7 +391,7 @@ export function DailyPlanningReport({ date, stats, deliveries }: DailyPlanningRe
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="outline" size="sm" className="gap-2" style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent' }}>
           <FileText className="h-4 w-4" />
           <span className="hidden sm:inline">Rapport du jour</span>
         </Button>
