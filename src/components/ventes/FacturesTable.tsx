@@ -349,7 +349,11 @@ export function FacturesTable({
                   )}
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <span className="font-mono font-medium">{facture.facture_id}</span>
+                      <span
+                        style={{ fontFamily: 'ui-monospace, monospace', color: '#D4A843', fontWeight: 500, fontSize: 12, cursor: 'pointer' }}
+                        onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
+                        onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
+                      >{facture.facture_id}</span>
                       {isConsolidated && (
                         <Tooltip>
                           <TooltipTrigger>
