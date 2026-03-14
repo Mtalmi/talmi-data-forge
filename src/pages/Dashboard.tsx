@@ -1016,6 +1016,8 @@ export default function Dashboard() {
               sparkline: '0,28 20,24 40,20 60,26 80,18 100,14 120,10',
               secondaryLabel: 'Obj. mensuel',
               secondaryValue: '671 / 3 200 m³',
+              target: 280,
+              targetLabel: 'OBJ',
             },
             {
               label: 'REVENUE',
@@ -1044,6 +1046,8 @@ export default function Dashboard() {
               secondaryLabel: 'P&L',
               secondaryValue: 'Net: 24.2K DH',
               plBreakdown: true,
+              target: 32,
+              targetLabel: 'OBJ',
             },
             {
               label: 'TRÉSORERIE',
@@ -1059,7 +1063,12 @@ export default function Dashboard() {
               secondaryLabel: 'Net',
               secondaryValue: '+49K DH',
             },
-          ].map((kpi, i) => (
+          ].map((kpi, i) => {
+            const numVal = typeof kpi.value === 'number' ? kpi.value : parseFloat(String(kpi.value));
+            const hasTarget = 'target' in kpi && kpi.target !== undefined;
+            const aboveTarget = hasTarget ? numVal >= (kpi.target as number) : false;
+            const belowTarget = hasTarget ? numVal < (kpi.target as number) : false;
+            return (
             <TiltCard
               key={i}
               className="tbos-hero-card group cursor-pointer shimmer-effect h-full flex flex-col min-w-0 relative overflow-hidden hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 ease-out"
