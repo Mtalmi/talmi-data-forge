@@ -155,12 +155,12 @@ function FormulaCard({ f }: { f: Formula }) {
       <div className="grid grid-cols-2" style={{ gap: '12px 32px', padding: '20px 24px' }}>
         {props.map(([label, value]) => (
           <div key={label}>
-            <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#9CA3AF', marginBottom: 2 }}>{label}</p>
-            <p style={{
-              fontSize: 13, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 300,
+            <span style={{ fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.5px', color: '#9CA3AF', marginBottom: 2, display: 'block' }}>{label}</span>
+            <span style={{
+              fontSize: 13, fontFamily: 'ui-monospace, monospace', display: 'block',
+              fontWeight: isPrix(label) || isMarge(label) ? 600 : 300,
               color: isPrix(label) ? '#D4A843' : isMarge(label) ? '#22C55E' : '#fff',
-              ...(isPrix(label) || isMarge(label) ? { fontWeight: 600 } : {}),
-            }}>{value}</p>
+            }}>{value}</span>
           </div>
         ))}
       </div>
