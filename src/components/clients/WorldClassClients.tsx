@@ -178,6 +178,41 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
 
 interface ClientDisplay { name: string; segment: string; ca: string; lastOrder: string; status: string; solde: number; clientId?: string; email?: string; telephone?: string; ville?: string }
 
+// Health scores & trends by client name
+const HEALTH_SCORES: Record<string, number> = {
+  'TGCC': 92, 'Constructions Modernes SA': 85, 'BTP Maroc': 78,
+  'Ciments & Béton du Sud': 74, 'Saudi Readymix': 88, 'Sigma Bâtiment': 23,
+};
+const TREND_DATA: Record<string, { arrow: string; color: string }> = {
+  'TGCC': { arrow: '↑', color: '#22C55E' },
+  'Constructions Modernes SA': { arrow: '→', color: '#F59E0B' },
+  'BTP Maroc': { arrow: '↑', color: '#22C55E' },
+  'Ciments & Béton du Sud': { arrow: '↓', color: '#EF4444' },
+  'Saudi Readymix': { arrow: '↑', color: '#22C55E' },
+  'Sigma Bâtiment': { arrow: '↓↓', color: '#EF4444' },
+};
+
+function HealthGauge({ score, size = 36 }: { score: number; size?: number }) {
+  const r = (size - 4) / 2;
+  const circ = 2 * Math.PI * r;
+  const progress = (score / 100) * circ;
+  const color = score >= 80 ? '#22C55E' : score >= 50 ? '#F59E0B' : '#EF4444';
+  return (
+    <svg width={size} height={size} style={{ flexShrink: 0 }}>
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={3} />
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={3}
+        strokeDasharray={`${progress} ${circ - progress}`}
+        strokeLinecap="round"
+        transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        style={{ transition: 'stroke-dasharray 600ms ease' }}
+      />
+      <text x="50%" y="50%" textAnchor="middle" dominantBaseline="central"
+        style={{ fontFamily: MONO, fontSize: 11, fontWeight: 600, fill: color }}
+      >{score}</text>
+    </svg>
+  );
+}
+
 function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay; delay?: number; onOpenDetail: (client: ClientDisplay) => void }) {
   const visible = useFadeIn(delay);
   const [hov, setHov] = useState(false);
@@ -189,6 +224,11 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
   const segColor = SEGMENT_COLORS[client.segment] || T.gold;
   const initial = client.name.charAt(0).toUpperCase();
   const isInactif = client.status === 'Inactif';
+
+  const healthScore = HEALTH_SCORES[client.name] ?? 65;
+  const borderColor = healthScore >= 80 ? '#22C55E' : healthScore >= 50 ? '#F59E0B' : '#EF4444';
+  const trend = TREND_DATA[client.name];
+  const isSigma = client.name === 'Sigma Bâtiment';
 
   const fetchBrief = useCallback(async () => {
     if (!client.clientId) return;
@@ -228,10 +268,27 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
   return (
     <div>
       <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} onClick={handleRowClick}
-        style={{ opacity: visible ? 1 : 0, transform: visible ? (hov ? 'translateX(4px)' : 'translateY(0)') : 'translateY(20px)', transition: 'all 380ms ease-out', background: hov ? 'rgba(255,215,0,0.04)' : 'transparent', border: `1px solid ${hov ? T.cardBorder : 'transparent'}`, borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer' }}>
+        style={{
+          opacity: visible ? 1 : 0,
+          transform: visible ? 'translateY(0)' : 'translateY(20px)',
+          transition: 'all 380ms ease-out',
+          background: hov ? 'rgba(212,168,67,0.03)' : isSigma ? 'rgba(239,68,68,0.04)' : 'transparent',
+          borderWidth: '1px 1px 1px 3px',
+          borderStyle: 'solid',
+          borderColor: `${hov ? T.cardBorder : 'transparent'} ${hov ? T.cardBorder : 'transparent'} ${hov ? T.cardBorder : 'transparent'} ${borderColor}`,
+          borderRadius: 10,
+          padding: 16,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 16,
+          cursor: 'pointer',
+        }}>
+        {/* Avatar */}
         <div style={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0, background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: 16, color: '#D4A843' }}>{initial}</div>
-        <div style={{ flex: '2 1 170px', minWidth: 170 }}>
-          <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginBottom: 3 }}>{client.name}</p>
+
+        {/* Name + badges */}
+        <div style={{ flex: '2 1 180px', minWidth: 180 }}>
+          <p style={{ fontWeight: 500, fontSize: 15, color: T.textPri, marginBottom: 3 }}>{client.name}</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
             <Badge label={client.segment} color={segColor} bg={`${segColor}18`} />
             {(() => {
@@ -248,21 +305,8 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
               const rc = risk.level === 'high' ? T.danger : risk.level === 'moderate' ? T.warning : T.success;
               const emoji = risk.level === 'high' ? '🔴' : risk.level === 'moderate' ? '🟠' : '🟢';
               return (
-                <span
-                  title={risk.detail}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (client.name === 'Sigma Bâtiment') {
-                      toast.info('Sigma Bâtiment — IA: Réunion direction pour négocier un plan de paiement et relancer les commandes.');
-                    }
-                  }}
-                  style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 4,
-                    padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 700,
-                    background: `${rc}15`, color: rc, border: `1px solid ${rc}30`,
-                    cursor: client.name === 'Sigma Bâtiment' ? 'pointer' : 'help',
-                  }}
-                >
+                <span title={risk.detail} onClick={(e) => { e.stopPropagation(); if (isSigma) toast.info('Sigma Bâtiment — IA: Réunion direction pour négocier un plan de paiement et relancer les commandes.'); }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 700, background: `${rc}15`, color: rc, border: `1px solid ${rc}30`, cursor: isSigma ? 'pointer' : 'help' }}>
                   {emoji} {risk.label}
                 </span>
               );
@@ -279,44 +323,44 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
               const churn = CHURN_DATA[client.name];
               if (!churn) return null;
               return (
-                <span
-                  title={churn.detail}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (client.name === 'Sigma Bâtiment') {
-                      toast.info('Sigma Bâtiment — IA: Aucune commande depuis 28 jours, 4 impayés (189,000 MAD). Recommandation: réunion de direction immédiate.');
-                    }
-                  }}
-                  style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 3,
-                    padding: '2px 7px', borderRadius: 999, fontSize: 9, fontWeight: 600,
-                    background: 'transparent', color: churn.color, border: `1.5px dashed ${churn.color}50`,
-                    cursor: client.name === 'Sigma Bâtiment' ? 'pointer' : 'help',
-                  }}
-                >
+                <span title={churn.detail} onClick={(e) => { e.stopPropagation(); if (isSigma) toast.info('Sigma Bâtiment — IA: Aucune commande depuis 28 jours, 4 impayés (189,000 MAD). Recommandation: réunion de direction immédiate.'); }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '2px 7px', borderRadius: 999, fontSize: 9, fontWeight: 600, background: 'transparent', color: churn.color, border: `1.5px dashed ${churn.color}50`, cursor: isSigma ? 'pointer' : 'help' }}>
                   {churn.icon} {churn.label}
                 </span>
               );
             })()}
           </div>
         </div>
+
+        {/* CA YTD */}
         <div style={{ flex: '1 1 90px', minWidth: 90 }}>
-          <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>CA YTD</p>
-          <p style={{ fontFamily: MONO, fontSize: 15, fontWeight: 700, color: T.gold }}>{client.ca}</p>
+          <p style={{ color: '#9CA3AF', fontSize: 9, fontFamily: MONO, letterSpacing: '1px', marginBottom: 3 }}>CA YTD</p>
+          <p style={{ fontFamily: MONO, fontSize: 18, fontWeight: 300, color: '#D4A843' }}>{client.ca}</p>
         </div>
-        <div style={{ flex: '1 1 100px', minWidth: 100 }}>
-          <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>Dernière cmd</p>
-          <p style={{ color: T.textSec, fontSize: 12, fontFamily: MONO }}>{client.lastOrder}</p>
+
+        {/* Dernière cmd */}
+        <div style={{ flex: '1 1 90px', minWidth: 90 }}>
+          <p style={{ color: '#9CA3AF', fontSize: 9, fontFamily: MONO, letterSpacing: '1px', marginBottom: 3 }}>DERNIÈRE CMD</p>
+          <p style={{ color: T.textPri, fontSize: 13, fontFamily: MONO }}>{client.lastOrder}</p>
         </div>
-        <div style={{ flex: '0.5 1 80px', minWidth: 80 }}>
+
+        {/* Health Gauge */}
+        <div style={{ flex: '0 0 60px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+          <p style={{ color: '#9CA3AF', fontSize: 8, fontFamily: MONO, letterSpacing: '1px' }}>SCORE SANTÉ</p>
+          <HealthGauge score={healthScore} />
+        </div>
+
+        {/* Status + Solde + Trend */}
+        <div style={{ flex: '0 0 80px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
           <Badge label={client.status} color={isInactif ? T.warning : T.success} bg={isInactif ? `${T.warning}18` : `${T.success}18`} pulse={isInactif} />
-        </div>
-        <div style={{ flex: '1 1 90px', minWidth: 90 }}>
-          <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>Solde</p>
-          <p style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: client.solde === 0 ? T.success : T.danger }}>
+          <p style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: client.solde === 0 ? T.success : T.danger }}>
             {client.solde === 0 ? '0 DH' : `${(client.solde / 1000).toFixed(0)}K DH`}
           </p>
+          {trend && (
+            <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: trend.color }}>{trend.arrow}</span>
+          )}
         </div>
+
         <ChevronRight size={18} color={T.textDim} style={{ transition: 'transform 200ms', transform: expanded ? 'rotate(90deg)' : hov ? 'translateX(4px)' : 'none', flexShrink: 0 }} />
       </div>
 
@@ -367,73 +411,47 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
                 <p style={{ color: T.gold, fontWeight: 700, fontSize: 13 }}>🧠 Intelligence Client</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   {intel?.score_sante && (
-                    <span style={{ padding: '2px 10px', borderRadius: 999, fontSize: 10, fontWeight: 700,
-                      background: `${scoreColor}22`, color: scoreColor, border: `1px solid ${scoreColor}44`,
-                    }}>Santé: {intel.score_sante}</span>
+                    <span style={{ padding: '2px 10px', borderRadius: 999, fontSize: 10, fontWeight: 700, background: `${scoreColor}22`, color: scoreColor, border: `1px solid ${scoreColor}44` }}>Santé: {intel.score_sante}</span>
                   )}
                   {intel?.valeur_potentielle && (
-                    <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 600,
-                      background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)',
-                    }}>💰 {intel.valeur_potentielle}</span>
+                    <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>💰 {intel.valeur_potentielle}</span>
                   )}
                 </div>
               </div>
-
               <div style={{ marginBottom: 10 }}>
-                <p style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.55 }}>
-                  {intel?.resume || fallbackBrief?.summary || 'Aucun résumé disponible.'}
-                </p>
+                <p style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.55 }}>{intel?.resume || fallbackBrief?.summary || 'Aucun résumé disponible.'}</p>
               </div>
-
               {opportunites.length > 0 && (
                 <div style={{ marginBottom: 8 }}>
                   <p style={{ color: T.success, fontWeight: 700, fontSize: 11, marginBottom: 4 }}>✨ Opportunités</p>
-                  {opportunites.map((o: string, i: number) => (
-                    <p key={i} style={{ color: '#d1d5db', fontSize: 11, lineHeight: 1.5, paddingLeft: 12 }}>• {o}</p>
-                  ))}
+                  {opportunites.map((o: string, i: number) => <p key={i} style={{ color: '#d1d5db', fontSize: 11, lineHeight: 1.5, paddingLeft: 12 }}>• {o}</p>)}
                 </div>
               )}
-
               {risques.length > 0 && (
                 <div style={{ marginBottom: 8 }}>
                   <p style={{ color: T.danger, fontWeight: 700, fontSize: 11, marginBottom: 4 }}>⚠️ Risques</p>
-                  {risques.map((r: string, i: number) => (
-                    <p key={i} style={{ color: '#d1d5db', fontSize: 11, lineHeight: 1.5, paddingLeft: 12 }}>• {r}</p>
-                  ))}
+                  {risques.map((r: string, i: number) => <p key={i} style={{ color: '#d1d5db', fontSize: 11, lineHeight: 1.5, paddingLeft: 12 }}>• {r}</p>)}
                 </div>
               )}
-
               {actions.length > 0 && (
                 <div style={{ marginBottom: 8 }}>
                   <p style={{ color: '#D4A843', fontWeight: 700, fontSize: 11, marginBottom: 4 }}>🎯 Actions Recommandées</p>
-                  {actions.map((a: string, i: number) => (
-                    <p key={i} style={{ color: '#d1d5db', fontSize: 11, lineHeight: 1.5, paddingLeft: 12 }}>→ {a}</p>
-                  ))}
+                  {actions.map((a: string, i: number) => <p key={i} style={{ color: '#d1d5db', fontSize: 11, lineHeight: 1.5, paddingLeft: 12 }}>→ {a}</p>)}
                 </div>
               )}
-
               {!hasIntel && fallbackBrief?.patterns && (
                 <div style={{ marginBottom: 10 }}>
                   <p style={{ color: T.gold, fontWeight: 700, fontSize: 11, marginBottom: 6 }}>Tendances</p>
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    {fallbackBrief.patterns.avg_order_frequency_days != null && (
-                      <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>📦 Fréq: {fallbackBrief.patterns.avg_order_frequency_days}j</span>
-                    )}
-                    {fallbackBrief.patterns.preferred_formula && (
-                      <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>🧪 {fallbackBrief.patterns.preferred_formula}</span>
-                    )}
-                    {fallbackBrief.patterns.avg_volume_per_order != null && (
-                      <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>💰 Vol moy: {fallbackBrief.patterns.avg_volume_per_order}m³</span>
-                    )}
+                    {fallbackBrief.patterns.avg_order_frequency_days != null && <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>📦 Fréq: {fallbackBrief.patterns.avg_order_frequency_days}j</span>}
+                    {fallbackBrief.patterns.preferred_formula && <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>🧪 {fallbackBrief.patterns.preferred_formula}</span>}
+                    {fallbackBrief.patterns.avg_volume_per_order != null && <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>💰 Vol moy: {fallbackBrief.patterns.avg_volume_per_order}m³</span>}
                   </div>
                 </div>
               )}
-
               {!hasIntel && !brief && <p style={{ color: T.textDim, fontSize: 10, fontStyle: 'italic', marginBottom: 6 }}>Données de démonstration — cliquez Actualiser pour générer un vrai brief</p>}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: 8 }}>
-                <span style={{ color: '#6B7280', fontSize: 10 }}>
-                  {intel?.generated_at ? `Dernière analyse: ${relTime(intel.generated_at)}` : 'Dernière analyse: —'}
-                </span>
+                <span style={{ color: '#6B7280', fontSize: 10 }}>{intel?.generated_at ? `Dernière analyse: ${relTime(intel.generated_at)}` : 'Dernière analyse: —'}</span>
                 <button onClick={handleGenerate} style={{ padding: '3px 10px', borderRadius: 6, background: `${T.gold}22`, color: T.gold, border: `1px solid ${T.gold}44`, fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>Actualiser</button>
               </div>
             </>
@@ -450,13 +468,13 @@ function HealthCard({ label, value, color, desc, icon: Icon, delay = 0 }: { labe
   const visible = useFadeIn(delay);
   return (
     <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out' }}>
-      <Card goldBorder>
+      <Card style={{ borderTopWidth: '2px', borderTopStyle: 'solid', borderTopColor: color }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
           <div style={{ width: 44, height: 44, borderRadius: 12, background: `${color}18`, border: `1px solid ${color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <Icon size={20} color={color} />
           </div>
           <div>
-            <p style={{ fontFamily: MONO, fontSize: 28, fontWeight: 200, color, lineHeight: 1.1 }}>{animated}</p>
+            <p style={{ fontFamily: MONO, fontSize: 36, fontWeight: 100, color, lineHeight: 1.1 }}>{animated}</p>
             <p style={{ fontWeight: 700, fontSize: 13, color: T.textPri, marginTop: 4 }}>{label}</p>
             <p style={{ color: T.textDim, fontSize: 11, marginTop: 2 }}>{desc}</p>
           </div>
@@ -465,7 +483,6 @@ function HealthCard({ label, value, color, desc, icon: Icon, delay = 0 }: { labe
     </div>
   );
 }
-
 // ─────────────────────────────────────────────────────
 // Custom Pulse Dot for Area Chart
 // ─────────────────────────────────────────────────────
