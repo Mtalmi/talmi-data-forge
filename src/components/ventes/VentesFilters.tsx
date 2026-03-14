@@ -137,11 +137,22 @@ export function VentesFilters({
           </SelectContent>
         </Select>
 
-        <Button
-          variant={showAdvanced ? 'secondary' : 'outline'}
-          size="sm"
+        <button
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="gap-2"
+          style={{
+            border: '1px solid #D4A843',
+            color: '#D4A843',
+            background: showAdvanced ? 'rgba(212,168,67,0.1)' : 'transparent',
+            borderRadius: 8,
+            padding: '8px 20px',
+            cursor: 'pointer',
+            fontSize: 14,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.1)')}
+          onMouseLeave={e => (e.currentTarget.style.background = showAdvanced ? 'rgba(212,168,67,0.1)' : 'transparent')}
         >
           <Filter className="h-4 w-4" />
           {c.filters}
@@ -150,7 +161,7 @@ export function VentesFilters({
               {activeFilterCount}
             </Badge>
           )}
-        </Button>
+        </button>
 
         {(activeFilterCount > 0 || filters.search) && (
           <Button variant="ghost" size="sm" onClick={clearFilters}>

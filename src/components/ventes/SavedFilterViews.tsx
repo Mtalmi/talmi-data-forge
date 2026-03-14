@@ -141,7 +141,7 @@ export function SavedFilterViews({ currentFilters, onApplyFilter }: SavedFilterV
               </Badge>
             )}
             <ChevronDown className="h-3 w-3 opacity-50" />
-          </Button>
+          </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-56">
           <DropdownMenuLabel className="flex items-center gap-2">
