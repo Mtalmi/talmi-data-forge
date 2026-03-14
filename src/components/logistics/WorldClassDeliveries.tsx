@@ -1377,13 +1377,20 @@ export default function WorldClassDeliveries() {
 
             {/* 3b. KPI CARDS */}
             <section>
-              <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
+              <SectionHeader icon={TrendingUp} label="✦ Indicateurs Clés" />
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 14 }}>
                 <KPICard label="Livraisons Aujourd'hui" value={String(totalDeliveries)} color="#FFFFFF" subtitle={`↑ ${delivered} livrée`} delay={0} />
                 <KPICard label="Volume Livré" value={`${totalVolume}.0 m³`} color={T.gold} subtitle={`${enRoute} en route`} delay={80} />
                 <KPICard label="Revenu Journée" value={`${Math.round(revenuTotal).toLocaleString('fr-MA')} DH`} color={T.gold} subtitle="marge moy: 36%" delay={160} />
                 <KPICard label="Taux Ponctualité" value="94%" color={T.success} subtitle="+2% vs sem." delay={240} />
-                <KPICard label="Flotte Active" value={`3/4`} color="#FFFFFF" subtitle="1 maintenance" delay={320} />
+                {/* Custom split-color card for Flotte Active */}
+                <div style={{ opacity: 1, transform: 'translateY(0)', transition: 'all 500ms ease-out' }}>
+                  <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '18px 16px', borderTop: `2px solid ${T.gold}` }}>
+                    <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 8 }}>FLOTTE ACTIVE</p>
+                    <p style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, margin: 0, lineHeight: 1, letterSpacing: '-0.02em' }}><span style={{ color: '#FFFFFF' }}>3</span><span style={{ color: '#9CA3AF' }}>/4</span></p>
+                    <p style={{ fontSize: 11, color: T.warning, marginTop: 6 }}>1 maintenance</p>
+                  </div>
+                </div>
               </div>
             </section>
 
