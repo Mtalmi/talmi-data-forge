@@ -572,7 +572,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
               <span style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>{k.label}</span>
               <k.icon size={14} strokeWidth={1.5} style={{ color: k.accent + '40' }} />
             </div>
-            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 22, fontWeight: 200, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>
+            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 36, fontWeight: 200, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em' }}>
               {k.value}<span style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', fontWeight: 400 }}>{k.suffix}</span>
             </p>
           </div>
