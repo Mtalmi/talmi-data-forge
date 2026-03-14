@@ -330,10 +330,10 @@ export function BcTable({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
-            className="flex items-center justify-center w-8 h-8 rounded-md text-gray-400 hover:text-amber-400 transition-colors duration-150"
-            style={{ background: 'transparent' }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(245, 158, 11, 0.1)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+            className="flex items-center justify-center w-8 h-8 rounded-md transition-colors duration-150"
+            style={{ background: 'transparent', color: '#D4A843' }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(245,158,11,0.1)'; e.currentTarget.style.color = '#E8C96A'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#D4A843'; }}
             onClick={e => e.stopPropagation()}
           >
             <MoreHorizontal className="h-4 w-4" />
