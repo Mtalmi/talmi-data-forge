@@ -252,6 +252,7 @@
 .ops-surface-card {
   border-radius: 4px !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-top: 2px solid #D4A843 !important;
   background: linear-gradient(to bottom right, #1a1f2e, #141824) !important;
   box-shadow: none !important;
   overflow: hidden !important;
