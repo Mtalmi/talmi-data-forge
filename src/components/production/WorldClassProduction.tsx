@@ -415,7 +415,7 @@ export default function WorldClassProduction() {
         if (hourMap[key] !== undefined) hourMap[key] += b.volume_m3 || 0;
       }
     });
-    const liveData = Object.entries(hourMap).map(([hour, volume]) => ({ hour, volume: Math.round(volume), objectif: 90 }));
+    const liveData = Object.entries(hourMap).map(([hour, volume]) => ({ hour, volume: Math.round(volume), objectif: 90, lastWeek: 0 }));
     const hasLive = liveData.some(d => d.volume > 0);
     if (hasLive) return liveData;
     // Demo data matching Dashboard curve
