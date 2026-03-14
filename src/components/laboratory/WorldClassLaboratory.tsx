@@ -9,8 +9,10 @@ import {
   FlaskConical, CheckCircle, AlertTriangle, Clock, Plus,
   FileText, Bell, Zap, Droplets, Activity, CloudRain,
   TrendingUp, BookOpen, ChevronDown, ChevronUp, User,
-  OctagonX, Eye, CheckCheck, Brain,
+  OctagonX, Eye, CheckCheck, Brain, Search, LineChart,
+  Filter, BarChart3,
 } from 'lucide-react';
+import { LineChart as RechartsLineChart, Line, ReferenceLine } from 'recharts';
 import { PageHeader } from '@/components/layout/PageHeader';
 
 // ─────────────────────────────────────────────────────
@@ -806,10 +808,100 @@ function EssaisDuJourTab({ labKpis }: { labKpis: { testsToday: number; conformes
 }
 
 // ─────────────────────────────────────────────────────
+// HISTORIQUE MOCK DATA
+// ─────────────────────────────────────────────────────
+const RESISTANCE_28J_DATA = [
+  { date: '12 Fév', fb20: 22.1, fb25: 27.3, fb30: 33.5 },
+  { date: '14 Fév', fb20: 21.8, fb25: 26.9, fb30: 32.1 },
+  { date: '16 Fév', fb20: 23.0, fb25: 28.1, fb30: 34.2 },
+  { date: '18 Fév', fb20: 22.4, fb25: 27.8, fb30: 31.8 },
+  { date: '20 Fév', fb20: 21.5, fb25: 26.2, fb30: 33.0 },
+  { date: '22 Fév', fb20: 22.8, fb25: 27.5, fb30: 34.8 },
+  { date: '24 Fév', fb20: 23.2, fb25: 28.4, fb30: 32.6 },
+  { date: '26 Fév', fb20: 21.9, fb25: 27.0, fb30: 33.9 },
+  { date: '28 Fév', fb20: 22.6, fb25: 28.0, fb30: 34.1 },
+  { date: '02 Mar', fb20: 23.5, fb25: 27.9, fb30: 33.7 },
+  { date: '04 Mar', fb20: 22.3, fb25: 26.8, fb30: 32.4 },
+  { date: '06 Mar', fb20: 22.9, fb25: 28.2, fb30: 34.5 },
+  { date: '08 Mar', fb20: 23.1, fb25: 27.6, fb30: 33.2 },
+  { date: '10 Mar', fb20: 22.7, fb25: 28.5, fb30: 34.0 },
+  { date: '12 Mar', fb20: 23.4, fb25: 27.8, fb30: 33.8 },
+];
+
+const HISTORY_ROWS = [
+  { date: '14 Mar', batch: 'BN-0158', formule: 'F-B25', type: 'Slump',          result: '17 cm',    norme: '15-20 cm', ecart: '+0%',   ecartLevel: 'ok',     operateur: 'Youssef M.', conforme: true  },
+  { date: '14 Mar', batch: 'BN-0158', formule: 'F-B25', type: 'Résistance 7j',  result: '26.3 MPa', norme: '>18 MPa',  ecart: '+46%',  ecartLevel: 'ok',     operateur: 'Youssef M.', conforme: true  },
+  { date: '13 Mar', batch: 'BN-0157', formule: 'F-B30', type: 'Slump',          result: '14 cm',    norme: '12-18 cm', ecart: '+0%',   ecartLevel: 'ok',     operateur: 'Karim L.',   conforme: true  },
+  { date: '13 Mar', batch: 'BN-0156', formule: 'F-B20', type: 'Température',    result: '29°C',     norme: '<32°C',    ecart: 'OK',    ecartLevel: 'ok',     operateur: 'Ahmed B.',   conforme: true  },
+  { date: '12 Mar', batch: 'BN-0155', formule: 'F-B25', type: 'Résistance 28j', result: '27.8 MPa', norme: '>25 MPa',  ecart: '+11%',  ecartLevel: 'ok',     operateur: 'Youssef M.', conforme: true  },
+  { date: '12 Mar', batch: 'BN-0154', formule: 'F-B30', type: 'Slump',          result: '11 cm',    norme: '12-18 cm', ecart: '-8%',   ecartLevel: 'amber',  operateur: 'Karim L.',   conforme: true  },
+  { date: '11 Mar', batch: 'BN-0153', formule: 'F-B35', type: 'Slump',          result: '22 cm',    norme: '10-15 cm', ecart: '+47%',  ecartLevel: 'bad',    operateur: 'Youssef M.', conforme: false },
+  { date: '11 Mar', batch: 'BN-0152', formule: 'F-B25', type: 'Air occlus',     result: '4.8%',     norme: '3-6%',     ecart: 'OK',    ecartLevel: 'ok',     operateur: 'Ahmed B.',   conforme: true  },
+  { date: '10 Mar', batch: 'BN-0151', formule: 'F-B20', type: 'Résistance 7j',  result: '19.2 MPa', norme: '>14 MPa',  ecart: '+37%',  ecartLevel: 'ok',     operateur: 'Karim L.',   conforme: true  },
+  { date: '09 Mar', batch: 'BN-0150', formule: 'F-B30', type: 'Résistance 28j', result: '33.8 MPa', norme: '>30 MPa',  ecart: '+13%',  ecartLevel: 'ok',     operateur: 'Ahmed B.',   conforme: true  },
+  { date: '08 Mar', batch: 'BN-0149', formule: 'F-B25', type: 'Slump',          result: '19 cm',    norme: '15-20 cm', ecart: '-5%',   ecartLevel: 'amber',  operateur: 'Youssef M.', conforme: true  },
+  { date: '07 Mar', batch: 'BN-0148', formule: 'F-B20', type: 'Température',    result: '31°C',     norme: '<32°C',    ecart: '-3%',   ecartLevel: 'amber',  operateur: 'Karim L.',   conforme: true  },
+  { date: '06 Mar', batch: 'BN-0147', formule: 'F-B30', type: 'Résistance 7j',  result: '28.1 MPa', norme: '>21 MPa',  ecart: '+34%',  ecartLevel: 'ok',     operateur: 'Ahmed B.',   conforme: true  },
+  { date: '05 Mar', batch: 'BN-0146', formule: 'F-B25', type: 'Slump',          result: '16 cm',    norme: '15-20 cm', ecart: 'OK',    ecartLevel: 'ok',     operateur: 'Youssef M.', conforme: true  },
+  { date: '04 Mar', batch: 'BN-0145', formule: 'F-B35', type: 'Résistance 28j', result: '32.1 MPa', norme: '>35 MPa',  ecart: '-8%',   ecartLevel: 'bad',    operateur: 'Karim L.',   conforme: false },
+];
+
+const MONTHLY_TREND = [
+  { month: 'Oct', pct: 94 },
+  { month: 'Nov', pct: 91 },
+  { month: 'Déc', pct: 96 },
+  { month: 'Jan', pct: 93 },
+  { month: 'Fév', pct: 95 },
+  { month: 'Mar', pct: 97 },
+];
+
+// ─────────────────────────────────────────────────────
+// RESISTANCE 28J TOOLTIP
+// ─────────────────────────────────────────────────────
+function Resistance28jTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{ background: '#1A2540', border: `1px solid ${T.goldBorder}`, borderRadius: 10, padding: '10px 14px', minWidth: 160 }}>
+      <p style={{ color: T.gold, fontWeight: 700, fontSize: 12, marginBottom: 6, fontFamily: MONO }}>{label}</p>
+      {payload.map((p: any, i: number) => (
+        <p key={i} style={{ color: p.color, fontSize: 12, margin: '2px 0' }}>
+          {p.name}: <strong style={{ fontFamily: MONO }}>{p.value} MPa</strong>
+        </p>
+      ))}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
+// PULSE DOT FOR LINE CHARTS
+// ─────────────────────────────────────────────────────
+function LinePulseDot(color: string, dataLength: number) {
+  return (props: any) => {
+    const { cx, cy, index } = props;
+    if (index === dataLength - 1) {
+      return (
+        <g>
+          <circle cx={cx} cy={cy} r={6} fill={`${color}30`}>
+            <animate attributeName="r" values="6;10;6" dur="2s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.6;0.1;0.6" dur="2s" repeatCount="indefinite" />
+          </circle>
+          <circle cx={cx} cy={cy} r={4} fill={color} stroke={color} strokeWidth={2} />
+        </g>
+      );
+    }
+    return <circle cx={cx} cy={cy} r={3} fill={color} stroke={color} strokeWidth={1.5} />;
+  };
+}
+
+// ─────────────────────────────────────────────────────
 // TAB CONTENT: HISTORIQUE & NORMES
 // ─────────────────────────────────────────────────────
 function HistoriqueNormesTab() {
   const [normsExpanded, setNormsExpanded] = useState(false);
+  const [periode, setPeriode] = useState('30J');
+  const [formule, setFormule] = useState('Toutes');
+  const [statut, setStatut] = useState('Tous');
+  const [search, setSearch] = useState('');
   const visibleNorms = normsExpanded ? NORMS : NORMS.slice(0, 4);
 
   const chartStyle: React.CSSProperties = {
@@ -818,76 +910,268 @@ function HistoriqueNormesTab() {
     borderRadius: 14, padding: 24,
   };
 
+  const selectStyle: React.CSSProperties = {
+    background: 'transparent', border: '1px solid rgba(212,168,67,0.3)',
+    borderRadius: 8, padding: '7px 12px', color: '#9CA3AF',
+    fontFamily: MONO, fontSize: 12, cursor: 'pointer', outline: 'none',
+    minWidth: 120, appearance: 'none' as const,
+    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%239CA3AF' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E")`,
+    backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center',
+    paddingRight: 30,
+  };
+
+  const FORMULE_COLORS: Record<string, { bg: string; color: string; border: string }> = {
+    'F-B20': { bg: 'rgba(232,201,106,0.15)', color: '#E8C96A', border: '1px solid rgba(232,201,106,0.3)' },
+    'F-B25': { bg: 'rgba(212,168,67,0.15)',  color: '#D4A843', border: '1px solid rgba(212,168,67,0.3)' },
+    'F-B30': { bg: 'rgba(196,154,60,0.15)',  color: '#C49A3C', border: '1px solid rgba(196,154,60,0.3)' },
+    'F-B35': { bg: 'rgba(160,124,46,0.15)',  color: '#A07C2E', border: '1px solid rgba(160,124,46,0.3)' },
+  };
+
+  // Filter rows
+  const filtered = HISTORY_ROWS.filter(r => {
+    if (formule !== 'Toutes' && r.formule !== formule) return false;
+    if (statut === 'Conforme' && !r.conforme) return false;
+    if (statut === 'Non-conforme' && r.conforme) return false;
+    if (search && !r.batch.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
+
+  const conformBar = useBarWidth(97, 0);
+  const conformBar2 = useBarWidth(95, 100);
+  const conformBar3 = useBarWidth(98, 200);
+  const causeBar1 = useBarWidth(45, 300);
+  const causeBar2 = useBarWidth(30, 400);
+  const causeBar3 = useBarWidth(25, 500);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-      {/* WEEKLY TREND */}
+
+      {/* ── SECTION 1: FILTER BAR ── */}
+      <section>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', padding: '16px 20px', background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: `1px solid ${T.cardBorder}`, borderRadius: 12 }}>
+          {/* Période pills */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <Filter size={13} color={T.textDim} style={{ marginRight: 6 }} />
+            {['7J', '30J', '90J', 'PERSONNALISÉ'].map(p => {
+              const isActive = periode === p;
+              return (
+                <button key={p} onClick={() => setPeriode(p)} style={{
+                  fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
+                  padding: '6px 14px', borderRadius: 6, cursor: 'pointer', transition: 'all 160ms',
+                  background: isActive ? '#D4A843' : 'transparent',
+                  color: isActive ? '#0F1629' : '#9CA3AF',
+                  border: isActive ? '1px solid #D4A843' : '1px solid rgba(212,168,67,0.3)',
+                }}>
+                  {p}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Formule dropdown */}
+          <select value={formule} onChange={e => setFormule(e.target.value)} style={selectStyle}>
+            {['Toutes', 'F-B20', 'F-B25', 'F-B30', 'F-B35'].map(f => <option key={f} value={f} style={{ background: '#0B1120' }}>{f === 'Toutes' ? 'Toutes formules' : f}</option>)}
+          </select>
+
+          {/* Statut dropdown */}
+          <select value={statut} onChange={e => setStatut(e.target.value)} style={selectStyle}>
+            {['Tous', 'Conforme', 'Non-conforme', 'En attente'].map(s => <option key={s} value={s} style={{ background: '#0B1120' }}>{s === 'Tous' ? 'Tous statuts' : s}</option>)}
+          </select>
+
+          {/* Search */}
+          <div style={{ position: 'relative', flex: 1, minWidth: 180 }}>
+            <Search size={14} color={T.textDim} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />
+            <input
+              value={search} onChange={e => setSearch(e.target.value)}
+              placeholder="Rechercher batch..."
+              style={{
+                width: '100%', fontFamily: MONO, fontSize: 12, padding: '7px 12px 7px 32px',
+                background: 'transparent', border: '1px solid rgba(212,168,67,0.2)',
+                borderRadius: 8, color: T.textPri, outline: 'none',
+              }}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 2: RÉSISTANCE À 28 JOURS TRACKING ── */}
       <section>
         <div style={{ ...chartStyle, borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
-          <SectionHeader icon={TrendingUp} label="Tendance Conformité" sub="cette semaine" />
+          <SectionHeader icon={LineChart} label="✦ Résistance à 28 Jours — Suivi Historique" />
           <div style={{ display: 'flex', gap: 16, marginBottom: 12 }}>
-            {[['#D4A843', 'Conformes', false], ['#EF4444', 'Non-conf.', false], ['#D4A843', 'Taux %', true]].map(([c, l, isLine], i) => (
+            {[['#E8C96A', 'F-B20'], ['#D4A843', 'F-B25'], ['#C49A3C', 'F-B30']].map(([c, l], i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                <div style={{ width: isLine ? 14 : 10, height: isLine ? 2 : 10, borderRadius: isLine ? 0 : 3, background: c as string }} />
-                <span style={{ fontSize: 11, color: T.textSec }}>{l as string}</span>
+                <div style={{ width: 14, height: 2, background: c }} />
+                <span style={{ fontSize: 11, color: T.textSec }}>{l}</span>
               </div>
             ))}
           </div>
-          <ResponsiveContainer width="100%" height={280}>
-            <AreaChart data={WEEKLY} margin={{ top: 4, right: 50, left: 0, bottom: 0 }}>
+          <ResponsiveContainer width="100%" height={300}>
+            <AreaChart data={RESISTANCE_28J_DATA} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <defs>
-                <linearGradient id="gradConfGold2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#C49A3C" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="#D4A843" stopOpacity={0.02} />
-                </linearGradient>
-                <linearGradient id="gradNon2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={T.danger} stopOpacity={0.45} />
-                  <stop offset="95%" stopColor={T.danger} stopOpacity={0.05} />
-                </linearGradient>
-                <linearGradient id="gradTaux2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#D4A843" stopOpacity={0.1} />
-                  <stop offset="95%" stopColor="#D4A843" stopOpacity={0} />
-                </linearGradient>
+                <linearGradient id="areaFb20" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#E8C96A" stopOpacity={0.08} /><stop offset="95%" stopColor="#E8C96A" stopOpacity={0} /></linearGradient>
+                <linearGradient id="areaFb25" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#D4A843" stopOpacity={0.08} /><stop offset="95%" stopColor="#D4A843" stopOpacity={0} /></linearGradient>
+                <linearGradient id="areaFb30" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#C49A3C" stopOpacity={0.08} /><stop offset="95%" stopColor="#C49A3C" stopOpacity={0} /></linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} />
-              <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11 }} />
-              <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 15]} />
-              <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 110]} tickFormatter={(v: number) => `${v}%`} />
-              <RechartsTooltip content={<WeeklyTooltip />} />
-              <Bar yAxisId="left" dataKey="conformes" name="Conformes" radius={[4,4,0,0]} isAnimationActive animationDuration={1200}>
-                {WEEKLY.map((_, i) => <Cell key={i} fill="url(#gradConfGold2)" stroke="#D4A843" strokeWidth={0.5} />)}
-              </Bar>
-              <Bar yAxisId="left" dataKey="non" name="Non-conf." radius={[4,4,0,0]} isAnimationActive animationDuration={1200}>
-                {WEEKLY.map((_, i) => <Cell key={i} fill="#EF4444" />)}
-              </Bar>
-              <Area yAxisId="right" type="monotone" dataKey="taux" name="Taux %" stroke="#D4A843" fill="url(#gradTaux2)" strokeWidth={3} dot={<TauxDot />} isAnimationActive animationDuration={1200} />
+              <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[15, 40]} tickFormatter={(v: number) => `${v}`} />
+              <RechartsTooltip content={<Resistance28jTooltip />} />
+              <ReferenceLine y={20} stroke="#E8C96A" strokeDasharray="6 4" strokeOpacity={0.3} label={{ value: '20 MPa', fill: '#E8C96A', fontSize: 9, position: 'right' }} />
+              <ReferenceLine y={25} stroke="#D4A843" strokeDasharray="6 4" strokeOpacity={0.3} label={{ value: '25 MPa', fill: '#D4A843', fontSize: 9, position: 'right' }} />
+              <ReferenceLine y={30} stroke="#C49A3C" strokeDasharray="6 4" strokeOpacity={0.3} label={{ value: '30 MPa', fill: '#C49A3C', fontSize: 9, position: 'right' }} />
+              <Area type="monotone" dataKey="fb20" name="F-B20" stroke="#E8C96A" fill="url(#areaFb20)" strokeWidth={2} dot={LinePulseDot('#E8C96A', RESISTANCE_28J_DATA.length)} />
+              <Area type="monotone" dataKey="fb25" name="F-B25" stroke="#D4A843" fill="url(#areaFb25)" strokeWidth={2} dot={LinePulseDot('#D4A843', RESISTANCE_28J_DATA.length)} />
+              <Area type="monotone" dataKey="fb30" name="F-B30" stroke="#C49A3C" fill="url(#areaFb30)" strokeWidth={2} dot={LinePulseDot('#C49A3C', RESISTANCE_28J_DATA.length)} />
             </AreaChart>
           </ResponsiveContainer>
+          {/* Summary strip */}
+          <div style={{ display: 'flex', gap: 24, marginTop: 16, paddingTop: 14, borderTop: `1px solid ${T.cardBorder}` }}>
+            {[
+              { label: 'MOY. F-B20', value: '22.5 MPa', color: '#E8C96A' },
+              { label: 'MOY. F-B25', value: '27.6 MPa', color: '#D4A843' },
+              { label: 'MOY. F-B30', value: '33.4 MPa', color: '#C49A3C' },
+              { label: 'CONFORMITÉ 28J', value: '96.2%', color: T.success },
+            ].map((s, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF', letterSpacing: '0.05em' }}>{s.label}</span>
+                <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: s.color }}>{s.value}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* FULL RESULTS TABLE */}
+      {/* ── SECTION 3: HISTORIQUE COMPLET ── */}
       <section>
         <div style={{ ...chartStyle, borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
-          <SectionHeader icon={FlaskConical} label="Historique des Résultats" />
-          <div style={{ display: 'grid', gridTemplateColumns: '0.6fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.9fr', padding: '0 14px 10px', gap: 8, borderBottom: `1px solid ${T.cardBorder}` }}>
-            {['Test ID', 'Batch', 'Type', 'Résultat', 'Norme', 'Écart', 'Statut'].map((h, i) => (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <FlaskConical size={16} color={T.gold} />
+              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>✦ Historique des Essais</span>
+            </div>
+            <span style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF' }}>dernière mise à jour : à l'instant</span>
+          </div>
+          {/* Table header */}
+          <div style={{ display: 'grid', gridTemplateColumns: '0.7fr 0.7fr 0.7fr 0.9fr 0.7fr 0.6fr 0.6fr 0.8fr 0.9fr', padding: '0 14px 10px', gap: 6, borderBottom: `1px solid ${T.cardBorder}` }}>
+            {['Date', 'Batch', 'Formule', 'Type', 'Résultat', 'Norme', 'Écart', 'Opérateur', 'NM'].map((h, i) => (
               <p key={i} style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', margin: 0 }}>{h}</p>
             ))}
           </div>
+          {/* Table rows */}
           <div style={{ marginTop: 4 }}>
-            {RESULTS.map((r, i) => <TestRow key={r.id} r={r} delay={i * 60} index={i} />)}
+            {filtered.map((r, i) => {
+              const fc = FORMULE_COLORS[r.formule] || FORMULE_COLORS['F-B25'];
+              const ecartColor = r.ecartLevel === 'ok' ? T.success : r.ecartLevel === 'amber' ? T.warning : T.danger;
+              return (
+                <div key={i} style={{
+                  display: 'grid', gridTemplateColumns: '0.7fr 0.7fr 0.7fr 0.9fr 0.7fr 0.6fr 0.6fr 0.8fr 0.9fr',
+                  alignItems: 'center', gap: 6, padding: '10px 14px', borderRadius: 8,
+                  background: i % 2 === 0 ? 'rgba(212,168,67,0.03)' : 'transparent',
+                  borderBottom: `1px solid ${T.cardBorder}40`,
+                  transition: 'background 150ms', cursor: 'default',
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = i % 2 === 0 ? 'rgba(212,168,67,0.03)' : 'transparent'; }}
+                >
+                  <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>{r.date}</span>
+                  <span style={{ fontFamily: MONO, fontSize: 12, color: '#D4A843', fontWeight: 700 }}>{r.batch}</span>
+                  <span style={{ display: 'inline-flex', padding: '2px 8px', borderRadius: 4, background: fc.bg, color: fc.color, border: fc.border, fontSize: 11, fontFamily: MONO, fontWeight: 700, width: 'fit-content' }}>{r.formule}</span>
+                  <span style={{ fontSize: 12, color: T.textSec }}>{r.type}</span>
+                  <span style={{ fontFamily: MONO, fontWeight: 200, fontSize: 13, color: '#FFFFFF' }}>{r.result}</span>
+                  <span style={{ fontSize: 11, color: T.textDim }}>{r.norme}</span>
+                  <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: ecartColor }}>{r.ecart}</span>
+                  <span style={{ fontSize: 12, color: '#9CA3AF' }}>{r.operateur}</span>
+                  <span>{r.conforme
+                    ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '2px 8px', borderRadius: 4, background: 'rgba(34,197,94,0.15)', color: '#22C55E', border: '1px solid rgba(34,197,94,0.3)', fontSize: 11, fontFamily: MONO, fontWeight: 700 }}>✓ CONFORME</span>
+                    : <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '2px 8px', borderRadius: 4, background: 'rgba(239,68,68,0.15)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)', fontSize: 11, fontFamily: MONO, fontWeight: 700 }}>✗ ÉCHOUÉ</span>
+                  }</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* NORMS TABLE */}
+      {/* ── SECTION 4: STATISTIQUES DE CONFORMITÉ ── */}
       <section>
-        <Card>
+        <SectionHeader icon={BarChart3} label="Statistiques de Conformité" />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+          {/* Card 1: Conformité par formule */}
+          <Card style={{ borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
+            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 20 }}>Conformité par Formule</p>
+            {[
+              { label: 'F-B20', pct: 97, color: T.success, barW: conformBar },
+              { label: 'F-B25', pct: 95, color: '#D4A843', barW: conformBar2 },
+              { label: 'F-B30', pct: 98, color: T.success, barW: conformBar3 },
+            ].map((f, i) => (
+              <div key={i} style={{ marginBottom: 14 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
+                  <span style={{ fontFamily: MONO, fontSize: 12, color: T.textSec }}>{f.label}</span>
+                  <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 200, color: f.color }}>{f.pct}%</span>
+                </div>
+                <div style={{ height: 6, borderRadius: 99, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${f.barW}%`, background: f.color, borderRadius: 99, transition: 'width 900ms cubic-bezier(0.4,0,0.2,1)' }} />
+                </div>
+              </div>
+            ))}
+          </Card>
+
+          {/* Card 2: Tendance mensuelle */}
+          <Card style={{ borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
+            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 16 }}>Tendance Mensuelle</p>
+            <ResponsiveContainer width="100%" height={140}>
+              <AreaChart data={MONTHLY_TREND} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="monthlyGold" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#D4A843" stopOpacity={0.15} />
+                    <stop offset="95%" stopColor="#D4A843" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 9 }} />
+                <YAxis hide domain={[85, 100]} />
+                <Area type="monotone" dataKey="pct" stroke="#D4A843" fill="url(#monthlyGold)" strokeWidth={2} dot={LinePulseDot('#D4A843', MONTHLY_TREND.length)} />
+              </AreaChart>
+            </ResponsiveContainer>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 8 }}>
+              <span style={{ fontFamily: MONO, fontSize: 24, fontWeight: 200, color: T.gold }}>97%</span>
+              <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim, marginLeft: 6, alignSelf: 'flex-end', marginBottom: 4 }}>ce mois</span>
+            </div>
+          </Card>
+
+          {/* Card 3: Top causes non-conformité */}
+          <Card style={{ borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
+            <p style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', marginBottom: 20 }}>Top Causes Non-Conformité</p>
+            {[
+              { rank: 1, label: 'Affaissement hors tolérance', pct: 45, color: T.danger, barW: causeBar1 },
+              { rank: 2, label: 'Ratio E/C élevé', pct: 30, color: T.warning, barW: causeBar2 },
+              { rank: 3, label: 'Température', pct: 25, color: '#D4A843', barW: causeBar3 },
+            ].map((c, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'stretch', gap: 10, marginBottom: 14 }}>
+                <div style={{ width: 3, borderRadius: 99, background: c.color, flexShrink: 0 }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                    <span style={{ fontSize: 12, color: T.textSec }}>{c.rank}. {c.label}</span>
+                    <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 200, color: c.color }}>{c.pct}%</span>
+                  </div>
+                  <div style={{ height: 4, borderRadius: 99, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${c.barW}%`, background: c.color, borderRadius: 99, transition: 'width 900ms cubic-bezier(0.4,0,0.2,1)' }} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </Card>
+        </div>
+      </section>
+
+      {/* ── SECTION 5: RÉFÉRENTIEL NORMES ── */}
+      <section>
+        <Card style={{ borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <BookOpen size={16} color={T.gold} />
-              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>Référentiel Normes</span>
-              <span style={{ fontSize: 10, color: T.textDim, padding: '2px 6px', background: '#0D1627', borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>NM 10.1.008</span>
+              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>✦ Référentiel Normes</span>
+              <span style={{ fontFamily: MONO, fontSize: 10, color: '#D4A843', padding: '2px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4 }}>NM 10.1.008</span>
             </div>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 0.8fr 0.6fr 0.8fr', padding: '8px 12px', borderBottom: `1px solid ${T.cardBorder}`, marginBottom: 4 }}>
@@ -906,7 +1190,7 @@ function HistoriqueNormesTab() {
               onMouseLeave={e => { e.currentTarget.style.background = i % 2 === 0 ? 'rgba(212,168,67,0.03)' : 'transparent'; }}
             >
               <span style={{ fontSize: 12, color: T.textSec }}>{n.test}</span>
-              <span style={{ fontFamily: MONO, fontSize: 12, color: T.textPri, fontWeight: 200 }}>{n.norme}</span>
+              <span style={{ fontFamily: MONO, fontSize: 12, color: '#D4A843', fontWeight: 200 }}>{n.norme}</span>
               <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>{n.unite}</span>
               <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>{n.tolerance}</span>
             </div>
