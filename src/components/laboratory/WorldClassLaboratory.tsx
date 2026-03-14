@@ -3,12 +3,13 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   ResponsiveContainer, Tooltip as RechartsTooltip,
-  PieChart, Pie, Cell, Sector, ReferenceLine,
+  PieChart, Pie, Cell, Sector,
 } from 'recharts';
 import {
   FlaskConical, CheckCircle, AlertTriangle, Clock, Plus,
   FileText, Bell, Zap, Droplets, Activity, CloudRain,
   TrendingUp, BookOpen, ChevronDown, ChevronUp, User,
+  OctagonX, Eye, CheckCheck, Brain,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 
@@ -72,7 +73,6 @@ function useBarWidth(target: number, delay = 0) {
 // ─────────────────────────────────────────────────────
 function useLaboratoryLiveData() {
   const [kpis, setKpis] = useState({ testsToday: 8, conformes: 7, nonConformes: 1, enAttente: 2 });
-  const [liveResults, setLiveResults] = useState<typeof RESULTS>([]);
   const fetchData = useCallback(async () => {
     try {
       const today = new Date().toISOString().split('T')[0];
@@ -95,7 +95,7 @@ function useLaboratoryLiveData() {
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [fetchData]);
-  return { kpis, liveResults };
+  return { kpis };
 }
 
 // ─────────────────────────────────────────────────────
@@ -216,8 +216,15 @@ const NORMS = [
   { test: 'Air occlus',         norme: '3-6',   unite: '%',   tolerance: '±1%'   },
 ];
 
+const ALERT_TIMELINE = [
+  { time: '11:48', text: 'Non-conformité détectée' },
+  { time: '11:52', text: 'Lab notifié' },
+  { time: '11:55', text: 'Doseur eau recalibré' },
+  { time: '12:10', text: 'Test de validation en cours' },
+];
+
 // ─────────────────────────────────────────────────────
-// CONFORMITY GAUGE (SVG) — #2
+// CONFORMITY GAUGE (SVG)
 // ─────────────────────────────────────────────────────
 function ConformityGauge({ value }: { value: number }) {
   const r = 80, cx = 110, cy = 110;
@@ -288,7 +295,7 @@ function BatchTooltip({ active, payload, label }: any) {
 }
 
 // ─────────────────────────────────────────────────────
-// CUSTOM DOT FOR TAUX LINE — pulse on last point
+// CUSTOM DOT FOR TAUX LINE
 // ─────────────────────────────────────────────────────
 function TauxDot(props: any) {
   const { cx, cy, index, payload } = props;
@@ -309,7 +316,7 @@ function TauxDot(props: any) {
 }
 
 // ─────────────────────────────────────────────────────
-// TEST RESULT ROW — #4
+// TEST RESULT ROW
 // ─────────────────────────────────────────────────────
 function TestRow({ r, delay = 0, index = 0 }: { r: typeof RESULTS[0]; delay?: number; index?: number }) {
   const vis = useFadeIn(delay);
@@ -373,7 +380,7 @@ function TestRow({ r, delay = 0, index = 0 }: { r: typeof RESULTS[0]; delay?: nu
 }
 
 // ─────────────────────────────────────────────────────
-// KPI CARD — #1
+// KPI CARD
 // ─────────────────────────────────────────────────────
 function KPICard({ label, value, color, icon: Icon, trend, delay = 0 }: {
   label: string; value: number; color: string; icon: React.ElementType; trend?: string; delay?: number;
@@ -397,7 +404,7 @@ function KPICard({ label, value, color, icon: Icon, trend, delay = 0 }: {
 }
 
 // ─────────────────────────────────────────────────────
-// PENDING CARD — #9
+// PENDING CARD
 // ─────────────────────────────────────────────────────
 function PendingCard({ p, delay = 0 }: { p: typeof PENDING[0]; delay?: number }) {
   const vis = useFadeIn(delay);
@@ -441,7 +448,7 @@ function renderActiveShape(props: any) {
 }
 
 // ─────────────────────────────────────────────────────
-// STAT BOX — #2
+// STAT BOX
 // ─────────────────────────────────────────────────────
 function StatBox({ label, value, color, borderColor }: { label: string; value: number; color: string; borderColor: string }) {
   const animated = useAnimatedCounter(value);
@@ -454,36 +461,517 @@ function StatBox({ label, value, color, borderColor }: { label: string; value: n
 }
 
 // ─────────────────────────────────────────────────────
-// MAIN COMPONENT
+// QUALITY ALERT BAR
 // ─────────────────────────────────────────────────────
-export default function WorldClassLaboratory() {
-  const [activeTab, setActiveTab] = useState("Aujourd'hui");
-  const [hoverNew, setHoverNew] = useState(false);
-  const [activePie, setActivePie] = useState<number | null>(null);
-  const [normsExpanded, setNormsExpanded] = useState(false);
-  const { kpis: labKpis } = useLaboratoryLiveData();
+function QualityAlertBar() {
+  const [hov1, setHov1] = useState(false);
+  const [hov2, setHov2] = useState(false);
+  const [hov3, setHov3] = useState(false);
+  return (
+    <section>
+      <div style={{
+        borderLeft: '4px solid #EF4444',
+        background: 'rgba(239,68,68,0.05)',
+        borderRadius: '0 12px 12px 0',
+        padding: '20px 24px',
+        border: '1px solid rgba(239,68,68,0.15)',
+        borderLeftWidth: 4,
+        borderLeftColor: '#EF4444',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 16 }}>
+          <AlertTriangle size={18} color="#EF4444" style={{ marginTop: 2, flexShrink: 0 }} />
+          <div>
+            <p style={{ fontSize: 14, fontWeight: 700, color: T.textPri, margin: '0 0 6px' }}>
+              <span style={{ color: '#EF4444' }}>⚠ Alerte Qualité</span> — Batch BN-0140: Slump 22 cm hors norme (+10%). Formule B25-HP. Cause probable: excès d'eau. Impact: 2 batches potentiellement affectés.
+            </p>
+          </div>
+        </div>
 
-  const tabs = ["Aujourd'hui", 'Cette semaine', 'Résultats', 'Normes'];
+        {/* Timeline */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16, paddingLeft: 30 }}>
+          {ALERT_TIMELINE.map((entry, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 600, color: '#D4A843' }}>{entry.time}</span>
+              <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>— {entry.text}</span>
+              {i < ALERT_TIMELINE.length - 1 && <span style={{ color: 'rgba(212,168,67,0.3)', margin: '0 4px' }}>·</span>}
+            </div>
+          ))}
+        </div>
+
+        {/* Buttons */}
+        <div style={{ display: 'flex', gap: 10, paddingLeft: 30 }}>
+          <button
+            onMouseEnter={() => setHov1(true)} onMouseLeave={() => setHov1(false)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px',
+              background: hov1 ? '#DC2626' : '#EF4444', color: '#fff',
+              border: 'none', borderRadius: 9, fontWeight: 700, fontSize: 12, cursor: 'pointer',
+              transition: 'all 160ms', fontFamily: 'DM Sans, sans-serif',
+            }}
+          >
+            <OctagonX size={13} /> Arrêter Production
+          </button>
+          <button
+            onMouseEnter={() => setHov2(true)} onMouseLeave={() => setHov2(false)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px',
+              background: hov2 ? 'rgba(212,168,67,0.1)' : 'transparent', color: '#D4A843',
+              border: '1px solid #D4A843', borderRadius: 9, fontWeight: 700, fontSize: 12, cursor: 'pointer',
+              transition: 'all 160ms', fontFamily: 'DM Sans, sans-serif',
+            }}
+          >
+            <Eye size={13} /> Voir Détails
+          </button>
+          <button
+            onMouseEnter={() => setHov3(true)} onMouseLeave={() => setHov3(false)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px',
+              background: hov3 ? 'rgba(212,168,67,0.1)' : 'transparent', color: '#D4A843',
+              border: '1px solid #D4A843', borderRadius: 9, fontWeight: 700, fontSize: 12, cursor: 'pointer',
+              transition: 'all 160ms', fontFamily: 'DM Sans, sans-serif',
+            }}
+          >
+            <CheckCheck size={13} /> Valider Correction
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────
+// TAB CONTENT: ESSAIS DU JOUR
+// ─────────────────────────────────────────────────────
+function EssaisDuJourTab({ labKpis }: { labKpis: { testsToday: number; conformes: number; nonConformes: number; enAttente: number } }) {
+  const [activePie, setActivePie] = useState<number | null>(null);
+
   const chartStyle: React.CSSProperties = {
     background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
     border: `1px solid ${T.cardBorder}`,
     borderRadius: 14, padding: 24,
   };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+      {/* KPIs */}
+      <section>
+        <SectionHeader icon={TrendingUp} label="Indicateurs du Jour" />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, alignItems: 'stretch' }}>
+          <KPICard label="Tests Aujourd'hui"      value={labKpis.testsToday}    color="#FFFFFF"  icon={FlaskConical}   trend="+3 vs hier"       delay={0}   />
+          <KPICard label="Conformes"               value={labKpis.conformes}    color="#22C55E"  icon={CheckCircle}    trend={`${labKpis.testsToday > 0 ? Math.round((labKpis.conformes / labKpis.testsToday) * 100) : 0}% taux`}       delay={80}  />
+          <KPICard label="Non-Conformes"           value={labKpis.nonConformes} color="#EF4444"  icon={AlertTriangle}  trend="-1 vs hier"       delay={160} />
+          <KPICard label="En Attente Résultat"     value={labKpis.enAttente}    color="#F59E0B"  icon={Clock}                                   delay={240} />
+        </div>
+      </section>
+
+      {/* QUALITY ALERT BAR */}
+      <QualityAlertBar />
+
+      {/* GAUGE + WEEKLY TREND */}
+      <section>
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 3fr', gap: 20 }}>
+          <Card className="tbos-card-stagger" style={{ borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
+            <SectionHeader icon={CheckCircle} label="Conformité" sub="aujourd'hui" />
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <ConformityGauge value={87.5} />
+            </div>
+            <p style={{ textAlign: 'center' as const, color: '#9CA3AF', fontSize: 11, marginBottom: 16, marginTop: 0 }}>Taux de Conformité Aujourd'hui</p>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <StatBox label="Total" value={8} color={T.textPri} borderColor="#D4A843" />
+              <StatBox label="Conformes" value={7} color={T.success} borderColor="#22C55E" />
+              <StatBox label="Non-conf." value={1} color={T.danger} borderColor="#EF4444" />
+            </div>
+          </Card>
+
+          <div style={{ ...chartStyle, borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
+            <SectionHeader icon={TrendingUp} label="Tendance Conformité" sub="cette semaine" />
+            <div style={{ display: 'flex', gap: 16, marginBottom: 12 }}>
+              {[['#D4A843', 'Conformes', false], ['#EF4444', 'Non-conf.', false], ['#D4A843', 'Taux %', true]].map(([c, l, isLine], i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <div style={{ width: isLine ? 14 : 10, height: isLine ? 2 : 10, borderRadius: isLine ? 0 : 3, background: c as string, borderTop: isLine ? `2px solid ${c}` : undefined }} />
+                  <span style={{ fontSize: 11, color: T.textSec }}>{l as string}</span>
+                </div>
+              ))}
+            </div>
+            <ResponsiveContainer width="100%" height={220}>
+              <AreaChart data={WEEKLY} margin={{ top: 4, right: 50, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="gradConfGold" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#C49A3C" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#D4A843" stopOpacity={0.02} />
+                  </linearGradient>
+                  <linearGradient id="gradNon" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={T.danger} stopOpacity={0.45} />
+                    <stop offset="95%" stopColor={T.danger} stopOpacity={0.05} />
+                  </linearGradient>
+                  <linearGradient id="gradTaux" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#D4A843" stopOpacity={0.1} />
+                    <stop offset="95%" stopColor="#D4A843" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} />
+                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11 }} />
+                <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 15]} />
+                <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 110]} tickFormatter={(v: number) => `${v}%`} />
+                <RechartsTooltip content={<WeeklyTooltip />} />
+                <Bar yAxisId="left" dataKey="conformes" name="Conformes" radius={[4,4,0,0]} isAnimationActive animationDuration={1200}>
+                  {WEEKLY.map((_, i) => <Cell key={i} fill="url(#gradConfGold)" stroke="#D4A843" strokeWidth={0.5} />)}
+                </Bar>
+                <Bar yAxisId="left" dataKey="non" name="Non-conf." radius={[4,4,0,0]} isAnimationActive animationDuration={1200}>
+                  {WEEKLY.map((_, i) => <Cell key={i} fill="#EF4444" />)}
+                </Bar>
+                <Area yAxisId="right" type="monotone" dataKey="taux" name="Taux %" stroke="#D4A843" fill="url(#gradTaux)" strokeWidth={3} dot={<TauxDot />} isAnimationActive animationDuration={1200} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </section>
+
+      {/* RESULTS TABLE */}
+      <section>
+        <div style={{ ...chartStyle, borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
+          <SectionHeader
+            icon={FlaskConical}
+            label="Résultats du Jour"
+            right={
+              <div style={{ display: 'flex', gap: 8 }}>
+                <Bdg label="7 conformes"    color={T.success} bg="rgba(34,197,94,0.15)" border="1px solid rgba(34,197,94,0.3)" icon={CheckCircle} />
+                <Bdg label="1 non-conforme" color={T.danger}  bg="rgba(239,68,68,0.15)" border="1px solid rgba(239,68,68,0.3)" pulse icon={AlertTriangle} />
+              </div>
+            }
+          />
+          <div style={{ display: 'grid', gridTemplateColumns: '0.6fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.9fr', padding: '0 14px 10px', gap: 8, borderBottom: `1px solid ${T.cardBorder}` }}>
+            {['Test ID', 'Batch', 'Type', 'Résultat', 'Norme', 'Écart', 'Statut'].map((h, i) => (
+              <p key={i} style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', margin: 0 }}>{h}</p>
+            ))}
+          </div>
+          <div style={{ marginTop: 4 }}>
+            {RESULTS.map((r, i) => <TestRow key={r.id} r={r} delay={i * 60} index={i} />)}
+          </div>
+        </div>
+      </section>
+
+      {/* AI RISK PREDICTION */}
+      <section>
+        <Card style={{ borderLeft: `4px solid ${T.gold}`, background: 'rgba(255,255,255,0.04)', borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#F59E0B' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Zap size={14} color={T.gold} />
+              <span style={{ color: T.gold, fontFamily: MONO, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px' }}>
+                Agent IA: Risque Prochain Batch
+              </span>
+            </div>
+            <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', padding: '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4 }}>
+              Généré par IA · Claude Opus
+            </span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+            <div style={{ textAlign: 'center', flexShrink: 0 }}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>Score Risque</div>
+              <span style={{ fontFamily: MONO, fontSize: 48, fontWeight: 200, lineHeight: 1, letterSpacing: '-0.02em', color: '#F59E0B' }}>34</span>
+              <div style={{ fontSize: 10, color: T.textDim, marginTop: 4 }}>/100</div>
+            </div>
+            <div style={{ flex: 1, borderLeft: '1px solid rgba(255,255,255,0.06)', paddingLeft: 20 }}>
+              <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, margin: 0 }}>
+                <strong style={{ color: T.gold }}>Formule B35</strong> — variance élevée détectée sur les 5 derniers tests. Probabilité de non-conformité : <strong style={{ fontFamily: MONO, color: '#F59E0B' }}>34%</strong>. Recommandation : <span style={{ color: T.success }}>réduire E/C de 0.02</span>.
+              </p>
+              <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
+                {['Variance: ±4.2 MPa', '5 tests analysés', 'E/C actuel: 0.48'].map((lbl, i) => (
+                  <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', fontSize: 10, fontFamily: MONO, fontWeight: 600 }}>{lbl}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Card>
+      </section>
+
+      {/* NON-CONFORMITY */}
+      <section>
+        <Card style={{ borderLeft: `4px solid ${T.danger}`, background: 'linear-gradient(145deg, #1C0F0F 0%, #201520 100%)', borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#EF4444' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <AlertTriangle size={18} color={T.danger} />
+              <span style={{ fontFamily: MONO, fontWeight: 700, fontSize: 13, color: T.textPri, textTransform: 'uppercase', letterSpacing: '2px' }}>Non-Conformité Détectée</span>
+            </div>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 4, background: 'rgba(239,68,68,0.15)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)', fontSize: 11, fontFamily: MONO, fontWeight: 700 }}>
+              <AlertTriangle size={9} /> Action Requise
+            </span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28, marginBottom: 20 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {[['Test', 'LAB-140', true], ['Batch', 'BN-0140', false], ['Type', 'Slump', false]].map(([lbl, val, isGold]) => (
+                <div key={lbl as string} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <span style={{ fontSize: 10, color: T.textDim, width: 70 }}>{lbl as string}</span>
+                  <span style={{ fontFamily: MONO, fontWeight: isGold ? 700 : 400, color: isGold ? T.gold : T.textSec, fontSize: 13 }}>{val as string}</span>
+                </div>
+              ))}
+              <div>
+                <p style={{ fontSize: 10, color: T.textDim, margin: '0 0 4px' }}>Résultat mesuré</p>
+                <p style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color: T.danger, margin: 0 }}>22 cm</p>
+                <p style={{ fontSize: 11, color: T.textDim, margin: '4px 0 0' }}>Norme: 15-20 cm</p>
+                <p style={{ fontSize: 12, fontWeight: 700, color: T.danger, marginTop: 4 }}>+10% hors tolérance</p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}><span style={{ fontSize: 10, color: T.textDim, width: 110 }}>Cause probable</span><span style={{ fontSize: 13, color: T.textSec }}>Excès d'eau dans le mélange</span></div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}><span style={{ fontSize: 10, color: T.textDim, width: 110 }}>Formule</span><Bdg label="B35-HP" color={T.purple} bg={`${T.purple}15`} /></div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}><span style={{ fontSize: 10, color: T.textDim, width: 110 }}>Opérateur</span><span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: T.textSec }}><User size={11} /> Youssef M.</span></div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}><span style={{ fontSize: 10, color: T.textDim, width: 110 }}>Heure</span><span style={{ fontFamily: MONO, fontSize: 13, color: T.textSec }}>11:48</span></div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 10, paddingTop: 16, borderTop: `1px solid ${T.danger}30` }}>
+            <ActionBtn label="Créer Rapport NC" icon={FileText} bg={T.danger} textCol="#fff" fill />
+            <ActionBtn label="Ajuster Formule" icon={FlaskConical} outline="#D4A843" />
+            <ActionBtn label="Notifier Responsable" icon={Bell} outline="#D4A843" />
+          </div>
+        </Card>
+      </section>
+
+      {/* DISTRIBUTION */}
+      <section>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          {/* Donut by type */}
+          <div style={chartStyle}>
+            <SectionHeader icon={FlaskConical} label="Par Type de Test" />
+            <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
+              <ResponsiveContainer width={220} height={190}>
+                <PieChart>
+                  <Pie data={TYPE_DIST} cx={105} cy={88} innerRadius={55} outerRadius={82}
+                    dataKey="count" startAngle={90} endAngle={-270}
+                    isAnimationActive animationDuration={800}
+                    activeIndex={activePie ?? undefined} activeShape={renderActiveShape}
+                    onMouseEnter={(_: any, i: number) => setActivePie(i)} onMouseLeave={() => setActivePie(null)}
+                  >
+                    {TYPE_DIST.map((d, i) => <Cell key={i} fill={d.color} stroke="transparent" />)}
+                  </Pie>
+                  <RechartsTooltip content={<TypeTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -56%)', textAlign: 'center', pointerEvents: 'none' }}>
+                <p style={{ fontFamily: MONO, fontSize: 26, fontWeight: 200, color: T.gold, lineHeight: 1, margin: 0 }}>8</p>
+                <p style={{ fontFamily: MONO, fontSize: 9, color: T.textDim, margin: 0 }}>tests</p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
+              {TYPE_DIST.map((d, i) => {
+                const Icon = TEST_TYPE_ICON[d.name] ?? FlaskConical;
+                return (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Icon size={12} color={d.color} />
+                    <span style={{ flex: 1, fontSize: 12, color: T.textSec }}>{d.name}</span>
+                    <span style={{ fontFamily: MONO, fontSize: 11, color: d.color, fontWeight: 700 }}>{d.count}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Batch bars */}
+          <div style={chartStyle}>
+            <SectionHeader icon={TrendingUp} label="Par Batch" />
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={BATCH_DIST} layout="vertical" margin={{ top: 2, right: 30, left: 10, bottom: 2 }}>
+                <defs>
+                  <linearGradient id="batchGoldGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#C49A3C" />
+                    <stop offset="100%" stopColor="#D4A843" />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} horizontal={false} />
+                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 1]} />
+                <YAxis type="category" dataKey="batch" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 11, fontFamily: MONO }} width={80} />
+                <RechartsTooltip content={<BatchTooltip />} cursor={{ fill: `${T.gold}08` }} />
+                <Bar dataKey="conf" name="Conformes" radius={[0,4,4,0]} stackId="a" fill="url(#batchGoldGrad)" isAnimationActive animationDuration={1000} />
+                <Bar dataKey="nonConf" name="Non-conf." radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000}>
+                  {BATCH_DIST.map((_, i) => <Cell key={i} fill="#EF4444" />)}
+                </Bar>
+                <Bar dataKey="enAttente" name="En attente" radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000}>
+                  {BATCH_DIST.map((_, i) => <Cell key={i} fill="rgba(212,168,67,0.4)" />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </section>
+
+      {/* PENDING */}
+      <section>
+        <SectionHeader icon={Clock} label="Résultats en Attente" right={<Bdg label="2 tests" color={T.warning} bg={`${T.warning}15`} pulse />} />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          {PENDING.map((p, i) => <PendingCard key={p.id} p={p} delay={i * 120} />)}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
+// TAB CONTENT: HISTORIQUE & NORMES
+// ─────────────────────────────────────────────────────
+function HistoriqueNormesTab() {
+  const [normsExpanded, setNormsExpanded] = useState(false);
   const visibleNorms = normsExpanded ? NORMS : NORMS.slice(0, 4);
+
+  const chartStyle: React.CSSProperties = {
+    background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
+    border: `1px solid ${T.cardBorder}`,
+    borderRadius: 14, padding: 24,
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+      {/* WEEKLY TREND */}
+      <section>
+        <div style={{ ...chartStyle, borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
+          <SectionHeader icon={TrendingUp} label="Tendance Conformité" sub="cette semaine" />
+          <div style={{ display: 'flex', gap: 16, marginBottom: 12 }}>
+            {[['#D4A843', 'Conformes', false], ['#EF4444', 'Non-conf.', false], ['#D4A843', 'Taux %', true]].map(([c, l, isLine], i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <div style={{ width: isLine ? 14 : 10, height: isLine ? 2 : 10, borderRadius: isLine ? 0 : 3, background: c as string }} />
+                <span style={{ fontSize: 11, color: T.textSec }}>{l as string}</span>
+              </div>
+            ))}
+          </div>
+          <ResponsiveContainer width="100%" height={280}>
+            <AreaChart data={WEEKLY} margin={{ top: 4, right: 50, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="gradConfGold2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#C49A3C" stopOpacity={0.3} />
+                  <stop offset="100%" stopColor="#D4A843" stopOpacity={0.02} />
+                </linearGradient>
+                <linearGradient id="gradNon2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={T.danger} stopOpacity={0.45} />
+                  <stop offset="95%" stopColor={T.danger} stopOpacity={0.05} />
+                </linearGradient>
+                <linearGradient id="gradTaux2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#D4A843" stopOpacity={0.1} />
+                  <stop offset="95%" stopColor="#D4A843" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} />
+              <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11 }} />
+              <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 15]} />
+              <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 110]} tickFormatter={(v: number) => `${v}%`} />
+              <RechartsTooltip content={<WeeklyTooltip />} />
+              <Bar yAxisId="left" dataKey="conformes" name="Conformes" radius={[4,4,0,0]} isAnimationActive animationDuration={1200}>
+                {WEEKLY.map((_, i) => <Cell key={i} fill="url(#gradConfGold2)" stroke="#D4A843" strokeWidth={0.5} />)}
+              </Bar>
+              <Bar yAxisId="left" dataKey="non" name="Non-conf." radius={[4,4,0,0]} isAnimationActive animationDuration={1200}>
+                {WEEKLY.map((_, i) => <Cell key={i} fill="#EF4444" />)}
+              </Bar>
+              <Area yAxisId="right" type="monotone" dataKey="taux" name="Taux %" stroke="#D4A843" fill="url(#gradTaux2)" strokeWidth={3} dot={<TauxDot />} isAnimationActive animationDuration={1200} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </section>
+
+      {/* FULL RESULTS TABLE */}
+      <section>
+        <div style={{ ...chartStyle, borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#D4A843' }}>
+          <SectionHeader icon={FlaskConical} label="Historique des Résultats" />
+          <div style={{ display: 'grid', gridTemplateColumns: '0.6fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.9fr', padding: '0 14px 10px', gap: 8, borderBottom: `1px solid ${T.cardBorder}` }}>
+            {['Test ID', 'Batch', 'Type', 'Résultat', 'Norme', 'Écart', 'Statut'].map((h, i) => (
+              <p key={i} style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', margin: 0 }}>{h}</p>
+            ))}
+          </div>
+          <div style={{ marginTop: 4 }}>
+            {RESULTS.map((r, i) => <TestRow key={r.id} r={r} delay={i * 60} index={i} />)}
+          </div>
+        </div>
+      </section>
+
+      {/* NORMS TABLE */}
+      <section>
+        <Card>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <BookOpen size={16} color={T.gold} />
+              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>Référentiel Normes</span>
+              <span style={{ fontSize: 10, color: T.textDim, padding: '2px 6px', background: '#0D1627', borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>NM 10.1.008</span>
+            </div>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 0.8fr 0.6fr 0.8fr', padding: '8px 12px', borderBottom: `1px solid ${T.cardBorder}`, marginBottom: 4 }}>
+            {['Test', 'Norme', 'Unité', 'Tolérance'].map((h, i) => (
+              <p key={i} style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', margin: 0 }}>{h}</p>
+            ))}
+          </div>
+          {visibleNorms.map((n, i) => (
+            <div key={i} style={{
+              display: 'grid', gridTemplateColumns: '2fr 0.8fr 0.6fr 0.8fr', padding: '9px 12px', borderRadius: 8,
+              background: i % 2 === 0 ? 'rgba(212,168,67,0.03)' : 'transparent',
+              borderBottom: i < visibleNorms.length - 1 ? `1px solid ${T.cardBorder}40` : 'none',
+              transition: 'background 150ms',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = i % 2 === 0 ? 'rgba(212,168,67,0.03)' : 'transparent'; }}
+            >
+              <span style={{ fontSize: 12, color: T.textSec }}>{n.test}</span>
+              <span style={{ fontFamily: MONO, fontSize: 12, color: T.textPri, fontWeight: 200 }}>{n.norme}</span>
+              <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>{n.unite}</span>
+              <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>{n.tolerance}</span>
+            </div>
+          ))}
+          <button
+            onClick={() => setNormsExpanded(e => !e)}
+            style={{
+              marginTop: 12, display: 'flex', alignItems: 'center', gap: 5,
+              background: 'transparent', border: 'none', color: '#D4A843',
+              fontSize: 12, fontWeight: 700, cursor: 'pointer', padding: '4px 0',
+              fontFamily: MONO,
+            }}
+          >
+            {normsExpanded ? <><ChevronUp size={14} /> Réduire</> : <><ChevronDown size={14} /> Voir tout ({NORMS.length - 4} de plus)</>}
+          </button>
+        </Card>
+      </section>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
+// EMPTY TAB PLACEHOLDER
+// ─────────────────────────────────────────────────────
+function EmptyTabPlaceholder({ title, icon: Icon }: { title: string; icon: React.ElementType }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 40px', gap: 16 }}>
+      <div style={{ width: 64, height: 64, borderRadius: 16, background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Icon size={28} color="#D4A843" />
+      </div>
+      <p style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '2px' }}>{title}</p>
+      <p style={{ fontSize: 13, color: '#9CA3AF', textAlign: 'center', maxWidth: 400 }}>Cette section sera disponible prochainement avec des analyses avancées et des outils interactifs.</p>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
+// MAIN COMPONENT
+// ─────────────────────────────────────────────────────
+export default function WorldClassLaboratory() {
+  const [activeTab, setActiveTab] = useState('essais');
+  const [hoverNew, setHoverNew] = useState(false);
+  const { kpis: labKpis } = useLaboratoryLiveData();
+
+  const TABS = [
+    { id: 'essais', label: 'ESSAIS DU JOUR' },
+    { id: 'historique', label: 'HISTORIQUE & NORMES' },
+    { id: 'analytique', label: 'ANALYTIQUE' },
+    { id: 'ia', label: 'INTELLIGENCE IA', badge: '5' },
+  ];
 
   return (
     <div style={{ fontFamily: 'DM Sans, sans-serif', color: T.textPri, paddingBottom: 60 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700;800&display=swap');
         @keyframes tbos-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+        @keyframes lab-tab-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
 
-      {/* ══════════════════════════ PAGE HEADER ══════════════════════════ */}
+      {/* PAGE HEADER */}
       <PageHeader
         icon={FlaskConical}
         title="Laboratoire"
         subtitle="Contrôle qualité et essais"
-        tabs={tabs.map(t => ({ id: t, label: t }))}
+        tabs={TABS.map(t => ({ id: t.id, label: t.label }))}
         activeTab={activeTab}
         onTabChange={setActiveTab}
         actions={
@@ -501,340 +989,60 @@ export default function WorldClassLaboratory() {
         }
       />
 
-      {/* PAGE BODY */}
-      <div style={{ padding: '32px 32px 0', display: 'flex', flexDirection: 'column', gap: 32 }}>
-
-        {/* ══════ SECTION 1 — KPIs ══════ */}
-        <section>
-          <SectionHeader icon={TrendingUp} label="Indicateurs du Jour" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, alignItems: 'stretch' }}>
-            <KPICard label="Tests Aujourd'hui"      value={labKpis.testsToday}    color="#FFFFFF"  icon={FlaskConical}   trend="+3 vs hier"       delay={0}   />
-            <KPICard label="Conformes"               value={labKpis.conformes}    color="#22C55E"  icon={CheckCircle}    trend={`${labKpis.testsToday > 0 ? Math.round((labKpis.conformes / labKpis.testsToday) * 100) : 0}% taux`}       delay={80}  />
-            <KPICard label="Non-Conformes"           value={labKpis.nonConformes} color="#EF4444"  icon={AlertTriangle}  trend="-1 vs hier"       delay={160} />
-            <KPICard label="En Attente Résultat"     value={labKpis.enAttente}    color="#F59E0B"  icon={Clock}                                   delay={240} />
-          </div>
-        </section>
-
-        {/* ══════ SECTION 2 — GAUGE + WEEKLY TREND ══════ */}
-        <section>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 3fr', gap: 20 }}>
-
-            {/* Gauge left */}
-            <Card className="tbos-card-stagger" style={{ borderTop: '2px solid #D4A843' }}>
-              <SectionHeader icon={CheckCircle} label="Conformité" sub="aujourd'hui" />
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <ConformityGauge value={87.5} />
-              </div>
-              <p style={{ textAlign: 'center' as const, color: '#9CA3AF', fontSize: 11, marginBottom: 16, marginTop: 0 }}>Taux de Conformité Aujourd'hui</p>
-              <div style={{ display: 'flex', gap: 10 }}>
-                <StatBox label="Total" value={8} color={T.textPri} borderColor="#D4A843" />
-                <StatBox label="Conformes" value={7} color={T.success} borderColor="#22C55E" />
-                <StatBox label="Non-conf." value={1} color={T.danger} borderColor="#EF4444" />
-              </div>
-            </Card>
-
-            {/* Weekly trend right — #3 */}
-            <div style={{ ...chartStyle, borderTop: '2px solid #D4A843' }}>
-              <SectionHeader icon={TrendingUp} label="Tendance Conformité" sub="cette semaine" />
-              <div style={{ display: 'flex', gap: 16, marginBottom: 12 }}>
-                {[['#D4A843', 'Conformes', false], ['#EF4444', 'Non-conf.', false], ['#D4A843', 'Taux %', true]].map(([c, l, isLine], i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <div style={{ width: isLine ? 14 : 10, height: isLine ? 2 : 10, borderRadius: isLine ? 0 : 3, background: c as string, borderTop: isLine ? `2px solid ${c}` : undefined }} />
-                    <span style={{ fontSize: 11, color: T.textSec }}>{l as string}</span>
-                  </div>
-                ))}
-              </div>
-              <ResponsiveContainer width="100%" height={220}>
-                <AreaChart data={WEEKLY} margin={{ top: 4, right: 50, left: 0, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="gradConfGold" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#C49A3C" stopOpacity={0.3} />
-                      <stop offset="100%" stopColor="#D4A843" stopOpacity={0.02} />
-                    </linearGradient>
-                    <linearGradient id="gradNon" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={T.danger} stopOpacity={0.45} />
-                      <stop offset="95%" stopColor={T.danger} stopOpacity={0.05} />
-                    </linearGradient>
-                    <linearGradient id="gradTaux" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#D4A843" stopOpacity={0.1} />
-                      <stop offset="95%" stopColor="#D4A843" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} />
-                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11 }} />
-                  <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 15]} />
-                  <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 110]} tickFormatter={(v: number) => `${v}%`} />
-                  <RechartsTooltip content={<WeeklyTooltip />} />
-                  <Bar yAxisId="left" dataKey="conformes" name="Conformes" radius={[4,4,0,0]} isAnimationActive animationDuration={1200}>
-                    {WEEKLY.map((_, i) => <Cell key={i} fill="url(#gradConfGold)" stroke="#D4A843" strokeWidth={0.5} />)}
-                  </Bar>
-                  <Bar yAxisId="left" dataKey="non" name="Non-conf." radius={[4,4,0,0]} isAnimationActive animationDuration={1200}>
-                    {WEEKLY.map((_, i) => <Cell key={i} fill="#EF4444" />)}
-                  </Bar>
-                  <Area yAxisId="right" type="monotone" dataKey="taux" name="Taux %" stroke="#D4A843" fill="url(#gradTaux)" strokeWidth={3} dot={<TauxDot />} isAnimationActive animationDuration={1200} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </section>
-
-        {/* ══════ SECTION 3 — TEST RESULTS TABLE — #4 ══════ */}
-        <section>
-          <div style={{ ...chartStyle, borderTop: '2px solid #D4A843' }}>
-            <SectionHeader
-              icon={FlaskConical}
-              label="Résultats du Jour"
-              right={
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <Bdg label="7 conformes"    color={T.success} bg="rgba(34,197,94,0.15)" border="1px solid rgba(34,197,94,0.3)" icon={CheckCircle} />
-                  <Bdg label="1 non-conforme" color={T.danger}  bg="rgba(239,68,68,0.15)" border="1px solid rgba(239,68,68,0.3)" pulse icon={AlertTriangle} />
-                </div>
-              }
-            />
-            {/* Column headers */}
-            <div style={{ display: 'grid', gridTemplateColumns: '0.6fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.9fr', padding: '0 14px 10px', gap: 8, borderBottom: `1px solid ${T.cardBorder}` }}>
-              {['Test ID', 'Batch', 'Type', 'Résultat', 'Norme', 'Écart', 'Statut'].map((h, i) => (
-                <p key={i} style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', margin: 0 }}>{h}</p>
-              ))}
-            </div>
-            <div style={{ marginTop: 4 }}>
-              {RESULTS.map((r, i) => <TestRow key={r.id} r={r} delay={i * 60} index={i} />)}
-            </div>
-          </div>
-        </section>
-
-        {/* ══════ AI RISK PREDICTION CARD — #5 ══════ */}
-        <section>
-          <Card style={{ borderLeft: `4px solid ${T.gold}`, background: 'rgba(255,255,255,0.04)', borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#F59E0B' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Zap size={14} color={T.gold} />
-                <span style={{ color: T.gold, fontFamily: MONO, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px' }}>
-                  Agent IA: Risque Prochain Batch
-                </span>
-              </div>
-              <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', padding: '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4 }}>
-                Généré par IA · Claude Opus
-              </span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-              <div style={{ textAlign: 'center', flexShrink: 0 }}>
-                <div style={{ fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>
-                  Score Risque
-                </div>
-                <span style={{ fontFamily: MONO, fontSize: 48, fontWeight: 200, lineHeight: 1, letterSpacing: '-0.02em', color: '#F59E0B' }}>
-                  34
-                </span>
-                <div style={{ fontSize: 10, color: T.textDim, marginTop: 4 }}>/100</div>
-              </div>
-              <div style={{ flex: 1, borderLeft: '1px solid rgba(255,255,255,0.06)', paddingLeft: 20 }}>
-                <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, margin: 0 }}>
-                  <strong style={{ color: T.gold }}>Formule B35</strong> — variance élevée détectée sur les 5 derniers tests. Probabilité de non-conformité : <strong style={{ fontFamily: MONO, color: '#F59E0B' }}>34%</strong>. Recommandation : <span style={{ color: T.success }}>réduire E/C de 0.02</span>.
-                </p>
-                <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', fontSize: 10, fontFamily: MONO, fontWeight: 600 }}>
-                    Variance: ±4.2 MPa
-                  </span>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', fontSize: 10, fontFamily: MONO, fontWeight: 600 }}>
-                    5 tests analysés
-                  </span>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', fontSize: 10, fontFamily: MONO, fontWeight: 600 }}>
-                    E/C actuel: 0.48
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </section>
-
-        {/* ══════ SECTION 4 — NON-CONFORMITY DETAIL — #6 ══════ */}
-        <section>
-          <Card style={{ borderLeft: `4px solid ${T.danger}`, background: 'linear-gradient(145deg, #1C0F0F 0%, #201520 100%)', borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#EF4444' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <AlertTriangle size={18} color={T.danger} />
-                <span style={{ fontFamily: MONO, fontWeight: 700, fontSize: 13, color: T.textPri, textTransform: 'uppercase', letterSpacing: '2px' }}>Non-Conformité Détectée</span>
-              </div>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 4, background: 'rgba(239,68,68,0.15)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)', fontSize: 11, fontFamily: MONO, fontWeight: 700 }}>
-                <AlertTriangle size={9} /> Action Requise
-              </span>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28, marginBottom: 20 }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <span style={{ fontSize: 10, color: T.textDim, width: 70 }}>Test</span>
-                  <span style={{ fontFamily: MONO, fontWeight: 700, color: T.gold, fontSize: 13 }}>LAB-140</span>
-                </div>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <span style={{ fontSize: 10, color: T.textDim, width: 70 }}>Batch</span>
-                  <span style={{ fontFamily: MONO, fontSize: 13, color: T.textSec }}>BN-0140</span>
-                </div>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <span style={{ fontSize: 10, color: T.textDim, width: 70 }}>Type</span>
-                  <span style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>Slump</span>
-                </div>
-                <div>
-                  <p style={{ fontSize: 10, color: T.textDim, margin: '0 0 4px' }}>Résultat mesuré</p>
-                  <p style={{ fontFamily: MONO, fontSize: 36, fontWeight: 200, color: T.danger, margin: 0 }}>22 cm</p>
-                  <p style={{ fontSize: 11, color: T.textDim, margin: '4px 0 0' }}>Norme: 15-20 cm</p>
-                  <p style={{ fontSize: 12, fontWeight: 700, color: T.danger, marginTop: 4 }}>+10% hors tolérance</p>
-                </div>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <span style={{ fontSize: 10, color: T.textDim, width: 110 }}>Cause probable</span>
-                  <span style={{ fontSize: 13, color: T.textSec }}>Excès d'eau dans le mélange</span>
-                </div>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <span style={{ fontSize: 10, color: T.textDim, width: 110 }}>Formule</span>
-                  <Bdg label="B35-HP" color={T.purple} bg={`${T.purple}15`} />
-                </div>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <span style={{ fontSize: 10, color: T.textDim, width: 110 }}>Opérateur</span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: T.textSec }}><User size={11} /> Youssef M.</span>
-                </div>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <span style={{ fontSize: 10, color: T.textDim, width: 110 }}>Heure</span>
-                  <span style={{ fontFamily: MONO, fontSize: 13, color: T.textSec }}>11:48</span>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: 10, paddingTop: 16, borderTop: `1px solid ${T.danger}30` }}>
-              <ActionBtn label="Créer Rapport NC"     icon={FileText}     bg={T.danger}   textCol="#fff"    fill />
-              <ActionBtn label="Ajuster Formule"      icon={FlaskConical} outline="#D4A843" />
-              <ActionBtn label="Notifier Responsable" icon={Bell}         outline="#D4A843" />
-            </div>
-          </Card>
-        </section>
-
-        {/* ══════ SECTION 5 — DISTRIBUTION — #7 & #8 ══════ */}
-        <section>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-
-            {/* Donut by type — #7 */}
-            <div style={chartStyle}>
-              <SectionHeader icon={FlaskConical} label="Par Type de Test" />
-              <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
-                <ResponsiveContainer width={220} height={190}>
-                  <PieChart>
-                    <Pie data={TYPE_DIST} cx={105} cy={88} innerRadius={55} outerRadius={82}
-                      dataKey="count" startAngle={90} endAngle={-270}
-                      isAnimationActive animationDuration={800}
-                      activeIndex={activePie ?? undefined} activeShape={renderActiveShape}
-                      onMouseEnter={(_: any, i: number) => setActivePie(i)} onMouseLeave={() => setActivePie(null)}
-                    >
-                      {TYPE_DIST.map((d, i) => <Cell key={i} fill={d.color} stroke="transparent" />)}
-                    </Pie>
-                    <RechartsTooltip content={<TypeTooltip />} />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -56%)', textAlign: 'center', pointerEvents: 'none' }}>
-                  <p style={{ fontFamily: MONO, fontSize: 26, fontWeight: 200, color: T.gold, lineHeight: 1, margin: 0 }}>8</p>
-                  <p style={{ fontFamily: MONO, fontSize: 9, color: T.textDim, margin: 0 }}>tests</p>
-                </div>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
-                {TYPE_DIST.map((d, i) => {
-                  const Icon = TEST_TYPE_ICON[d.name] ?? FlaskConical;
-                  return (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <Icon size={12} color={d.color} />
-                      <span style={{ flex: 1, fontSize: 12, color: T.textSec }}>{d.name}</span>
-                      <span style={{ fontFamily: MONO, fontSize: 11, color: d.color, fontWeight: 700 }}>{d.count}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Stacked bar by batch — #8 */}
-            <div style={chartStyle}>
-              <SectionHeader icon={TrendingUp} label="Par Batch" />
-              <ResponsiveContainer width="100%" height={280}>
-                <BarChart data={BATCH_DIST} layout="vertical" margin={{ top: 2, right: 30, left: 10, bottom: 2 }}>
-                  <defs>
-                    <linearGradient id="batchGoldGrad" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#C49A3C" />
-                      <stop offset="100%" stopColor="#D4A843" />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} horizontal={false} />
-                  <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 1]} />
-                  <YAxis type="category" dataKey="batch" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 11, fontFamily: MONO }} width={80} />
-                  <RechartsTooltip content={<BatchTooltip />} cursor={{ fill: `${T.gold}08` }} />
-                  <Bar dataKey="conf" name="Conformes" radius={[0,4,4,0]} stackId="a" fill="url(#batchGoldGrad)" isAnimationActive animationDuration={1000} />
-                  <Bar dataKey="nonConf" name="Non-conf." radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000}>
-                    {BATCH_DIST.map((_, i) => <Cell key={i} fill="#EF4444" />)}
-                  </Bar>
-                  <Bar dataKey="enAttente" name="En attente" radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000}>
-                    {BATCH_DIST.map((_, i) => <Cell key={i} fill="rgba(212,168,67,0.4)" />)}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </section>
-
-        {/* ══════ SECTION 6 — PENDING RESULTS — #9 ══════ */}
-        <section>
-          <SectionHeader
-            icon={Clock}
-            label="Résultats en Attente"
-            right={<Bdg label="2 tests" color={T.warning} bg={`${T.warning}15`} pulse />}
-          />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-            {PENDING.map((p, i) => <PendingCard key={p.id} p={p} delay={i * 120} />)}
-          </div>
-        </section>
-
-        {/* ══════ SECTION 7 — NORMS REFERENCE — #10 ══════ */}
-        <section>
-          <Card>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <BookOpen size={16} color={T.gold} />
-                <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>Référentiel Normes</span>
-                <span style={{ fontSize: 10, color: T.textDim, padding: '2px 6px', background: '#0D1627', borderRadius: 6, border: `1px solid ${T.cardBorder}` }}>NM 10.1.008</span>
-              </div>
-            </div>
-            {/* Table header */}
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 0.8fr 0.6fr 0.8fr', padding: '8px 12px', borderBottom: `1px solid ${T.cardBorder}`, marginBottom: 4 }}>
-              {['Test', 'Norme', 'Unité', 'Tolérance'].map((h, i) => (
-                <p key={i} style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', margin: 0 }}>{h}</p>
-              ))}
-            </div>
-            {visibleNorms.map((n, i) => (
-              <div key={i} style={{
-                display: 'grid', gridTemplateColumns: '2fr 0.8fr 0.6fr 0.8fr', padding: '9px 12px', borderRadius: 8,
-                background: i % 2 === 0 ? 'rgba(212,168,67,0.03)' : 'transparent',
-                borderBottom: i < visibleNorms.length - 1 ? `1px solid ${T.cardBorder}40` : 'none',
-                transition: 'background 150ms',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = i % 2 === 0 ? 'rgba(212,168,67,0.03)' : 'transparent'; }}
+      {/* CUSTOM TAB BAR (override PageHeader tabs for exact styling) */}
+      <div style={{ padding: '0 32px', borderBottom: `1px solid ${T.cardBorder}`, marginBottom: 0 }}>
+        <div style={{ display: 'flex', gap: 0 }}>
+          {TABS.map(tab => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                style={{
+                  fontFamily: MONO,
+                  fontSize: 12,
+                  letterSpacing: '1.5px',
+                  fontWeight: 600,
+                  color: isActive ? '#D4A843' : '#9CA3AF',
+                  background: 'transparent',
+                  border: 'none',
+                  borderBottom: isActive ? '2px solid #D4A843' : '2px solid transparent',
+                  padding: '14px 24px',
+                  cursor: 'pointer',
+                  transition: 'all 200ms ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  textTransform: 'uppercase',
+                }}
               >
-                <span style={{ fontSize: 12, color: T.textSec }}>{n.test}</span>
-                <span style={{ fontFamily: MONO, fontSize: 12, color: T.textPri, fontWeight: 200 }}>{n.norme}</span>
-                <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>{n.unite}</span>
-                <span style={{ fontFamily: MONO, fontSize: 11, color: T.textDim }}>{n.tolerance}</span>
-              </div>
-            ))}
-            <button
-              onClick={() => setNormsExpanded(e => !e)}
-              style={{
-                marginTop: 12, display: 'flex', alignItems: 'center', gap: 5,
-                background: 'transparent', border: 'none', color: '#D4A843',
-                fontSize: 12, fontWeight: 700, cursor: 'pointer', padding: '4px 0',
-                fontFamily: MONO,
-              }}
-            >
-              {normsExpanded ? <><ChevronUp size={14} /> Réduire</> : <><ChevronDown size={14} /> Voir tout ({NORMS.length - 4} de plus)</>}
-            </button>
-          </Card>
-        </section>
+                {tab.label}
+                {tab.badge && (
+                  <span style={{
+                    fontFamily: MONO,
+                    fontSize: 10,
+                    fontWeight: 700,
+                    color: '#0F1629',
+                    background: '#D4A843',
+                    borderRadius: 999,
+                    padding: '1px 7px',
+                    lineHeight: '16px',
+                  }}>
+                    {tab.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
+      {/* TAB CONTENT */}
+      <div style={{ padding: '32px 32px 0', animation: 'lab-tab-fade 0.35s ease-out' }} key={activeTab}>
+        {activeTab === 'essais' && <EssaisDuJourTab labKpis={labKpis} />}
+        {activeTab === 'historique' && <HistoriqueNormesTab />}
+        {activeTab === 'analytique' && <EmptyTabPlaceholder title="Analytique" icon={TrendingUp} />}
+        {activeTab === 'ia' && <EmptyTabPlaceholder title="Intelligence IA" icon={Brain} />}
       </div>
     </div>
   );
