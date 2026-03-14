@@ -554,26 +554,24 @@ function ZoneHeader({ icon, label, right }: { icon: string; label: string; right
 function CollapsibleChronologique() {
   const [chronoOpen, setChronoOpen] = useState(false);
   return (
-    <div>
+    <div style={{ borderBottom: chronoOpen ? 'none' : '1px solid rgba(212, 168, 67, 0.2)' }}>
       <button
         onClick={() => setChronoOpen(!chronoOpen)}
         style={{
           width: '100%', display: 'flex', alignItems: 'center', gap: 10,
-          padding: '0 0 12px 0', background: 'transparent', border: 'none',
+          padding: '12px 0', background: 'transparent', border: 'none',
           cursor: 'pointer', textAlign: 'left',
         }}
       >
-        <Clock size={16} color={T.gold} />
+        <Clock size={14} color={T.gold} />
         <span style={{ color: T.gold, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>
           PLANNING CHRONOLOGIQUE — Vendredi 13 Mars 2026
         </span>
-        <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
-        {!chronoOpen && (
-          <span style={{ fontSize: 11, color: T.textSec, fontWeight: 500, whiteSpace: 'nowrap' }}>
-            5 livraisons · 225 m³ · 153,250 DH
-          </span>
-        )}
-        {chronoOpen ? <ChevronUp size={16} color={T.textSec} /> : <ChevronDown size={16} color={T.textSec} />}
+        <div style={{ flex: 1 }} />
+        <span style={{ fontSize: 11, color: T.textSec, fontWeight: 500, whiteSpace: 'nowrap' }}>
+          5 livraisons · 225 m³ · 153,250 DH
+        </span>
+        {chronoOpen ? <ChevronUp size={14} color={T.textSec} /> : <ChevronDown size={14} color={T.textSec} />}
       </button>
       {chronoOpen && (
         <Card style={{ padding: 0, overflow: 'hidden' }}>
