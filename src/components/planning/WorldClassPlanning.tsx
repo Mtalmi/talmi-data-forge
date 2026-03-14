@@ -449,7 +449,7 @@ function DeliveryCard({ d, delay = 0, routeData, weatherIndex = 0 }: { d: typeof
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 13, color: T.textPri }}>{d.client}</p>
+            <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: 15, color: T.textPri }}>{d.client}</p>
             {(() => {
               const ratings: Record<string, { score: string; color: string }> = {
                 'Ciments du Maroc': { score: '4.8', color: '#10B981' },
