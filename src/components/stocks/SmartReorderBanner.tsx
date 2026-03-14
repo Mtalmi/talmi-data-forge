@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Zap, ShoppingCart, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
+const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
+
 interface ReorderRec {
   id: string;
   materiau: string;
@@ -42,45 +44,64 @@ export function SmartReorderBanner() {
   if (visible.length === 0) return null;
 
   return (
-    <div className="space-y-3">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       {visible.map(rec => (
         <div key={rec.id} style={{
-          background: 'linear-gradient(135deg, rgba(255,215,0,0.08) 0%, rgba(255,215,0,0.03) 100%)',
-          border: '1px solid rgba(255,215,0,0.25)',
+          background: 'rgba(239,68,68,0.04)',
+          borderLeft: '3px solid #EF4444',
+          border: '1px solid rgba(239,68,68,0.15)',
+          borderLeftWidth: 3,
+          borderLeftColor: '#EF4444',
           borderRadius: 12, padding: '14px 20px',
           display: 'flex', alignItems: 'center', gap: 14,
         }}>
-          <Zap size={20} color="#FFD700" style={{ flexShrink: 0 }} />
+          {/* Pulsing red dot */}
+          <div style={{
+            width: 10, height: 10, borderRadius: '50%',
+            background: '#EF4444',
+            boxShadow: '0 0 8px rgba(239,68,68,0.5)',
+            animation: 'reorder-pulse 2s infinite',
+            flexShrink: 0,
+          }} />
+          <Zap size={20} color="#EF4444" style={{ flexShrink: 0 }} />
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: 13, fontWeight: 700, color: '#FFD700', marginBottom: 2 }}>
-              Agent IA: Réapprovisionnement recommandé pour {rec.materiau}
+            <p style={{ fontSize: 13, fontWeight: 700, color: '#FFD700', marginBottom: 2, fontFamily: MONO }}>
+              Agent IA: Réapprovisionnement recommandé pour <span style={{ color: '#EF4444', fontWeight: 600 }}>{rec.materiau}</span>
             </p>
-            <p style={{ fontSize: 11, color: '#94A3B8' }}>
+            <p style={{ fontSize: 11, color: '#94A3B8', fontFamily: MONO }}>
               {rec.days_remaining !== null && (
                 <>Stock estimé à <strong style={{ color: '#EF4444' }}>{Math.round(Number(rec.days_remaining) * 10) / 10}j</strong>. </>
               )}
-              Commande suggérée: <strong style={{ color: '#FFD700' }}>{Number(rec.recommended_qty).toLocaleString()} {rec.unite}</strong>
-              {rec.fournisseur && <> — {rec.fournisseur}</>}
+              Commande suggérée: <span style={{ color: '#D4A843', fontWeight: 600, fontFamily: MONO }}>{Number(rec.recommended_qty).toLocaleString()} {rec.unite}</span>
+              {rec.fournisseur && <> — <span style={{ color: '#fff', fontWeight: 500 }}>{rec.fournisseur}</span></>}
             </p>
           </div>
           <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
             <button onClick={() => navigate('/fournisseurs')} style={{
-              padding: '6px 14px', borderRadius: 8,
-              background: 'rgba(255,215,0,0.15)', border: '1px solid rgba(255,215,0,0.3)',
-              color: '#FFD700', fontSize: 12, fontWeight: 700, cursor: 'pointer',
-              display: 'flex', alignItems: 'center', gap: 4,
+              padding: '8px 20px', borderRadius: 8,
+              background: '#D4A843', border: 'none',
+              color: '#0F1629', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+              fontFamily: MONO,
+              display: 'flex', alignItems: 'center', gap: 6,
             }}>
-              <ShoppingCart size={12} /> Créer Commande
+              <ShoppingCart size={13} /> Créer Commande
             </button>
             <button onClick={() => setDismissed(prev => new Set(prev).add(rec.id))} style={{
-              padding: '6px 10px', borderRadius: 8,
-              background: 'transparent', border: '1px solid rgba(255,255,255,0.1)',
-              color: '#64748B', fontSize: 12, cursor: 'pointer',
+              padding: '8px 16px', borderRadius: 8,
+              background: 'transparent', border: '1px solid #D4A843',
+              color: '#D4A843', fontSize: 13, cursor: 'pointer',
+              fontFamily: MONO,
               display: 'flex', alignItems: 'center', gap: 4,
             }}>
               <X size={12} /> Ignorer
             </button>
           </div>
+          <style>{`
+            @keyframes reorder-pulse {
+              0%, 100% { transform: scale(1); opacity: 1; }
+              50% { transform: scale(1.3); opacity: 0.6; }
+            }
+          `}</style>
         </div>
       ))}
     </div>
