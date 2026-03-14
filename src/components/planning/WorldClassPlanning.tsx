@@ -885,14 +885,12 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
               <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
                 <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 24 }}>
                   {dispatchMain}
-
-                  {/* Planning Chronologique — Collapsible */}
-                  <div style={{ flexShrink: 0, flexGrow: 0 }}>
-                    <CollapsibleChronologique />
-                  </div>
                 </div>
                 {fleetPanel}
               </div>
+
+              {/* Planning Chronologique — Collapsible (outside fleet row) */}
+              <CollapsibleChronologique />
 
               {/* 5. Compact AI Insight Strip */}
               <div style={{
