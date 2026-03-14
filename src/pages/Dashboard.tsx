@@ -1380,44 +1380,64 @@ export default function Dashboard() {
                       <>
                         {/* Top row: Primary KPIs */}
                         <div className="grid grid-cols-2 gap-3 mt-3">
-                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden">
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden cursor-pointer" onClick={() => setExpandedKpi(expandedKpi === 'produit' ? null : 'produit')}>
                             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Produit</div>
-                            <div className="text-xl text-white font-semibold font-mono">671 <span className="text-sm text-muted-foreground/40">m³</span></div>
+                            <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '38px', color: 'white', lineHeight: 1.1 }}>{kpiProduit} <span className="text-sm text-muted-foreground/40">m³</span></div>
                             <div className="text-[10px] text-muted-foreground/40 mb-1.5">sur 800 m³ objectif</div>
                             <div className="h-[4px] rounded-full bg-white/[0.06] w-full">
-                              <div className="h-full rounded-full" style={{ width: '84%', background: '#D4A843', boxShadow: '0 0 8px rgba(212, 168, 67, 0.25)' }} />
+                              <div className="h-full rounded-full" style={{ width: '84%', background: 'linear-gradient(90deg, #D4A843, #E8C96A)', boxShadow: '0 0 8px rgba(212, 168, 67, 0.25)', animation: 'progressGrow 1.2s ease forwards' }} />
+                            </div>
+                            <div style={{ maxHeight: expandedKpi === 'produit' ? '120px' : '0', overflow: 'hidden', transition: 'max-height 300ms ease' }}>
+                              <div style={{ fontSize: '12px', color: '#9CA3AF', padding: '8px 12px', borderTop: '1px solid rgba(212,168,67,0.1)' }}>
+                                Objectif: 800 m³ · Réalisé: 671 m³ · Écart: -129 m³ · Tendance: ↗ rattrapage 15h
+                              </div>
                             </div>
                           </div>
-                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden">
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden cursor-pointer" onClick={() => setExpandedKpi(expandedKpi === 'rendement' ? null : 'rendement')}>
                             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Rendement</div>
-                            <div className="text-xl text-emerald-400 font-semibold font-mono">94%</div>
+                            <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '38px', color: '#D4A843', lineHeight: 1.1 }}>{kpiRendement}%</div>
                             <div className="text-[10px] text-muted-foreground/40"><span className="text-emerald-400">↗</span> vs 91% hier</div>
+                            <div style={{ maxHeight: expandedKpi === 'rendement' ? '120px' : '0', overflow: 'hidden', transition: 'max-height 300ms ease' }}>
+                              <div style={{ fontSize: '12px', color: '#9CA3AF', padding: '8px 12px', borderTop: '1px solid rgba(212,168,67,0.1)' }}>
+                                Hier: 91% · Moyenne 7j: 93.2% · Meilleur batch: #403-065 (98.1%)
+                              </div>
+                            </div>
                           </div>
                         </div>
                         {/* Bottom row: Secondary KPIs */}
                         <div className="grid grid-cols-2 gap-3 border-t border-white/[0.04] pt-3 mt-3 flex-1">
-                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden">
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden cursor-pointer" onClick={() => setExpandedKpi(expandedKpi === 'qualite' ? null : 'qualite')}>
                             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Qualité</div>
-                            <div className="text-xl text-white font-semibold font-mono">96.2%</div>
+                            <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '38px', color: 'white', lineHeight: 1.1 }}>{kpiQualite}%</div>
                             <div className="flex gap-1 mt-1">
                               <span className="text-xs px-1.5 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20 font-medium">2 OK</span>
                               <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium animate-pulse">1 VAR</span>
                               <span className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-white/30 font-medium">0 CRIT</span>
                             </div>
+                            <div style={{ maxHeight: expandedKpi === 'qualite' ? '120px' : '0', overflow: 'hidden', transition: 'max-height 300ms ease' }}>
+                              <div style={{ fontSize: '12px', color: '#9CA3AF', padding: '8px 12px', borderTop: '1px solid rgba(212,168,67,0.1)' }}>
+                                12 tests · 2 OK · 1 VAR (F-B30 slump +8mm) · 0 CRIT · Prochain test: 14h30
+                              </div>
+                            </div>
                           </div>
-                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden">
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden cursor-pointer" onClick={() => setExpandedKpi(expandedKpi === 'livraisons' ? null : 'livraisons')}>
                             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Livraisons</div>
-                            <div className="text-xl font-semibold font-mono" style={{ color: '#D4A843' }}>8/12</div>
+                            <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '38px', color: '#D4A843', lineHeight: 1.1 }}>{kpiLivA}/{kpiLivB}</div>
                             <div className="text-xs text-white/60 mt-1">4 restantes aujourd'hui</div>
+                            <div style={{ maxHeight: expandedKpi === 'livraisons' ? '120px' : '0', overflow: 'hidden', transition: 'max-height 300ms ease' }}>
+                              <div style={{ fontSize: '12px', color: '#9CA3AF', padding: '8px 12px', borderTop: '1px solid rgba(212,168,67,0.1)' }}>
+                                8 livrées · 4 restantes · Prochaine: BL-2603-009 Ciments du Sud 14h30
+                              </div>
+                            </div>
                           </div>
                         </div>
-                        {/* Bottom next delivery */}
+                        {/* Bottom next delivery (item 13 — clock pulse) */}
                         <div style={{ background: 'rgba(212,168,67,0.05)', border: '1px solid rgba(212,168,67,0.25)', borderRadius: '6px', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-                          <span className="text-[#D4A843]">⏱</span>
+                          <span className="text-[#D4A843]" style={{ animation: 'clockPulse 2s infinite', display: 'inline-block' }}>⏱</span>
                           <span className="text-[10px] text-muted-foreground/40" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                             Prochain: BL-2603-009 · Ciments du Sud · 14h30
                           </span>
