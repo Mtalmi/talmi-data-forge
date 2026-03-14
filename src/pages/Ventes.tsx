@@ -426,7 +426,7 @@ export default function Ventes() {
           <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid rgba(255,255,255,0.06)', marginBottom: 8 }}>
             {MAIN_TABS.map(tab => {
               const isActive = mainTab === tab.id;
-              const badgeNum = tab.id === 'orders' ? (filteredDevis.length || undefined) : tab.id === 'intelligence' ? 3 : undefined;
+              const badgeNum = tab.id === 'orders' ? (filteredDevis.length || undefined) : tab.id === 'intelligence' ? 6 : undefined;
               return (
                 <button
                   key={tab.id}
