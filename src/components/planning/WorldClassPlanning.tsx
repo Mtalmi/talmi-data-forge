@@ -1219,22 +1219,13 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
               />
 
               {/* 5. Placeholder — Satisfaction Client */}
-              <section style={{ opacity: 0.45 }}>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <span style={{ color: '#D4A843', fontSize: 14 }}>✦</span>
-                    <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>AGENT IA: SATISFACTION CLIENT</span>
-                  </div>
-                  <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(148,163,184,0.12)', color: T.textDim, border: '1px solid rgba(148,163,184,0.2)' }}>Prochainement</span>
+              <div style={{ height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', opacity: 0.5, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12 }}>
+                <div className="flex items-center gap-2">
+                  <span style={{ color: '#D4A843', fontSize: 14 }}>✦</span>
+                  <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>AGENT IA: SATISFACTION CLIENT</span>
                 </div>
-                <div style={{
-                  background: `${T.cardBorder}20`,
-                  border: `1px dashed ${T.cardBorder}`,
-                  borderRadius: 12, padding: 24, textAlign: 'center',
-                }}>
-                  <p style={{ color: T.textDim, fontSize: 12 }}>Analyse automatique de la satisfaction client basée sur les retards, réclamations et scores NPS. Disponible prochainement.</p>
-                </div>
-              </section>
+                <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(148,163,184,0.12)', color: T.textDim, border: '1px solid rgba(148,163,184,0.2)' }}>Prochainement</span>
+              </div>
             </div>
           </div>
         )}
