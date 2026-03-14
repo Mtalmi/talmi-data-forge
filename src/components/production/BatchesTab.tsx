@@ -363,7 +363,6 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
             borderTop: '2px solid #D4A843',
             borderRadius: 12, height: '100%', display: 'flex', flexDirection: 'column',
           }}>
-          }}>
             {/* Header */}
             <div style={{ padding: 16, borderBottom: `1px solid ${T.cardBorder}` }}>
               <div className="flex items-center justify-between">
