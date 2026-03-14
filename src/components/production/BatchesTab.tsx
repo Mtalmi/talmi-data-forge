@@ -27,6 +27,8 @@ interface BatchRow {
   formule: string;
   volume: number;
   heure: string;
+  cout: string;
+  marge: number;
   status: 'valide' | 'production' | 'planifie' | 'ecart';
   progress: number;
 }
