@@ -1239,7 +1239,7 @@ export default function Bons() {
                           <tr key={i} style={{ borderBottom: `1px solid ${T.cardBorder}`, borderLeft: r.flagged ? `3px solid ${T.danger}` : 'none', background: i % 2 === 1 ? 'rgba(212,168,67,0.03)' : 'transparent', transition: 'background 150ms' }}
                             onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }}
                             onMouseLeave={e => { e.currentTarget.style.background = i % 2 === 1 ? 'rgba(212,168,67,0.03)' : 'transparent'; }}>
-                            <td style={{ padding: '8px 12px', fontSize: 12, color: T.textPri, fontWeight: 600 }}>{r.client}</td>
+                            <td style={{ padding: '8px 12px', fontSize: 12, color: T.textPri, fontWeight: 600 }}><span style={{ display: 'inline-flex', alignItems: 'center' }}>{r.client === 'Sigma Bâtiment' ? <><span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#EF4444', marginRight: 5, boxShadow: '0 0 4px rgba(239,68,68,0.4)' }} />{r.client}</> : r.client}</span></td>
                             <td style={{ padding: '8px 12px', fontFamily: MONO, fontSize: 12, color: T.textSec }}>{r.livres}</td>
                             <td style={{ padding: '8px 12px', fontFamily: MONO, fontSize: 12, color: T.success }}>{r.payes}</td>
                             <td style={{ padding: '8px 12px', fontFamily: MONO, fontSize: 12, color: r.attente > 0 ? T.warning : T.textDim }}>{r.attente}</td>
@@ -1256,7 +1256,7 @@ export default function Bons() {
 
                   <div style={{ borderLeft: `3px solid ${T.warning}`, background: 'rgba(245,158,11,0.04)', padding: '12px 16px', borderRadius: '0 8px 8px 0' }}>
                     <p style={{ fontFamily: MONO, fontSize: 12, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
-                      Taux de paiement critique à <strong style={{ color: T.danger }}>{tauxPaiement}%</strong>. Sigma Bâtiment : 2 bons livrés, <strong style={{ color: T.danger }}>13,200 DH impayés</strong>, 0 paiements reçus. Score 12/100 — cohérent avec le pattern de défaut. Recommandation : (1) <strong style={{ color: T.gold }}>Aucune nouvelle livraison sans paiement anticipé</strong>. (2) Relance formelle cette semaine. (3) Pour les autres clients, rappel automatique à J+7 après livraison.
+                      Taux de paiement critique à <strong style={{ color: T.danger }}>{tauxPaiement}%</strong>. Sigma Bâtiment : 2 bons livrés, <strong style={{ color: T.danger }}>13,200 DH impayés</strong>, 0 paiements reçus. Score 12/100 <span style={{ fontFamily: MONO, fontSize: 10, color: 'rgba(212,168,67,0.5)' }}>(Créances)</span> — cohérent avec le pattern de défaut. Score santé 23/100 <span style={{ fontFamily: MONO, fontSize: 10, color: 'rgba(212,168,67,0.5)' }}>(Clients)</span>. Recommandation : (1) <strong style={{ color: T.gold }}>Aucune nouvelle livraison sans paiement anticipé</strong>. (2) Relance formelle cette semaine. (3) Pour les autres clients, rappel automatique à J+7 après livraison.
                     </p>
                   </div>
                 </div>

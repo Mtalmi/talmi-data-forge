@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { FlaggedClientName, CrossRef } from '@/lib/cross-page-data';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip,
   ResponsiveContainer, CartesianGrid, Area, AreaChart,
@@ -1708,7 +1709,7 @@ function IntelligenceIATab() {
                 <tr key={r.client} style={{ borderLeft: r.border ? `3px solid ${T.danger}` : 'none', background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)' }}
                   onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.06)')}
                   onMouseLeave={e => (e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.02)')}>
-                  <td style={{ fontSize: 11, color: T.textPri, padding: '8px 8px', fontWeight: 600 }}>{r.client}</td>
+                  <td style={{ fontSize: 11, color: T.textPri, padding: '8px 8px', fontWeight: 600 }}><FlaggedClientName name={r.client} /></td>
                   <td style={{ fontSize: 11, color: T.textSec, padding: '8px 8px' }}>{r.chantier}</td>
                   <td style={{ fontSize: 11, color: T.textPri, padding: '8px 8px', fontWeight: 200 }}>{r.livr}</td>
                   <td style={{ fontSize: 11, color: r.onTime === '100%' ? T.success : r.onTime >= '80%' ? T.warning : T.danger, padding: '8px 8px', fontWeight: 200 }}>{r.onTime}</td>
@@ -1725,7 +1726,7 @@ function IntelligenceIATab() {
         </div>
 
         <RecommendationBox text={
-          <>Sigma Bâtiment (score <strong style={{ color: T.danger }}>23/100</strong>) est le chantier le plus problématique : 1 retour béton + 2 surestaries + 33% retard. Corrélation : ce client a aussi un score paiement de <strong style={{ color: T.danger }}>12/100</strong> (page Clients). Recommandation : exiger confirmation chantier + paiement anticipé pour toute livraison. Résidences Atlas (<strong style={{ color: T.warning }}>65/100</strong>) en baisse — 2 surestaries en 3 mois, enquêter sur changement de responsable chantier.</>
+          <>Sigma Bâtiment (score <strong style={{ color: T.danger }}>23/100</strong>) est le chantier le plus problématique : 1 retour béton + 2 surestaries + 33% retard. Corrélation : score chantier <strong style={{ color: T.danger }}>23/100</strong> <CrossRef page="Logistique" /> · score paiement <strong style={{ color: T.danger }}>12/100</strong> <CrossRef page="Créances" /> · volume en baisse <strong style={{ color: T.danger }}>−40%</strong> <CrossRef page="Ventes" />. Recommandation : exiger confirmation chantier + paiement anticipé pour toute livraison. Résidences Atlas (<strong style={{ color: T.warning }}>65/100</strong>) en baisse — 2 surestaries en 3 mois, enquêter sur changement de responsable chantier.</>
         } />
       </Card>
 
@@ -1767,7 +1768,7 @@ function IntelligenceIATab() {
                   <td style={{ fontSize: 11, color: T.textSec, padding: '8px 8px' }}>{r.cat}</td>
                   <td style={{ fontFamily: MONO, fontSize: 11, fontWeight: 200, color: r.hasAmount ? T.danger : T.success, padding: '8px 8px' }}>{r.montant}</td>
                   <td style={{ fontSize: 11, color: T.textPri, padding: '8px 8px', fontWeight: 200 }}>{r.occ}</td>
-                  <td style={{ fontSize: 11, color: T.textSec, padding: '8px 8px' }}>{r.client}</td>
+                  <td style={{ fontSize: 11, color: T.textSec, padding: '8px 8px' }}><FlaggedClientName name={r.client.replace(' (45%)', '')} />{r.client.includes('(') ? ' (45%)' : ''}</td>
                   <td style={{ padding: '8px 8px' }}>
                     {r.hasAmount ? (
                       <button className="gold-outline-btn" style={{ fontFamily: MONO, fontSize: 10, fontWeight: 600, padding: '3px 10px', borderRadius: 4, background: T.gold, color: '#0F1629', border: 'none', cursor: 'pointer' }}>Facturer</button>
@@ -1792,9 +1793,9 @@ function IntelligenceIATab() {
 
         {/* Red left-border recommendation */}
         <div style={{ borderLeft: `3px solid ${T.danger}`, background: 'linear-gradient(135deg, rgba(239,68,68,0.08) 0%, rgba(239,68,68,0.02) 100%)', padding: '12px 14px', borderRadius: 6 }}>
-          <p style={{ fontFamily: MONO, fontSize: 11, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
-            <strong style={{ color: T.danger }}>16,600 DH</strong> de revenus identifiés et non-réclamés ce mois. Sigma Bâtiment concentre 100% des pertes (surestaries 2,500 DH + retour béton 4,200 DH non-facturés). Ce client a un historique de non-paiement (score <strong style={{ color: T.danger }}>12/100</strong>). Recommandation urgente : (1) Émettre factures immédiatement avec preuve horodatée (GPS + timestamps). (2) Suspendre toute livraison Sigma Bâtiment tant que le solde <strong style={{ color: T.danger }}>189K DH</strong> (créances) + <strong style={{ color: T.danger }}>6,700 DH</strong> (revenus logistique) n'est pas régularisé. (3) Automatiser la facturation surestaries : chaque dépassement &gt;20 min génère automatiquement une ligne de facturation.
-          </p>
+           <p style={{ fontFamily: MONO, fontSize: 11, color: T.textSec, lineHeight: 1.7, margin: 0 }}>
+             <strong style={{ color: T.danger }}>16,600 DH</strong> de revenus identifiés et non-réclamés ce mois. Sigma Bâtiment concentre 100% des pertes (surestaries 2,500 DH + retour béton 4,200 DH non-facturés). Ce client a un historique de non-paiement (score <strong style={{ color: T.danger }}>12/100</strong> <CrossRef page="Créances" />). Recommandation urgente : (1) Émettre factures immédiatement avec preuve horodatée (GPS + timestamps). (2) Suspendre toute livraison Sigma Bâtiment tant que le solde <strong style={{ color: T.danger }}>189K DH</strong> <CrossRef page="Créances" /> + <strong style={{ color: T.danger }}>6,700 DH</strong> (revenus logistique) n'est pas régularisé. (3) Automatiser la facturation surestaries : chaque dépassement &gt;20 min génère automatiquement une ligne de facturation.
+           </p>
         </div>
       </Card>
 
@@ -2178,7 +2179,7 @@ export default function WorldClassDeliveries() {
                       ].map((r, i) => (
                         <tr key={i} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)', borderBottom: `1px solid rgba(30,45,74,0.5)` }}>
                           <td style={{ padding: '10px 12px', fontFamily: MONO, fontSize: 11, color: T.textSec }}>{r.date}</td>
-                          <td style={{ padding: '10px 12px', fontSize: 12, color: T.textPri }}>{r.client}</td>
+                          <td style={{ padding: '10px 12px', fontSize: 12, color: T.textPri }}><FlaggedClientName name={r.client} /></td>
                           <td style={{ padding: '10px 12px', fontFamily: MONO, fontSize: 11, color: T.gold }}>{r.volume}</td>
                           <td style={{ padding: '10px 12px', fontSize: 11, color: T.textSec }}>{r.cause}</td>
                           <td style={{ padding: '10px 12px', fontFamily: MONO, fontSize: 11, fontWeight: 200, color: T.danger }}>{r.perte}</td>
