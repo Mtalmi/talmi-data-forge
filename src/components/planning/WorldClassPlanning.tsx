@@ -575,7 +575,7 @@ function ZoneHeader({ icon, label, right }: { icon: string; label: string; right
       paddingBottom: 12, borderBottom: `1px solid ${T.cardBorder}`,
     }}>
       <span style={{ fontSize: 16 }}>{icon}</span>
-      <span style={{ color: T.gold, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.2em' }}>{label}</span>
+      <span style={{ color: T.gold, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '2px' }}>{label}</span>
       <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
       {right}
     </div>
@@ -681,20 +681,24 @@ function IAAgentSection({ name, content }: { name: string; content: React.ReactN
     name.includes('MÉTÉO') || name.includes('RETARDS') ? '#EF4444' :
     name.includes('ORCHESTRATION') || name.includes('FLOTTE') ? '#F59E0B' :
     '#10B981';
+  const borderTopColor = 
+    name.includes('MÉTÉO') ? '#EF4444' :
+    name.includes('RETARDS') ? '#F59E0B' :
+    '#D4A843';
   return (
     <section>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span style={{ width: 8, height: 8, borderRadius: '50%', background: urgencyColor, flexShrink: 0 }} />
           <span style={{ color: '#D4A843', fontSize: 14, animation: 'tbos-pulse 3s ease-in-out infinite' }}>✦</span>
-          <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>AGENT IA: {name}</span>
+          <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '1.5px' }}>AGENT IA: {name}</span>
         </div>
-        <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)', whiteSpace: 'nowrap', flexShrink: 0 }}>Généré par IA · Claude Opus</span>
+        <span style={{ padding: '3px 10px', borderRadius: 999, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 10, fontWeight: 600, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843', whiteSpace: 'nowrap', flexShrink: 0 }}>Généré par IA · Claude Opus</span>
       </div>
       <div style={{
         background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
         border: `1px solid ${T.cardBorder}`,
-        borderTop: '2px solid #D4A843',
+        borderTop: `2px solid ${borderTopColor}`,
         borderLeft: '3px solid #D4A843',
         borderRadius: 12, padding: 20,
       }}>
@@ -775,6 +779,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
         @keyframes tbos-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:0.85} }
         @keyframes liveDotPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.3);opacity:0.5} }
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        @keyframes riskPulse { 0%,100%{box-shadow:0 0 8px rgba(239,68,68,0.3)} 50%{box-shadow:0 0 16px rgba(239,68,68,0.1)} }
       `}</style>
 
       <PageHeader
@@ -1227,8 +1232,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                 <span style={{
                   display: 'inline-flex', alignItems: 'center', gap: 5,
                   padding: '4px 12px', borderRadius: 999,
-                  background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.25)',
+                  background: 'rgba(212,168,67,0.06)', border: '1px solid #D4A843',
                   fontSize: 11, fontWeight: 600, color: '#D4A843',
+                  fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
                 }}>
                   5 agents actifs
                 </span>
@@ -1241,27 +1247,27 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                 name="ORCHESTRATION LIVRAISONS"
                 content={
                   <div className="flex flex-col gap-4">
-                    <p style={{ color: '#fff', fontSize: 15, fontWeight: 700, lineHeight: 1.4 }}>3 livraisons regroupées Casa Nord — économie 180 DH et 45 min</p>
+                    <p style={{ color: '#fff', fontSize: 16, fontWeight: 600, lineHeight: 1.4 }}>3 livraisons regroupées Casa Nord — économie <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 600 }}>180 DH</span> et <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 600 }}>45 min</span></p>
                     <div className="flex items-start gap-3">
                       <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
                       <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.7 }}>
-                        Routes optimisées ce matin. Économie carburant estimée: <span style={{ color: '#34d399', fontWeight: 600 }}>180 DH</span>. Temps gagné: <span style={{ color: '#34d399', fontWeight: 600 }}>45 min</span>.
+                        Routes optimisées ce matin. Économie carburant estimée: <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 600 }}>180 DH</span>. Temps gagné: <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 600 }}>45 min</span>.
                       </p>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
                       <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.7 }}>
-                        Toupie <span style={{ color: '#fff', fontWeight: 600 }}>TOU-03</span> en surcharge cette semaine (<span style={{ color: '#F59E0B', fontWeight: 600 }}>6 rotations/jour vs recommandé 5</span>).
+                        Toupie <span style={{ color: '#fff', fontWeight: 600 }}>TOU-03</span> en surcharge cette semaine (<span style={{ color: '#F59E0B', fontWeight: 600 }}><span style={{ color: '#EF4444', fontWeight: 700 }}>6</span> rotations/jour vs recommandé <span style={{ color: '#22C55E', fontWeight: 700 }}>5</span></span>).
                       </p>
                     </div>
-                    <div style={{ background: 'rgba(212,168,67,0.05)', borderLeft: '3px solid #D4A843', padding: 12, borderRadius: '0 8px 8px 0', marginTop: 8 }}>
+                    <div style={{ background: 'rgba(212,168,67,0.04)', borderLeft: '3px solid #D4A843', padding: 12, borderRadius: '0 6px 6px 0', marginTop: 8 }}>
                       <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.6 }}>
                         <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation:</span> Basculer 2 livraisons de TOU-03 sur TOU-01 demain. Prévoir TOU-03 en backup pour BL-2602-014 Saudi Readymix (50m³).
                       </p>
                     </div>
                     <div className="flex gap-2 mt-2">
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(16,185,129,0.12)', color: '#34d399' }}>Économie: 180 DH</span>
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>3 optimisations</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843' }}>Économie: 180 DH</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 11, fontWeight: 500, background: 'rgba(34,197,94,0.06)', color: '#22C55E', border: '1px solid #22C55E' }}>3 optimisations</span>
                     </div>
                   </div>
                 }
@@ -1272,18 +1278,18 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                 name="MÉTÉO"
                 content={
                   <div>
-                    <p style={{ color: '#fff', fontSize: 15, fontWeight: 700, lineHeight: 1.4, marginBottom: 12 }}>Samedi 38°C — risque fissuration élevé</p>
+                    <p style={{ color: '#fff', fontSize: 16, fontWeight: 600, lineHeight: 1.4, marginBottom: 12 }}>Samedi <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#EF4444', fontWeight: 700, fontSize: 18 }}>38°C</span> — risque fissuration élevé</p>
                     <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.8 }}>
-                      Prévisions 48h: <span style={{ color: '#fff', fontWeight: 600 }}>Samedi 14 mars</span> — température <span style={{ color: '#EF4444', fontWeight: 600 }}>38°C</span> prévue à 14h. Impact béton: temps de prise réduit de <span style={{ color: '#F59E0B', fontWeight: 600 }}>20%</span>. <span style={{ color: '#fff', fontWeight: 600 }}>Dimanche 15</span>: conditions normales, aucun ajustement nécessaire.
+                      Prévisions 48h: <span style={{ color: '#fff', fontWeight: 600 }}>Samedi 14 mars</span> — température <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#EF4444', fontWeight: 700, fontSize: 18 }}>38°C</span> prévue à 14h. Impact béton: temps de prise réduit de <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#EF4444', fontWeight: 700 }}>20%</span>. <span style={{ color: '#fff', fontWeight: 600 }}>Dimanche 15</span>: conditions normales, aucun ajustement nécessaire.
                     </p>
-                    <div style={{ background: 'rgba(212,168,67,0.05)', borderLeft: '3px solid #D4A843', padding: 12, borderRadius: '0 8px 8px 0', marginTop: 8 }}>
+                    <div style={{ background: 'rgba(212,168,67,0.04)', borderLeft: '3px solid #D4A843', padding: 12, borderRadius: '0 6px 6px 0', marginTop: 8 }}>
                       <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.6 }}>
                         <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation:</span> (1) Ajouter retardateur de prise aux formules B25/B30, (2) Planifier livraisons avant 11h, (3) Alerter 3 chantiers identifiés à risque.
                       </p>
                     </div>
                     <div className="flex gap-2 mt-4">
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(239,68,68,0.12)', color: '#EF4444' }}>Risque: Élevé samedi</span>
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 92%</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 11, fontWeight: 500, background: 'rgba(239,68,68,0.12)', color: '#EF4444', animation: 'riskPulse 2s infinite' }}>Risque: Élevé samedi</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843' }}>Confiance: 92%</span>
                     </div>
                   </div>
                 }
@@ -1294,33 +1300,33 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                 name="PRÉDICTION RETARDS"
                 content={
                   <div className="flex flex-col gap-4">
-                    <p style={{ color: '#fff', fontSize: 15, fontWeight: 700, lineHeight: 1.4 }}>BL-2602-014 Saudi Readymix — probabilité retard 35%</p>
+                    <p style={{ color: '#fff', fontSize: 16, fontWeight: 600, lineHeight: 1.4 }}><span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 500 }}>BL-2602-014</span> Saudi Readymix — probabilité retard <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#F59E0B', fontWeight: 700, fontSize: 18 }}>35%</span></p>
                     <div className="flex items-start gap-3">
                       <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B' }} />
                       <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.7 }}>
-                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-014 Saudi Readymix</span>: distance 20km, trafic historique créneau 13h élevé, temps chargement F-B25.
+                        <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 500 }}>BL-2602-014</span> <span style={{ color: '#fff', fontWeight: 600 }}>Saudi Readymix</span>: distance 20km, trafic historique créneau 13h élevé, temps chargement F-B25.
                       </p>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
                       <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.7 }}>
-                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-015 BTP Maroc</span>: probabilité retard <span style={{ color: '#34d399', fontWeight: 600 }}>8%</span> — client proche (4km), créneau 15h fluide. Aucune action requise.
+                        <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 500 }}>BL-2602-015</span> <span style={{ color: '#fff', fontWeight: 600 }}>BTP Maroc</span>: probabilité retard <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#22C55E', fontWeight: 700 }}>8%</span> — client proche (4km), créneau 15h fluide. Aucune action requise.
                       </p>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="flex-shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444' }} />
                       <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.7 }}>
-                        <span style={{ color: '#fff', fontWeight: 600 }}>BL-2602-013 Constructions Modernes (80m³)</span>: 2 rotations nécessaires. Rotation 2 risque retard si Rotation 1 dépasse <span style={{ color: '#EF4444', fontWeight: 600 }}>45 min sur site</span>.
+                        <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 500 }}>BL-2602-013</span> <span style={{ color: '#fff', fontWeight: 600 }}>Constructions Modernes (80m³)</span>: 2 rotations nécessaires. Rotation 2 risque retard si Rotation 1 dépasse <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#EF4444', fontWeight: 700 }}>45 min sur site</span>.
                       </p>
                     </div>
-                    <div style={{ background: 'rgba(212,168,67,0.05)', borderLeft: '3px solid #D4A843', padding: 12, borderRadius: '0 8px 8px 0', marginTop: 8 }}>
+                    <div style={{ background: 'rgba(212,168,67,0.04)', borderLeft: '3px solid #D4A843', padding: 12, borderRadius: '0 6px 6px 0', marginTop: 8 }}>
                       <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.6 }}>
-                        <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation:</span> Avancer départ BL-2602-014 de 15 min. Pré-alerter chantier Constructions Modernes sur temps de déchargement.
+                        <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation:</span> Avancer départ <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 500 }}>BL-2602-014</span> de 15 min. Pré-alerter chantier Constructions Modernes sur temps de déchargement.
                       </p>
                     </div>
                     <div className="flex gap-2 mt-2">
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>1 action requise</span>
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.12)', color: '#D4A843' }}>Confiance: 89%</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.06)', color: '#F59E0B', border: '1px solid #F59E0B' }}>1 action requise</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843' }}>Confiance: 89%</span>
                     </div>
                   </div>
                 }
@@ -1331,30 +1337,30 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
                 name="OPTIMISATION FLOTTE"
                 content={
                   <div>
-                    <p style={{ color: '#fff', fontSize: 15, fontWeight: 700, lineHeight: 1.4, marginBottom: 12 }}>TOU-02 sous-utilisée, TOU-01 en surutilisation — rééquilibrage possible</p>
+                    <p style={{ color: '#fff', fontSize: 16, fontWeight: 600, lineHeight: 1.4, marginBottom: 12 }}><span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 600 }}>TOU-02</span> sous-utilisée, <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 600 }}>TOU-01</span> en surutilisation — rééquilibrage possible</p>
                     <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.8 }}>
-                      Analyse hebdomadaire flotte: <span style={{ color: '#fff', fontWeight: 600 }}>TOU-02</span> à 3 rotations/jour vs capacité 5. <span style={{ color: '#F59E0B', fontWeight: 600 }}>TOU-01</span> à 5.2 rotations/jour moyenne. Coût carburant flotte cette semaine: <span style={{ color: '#fff', fontWeight: 600 }}>4,200 DH</span> (<span style={{ color: '#34d399', fontWeight: 600 }}>↘ -8% vs sem. dern.</span>).
+                      Analyse hebdomadaire flotte: <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 600 }}>TOU-02</span> à 3 rotations/jour vs capacité 5. <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 600 }}>TOU-01</span> à 5.2 rotations/jour moyenne. Coût carburant flotte cette semaine: <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 700 }}>4,200 DH</span> (<span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#22C55E', fontWeight: 600 }}>↘ -8% vs sem. dern.</span>).
                     </p>
-                    <div style={{ background: 'rgba(212,168,67,0.05)', borderLeft: '3px solid #D4A843', padding: 12, borderRadius: '0 8px 8px 0', marginTop: 8 }}>
+                    <div style={{ background: 'rgba(212,168,67,0.04)', borderLeft: '3px solid #D4A843', padding: 12, borderRadius: '0 6px 6px 0', marginTop: 8 }}>
                       <p style={{ color: '#9CA3AF', fontSize: 13, lineHeight: 1.6 }}>
-                        <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation:</span> Réaffecter livraison Alliances (Lundi 13h) de TOU-01 à TOU-02. Gain: <span style={{ color: '#34d399', fontWeight: 600 }}>2h disponibilité TOU-01</span> pour maintenance préventive courroie.
+                        <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation:</span> Réaffecter livraison Alliances (Lundi 13h) de TOU-01 à TOU-02. Gain: <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 600 }}>2h disponibilité TOU-01</span> pour maintenance préventive courroie.
                       </p>
                     </div>
                     <div className="flex gap-2 mt-4">
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(16,185,129,0.12)', color: '#34d399' }}>Économie flotte: 340 DH/sem</span>
-                      <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}>Maintenance: 1 alerte</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843' }}>Économie flotte: 340 DH/sem</span>
+                      <span style={{ padding: '3px 10px', borderRadius: 999, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.06)', color: '#F59E0B', border: '1px solid #F59E0B' }}>Maintenance: 1 alerte</span>
                     </div>
                   </div>
                 }
               />
 
               {/* 5. Placeholder — Satisfaction Client */}
-              <div style={{ height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', opacity: 0.5, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12 }}>
+              <div style={{ height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', opacity: 0.5, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, overflow: 'hidden' }}>
                 <div className="flex items-center gap-2">
                   <span style={{ color: '#D4A843', fontSize: 14 }}>✦</span>
-                  <span style={{ color: '#D4A843', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>AGENT IA: SATISFACTION CLIENT</span>
+                  <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '1.5px' }}>AGENT IA: SATISFACTION CLIENT</span>
                 </div>
-                <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(148,163,184,0.12)', color: T.textDim, border: '1px solid rgba(148,163,184,0.2)' }}>Prochainement</span>
+                <span style={{ padding: '3px 10px', borderRadius: 999, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 10, fontWeight: 600, background: 'rgba(148,163,184,0.12)', color: T.textDim, border: '1px solid rgba(148,163,184,0.2)' }}>Prochainement</span>
               </div>
             </div>
           </div>
