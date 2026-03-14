@@ -1433,9 +1433,55 @@ export default function WorldClassDeliveries() {
                     </div>
                   ))}
                 </div>
+                {/* Summary strip */}
+                <div style={{ display: 'flex', gap: 20, marginTop: 16, paddingTop: 14, borderTop: `1px solid ${T.cardBorder}`, flexWrap: 'wrap' }}>
+                  {[
+                    { label: 'DEMANDE J+7:', value: '42 livr.', color: T.gold },
+                    { label: 'PIC PRÉVU:', value: 'Mar 18 (12 livr.)', color: T.warning },
+                    { label: 'CAPACITÉ:', value: '10/jour', color: T.textPri },
+                    { label: 'RISQUE:', value: '⚠ Saturation mardi', color: T.warning },
+                  ].map((s, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ fontFamily: MONO, fontSize: 12, color: T.textDim }}>{s.label}</span>
+                      <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: s.color }}>{s.value}</span>
+                    </div>
+                  ))}
+                </div>
               </Card>
             </section>
 
+            {/* PASSATION LOGISTIQUE */}
+            <section>
+              <SectionHeader icon={ClipboardCheck} label="✦ Passation Logistique — Fin de Journée" />
+              <Card style={{ borderTop: `2px solid ${T.gold}` }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {[
+                    { color: T.success, text: '1 livraison complétée — Groupe A, 8 m³ F-B25, livré à 09:02 ✓', pulse: false },
+                    { color: T.gold, text: '1 livraison en cours — Résidences Atlas, 12 m³ F-B30, T-04 en route (ETA 10:44, +14 min retard trafic)', pulse: true },
+                    { color: T.warning, text: '1 livraison planifiée — Saham Im, 10 m³ F-B35, T-12 départ prévu 14:00', pulse: false },
+                    { color: T.danger, text: 'T-09 en maintenance — pneus à remplacer. Retour prévu demain 08:00. 3 livraisons T-09 réaffectées.', pulse: false },
+                    { color: T.success, text: 'Carburant flotte : T-04 34% (ravitaillement ce soir), T-07 62% ✓, T-12 78% ✓', pulse: false },
+                  ].map((item, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: item.color, marginTop: 4, flexShrink: 0, animation: item.pulse ? 'tbos-pulse 1.5s ease-in-out infinite' : 'none' }} />
+                      <span style={{ fontFamily: MONO, fontSize: 13, color: item.color === T.danger ? T.danger : T.textSec, lineHeight: 1.5 }}>{item.text}</span>
+                    </div>
+                  ))}
+                </div>
+                <p style={{ fontFamily: MONO, fontSize: 12, color: T.textDim, marginTop: 16, lineHeight: 1.6 }}>
+                  Demain: 5 livraisons planifiées · 891 DH revenu prévu · T-09 retour maintenance 08:00 · Pic mardi 18/03 (12 livr.)
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 16 }}>
+                  <button style={{ padding: '9px 20px', background: T.gold, border: 'none', borderRadius: 8, color: '#0F1629', fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: MONO }}>
+                    Valider Passation
+                  </button>
+                  <IABadge />
+                </div>
+                <p style={{ fontFamily: MONO, fontSize: 12, color: T.textDim, marginTop: 12 }}>
+                  Prochain shift: demain 06:00 — Youssef B., Mehdi T., + T-09 si maintenance terminée
+                </p>
+              </Card>
+            </section>
             {/* 3i. PRÉVISION DEMANDE IA */}
             <section>
               <SectionHeader icon={TrendingUp} label="Prévision Demande IA — 14 Jours" right={
