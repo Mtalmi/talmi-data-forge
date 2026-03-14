@@ -2179,7 +2179,7 @@ export default function WorldClassDeliveries() {
                       ].map((r, i) => (
                         <tr key={i} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)', borderBottom: `1px solid rgba(30,45,74,0.5)` }}>
                           <td style={{ padding: '10px 12px', fontFamily: MONO, fontSize: 11, color: T.textSec }}>{r.date}</td>
-                          <td style={{ padding: '10px 12px', fontSize: 12, color: T.textPri }}>{r.client}</td>
+                          <td style={{ padding: '10px 12px', fontSize: 12, color: T.textPri }}><FlaggedClientName name={r.client} /></td>
                           <td style={{ padding: '10px 12px', fontFamily: MONO, fontSize: 11, color: T.gold }}>{r.volume}</td>
                           <td style={{ padding: '10px 12px', fontSize: 11, color: T.textSec }}>{r.cause}</td>
                           <td style={{ padding: '10px 12px', fontFamily: MONO, fontSize: 11, fontWeight: 200, color: T.danger }}>{r.perte}</td>

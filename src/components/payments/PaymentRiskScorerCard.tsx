@@ -213,7 +213,7 @@ export function PaymentRiskScorerCard() {
                   onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                   >
                     <td style={{ padding: '10px 14px', fontSize: 13, fontWeight: 700, color: T.gold, fontFamily: 'JetBrains Mono, monospace' }}>{inv.facture}</td>
-                    <td style={{ padding: '10px 14px', fontSize: 12, fontWeight: 600, color: T.textPri }}>{inv.client}</td>
+                    <td style={{ padding: '10px 14px', fontSize: 12, fontWeight: 600, color: T.textPri }}><FlaggedClientName name={inv.client} /></td>
                     <td style={{ padding: '10px 14px', fontSize: 12, color: T.textPri, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>{inv.montant}</td>
                     <td style={{ padding: '10px 14px', fontSize: 12, color: T.textSec }}>{inv.echeance}</td>
                     <td style={{ padding: '10px 14px' }}>

@@ -288,7 +288,7 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
         <div style={{ paddingLeft: 16, paddingTop: 12, paddingBottom: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0, background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: 16, color: '#D4A843' }}>{initial}</div>
           <div style={{ minWidth: 0 }}>
-            <p style={{ fontWeight: 500, fontSize: 15, color: T.textPri, marginBottom: 3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{client.name}</p>
+            <p style={{ fontWeight: 500, fontSize: 15, color: T.textPri, marginBottom: 3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex', alignItems: 'center' }}><FlaggedClientName name={client.name} /></p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
               <Badge label={client.segment} color={segColor} bg={`${segColor}18`} />
               {(() => {
