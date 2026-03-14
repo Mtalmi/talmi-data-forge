@@ -221,10 +221,10 @@ function useProductionLiveData() {
 // ─────────────────────────────────────────────────────
 // KPI CARD — Premium style matching Dashboard
 // ─────────────────────────────────────────────────────
-function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive, delay = 0, sparkData }: {
+function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive, delay = 0, sparkData, weekComparison }: {
   label: string; value: number; suffix: string; color: string;
   icon: any; trend: string; trendPositive: boolean; delay?: number;
-  sparkData?: number[];
+  sparkData?: number[]; weekComparison?: string;
 }) {
   const isDecimal = value % 1 !== 0;
   const animated = useAnimatedCounter(isDecimal ? Math.round(value * 10) : value, 1200);
