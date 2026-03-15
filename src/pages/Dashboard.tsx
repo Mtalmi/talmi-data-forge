@@ -1186,16 +1186,16 @@ export default function Dashboard() {
             {
               label: 'TRÉSORERIE',
               value: tresorerie,
-              unit: 'K DH',
-              watermark: 'DH',
-              sub: '→ 502K fin mois',
+              unit: uf.currKUnit,
+              watermark: uf.currSym,
+              sub: `→ ${uf.fmtCurrencyK(502000)} fin mois`,
               trend: '↗ +9.7%',
               healthyGlow: true,
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,26 20,22 40,24 60,18 80,14 100,10 120,4',
               secondaryLabel: 'Net',
-              secondaryValue: '+49K DH',
+              secondaryValue: `+${uf.fmtCurrencyK(49000)}`,
             },
           ].map((kpi, i) => {
             const kpiRoutes = ['/production', '/ventes', '/production', '/creances'];
