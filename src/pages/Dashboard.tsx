@@ -1059,13 +1059,13 @@ export default function Dashboard() {
               flexWrap: 'wrap',
             }}>
               <span style={{ color: '#F59E0B' }}>⚠</span>
-              <span style={{ color: '#EF4444' }}>Créances: 189K DH retard (Sigma)</span>
+              <span onClick={() => navigate('/creances')} style={{ color: '#EF4444', cursor: 'pointer', transition: 'color 200ms' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#EF4444'; (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}>Créances: 189K DH retard (Sigma)</span>
               <span style={{ color: 'rgba(212,168,67,0.3)' }}>·</span>
-              <span style={{ color: '#F59E0B' }}>Logistique: T-09 maintenance</span>
+              <span onClick={() => navigate('/logistique')} style={{ color: '#F59E0B', cursor: 'pointer', transition: 'color 200ms' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#F59E0B'; (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}>Logistique: T-09 maintenance</span>
               <span style={{ color: 'rgba(212,168,67,0.3)' }}>·</span>
-              <span style={{ color: '#F59E0B' }}>Stocks: Adjuvant 6,7j</span>
+              <span onClick={() => navigate('/stocks')} style={{ color: '#F59E0B', cursor: 'pointer', transition: 'color 200ms' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#F59E0B'; (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}>Stocks: Adjuvant 6,7j</span>
               <span style={{ color: 'rgba(212,168,67,0.3)' }}>·</span>
-              <span style={{ color: '#EF4444' }}>Lab: NM expire 26j</span>
+              <span onClick={() => navigate('/laboratoire')} style={{ color: '#EF4444', cursor: 'pointer', transition: 'color 200ms' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#EF4444'; (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}>Lab: NM expire 26j</span>
             </div>
           </div>
 
