@@ -170,7 +170,7 @@ export default function WorkflowAutomation() {
   const toggleWf = (id: number, current: string) => {
     const next = current === 'active' ? 'paused' : 'active';
     setWfStates(prev => ({ ...prev, [id]: next }));
-    setToast(next === 'active' ? '⚡ Workflow activated' : '⏸️ Workflow paused');
+    setToast(next === 'active' ? '⚡ Workflow activé' : '⏸️ Workflow en pause');
   };
 
   const barColor = (b: string) => b === 'gold' ? '#D4A843' : b === 'blue' ? '#D4A843' : '#22C55E';
@@ -201,7 +201,7 @@ export default function WorkflowAutomation() {
     const iv = setInterval(() => {
       i++;
       setTestStep(i);
-      if (i >= steps) { clearInterval(iv); setTimeout(() => { setTestRunning(false); setTestStep(-1); setToast('✅ Test Completed — 3 actions would execute'); }, 400); }
+      if (i >= steps) { clearInterval(iv); setTimeout(() => { setTestRunning(false); setTestStep(-1); setToast('✅ Test terminé — 3 actions seraient exécutées'); }, 400); }
     }, 400);
   };
 
@@ -383,7 +383,7 @@ export default function WorkflowAutomation() {
                   <p className="text-xs" style={{ color: '#B0B8C1' }}>économisés cette année</p>
                 </div>
               </div>
-              <button onClick={() => { navigator.clipboard?.writeText('TBOS Automation: 47.3hrs saved this week'); setToast('Link copied! 📋'); }}
+              <button onClick={() => { navigator.clipboard?.writeText('TBOS Automation: 47.3hrs saved this week'); setToast('Lien copié ! 📋'); }}
                 className="mt-4 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
                 style={{ background: 'linear-gradient(135deg, #FFD700, #B8960C)', color: '#0F1419' }}>
                 <Share2 size={14} /> Share This Report
@@ -744,7 +744,7 @@ export default function WorkflowAutomation() {
                         </p>
                         <p className="text-[10px] mt-1" style={{ color: '#B0B8C1' }}>Retry attempts: 3/3</p>
                       </div>
-                      <button onClick={() => { setRetrying(true); setTimeout(() => { setRetrying(false); setToast('✅ Retried Successfully'); setSelectedExec(null); }, 1000); }}
+                      <button onClick={() => { setRetrying(true); setTimeout(() => { setRetrying(false); setToast('✅ Relance réussie'); setSelectedExec(null); }, 1000); }}
                         disabled={retrying}
                         className="w-full py-2.5 rounded-lg text-sm font-bold mt-4 flex items-center justify-center gap-2 transition-all"
                         style={{ background: 'linear-gradient(135deg, #FFD700, #B8960C)', color: '#0F1419' }}>
