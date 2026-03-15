@@ -1335,6 +1335,30 @@ export default function WorldClassClients() {
               <Plus size={13} />
               Nouveau Client
             </button>
+            <ExportButton
+              data={clientList.map(c => ({
+                nom: c.name,
+                segment: c.segment,
+                ca: c.ca,
+                dernier_achat: c.lastOrder,
+                statut: c.status,
+                email: c.email || '',
+                telephone: c.telephone || '',
+                ville: c.ville || '',
+              }))}
+              columns={[
+                { key: 'nom', label: 'Nom' },
+                { key: 'segment', label: 'Segment' },
+                { key: 'ca', label: 'CA (DH)' },
+                { key: 'dernier_achat', label: 'Dernier Achat' },
+                { key: 'statut', label: 'Statut' },
+                { key: 'email', label: 'Email' },
+                { key: 'telephone', label: 'Téléphone' },
+                { key: 'ville', label: 'Ville' },
+              ]}
+              filename={`TBOS_Clients_${new Date().toISOString().split('T')[0]}`}
+              style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: 8 }}
+            />
             <span style={{ fontFamily: MONO, fontSize: 13, color: '#9CA3AF', letterSpacing: '0.5px' }}>{liveClock}</span>
           </>
         }
