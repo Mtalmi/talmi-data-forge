@@ -24,6 +24,7 @@ import { DailyScoreGauge } from '@/components/dashboard/DailyScoreGauge';
 import { MultiMarketCalendar } from '@/components/dashboard/MultiMarketCalendar';
 import { ScenarioSimulator } from '@/components/dashboard/ScenarioSimulator';
 import ROICalculator from '@/components/dashboard/ROICalculator';
+import ActivityFeed from '@/components/dashboard/ActivityFeed';
 import { tbosToast } from '@/hooks/useTbosToast';
 import { useUnitFormat } from '@/hooks/useUnitFormat';
 
@@ -1438,6 +1439,11 @@ export default function Dashboard() {
           {/* (4) Intelligence IA section */}
           <div className="relative z-[1] mb-2" style={{ animation: 'ccSectionIn 300ms ease-out 450ms both' }}>
             <IntelligenceBriefingCard />
+          </div>
+
+          {/* (4b) Activity Feed — LIVE */}
+          <div className="relative z-[1] mb-5" style={{ animation: 'ccSectionIn 300ms ease-out 500ms both' }}>
+            <ActivityFeed />
           </div>
 
           {/* (5) Flux Usine ribbon */}

@@ -5,6 +5,7 @@ import { exportToCSV } from '@/lib/exportUtils';
 import { triggerPrint } from '@/lib/printUtils';
 import { toast } from 'sonner';
 import { useI18n } from '@/i18n/I18nContext';
+import { logActivityEvent } from '@/contexts/ActivityContext';
 
 interface Column<T> {
   key: keyof T;
@@ -48,6 +49,7 @@ export function ExportButton<T extends Record<string, unknown>>({
     if (data.length === 0) { toast.error(eb.noData); return; }
     exportToCSV(data, columns, filename);
     toast.success(eb.exported.replace('{count}', String(data.length)));
+    logActivityEvent('action', `Export CSV généré: ${filename}`, 'SYSTÈME', 'success');
     setOpen(false);
   };
 

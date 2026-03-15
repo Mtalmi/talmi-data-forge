@@ -14,7 +14,9 @@ import { AIFloatingBubble } from "./components/ai/AIFloatingBubble";
 import { I18nProvider } from "@/i18n/I18nContext";
 import { UnitProvider } from "@/i18n/UnitContext";
 import { PlantProvider } from "@/contexts/PlantContext";
+import { ActivityProvider } from "@/contexts/ActivityContext";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
+import { NavigationLogger } from "@/components/logging/NavigationLogger";
 import { lazyRetry } from "@/lib/lazyRetry";
 
 // Critical path — Auth is eager (LCP element), others lazy
@@ -150,6 +152,7 @@ const App = () => (
   <I18nProvider>
   <UnitProvider>
   <PlantProvider>
+  <ActivityProvider>
     <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <TooltipProvider>
@@ -158,6 +161,7 @@ const App = () => (
         <BrowserRouter>
           <ScrollToTop />
           <PageTitleManager />
+          <NavigationLogger />
           <OfflineIndicator />
           <AuthProvider>
             <PreviewRoleProvider>
@@ -291,6 +295,7 @@ const App = () => (
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>
+  </ActivityProvider>
   </PlantProvider>
   </UnitProvider>
   </I18nProvider>
