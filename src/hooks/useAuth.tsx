@@ -349,7 +349,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const canValidateBcPrice = isCeo || isSuperviseur || isAgentAdministratif;
   
   // Emergency Window Check: 18:00 - 06:00 (Midnight Emergency Protocol)
-  const currentHour = new Date().getHours();
+  const currentHour = getMoroccoHour();
   const isInEmergencyWindow = currentHour >= 18 || currentHour < 6;
   
   // Emergency Bypass: Dir Ops can use emergency bypass ONLY during 18:00-00:00

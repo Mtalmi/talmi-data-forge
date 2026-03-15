@@ -77,8 +77,8 @@ export function getTimeContextualTip(): string {
 
 /* ─── SEASONAL CONTEXTUAL TIPS ─── */
 export function getSeasonalTip(market: 'mena' | 'eu' | 'us', tempC?: number): string | null {
-  const month = new Date().getMonth(); // 0-indexed
-  const day = new Date().getDate();
+  const month = getMoroccoMonth(); // 0-indexed
+  const day = getMoroccoDay();
 
   if (market === 'mena') {
     // Ramadan window (approximate: mid-March to mid-April)

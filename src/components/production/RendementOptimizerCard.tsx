@@ -71,7 +71,7 @@ function useProdRendement() {
         }
       });
       (todayBatches || []).forEach((b: any) => {
-        if (b.created_at) activeHoursSet.add(new Date(b.created_at).getHours());
+        if (b.created_at) activeHoursSet.add(getHourInMorocco(b.created_at));
       });
 
       setData({

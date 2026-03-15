@@ -43,7 +43,7 @@ export function EmergencyBcEligibilityCard({ deliveryDate, onEligibilityChange }
 
   if (!deliveryDate) return null;
 
-  const currentHour = new Date().getHours();
+  const currentHour = getMoroccoHour();
   const isAfter18h = currentHour >= 18;
   const today = new Date();
   const isSameDay = deliveryDate.toDateString() === today.toDateString();

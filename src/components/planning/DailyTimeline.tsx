@@ -92,8 +92,8 @@ export function DailyTimeline({
     });
   }, [timelineBons]);
 
-  const currentHour = new Date().getHours();
-  const currentMinute = new Date().getMinutes();
+  const currentHour = getMoroccoHour();
+  const currentMinute = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Casablanca', minute: 'numeric' }).format(new Date()), 10);
   const nowPosition = ((currentHour - startHour) + (currentMinute / 60)) / (endHour - startHour) * 100;
   const showNowLine = nowPosition >= 0 && nowPosition <= 100;
 

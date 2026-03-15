@@ -72,7 +72,7 @@ export function DailyProductionTimeline({
   const { t, lang } = useI18n();
   const dateLocale = getDateLocale(lang);
   const navigate = useNavigate();
-  const currentHour = new Date().getHours();
+  const currentHour = getMoroccoHour();
   const isViewingToday = isToday(selectedDate);
 
   // Group bons by hour

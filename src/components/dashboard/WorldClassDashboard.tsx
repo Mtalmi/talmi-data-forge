@@ -764,7 +764,7 @@ function useWorldClassLiveData() {
         for (let h = 6; h <= 18; h += 2) hourBuckets[`${h}h`] = 0;
         blTodayRes.data.forEach(bl => {
           if (bl.created_at) {
-            const rawHour = new Date(bl.created_at).getHours();
+            const rawHour = getHourInMorocco(bl.created_at);
             const bucketHour = rawHour % 2 === 0 ? rawHour : rawHour - 1;
             const hour = `${bucketHour}h`;
             if (hourBuckets[hour] !== undefined) hourBuckets[hour] += bl.volume_m3 || 0;

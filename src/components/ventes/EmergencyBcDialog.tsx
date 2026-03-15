@@ -324,7 +324,7 @@ export function EmergencyBcDialog({
   };
 
   const isFormValid = clientId && formuleId && volume && prix && deliveryDate && !isClientBlacklisted;
-  const currentHour = new Date().getHours();
+  const currentHour = getMoroccoHour();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

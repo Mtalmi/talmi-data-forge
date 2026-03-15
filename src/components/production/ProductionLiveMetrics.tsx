@@ -46,7 +46,7 @@ export function ProductionLiveMetrics({
   className,
 }: ProductionLiveMetricsProps) {
   const isViewingToday = isToday(selectedDate);
-  const currentHour = new Date().getHours();
+  const currentHour = getMoroccoHour();
 
   // Calculate cumulative volume metrics
   const volumeMetrics = useMemo(() => {
