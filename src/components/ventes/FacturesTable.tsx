@@ -40,6 +40,7 @@ import { PartialPaymentDialog } from '@/components/finance/PartialPaymentDialog'
 import { useI18n } from '@/i18n/I18nContext';
 import { DollarSign } from 'lucide-react';
 import { getDateLocale } from '@/i18n/dateLocale';
+import { TableSkeletonRows, TableEmptyState, TableFilteredEmpty, TableErrorState } from '@/components/ui/TableStates';
 
 interface Facture {
   id: string;

@@ -53,6 +53,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nContext';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { TableSkeletonRows, TableEmptyState } from '@/components/ui/TableStates';
 import { Progress } from '@/components/ui/progress';
 
 // Status configs use static colors but labels are resolved dynamically via i18n
