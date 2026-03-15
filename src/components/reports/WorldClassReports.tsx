@@ -656,6 +656,15 @@ export default function WorldClassReports() {
     { id: 'custom',     label: 'Custom' },
   ];
 
+  if (liveData.loading) {
+    return (
+      <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace", background: T.navy, minHeight: '100vh', color: T.textPri }}>
+        <PageHeader icon={FileText} title="Rapports" subtitle="Chargement..." />
+        <PageLoadingSkeleton message="Chargement des rapports..." />
+      </div>
+    );
+  }
+
   return (
     <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace", background: T.navy, minHeight: '100vh', color: T.textPri }}>
       <style>{`

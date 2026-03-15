@@ -2005,6 +2005,15 @@ export default function WorldClassExpenses() {
     );
   };
 
+  if (live.loading) {
+    return (
+      <div style={{ minHeight: '100vh', background: T.navy, fontFamily: 'DM Sans, sans-serif', color: T.textPri }}>
+        <PageHeader icon={CreditCard} title="Dépenses" subtitle="Chargement..." />
+        <PageLoadingSkeleton message="Chargement des dépenses..." />
+      </div>
+    );
+  }
+
   return (
     <div style={{ minHeight: '100vh', background: T.navy, fontFamily: 'DM Sans, sans-serif', color: T.textPri, padding: '0 0 60px 0' }}>
       <style>{`@keyframes tbos-pulse { 0%,100%{opacity:1} 50%{opacity:0.55} }
