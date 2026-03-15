@@ -165,7 +165,7 @@ export function DevisTable({
         body: JSON.stringify({ devis_id: devisId }),
       });
       const webhookResult = await res.json();
-      console.log('[ScoreIA] Webhook response:', webhookResult);
+      // Refetch score from DB
 
       // Refetch from Supabase
       const { data, error } = await (supabase.from('devis' as any) as any)
