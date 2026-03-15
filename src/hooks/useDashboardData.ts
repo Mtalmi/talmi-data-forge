@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { getMoroccoToday, getMoroccoYesterday, getMoroccoMonthStart } from '@/utils/timezone';
 import { safeDivide, roundPercent } from '@/utils/rounding';
 import { throttle } from '@/utils/debounce';
+import { toast } from 'sonner';
 
 export interface DashboardLiveData {
   loading: boolean;
