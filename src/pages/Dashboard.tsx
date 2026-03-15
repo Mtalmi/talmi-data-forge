@@ -1026,7 +1026,7 @@ export default function Dashboard() {
                       {`Production cumulée aujourd'hui. **14 batches** complétés. Cadence actuelle: **47 m³/h**. Objectif journalier: !!800 m³!! (84% atteint). Formule dominante: F-B25 (60%). Prévision fin de journée: ~780 m³ si cadence maintenue.`}
                     </MetricTooltip>
                   </div>
-                  <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">PRODUCTION DU JOUR</span>
+                  <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground/50">PRODUCTION DU JOUR</span>
                 </div>
 
                 {/* Divider */}
