@@ -70,6 +70,8 @@ const CONFIGS: Record<UnitSystem, UnitConfig> = {
     temperature: { unit: '°F', convert: (c) => (c * 9) / 5 + 32 },
     pressure: { unit: 'PSI', factor: 145.038, roundTo: 50 },
     distance: { unit: 'mi', factor: 0.621, decimals: 1 },
+    speed: { unit: 'mph', factor: 0.621 },
+    slump: { unit: 'in', factor: 1 / 2.54, decimals: 1 },
     concreteGrades: { 'F-B20': '2500 PSI', 'F-B25': '3500 PSI', 'F-B30': '4500 PSI', 'F-B35': '5000 PSI' },
     norms: { 'NM 10.1.008': 'ASTM C94', 'NM 10.1.271': 'ASTM C94' },
     fuelConvert: (v) => ({ value: v > 0 ? Math.round(235.215 / v * 10) / 10 : 0, unit: 'MPG' }),
