@@ -106,6 +106,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="ml-3 p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/[0.04] transition-all z-20 lg:hidden"
+            aria-label="Menu"
           >
             {sidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
