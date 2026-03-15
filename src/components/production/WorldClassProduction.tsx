@@ -490,19 +490,35 @@ export default function WorldClassProduction() {
 
   // ── Derived KPIs (with realistic fallbacks when DB is empty) ──
   const kpis = useMemo(() => {
-    const produced = bons.filter(b => b.workflow_status === 'validation_technique').reduce((s, b) => s + (b.volume_m3 || 0), 0);
-    const inProgress = bons.filter(b => b.workflow_status === 'production').reduce((s, b) => s + (b.volume_m3 || 0), 0);
-    const planned = bons.filter(b => b.workflow_status === 'planification').reduce((s, b) => s + (b.volume_m3 || 0), 0);
-    const totalVolume = produced + inProgress + planned;
+    // Use production_batches as primary source (seeded data)
+    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    const todayBatches = batches.filter(b => b.created_at?.startsWith(todayStr));
+    const completedBatches = todayBatches.filter(b => b.status === 'complete' || b.status === 'decharge');
+    const inProgressBatches = todayBatches.filter(b => b.status === 'en_cours');
 
-    const completedBatches = batches.filter(b => b.quality_status === 'ok' || b.quality_status === 'warning').length;
-    const criticalBatches = batches.filter(b => b.quality_status === 'critical').length;
-    const totalBatches = batches.length;
-    const conformity = totalBatches > 0 ? Math.round(((totalBatches - criticalBatches) / totalBatches) * 100) : 100;
+    // Volume from batches
+    const batchVolume = completedBatches.reduce((s, b) => s + (b.volume_m3 || 0), 0);
+    const inProgressVolume = inProgressBatches.reduce((s, b) => s + (b.volume_m3 || 0), 0);
+
+    // Fallback to BL if no batches
+    const blVolume = bons.filter(b => b.workflow_status === 'validation_technique').reduce((s, b) => s + (b.volume_m3 || 0), 0);
+    const blInProgress = bons.filter(b => b.workflow_status === 'production').reduce((s, b) => s + (b.volume_m3 || 0), 0);
+    const blPlanned = bons.filter(b => b.workflow_status === 'planification').reduce((s, b) => s + (b.volume_m3 || 0), 0);
+
+    const produced = batchVolume > 0 ? batchVolume : blVolume;
+    const inProgress = inProgressVolume > 0 ? inProgressVolume : blInProgress;
+    const planned = blPlanned;
+    const totalVolume = produced + inProgress + planned;
+    const totalBatches = todayBatches.length > 0 ? todayBatches.length : batches.length;
+
+    // Conformity from conformite_status or quality_status
+    const nonConformes = todayBatches.filter(b => b.conformite_status === 'non_conforme' || b.quality_status === 'critical').length;
+    const tested = todayBatches.filter(b => b.conformite_status && b.conformite_status !== 'en_attente').length || totalBatches;
+    const conformity = tested > 0 ? Math.round(((tested - nonConformes) / tested) * 1000) / 10 : 100;
 
     const hasData = totalVolume > 0 || totalBatches > 0;
     if (hasData) {
-      return { produced, inProgress, planned, totalVolume, completedBatches, conformity, totalBatches, isDemo: false };
+      return { produced, inProgress, planned, totalVolume, completedBatches: completedBatches.length || totalBatches, conformity, totalBatches, isDemo: false };
     }
     return {
       produced: 671, inProgress: 8, planned: 2,
