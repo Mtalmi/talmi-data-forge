@@ -37,7 +37,7 @@ import {
   Receipt,
   Send,
   Shield,
-  MoreHorizontal,
+  MoreVertical,
   MessageCircle,
   FileText,
 } from 'lucide-react';
