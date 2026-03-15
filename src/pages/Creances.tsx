@@ -304,6 +304,7 @@ export default function Creances() {
   const [actionNotes, setActionNotes] = useState('');
   const [processingAction, setProcessingAction] = useState(false);
   const [creancesTab, setCreancesTab] = useState('overview');
+  const [showFactureModal, setShowFactureModal] = useState(false);
 
   const canManageReceivables = isCeo || role === 'agent_administratif' || role === 'superviseur';
 
