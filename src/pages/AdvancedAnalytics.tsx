@@ -560,7 +560,7 @@ function ExecutiveTab() {
                 <div key={i} className="rounded-lg p-3 border-l-[3px]" style={{ background: C.bgElevated, borderLeftColor: ins.color }}>
                   <p className="text-xs leading-relaxed" style={{ color: C.text2 }}>{ins.text}</p>
                   <button className="text-[11px] font-semibold mt-2 transition-opacity hover:opacity-80" style={{ color: C.gold }}>
-                    View Details →
+                    Voir Détails →
                   </button>
                 </div>
               ))}

@@ -609,9 +609,9 @@ export default function WorkflowAutomation() {
                   </div>
                   <div className="mt-6 flex gap-2">
                     <button className="flex-1 py-2 rounded-lg text-sm font-bold transition-all duration-200"
-                      style={{ background: 'linear-gradient(135deg, #FFD700, #B8960C)', color: '#0F1419' }}>Apply Changes</button>
+                      style={{ background: 'linear-gradient(135deg, #FFD700, #B8960C)', color: '#0F1419' }}>Appliquer</button>
                     <button className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
-                      style={{ border: '1px solid #EF4444', color: '#EF4444' }}>Delete</button>
+                      style={{ border: '1px solid #EF4444', color: '#EF4444' }}>Supprimer</button>
                   </div>
                 </motion.div>
               )}

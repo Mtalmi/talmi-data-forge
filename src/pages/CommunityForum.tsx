@@ -502,17 +502,17 @@ export default function CommunityForum() {
                 {npTags.length < 5 && (
                   <input value={npTagInput} onChange={e => setNpTagInput(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter' && npTagInput.trim()) { e.preventDefault(); setNpTags([...npTags, npTagInput.trim()]); setNpTagInput(''); } }}
-                    placeholder="Type + Enter to add tag" className="w-full px-3 py-2 rounded-xl text-xs outline-none"
+                    placeholder="Tapez + Entrée pour ajouter un tag" className="w-full px-3 py-2 rounded-xl text-xs outline-none"
                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text1 }} />
                 )}
               </div>
 
               {/* Actions */}
               <div className="flex gap-3">
-                <button onClick={() => setShowNewPost(false)} className="px-5 py-3 rounded-xl text-sm" style={{ color: T.text2, border: `1px solid ${T.border}` }}>Save Draft</button>
+                <button onClick={() => setShowNewPost(false)} className="px-5 py-3 rounded-xl text-sm" style={{ color: T.text2, border: `1px solid ${T.border}` }}>Enregistrer Brouillon</button>
                 <button onClick={() => { if (npValid) setShowNewPost(false); }} className="flex-1 py-3 rounded-xl font-medium text-sm"
                   style={{ background: npValid ? `linear-gradient(135deg, ${T.gold}, ${T.goldDim})` : T.elevated, color: npValid ? '#000' : T.text2, opacity: npValid ? 1 : 0.5 }}>
-                  Post Discussion
+                  Publier Discussion
                 </button>
               </div>
             </motion.div>
