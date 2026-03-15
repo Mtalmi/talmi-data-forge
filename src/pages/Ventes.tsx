@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { FileText, ShoppingCart, AlertTriangle, X, Calendar, Mail, Receipt, Zap, ChevronDown, BarChart3, TrendingUp, Loader2, Target } from 'lucide-react';
+import { ExportButton } from '@/components/documents/ExportButton';
 import {
   DropdownMenu,
   DropdownMenuContent,
