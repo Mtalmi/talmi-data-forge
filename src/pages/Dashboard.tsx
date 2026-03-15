@@ -875,9 +875,6 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* ── CALENDRIER OPÉRATIONNEL MULTI-MARCHÉS ── */}
-              <MultiMarketCalendar />
-
               {/* ── ROW 2: STATS BAR (the hero — Production Live format) ── */}
               <div className="tbos-stats-bar flex items-center gap-8 py-3 bg-gradient-to-r from-[#D4A843]/[0.03] via-transparent to-transparent rounded-lg">
                 {/* Capacity */}
