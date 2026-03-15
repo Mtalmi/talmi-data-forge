@@ -1190,6 +1190,7 @@ export default function Dashboard() {
               secondaryValue: '+49K DH',
             },
           ].map((kpi, i) => {
+            const kpiRoutes = ['/production', '/ventes', '/production', '/creances'];
             const numVal = typeof kpi.value === 'number' ? kpi.value : parseFloat(String(kpi.value));
             const hasTarget = 'target' in kpi && kpi.target !== undefined;
             const aboveTarget = hasTarget ? numVal >= (kpi.target as number) : false;
