@@ -29,9 +29,9 @@ const pipelineChartData = [
 const ChartTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: 'rgba(15,23,42,0.95)', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 8, padding: '8px 14px', boxShadow: '0 12px 40px rgba(0,0,0,0.6)', backdropFilter: 'blur(12px)' }}>
+    <div style={{ background: '#1A2332', border: '1px solid rgba(212,168,67,0.2)', borderRadius: 8, padding: '8px 14px', boxShadow: '0 12px 40px rgba(0,0,0,0.6)', backdropFilter: 'blur(12px)' }}>
       <p style={{ color: 'rgba(148,163,184,0.5)', fontSize: 10 }}>{label}</p>
-      <p style={{ color: '#fff', fontFamily: 'Inter, system-ui', fontWeight: 300, fontSize: 13 }}>
+      <p style={{ color: '#D4A843', fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontWeight: 400, fontSize: 13 }}>
         {typeof payload[0].value === 'number' ? payload[0].value.toLocaleString('fr-FR') : payload[0].value}
         {payload[0].name !== 'value' ? '' : ' DH'}
       </p>
