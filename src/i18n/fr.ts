@@ -1211,7 +1211,7 @@ const fr = {
       toleranceAlerts: 'Alertes de Tolérance (Fuite)',
       cancel: 'Annuler',
       creating: 'Création...',
-      createSlip: 'Créer le Bon',
+      createSlip: 'Créer le Bon de Commande',
       volumeError: 'Volume doit être entre 0 et 12 m³',
       // Table headers
       date: 'Date',

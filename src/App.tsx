@@ -277,7 +277,7 @@ const App = () => (
                      <Route path="/failure-fiesta" element={<FailureFiesta />} />
                      <Route path="/boundary-breaker" element={<BoundaryBreaker />} />
                       {/* Route aliases for deep links */}
-                      <Route path="/bons-de-commande" element={<Bons />} />
+                      {/* Alias removed — canonical route is /bons */}
                       {/* Finance placeholder routes */}
                       <Route path="/tresorerie" element={<PlaceholderPage title="Trésorerie" />} />
                       <Route path="/finance/tresorerie" element={<PlaceholderPage title="Trésorerie" />} />
