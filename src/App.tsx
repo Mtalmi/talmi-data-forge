@@ -280,6 +280,7 @@ const App = () => (
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>
+  </PlantProvider>
   </UnitProvider>
   </I18nProvider>
 );
