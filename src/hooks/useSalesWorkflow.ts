@@ -286,11 +286,8 @@ export function useSalesWorkflow() {
 
       if (error) throw error;
 
-      fetch('https://talmi.app.n8n.cloud/webhook/deal-scorer', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ devis_id: newDevis.id })
-      }).catch(() => {});
+      // Fire-and-forget webhook for AI scoring
+      callWebhook(WEBHOOKS.DEAL_SCORER, { devis_id: newDevis.id }).catch(() => {});
 
       await fetchData();
       toast.success(`Devis ${devis_id} enregistré`);

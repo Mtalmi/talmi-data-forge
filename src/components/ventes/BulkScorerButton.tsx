@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, Target } from 'lucide-react';
 import { toast } from 'sonner';
 import { Devis } from '@/hooks/useSalesWorkflow';
+import { WEBHOOKS, callWebhook } from '@/config/webhooks';
 
 interface BulkScorerButtonProps {
   devisList: Devis[];
