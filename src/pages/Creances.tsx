@@ -960,8 +960,8 @@ export default function Creances() {
                     <svg width={svgW} height={svgH} viewBox={`0 0 ${svgW} ${svgH}`}>
                       <defs>
                         <linearGradient id="crGaugeGold" x1="0" y1="0" x2="1" y2="0">
-                          <stop offset="0%" stopColor="#B8860B" />
-                          <stop offset="100%" stopColor="#FFD700" />
+                          <stop offset="0%" stopColor="#C49A3C" />
+                          <stop offset="100%" stopColor="#D4A843" />
                         </linearGradient>
                         <filter id="crNeedleGlow"><feGaussianBlur stdDeviation="2" result="g" /><feMerge><feMergeNode in="g" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
                       </defs>
