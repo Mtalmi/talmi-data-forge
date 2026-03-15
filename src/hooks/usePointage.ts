@@ -197,7 +197,7 @@ export function usePointage() {
     observations?: string
   ): Promise<boolean> => {
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getMoroccoToday();
 
       // Check if already submitted today
       const { data: existing } = await supabase
