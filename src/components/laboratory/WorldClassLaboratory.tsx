@@ -356,7 +356,7 @@ function TestRow({ r, delay = 0, index = 0 }: { r: typeof RESULTS[0]; delay?: nu
     <div
       onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
       style={{
-        display: 'grid', gridTemplateColumns: '0.6fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.9fr',
+        display: 'grid', gridTemplateColumns: '0.6fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.9fr 0.5fr',
         alignItems: 'center', gap: 8,
         borderLeft: `4px solid ${sColor}`,
         borderRadius: 10, padding: '12px 14px',
@@ -377,6 +377,11 @@ function TestRow({ r, delay = 0, index = 0 }: { r: typeof RESULTS[0]; delay?: nu
       <p style={{ fontSize: 12, color: T.textDim, margin: 0 }}>{r.norme}</p>
       <div>{ecartEl}</div>
       <div>{statusBadge}</div>
+      <div title="Photos éprouvettes et résultats — preuve qualité horodatée" style={{ cursor: r.photos > 0 ? 'pointer' : 'default' }}>
+        <span style={{ fontFamily: MONO, fontSize: 11, color: r.photos > 0 ? '#D4A843' : '#9CA3AF' }}>
+          📷 {r.photos > 0 ? r.photos : '—'}
+        </span>
+      </div>
     </div>
   );
 }

@@ -430,18 +430,19 @@ export function BcTable({
 
   return (
     <div className="w-full overflow-x-auto">
-      <Table className="w-full table-fixed" style={{ minWidth: '960px' }}>
+      <Table className="w-full table-fixed" style={{ minWidth: '1000px' }}>
         <colgroup>
           <col style={{ width: '3%' }} />
-          <col style={{ width: '11%' }} />
-          <col style={{ width: '20%' }} />
+          <col style={{ width: '10%' }} />
+          <col style={{ width: '19%' }} />
           <col style={{ width: '7%' }} />
-          <col style={{ width: '10%' }} />
-          <col style={{ width: '7%' }} />
-          <col style={{ width: '10%' }} />
-          <col style={{ width: '10%' }} />
+          <col style={{ width: '9%' }} />
+          <col style={{ width: '6%' }} />
+          <col style={{ width: '9%' }} />
+          <col style={{ width: '9%' }} />
           <col style={{ width: '9%' }} />
           <col style={{ width: '4%' }} />
+          <col style={{ width: '5%' }} />
           <col style={{ width: '5%' }} />
         </colgroup>
         <TableHeader>

@@ -991,6 +991,9 @@ function RecommendationBox({ text, borderColor = T.gold }: { text: React.ReactNo
   return (
     <div style={{ borderLeft: `4px solid ${borderColor}`, background: borderColor === T.danger ? 'rgba(239,68,68,0.05)' : 'rgba(212,168,67,0.03)', padding: '14px 18px', borderRadius: '0 8px 8px 0', marginTop: 16 }}>
       <p style={{ fontFamily: MONO, fontSize: 12, color: T.textSec, lineHeight: 1.8, margin: 0 }}>{text}</p>
+      <p style={{ fontFamily: MONO, fontSize: 9, color: 'rgba(156,163,175,0.4)', margin: '8px 0 0', lineHeight: 1.5 }}>
+        Historique: 3 recommandations précédentes · Dernière action: 12/03 relance envoyée
+      </p>
     </div>
   );
 }
