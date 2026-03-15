@@ -25,6 +25,7 @@ import { PassationButton } from '@/components/ui/PassationButton';
 import RecettesTab from './RecettesTab';
 import PlanningTab from './PlanningTab';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { ExportButton } from '@/components/documents/ExportButton';
 import { ProductionBriefingCard } from './ProductionBriefingCard';
 import { RendementOptimizerCard } from './RendementOptimizerCard';
 import { QualitePredictorCard } from './QualitePredictorCard';
