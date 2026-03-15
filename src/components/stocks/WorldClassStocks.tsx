@@ -166,7 +166,7 @@ function useStocksLiveData() {
     try {
       const sevenDaysAgo = startOfDay(subDays(new Date(), 7)).toISOString();
       const [stocksRes, movementsRes, autonomyRes, consumptionRes, stockAlertsRes, reorderRes] = await Promise.all([
-        supabase.from('stocks').select('*'),
+        supabase.from('stocks').select('*').order('materiau', { ascending: true }),
         supabase.from('mouvements_stock')
           .select('id, materiau, type_mouvement, quantite, reference_id, created_by, created_at, fournisseur')
           .order('created_at', { ascending: false })
