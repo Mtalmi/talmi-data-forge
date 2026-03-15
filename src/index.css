@@ -258,12 +258,19 @@ html {
 .kpi-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(212, 168, 67, 0.08);
+  border-top: 2px solid #D4A843;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: border-color 200ms ease, box-shadow 200ms ease;
 }
 .tbos-card:hover,
 .kpi-card:hover {
   border-color: rgba(212, 168, 67, 0.15);
   box-shadow: 0 2px 12px rgba(212, 168, 67, 0.05);
+}
+/* Prevent nested gold borders */
+.tbos-card .tbos-card {
+  border-top: 1px solid rgba(212, 168, 67, 0.08);
 }
 
 /* Level 3 — Alert cards, recommendation boxes, active elements */
