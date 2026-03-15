@@ -299,14 +299,14 @@ export default function MobileField() {
             </div>
             <div className="flex gap-3">
               <button className="flex-1 h-14 rounded-xl text-sm font-bold text-white active:scale-95" style={{ background: '#1C2533', border: '1px solid #2A3545' }}>
-                View Details
+                Voir Détails
               </button>
               <button
-                onClick={() => { haptic(100); toast.success('✅ Batch #B-2847 Completed'); }}
+                onClick={() => { haptic(100); toast.success('✅ Batch #B-2847 Terminé'); }}
                 className="flex-1 h-14 rounded-xl text-sm font-bold text-black active:scale-95"
                 style={{ background: 'linear-gradient(135deg, #FFD700, #B8960C)' }}
               >
-                Complete
+                Terminer
               </button>
             </div>
           </motion.div>
