@@ -12,6 +12,7 @@ import {
   Eye, Bell,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { PageLoadingSkeleton } from '@/components/ui/PageLoadingSkeleton';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
