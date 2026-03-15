@@ -375,13 +375,13 @@ export function FixedAssetsDashboard() {
                       <TableCell>{fa.total}</TableCell>
                       <TableCell className="text-right">{totals.assetCount}</TableCell>
                       <TableCell className="text-right font-mono">
-                        {totals.grossValue.toLocaleString()} DH
+                        {totals.grossValue.toLocaleString('fr-FR')} DH
                       </TableCell>
                       <TableCell className="text-right font-mono text-orange-500">
-                        -{totals.accumulatedDepreciation.toLocaleString()} DH
+                        -{totals.accumulatedDepreciation.toLocaleString('fr-FR')} DH
                       </TableCell>
                       <TableCell className="text-right font-mono text-green-500">
-                        {totals.netBookValue.toLocaleString()} DH
+                        {totals.netBookValue.toLocaleString('fr-FR')} DH
                       </TableCell>
                     </TableRow>
                   </TableBody>
