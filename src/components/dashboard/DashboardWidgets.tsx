@@ -204,10 +204,10 @@ export function ARAgingWidget() {
   }, []);
 
   const chartData = [
-    { label: '0-30j', value: data.current, fill: '#10B981' },
-    { label: '31-60j', value: data.days30, fill: '#F59E0B' },
-    { label: '61-90j', value: data.days60, fill: '#F97316' },
-    { label: '>90j', value: data.days90, fill: '#EF4444' },
+    { label: '0-30j', value: data.current, fill: '#22C55E', count: counts.c0 },
+    { label: '31-60j', value: data.days30, fill: '#F59E0B', count: counts.c30 },
+    { label: '61-90j', value: data.days60, fill: '#EA580C', count: counts.c60 },
+    { label: '>90j', value: data.days90, fill: '#EF4444', count: counts.c90 },
   ];
 
   return (
