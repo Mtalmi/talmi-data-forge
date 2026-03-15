@@ -1661,6 +1661,7 @@ export default function Dashboard() {
                 <div className="relative">
                   <svg
                     width="100%" height="220" viewBox={`0 0 ${svgW} ${svgH}`} preserveAspectRatio="none"
+                    role="img" aria-label={`Graphique production horaire: pic ${Math.max(...SPARKLINE_DATA.map(d => d.v))} ${uf.volUnit}/h`}
                     className="cursor-crosshair"
                     onMouseMove={handleChartMouseMove}
                     onMouseLeave={handleChartMouseLeave}
