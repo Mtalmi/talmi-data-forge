@@ -2298,6 +2298,7 @@ export default function Creances() {
           </DialogContent>
         </Dialog>
       </div>
+      <NouvelleFactureModal open={showFactureModal} onClose={() => setShowFactureModal(false)} onCreated={() => refetch()} />
     </MainLayout>
   );
 }
