@@ -1097,6 +1097,7 @@ export default function Dashboard() {
               {/* Buttons */}
               <div className="flex items-center gap-3 flex-wrap">
                 <button
+                  onClick={() => navigate('/stocks')}
                   className="flex items-center gap-2 px-5 py-2 rounded-lg text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg"
                   style={{ background: '#D4A843', color: '#0F1629', border: 'none', cursor: 'pointer' }}
                   onMouseEnter={e => { e.currentTarget.style.background = '#FDB913'; }}
@@ -1105,6 +1106,7 @@ export default function Dashboard() {
                   Commander Adjuvant Maintenant
                 </button>
                 <button
+                  onClick={() => navigate('/stocks')}
                   className="flex items-center gap-2 px-5 py-2 rounded-lg text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px"
                   style={{ background: 'transparent', border: '1px solid #D4A843', color: '#D4A843', cursor: 'pointer' }}
                   onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.1)'; }}
