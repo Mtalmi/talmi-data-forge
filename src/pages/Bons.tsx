@@ -178,8 +178,8 @@ function RecoverySection({ items }: { items: { bl_id: string; client_id: string;
       <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-white/[0.02] transition-colors">
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4" style={{ color: '#FFD700' }} />
-          <span style={{ fontSize: 11, fontWeight: 700, color: T.gold, textTransform: 'uppercase', letterSpacing: '0.15em' }}>Agent IA: Recouvrement</span>
-          <Badge variant="outline" className="border-[#D4A843]/30 text-[#D4A843] text-[10px] ml-1">{items.length} impayés</Badge>
+          <span style={{ fontSize: 12, fontWeight: 700, color: T.gold, textTransform: 'uppercase', letterSpacing: '0.15em' }}>Agent IA: Recouvrement</span>
+          <Badge variant="outline" className="border-[#D4A843]/30 text-[#D4A843] text-xs ml-1">{items.length} impayés</Badge>
         </div>
         <ChevronDown className="h-4 w-4 transition-transform" style={{ color: T.gold, transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </button>
