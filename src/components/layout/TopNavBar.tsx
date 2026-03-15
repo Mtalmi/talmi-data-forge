@@ -75,7 +75,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
     >
       <div className="flex items-center justify-between px-6" style={{ height: 56 }}>
         {/* Left — Search */}
-        <div className="relative hidden md:block flex-shrink-0">
+        <div className="relative hidden md:block flex-shrink-0" data-tour="search">
           <GlobalSearch />
         </div>
 

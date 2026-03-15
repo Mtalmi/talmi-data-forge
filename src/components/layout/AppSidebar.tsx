@@ -145,6 +145,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
         { title: nav.auditLog || 'Journal', url: '/journal', icon: BookOpen },
         { title: nav.approvals || 'Approbations', url: '/approbations', icon: CheckSquare },
         { title: nav.supervisorAudit || 'Audit', url: '/audit-superviseur', icon: Search },
+        { title: '🎯 Visite Guidée', url: '/__tour', icon: BookOpen },
       ],
     },
   ], [nav]);
@@ -200,6 +201,12 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
   };
 
   const handleNav = (url: string) => {
+    // Tour trigger
+    if (url === '/__tour') {
+      window.dispatchEvent(new Event('tbos-start-tour'));
+      if (window.innerWidth < 768) onClose();
+      return;
+    }
     // Intelligence section items → navigate to dashboard with tab state
     if (url === '/__dashboard_intel' || url === '/__dashboard_intel_alerts' || url === '/__dashboard_intel_agents' || url === '/__dashboard_intel_history') {
       navigate('/', { state: { activeTab: 'intelligence' } });
@@ -218,6 +225,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
 
   return (
     <aside
+      data-tour="sidebar"
       className={cn(
         'fixed top-0 left-0 bottom-0 z-50 flex flex-col transition-transform duration-300 ease-out',
         'lg:translate-x-0',

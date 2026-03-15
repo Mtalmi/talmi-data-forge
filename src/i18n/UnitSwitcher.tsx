@@ -25,7 +25,7 @@ export function UnitSwitcher() {
   const current = OPTIONS.find(o => o.id === system)!;
 
   return (
-    <div ref={ref} style={{ position: 'relative' }}>
+    <div ref={ref} style={{ position: 'relative' }} data-tour="unit-switcher">
       {/* Trigger */}
       <button
         onClick={() => setOpen(!open)}

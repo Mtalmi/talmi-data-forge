@@ -921,7 +921,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 {/* DAILY SCORE GAUGE */}
-                <div className="hidden md:block">
+                <div className="hidden md:block" data-tour="score-gauge">
                   <DailyScoreGauge score={demoData.score} deltaVsYesterday={3} streak={demoData.streak} weeklyRecord={{ score: demoData.recordScore, day: 'jeudi' }} />
                 </div>
               </div>
@@ -1049,7 +1049,7 @@ export default function Dashboard() {
           </div>
 
           {/* (0) BRIEFING MATINAL — Full AI Intelligence Summary */}
-          <div className="relative z-[1] mb-5" style={{ animation: 'ccSectionIn 300ms ease-out 80ms both' }}>
+          <div className="relative z-[1] mb-5" data-tour="briefing" style={{ animation: 'ccSectionIn 300ms ease-out 80ms both' }}>
             <div style={{
               borderTop: '2px solid #D4A843',
               background: 'rgba(212, 168, 67, 0.03)',
@@ -1121,7 +1121,7 @@ export default function Dashboard() {
           </div>
 
           {/* (2b) PRÉDICTION ARRÊT USINE */}
-          <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" style={{ animation: 'ccSectionIn 300ms ease-out 150ms both' }}>
+          <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" data-tour="shutdown-prediction" style={{ animation: 'ccSectionIn 300ms ease-out 150ms both' }}>
             <div className="tbos-shutdown-pulse" style={{
               background: 'rgba(245, 158, 11, 0.05)',
               borderLeft: '4px solid #F59E0B',
@@ -1180,7 +1180,7 @@ export default function Dashboard() {
           </div>
 
           {/* (3) 4 KPI Cards Row */}
-          <div className="tbos-kpi-grid grid grid-cols-5 gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch', animation: 'ccSectionIn 300ms ease-out 200ms both' }}>
+          <div data-tour="kpi-cards" className="tbos-kpi-grid grid grid-cols-5 gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch', animation: 'ccSectionIn 300ms ease-out 200ms both' }}>
           {[
             {
               label: 'VOLUME',

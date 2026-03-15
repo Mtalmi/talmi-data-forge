@@ -17,6 +17,8 @@ import { PlantProvider } from "@/contexts/PlantContext";
 import { ActivityProvider } from "@/contexts/ActivityContext";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { NavigationLogger } from "@/components/logging/NavigationLogger";
+import { WelcomeModal } from "@/components/onboarding/WelcomeModal";
+import { GuidedTour } from "@/components/onboarding/GuidedTour";
 import { lazyRetry } from "@/lib/lazyRetry";
 
 // Critical path — Auth is eager (LCP element), others lazy
@@ -288,6 +290,8 @@ const App = () => (
                   </Routes>
                 </Suspense>
                 <AIFloatingBubble />
+                <WelcomeModal />
+                <GuidedTour />
               </SecurityProvider>
             </PreviewRoleProvider>
           </AuthProvider>
