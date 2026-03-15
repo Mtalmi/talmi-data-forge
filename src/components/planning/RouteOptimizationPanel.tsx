@@ -110,7 +110,7 @@ export function RouteOptimizationPanel({ open, onClose }: Props) {
           {loading ? (
             <p style={{ color: '#64748B', fontSize: 13, textAlign: 'center', paddingTop: 40 }}>Chargement...</p>
           ) : deliveries.length === 0 ? (
-            <p style={{ color: '#64748B', fontSize: 13, textAlign: 'center', paddingTop: 40 }}>Aucune livraison planifiée aujourd'hui.</p>
+            <p style={{ color: '#64748B', fontSize: 13, textAlign: 'center', paddingTop: 40 }}>Aucune livraison planifiée aujourd'hui. Jour calme — parfait pour la maintenance préventive. 🔧</p>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {deliveries.map((d, i) => {
