@@ -81,7 +81,7 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
       position: 'relative',
       overflow: 'hidden',
       background: 'rgba(255,255,255,0.05)',
-      backdropFilter: 'blur(4px)',
+      backdropFilter: 'blur(8px)',
       borderTop: `2px solid ${isMorning ? '#D4A843' : '#9CA3AF'}`,
       border: `1px solid ${isMorning ? 'rgba(212,168,67,0.15)' : 'rgba(139,159,204,0.15)'}`,
       borderLeft: '2px solid rgba(212,168,67,0.4)',
