@@ -276,17 +276,26 @@ const App = () => (
                      <Route path="/contextual-chameleon" element={<ContextualChameleon />} />
                      <Route path="/failure-fiesta" element={<FailureFiesta />} />
                      <Route path="/boundary-breaker" element={<BoundaryBreaker />} />
-                     {/* Finance placeholder routes */}
-                     <Route path="/tresorerie" element={<PlaceholderPage title="Trésorerie" />} />
-                     <Route path="/pnl" element={<PlaceholderPage title="P&L — Compte de Résultat" />} />
-                     <Route path="/budget" element={<PlaceholderPage title="Budget & Prévisions" />} />
-                     {/* Resources placeholder routes */}
-                     <Route path="/personnel" element={<PlaceholderPage title="Personnel & RH" />} />
-                     <Route path="/equipements" element={<PlaceholderPage title="Équipements" />} />
-                     {/* Admin placeholder routes */}
-                     <Route path="/utilisateurs" element={<PlaceholderPage title="Gestion Utilisateurs" />} />
-                     <Route path="/integrations" element={<PlaceholderPage title="Intégrations — n8n · WhatsApp · GPS" />} />
-                     <Route path="*" element={<NotFound />} />
+                      {/* Route aliases for deep links */}
+                      <Route path="/bons-de-commande" element={<Bons />} />
+                      {/* Finance placeholder routes */}
+                      <Route path="/tresorerie" element={<PlaceholderPage title="Trésorerie" />} />
+                      <Route path="/finance/tresorerie" element={<PlaceholderPage title="Trésorerie" />} />
+                      <Route path="/pnl" element={<PlaceholderPage title="P&L — Compte de Résultat" />} />
+                      <Route path="/finance/pnl" element={<PlaceholderPage title="P&L — Compte de Résultat" />} />
+                      <Route path="/budget" element={<PlaceholderPage title="Budget & Prévisions" />} />
+                      <Route path="/finance/budget" element={<PlaceholderPage title="Budget & Prévisions" />} />
+                      {/* Resources placeholder routes */}
+                      <Route path="/personnel" element={<PlaceholderPage title="Personnel & RH" />} />
+                      <Route path="/equipements" element={<PlaceholderPage title="Équipements" />} />
+                      {/* Admin placeholder routes */}
+                      <Route path="/utilisateurs" element={<PlaceholderPage title="Gestion Utilisateurs" />} />
+                      <Route path="/admin/utilisateurs" element={<PlaceholderPage title="Gestion Utilisateurs" />} />
+                      <Route path="/parametres" element={<Settings />} />
+                      <Route path="/admin/parametres" element={<Settings />} />
+                      <Route path="/integrations" element={<PlaceholderPage title="Intégrations — n8n · WhatsApp · GPS" />} />
+                      <Route path="/admin/integrations" element={<PlaceholderPage title="Intégrations — n8n · WhatsApp · GPS" />} />
+                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
                 <AIFloatingBubble />
