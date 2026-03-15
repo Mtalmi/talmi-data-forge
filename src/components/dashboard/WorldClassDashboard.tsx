@@ -563,6 +563,8 @@ function AIAnalystBrief() {
 // PIPELINE FUNNEL — Horizontal Stepped Funnel
 // ═══════════════════════════════════════════════════════
 function PipelineFunnel() {
+  const navigate = useNavigate();
+  const stageRoutes = ['/ventes', '/bons', '/production', '/creances'];
   const stages = [
     { label: 'Devis', value: 6 },
     { label: 'BC Validés', value: 3 },
