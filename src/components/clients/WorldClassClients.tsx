@@ -17,6 +17,7 @@ import {
 import { PageHeader } from '@/components/layout/PageHeader';
 import { supabase } from '@/integrations/supabase/client';
 import { format, subMonths, subDays } from 'date-fns';
+import { getMoroccoToday, getMoroccoClockTime, getMoroccoDateDisplay } from '@/utils/timezone';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
