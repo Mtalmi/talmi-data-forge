@@ -828,7 +828,7 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
           fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
           transition: 'filter 150ms',
         }}
-          onClick={() => onNewMovement ? onNewMovement() : toast.info('Utilisez les boutons d\'action dans l\'en-tête pour créer un mouvement.')}
+          onClick={() => setShowMouvementModal(true)}
           onMouseEnter={e => (e.currentTarget.style.filter = 'brightness(1.15)')}
           onMouseLeave={e => (e.currentTarget.style.filter = 'brightness(1)')}
         >
