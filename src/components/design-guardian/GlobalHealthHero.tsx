@@ -19,7 +19,7 @@ export default function GlobalHealthHero() {
   const animatedScore = useAnimatedCounter(avgScore, 1500, 1);
 
   const scoreColor = avgScore >= 8.5 ? 'text-green-400' : avgScore >= 7.0 ? 'text-yellow-400' : 'text-red-400';
-  const strokeColor = avgScore >= 8.5 ? '#22c55e' : avgScore >= 7.0 ? '#FFD700' : '#ef4444';
+  const strokeColor = avgScore >= 8.5 ? '#22c55e' : avgScore >= 7.0 ? '#D4A843' : '#ef4444';
 
   const circumference = 2 * Math.PI * 54;
   const progress = (avgScore / 10) * circumference;
