@@ -88,10 +88,13 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
         client_id: client,
         formule_id: formule,
         volume_m3: vol,
-        prix_unitaire: prix,
+        prix_vente_m3: prix,
+        cut_per_m3: prix * 0.5, // estimated material cost
         total_ht: vol * prix,
+        distance_km: 15, // default
         statut: 'brouillon',
         notes: sanitize(notes) || null,
+        date_livraison_souhaitee: dateLivraison || null,
       });
 
       if (error) throw error;
