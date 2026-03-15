@@ -268,9 +268,9 @@ export default function AnalyticsDashboard() {
         {/* Distribution Tab */}
         {activeTab === "distribution" && (
           <Card className="bg-card border-border md:col-span-2">
-            <CardHeader>
-              <CardTitle>Agent Distribution by Phase</CardTitle>
-            </CardHeader>
+              <CardHeader>
+                <CardTitle>Distribution des Agents par Phase</CardTitle>
+              </CardHeader>
             <CardContent className="flex items-center justify-center">
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>

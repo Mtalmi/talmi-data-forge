@@ -112,7 +112,7 @@ export function EnergyCostAnomalyCard() {
                   <YAxis yAxisId="left" tick={{ fill: T.info, fontSize: 9 }} axisLine={false} tickLine={false} />
                   <YAxis yAxisId="right" orientation="right" tick={{ fill: T.danger, fontSize: 9 }} axisLine={false} tickLine={false} />
                   <RechartsTooltip
-                    contentStyle={{ background: '#141824', border: `1px solid ${T.cardBorder}`, borderRadius: 8, fontSize: 11 }}
+                    contentStyle={{ background: '#1A1F35', border: '1px solid #D4A843', borderRadius: 8, fontSize: 11, color: '#FFFFFF' }}
                     labelStyle={{ color: T.textPri, fontWeight: 600 }}
                   />
                   <Area yAxisId="left" type="monotone" dataKey="production" name="Production (m³)" stroke={T.info} fill={`${T.info}20`} strokeWidth={2} dot={false} />

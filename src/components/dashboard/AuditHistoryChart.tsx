@@ -169,10 +169,10 @@ export function AuditHistoryChart() {
             <div className="h-[160px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="period" tick={{ fontSize: 10 }} />
-                  <YAxis tick={{ fontSize: 10 }} domain={[0, 100]} />
-                  <Tooltip contentStyle={{ backgroundColor: 'rgba(15,23,42,0.95)', border: '1px solid rgba(212,168,67,0.3)', borderRadius: '8px', backdropFilter: 'blur(12px)', color: '#fff' }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                  <XAxis dataKey="period" tick={{ fontSize: 10, fill: '#9CA3AF' }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                  <YAxis tick={{ fontSize: 10, fill: '#9CA3AF' }} domain={[0, 100]} tickFormatter={v => `${v}%`} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                  <Tooltip contentStyle={{ backgroundColor: '#1A1F35', border: '1px solid #D4A843', borderRadius: 8, backdropFilter: 'blur(12px)', color: '#FFFFFF' }} />
                   <Line type="monotone" dataKey="score" name={ah.complianceScore} stroke="hsl(var(--primary))" strokeWidth={3} dot={{ fill: 'hsl(var(--primary))', r: 4 }} />
                 </LineChart>
               </ResponsiveContainer>

@@ -436,7 +436,7 @@ export default function Paiements() {
                         <Cell key={`cell-${index}`} fill={entry.fill} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                    <Tooltip formatter={(value: number) => formatCurrency(value)} contentStyle={{ backgroundColor: '#1A1F35', border: '1px solid #D4A843', borderRadius: 8, color: '#FFFFFF' }} />
                     <Legend />
                   </PieChart>
                 </ResponsiveContainer>

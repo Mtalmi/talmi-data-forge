@@ -326,10 +326,10 @@ export default function AnalyticsBI() {
                 <CardContent>
                   <ResponsiveContainer width="100%" height={250}>
                     <BarChart data={materialCosts}>
-                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                      <XAxis dataKey="materiau" tick={{ fontSize: 9 }} />
-                      <YAxis tickFormatter={v => `${v}%`} tick={{ fontSize: 10 }} />
-                      <Tooltip formatter={(v: number) => [`${v}%`, 'Variance']} contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', fontSize: '12px' }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                      <XAxis dataKey="materiau" tick={{ fontSize: 9, fill: '#9CA3AF' }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                      <YAxis tickFormatter={v => `${v}%`} tick={{ fontSize: 10, fill: '#9CA3AF' }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                      <Tooltip formatter={(v: number) => [`${v}%`, 'Variance']} contentStyle={{ backgroundColor: '#1A1F35', border: '1px solid #D4A843', borderRadius: 8, fontSize: '12px', color: '#FFFFFF' }} />
                       <Bar dataKey="variance_pct" name="Variance %" radius={[4, 4, 0, 0]}>
                         {materialCosts.map((entry, index) => (
                           <Cell key={index} fill={entry.alert ? 'hsl(var(--destructive))' : 'hsl(var(--primary))'} />
