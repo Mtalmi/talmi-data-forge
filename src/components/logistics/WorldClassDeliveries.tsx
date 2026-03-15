@@ -593,6 +593,22 @@ function CarteGPSTab() {
           }}>{tab.label}</button>
         ))}
       </div>
+      {/* Client tracking mini-button */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
+        <span
+          title="Lien de suivi temps réel partageable avec le client. Le client voit: statut livraison, ETA, position toupie, fraîcheur béton."
+          style={{
+            fontFamily: MONO, fontSize: 10, padding: '2px 8px', borderRadius: 4,
+            background: 'transparent', border: `1px solid ${T.gold}`, color: T.gold,
+            cursor: 'pointer', transition: 'background 200ms', whiteSpace: 'nowrap',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.1)')}
+          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+        >🔗 Suivi Client</span>
+        <span style={{ fontFamily: MONO, fontSize: 9, color: 'rgba(212,168,67,0.5)' }}>
+          atlas.tbos.app/track/{d.bl_id}
+        </span>
+      </div>
 
       {/* ═══════════ CARTE LIVE ═══════════ */}
       {subTab === 'carte' && (
