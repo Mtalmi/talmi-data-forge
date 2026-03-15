@@ -65,12 +65,12 @@ const equipmentData: Record<string, { name: string; overall: number; units: { id
   "Rabat Central": {
     name: "Rabat Central", overall: 94,
     units: [
-      { id: "MX-004", type: "Concrete Mixer", health: 95, status: "Operational", nextService: "52 days" },
-      { id: "MX-005", type: "Concrete Mixer", health: 92, status: "Operational", nextService: "40 days" },
-      { id: "PMP-002", type: "Water Pump", health: 96, status: "Operational", nextService: "58 days" },
-      { id: "CNV-003", type: "Conveyor Belt", health: 91, status: "Operational", nextService: "47 days" },
-      { id: "WGH-002", type: "Weighbridge", health: 93, status: "Operational", nextService: "50 days" },
-      { id: "SLO-001", type: "Silo System", health: 97, status: "Operational", nextService: "65 days" },
+      { id: "MX-004", type: "Malaxeur Béton", health: 95, status: "Opérationnel", nextService: "52 jours" },
+      { id: "MX-005", type: "Malaxeur Béton", health: 92, status: "Opérationnel", nextService: "40 jours" },
+      { id: "PMP-002", type: "Pompe à eau", health: 96, status: "Opérationnel", nextService: "58 jours" },
+      { id: "CNV-003", type: "Convoyeur", health: 91, status: "Opérationnel", nextService: "47 jours" },
+      { id: "WGH-002", type: "Pont-bascule", health: 93, status: "Opérationnel", nextService: "50 jours" },
+      { id: "SLO-001", type: "Système Silo", health: 97, status: "Opérationnel", nextService: "65 jours" },
     ],
   },
   "Marrakech": {
