@@ -438,7 +438,7 @@ export default function TrainingAcademy() {
                     <p className="text-xs mb-3" style={{ color: T.text2 }}>{r.reason}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-xs" style={{ color: T.text2 }}>⏱️ {r.dur}</span>
-                      <button className="text-xs font-medium" style={{ color: T.gold }}>Start Course →</button>
+                      <span className="text-xs font-medium cursor-pointer hover:opacity-80" style={{ color: T.gold }}>Start Course →</span>
                     </div>
                   </motion.div>
                 ))}
