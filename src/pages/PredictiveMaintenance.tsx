@@ -375,7 +375,7 @@ export default function PredictiveMaintenance() {
               <ResponsiveContainer width="100%" height={280}>
                 <LineChart data={vibTempData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                  <XAxis dataKey="day" tick={{ fill: "#B0B8C1", fontSize: 10 }} interval={4} />
+                  <XAxis dataKey="day" tick={{ fill: "#9CA3AF", fontSize: 10 }} interval={4} />
                   <YAxis yAxisId="left" tick={{ fill: "#B0B8C1", fontSize: 10 }} label={{ value: "Vibration (mm/s)", angle: -90, position: "insideLeft", fill: "#B0B8C1", fontSize: 10 }} />
                   <YAxis yAxisId="right" orientation="right" tick={{ fill: "#B0B8C1", fontSize: 10 }} label={{ value: "Temperature (°C)", angle: 90, position: "insideRight", fill: "#B0B8C1", fontSize: 10 }} />
                   <Tooltip content={<GoldTooltip />} />
