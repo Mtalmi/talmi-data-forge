@@ -129,7 +129,7 @@ export function useFormationProgress() {
       }
 
       setCompletedSimulations([]);
-      console.log(`[SIMULATION] User ${user.id} reset all progress`);
+      
 
       return { success: true };
     } catch (err) {
