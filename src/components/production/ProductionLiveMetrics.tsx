@@ -4,6 +4,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { format, isToday, isBefore, set, parseISO } from 'date-fns';
+import { getMoroccoHour } from '@/utils/timezone';
 
 
 interface BonProduction {
@@ -46,7 +47,7 @@ export function ProductionLiveMetrics({
   className,
 }: ProductionLiveMetricsProps) {
   const isViewingToday = isToday(selectedDate);
-  const currentHour = new Date().getHours();
+  const currentHour = getMoroccoHour();
 
   // Calculate cumulative volume metrics
   const volumeMetrics = useMemo(() => {

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, forwardRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { format, differenceInMinutes } from 'date-fns';
+import { getMoroccoToday } from '@/utils/timezone';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
 import { 
@@ -70,7 +71,7 @@ const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
   const [truckAverages, setTruckAverages] = useState<Map<string, number>>(new Map());
   const [truckDrivers, setTruckDrivers] = useState<Map<string, string>>(new Map());
   const [loading, setLoading] = useState(true);
-  const [dateFilter, setDateFilter] = useState(() => format(new Date(), 'yyyy-MM-dd'));
+  const [dateFilter, setDateFilter] = useState(() => getMoroccoToday());
   const [truckFilter, setTruckFilter] = useState<string>('all');
   const [trucks, setTrucks] = useState<{ id_camion: string; chauffeur: string | null }[]>([]);
 

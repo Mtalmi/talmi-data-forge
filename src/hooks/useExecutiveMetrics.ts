@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getMoroccoToday, getMoroccoMonthStartISO } from '@/utils/timezone';
 
 interface ExecutiveMetrics {
   leakageRate: number;
@@ -44,9 +45,8 @@ export function useExecutiveMetrics() {
   const fetchMetrics = useCallback(async () => {
     try {
       // Get date range for this month
-      const now = new Date();
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-      const today = new Date().toISOString().split('T')[0];
+      const startOfMonth = getMoroccoMonthStartISO();
+      const today = getMoroccoToday();
       
       // Fetch deliveries with real consumption data for material variance
       const { data: deliveries, error: delError } = await supabase

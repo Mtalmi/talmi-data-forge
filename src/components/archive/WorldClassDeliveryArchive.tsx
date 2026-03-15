@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getMoroccoMonthStart } from '@/utils/timezone';
 import {
   ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid,
   ResponsiveContainer, Tooltip as RechartsTooltip,
@@ -75,8 +76,7 @@ function useArchiveLiveData() {
   const [liveEntries, setLiveEntries] = useState<typeof ENTRIES>([]);
   const fetchData = useCallback(async () => {
     try {
-      const now = new Date();
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+      const startOfMonth = getMoroccoMonthStart();
       const { data: bls } = await supabase.from('bons_livraison_reels')
         .select('bl_id, date_livraison, client_id, formule_id, volume_m3, camion_assigne, chauffeur_nom, workflow_status, prix_vente_m3, temps_rotation_minutes, clients(nom_client), zones_livraison(nom_zone)')
         .gte('date_livraison', startOfMonth)

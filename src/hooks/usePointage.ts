@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { getMoroccoToday } from '@/utils/timezone';
 
 interface Employe {
   id: string;
@@ -62,7 +63,7 @@ export function usePointage() {
 
   const fetchPointages = useCallback(async (date?: string) => {
     try {
-      const targetDate = date || new Date().toISOString().split('T')[0];
+      const targetDate = date || getMoroccoToday();
       
       const { data, error } = await supabase
         .from('pointages')
@@ -79,7 +80,7 @@ export function usePointage() {
 
   const fetchRapports = useCallback(async (date?: string) => {
     try {
-      const targetDate = date || new Date().toISOString().split('T')[0];
+      const targetDate = date || getMoroccoToday();
       
       const { data, error } = await supabase
         .from('rapports_journaliers')
@@ -97,7 +98,7 @@ export function usePointage() {
   // Clock in function
   const clockIn = useCallback(async (employeId: string, source: 'mobile' | 'bureau' = 'mobile'): Promise<boolean> => {
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getMoroccoToday();
       
       // Check if already clocked in today
       const { data: existing } = await supabase
@@ -150,7 +151,7 @@ export function usePointage() {
   // Clock out function
   const clockOut = useCallback(async (employeId: string): Promise<boolean> => {
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getMoroccoToday();
       
       const { data: existing } = await supabase
         .from('pointages')
@@ -197,7 +198,7 @@ export function usePointage() {
     observations?: string
   ): Promise<boolean> => {
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getMoroccoToday();
 
       // Check if already submitted today
       const { data: existing } = await supabase
@@ -290,7 +291,7 @@ export function usePointage() {
 
   // Get today's pointage for an employee
   const getTodayPointage = useCallback((employeId: string): Pointage | undefined => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getMoroccoToday();
     return pointages.find(p => p.employe_id === employeId && p.date_pointage === today);
   }, [pointages]);
 

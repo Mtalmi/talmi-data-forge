@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { getMoroccoHour } from '@/utils/timezone';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -324,7 +325,7 @@ export function EmergencyBcDialog({
   };
 
   const isFormValid = clientId && formuleId && volume && prix && deliveryDate && !isClientBlacklisted;
-  const currentHour = new Date().getHours();
+  const currentHour = getMoroccoHour();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

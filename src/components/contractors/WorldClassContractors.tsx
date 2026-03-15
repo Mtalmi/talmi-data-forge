@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { getMoroccoToday } from '@/utils/timezone';
 import { toast } from '@/hooks/use-toast';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -1906,7 +1907,7 @@ export default function WorldClassContractors() {
       {appelsOffres && createPortal(
         (() => {
           const closeAo = () => { setAppelsOffres(null); setAoForm({ titre: '', description: '', specialite: '', budget_max: '', date_limite: '', priorite: 'normale', chantier: '', duree_estimee: '' }); setAoLoading(false); setAoError(''); setAoSuccess(false); };
-          const todayStr = new Date().toISOString().split('T')[0];
+          const todayStr = getMoroccoToday();
           const allFilled = aoForm.titre && aoForm.specialite && aoForm.budget_max && aoForm.date_limite;
 
           const inputStyle: React.CSSProperties = { background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '10px 14px', color: '#fff', fontSize: 14, width: '100%', boxSizing: 'border-box' as const, outline: 'none', fontFamily: "'DM Sans', sans-serif" };

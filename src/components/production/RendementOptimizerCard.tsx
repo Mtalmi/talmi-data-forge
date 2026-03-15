@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Sparkles, TrendingDown, TrendingUp } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfDay, endOfDay, subDays, differenceInMinutes } from 'date-fns';
+import { getHourInMorocco } from '@/utils/timezone';
 
 interface RendementData {
   producedVolume: number;
@@ -66,12 +67,12 @@ function useProdRendement() {
           if (!isNaN(h)) activeHoursSet.add(h);
         }
         if (bl.production_batch_time) {
-          const h = new Date(bl.production_batch_time).getHours();
+          const h = getHourInMorocco(bl.production_batch_time);
           activeHoursSet.add(h);
         }
       });
       (todayBatches || []).forEach((b: any) => {
-        if (b.created_at) activeHoursSet.add(new Date(b.created_at).getHours());
+        if (b.created_at) activeHoursSet.add(getHourInMorocco(b.created_at));
       });
 
       setData({

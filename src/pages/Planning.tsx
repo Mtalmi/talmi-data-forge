@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { format, addHours, parseISO, isWithinInterval, differenceInMinutes, startOfMonth, endOfMonth } from 'date-fns';
+import { getMoroccoToday } from '@/utils/timezone';
 
 import { 
   Clock, 
@@ -176,7 +177,7 @@ export default function Planning() {
     limite: number;
   } | null>(null);
   // Initialize date: always default to today unless explicit date param provided
-  const todayFormatted = format(new Date(), 'yyyy-MM-dd');
+  const todayFormatted = getMoroccoToday();
   const urlDate = searchParams.get('date');
   const [selectedDate, setSelectedDate] = useState(urlDate || todayFormatted);
 

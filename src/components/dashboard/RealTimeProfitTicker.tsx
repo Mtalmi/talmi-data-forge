@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nContext';
 import { TrendingUp, TrendingDown, Minus, RefreshCw, DollarSign, Fuel, Truck } from 'lucide-react';
 import { format } from 'date-fns';
+import { getMoroccoToday } from '@/utils/timezone';
 
 interface ProfitData {
   totalRevenue: number;
@@ -32,7 +33,7 @@ export function RealTimeProfitTicker() {
 
   const fetchProfitData = useCallback(async () => {
     try {
-      const today = format(new Date(), 'yyyy-MM-dd');
+      const today = getMoroccoToday();
       
       // Fetch today's invoiced revenue
       const { data: invoices } = await supabase

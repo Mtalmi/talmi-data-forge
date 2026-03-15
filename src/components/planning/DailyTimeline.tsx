@@ -7,6 +7,7 @@ import {
 import { Clock, Truck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nContext';
+import { getMoroccoHour } from '@/utils/timezone';
 
 interface BonLivraison {
   bl_id: string;
@@ -92,8 +93,8 @@ export function DailyTimeline({
     });
   }, [timelineBons]);
 
-  const currentHour = new Date().getHours();
-  const currentMinute = new Date().getMinutes();
+  const currentHour = getMoroccoHour();
+  const currentMinute = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Casablanca', minute: 'numeric' }).format(new Date()), 10);
   const nowPosition = ((currentHour - startHour) + (currentMinute / 60)) / (endHour - startHour) * 100;
   const showNowLine = nowPosition >= 0 && nowPosition <= 100;
 

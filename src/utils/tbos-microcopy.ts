@@ -3,6 +3,7 @@
  * Centralized personality-driven messages for the entire platform.
  * fontFamily: 'ui-monospace' throughout. Emojis sparingly — only in greetings, streaks, and tips.
  */
+import { getMoroccoHour, getMoroccoMonth, getMoroccoDay } from '@/utils/timezone';
 
 /* ─── GREETING BASED ON SCORE ─── */
 export function getScoreGreeting(greeting: string, name: string, score: number, alertCount: number): string {
@@ -67,7 +68,7 @@ export function getShutdownUrgency(daysUntil: number, costPerDay?: string): Shut
 
 /* ─── TIME-CONTEXTUAL SUGGESTIONS ─── */
 export function getTimeContextualTip(): string {
-  const hour = new Date().getHours();
+  const hour = getMoroccoHour();
   if (hour < 8)  return 'Priorité du matin: vérifier les niveaux de stock et confirmer les premières livraisons.';
   if (hour < 12) return 'Production en cours. Surveillez le pic de cadence attendu entre 10h et 14h.';
   if (hour < 14) return 'Mi-journée. Bon moment pour vérifier les paiements et relancer les devis en attente.';
@@ -77,8 +78,8 @@ export function getTimeContextualTip(): string {
 
 /* ─── SEASONAL CONTEXTUAL TIPS ─── */
 export function getSeasonalTip(market: 'mena' | 'eu' | 'us', tempC?: number): string | null {
-  const month = new Date().getMonth(); // 0-indexed
-  const day = new Date().getDate();
+  const month = getMoroccoMonth(); // 0-indexed
+  const day = getMoroccoDay();
 
   if (market === 'mena') {
     // Ramadan window (approximate: mid-March to mid-April)

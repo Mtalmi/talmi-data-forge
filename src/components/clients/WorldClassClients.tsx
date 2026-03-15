@@ -17,6 +17,7 @@ import {
 import { PageHeader } from '@/components/layout/PageHeader';
 import { supabase } from '@/integrations/supabase/client';
 import { format, subMonths, subDays } from 'date-fns';
+import { getMoroccoToday, getMoroccoClockTime, getMoroccoDateDisplay } from '@/utils/timezone';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -61,9 +62,9 @@ function useFadeIn(delay = 0) {
 }
 
 function useLiveClock() {
-  const [time, setTime] = useState(format(new Date(), 'HH:mm:ss'));
+  const [time, setTime] = useState(getMoroccoClockTime());
   useEffect(() => {
-    const id = setInterval(() => setTime(format(new Date(), 'HH:mm:ss')), 1000);
+    const id = setInterval(() => setTime(getMoroccoClockTime()), 1000);
     return () => clearInterval(id);
   }, []);
   return time;
@@ -1633,7 +1634,7 @@ export default function WorldClassClients() {
 
         {/* Footer */}
         <footer style={{ borderTop: '1px solid rgba(245, 158, 11, 0.08)', paddingTop: 24, paddingBottom: 24, display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 40 }}>
-          <span style={{ color: '#4B5563', fontSize: 12, fontFamily: MONO }}>TBOS Clients v2.0 — Données live • {format(new Date(), 'dd/MM/yyyy')}</span>
+          <span style={{ color: '#4B5563', fontSize: 12, fontFamily: MONO }}>TBOS Clients v2.0 — Données live • {getMoroccoDateDisplay()}</span>
         </footer>
       </div>
     </div>

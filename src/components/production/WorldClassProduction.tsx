@@ -18,6 +18,7 @@ import { useCountUp } from '@/hooks/useCountUp';
 import { MetricTooltip } from '@/components/ui/MetricTooltip';
 import { supabase } from '@/integrations/supabase/client';
 import { format, startOfDay, endOfDay, startOfWeek, endOfWeek } from 'date-fns';
+import { getMoroccoToday } from '@/utils/timezone';
 import BatchesTab from './BatchesTab';
 import { PassationButton } from '@/components/ui/PassationButton';
 import RecettesTab from './RecettesTab';
@@ -204,7 +205,7 @@ function useProductionLiveData() {
   const [weekBons, setWeekBons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const today = format(new Date(), 'yyyy-MM-dd');
+  const today = getMoroccoToday();
   const weekStart = format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
   const weekEnd = format(endOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
 
@@ -493,7 +494,7 @@ export default function WorldClassProduction() {
   // ── Derived KPIs (with realistic fallbacks when DB is empty) ──
   const kpis = useMemo(() => {
     // Use production_batches as primary source (seeded data)
-    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    const todayStr = getMoroccoToday();
     const todayBatches = batches.filter(b => b.created_at?.startsWith(todayStr));
     const completedBatches = todayBatches.filter(b => b.status === 'complete' || b.status === 'decharge');
     const inProgressBatches = todayBatches.filter(b => b.status === 'en_cours');
@@ -544,7 +545,7 @@ export default function WorldClassProduction() {
     for (let h = 6; h <= 18; h++) hourMap[`${h}h`] = 0;
 
     // Primary: use production_batches completed_at/created_at
-    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    const todayStr = getMoroccoToday();
     const todayBatches = batches.filter(b => b.created_at?.startsWith(todayStr) && b.status === 'complete');
     if (todayBatches.length > 0) {
       todayBatches.forEach(b => {

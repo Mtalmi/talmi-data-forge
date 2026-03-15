@@ -6,6 +6,7 @@ import { Factory, CheckCircle, Clock, AlertTriangle, Link2 } from 'lucide-react'
 import { useI18n } from '@/i18n/I18nContext';
 import { format } from 'date-fns';
 import { getDateLocale } from '@/i18n/dateLocale';
+import { getMoroccoToday } from '@/utils/timezone';
 
 interface WS7Batch {
   id: string;
@@ -27,7 +28,7 @@ export function WS7LiveFeedWidget() {
   const [todayCount, setTodayCount] = useState(0);
 
   const fetchData = async () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getMoroccoToday();
 
     const [batchesRes, logRes, countRes] = await Promise.all([
       supabase

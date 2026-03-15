@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getMoroccoToday } from '@/utils/timezone';
 import { useNavigate } from 'react-router-dom';
 import {
   CheckCircle2,
@@ -77,7 +78,7 @@ export function TodaysPipelineWidget() {
 
   useEffect(() => {
     const fetchToday = async () => {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getMoroccoToday();
       const { data: bls } = await supabase
         .from('bons_livraison_reels')
         .select('volume_m3, workflow_status')

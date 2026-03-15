@@ -24,6 +24,7 @@ import { Shield, Map as MapIcon, Users, TrendingDown, Minus, Leaf } from 'lucide
 import { supabase } from '@/integrations/supabase/client';
 import { format, startOfWeek, endOfWeek, subDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { getMoroccoHour, getMoroccoToday } from '@/utils/timezone';
 
 // ─────────────────────────────────────────────────────
 // WhatsApp/Call action buttons with state transitions
@@ -2094,7 +2095,7 @@ export default function WorldClassDeliveries() {
   const enRoute = activePipeline.filter(b => b.workflow_status === 'production').length;
   const planned = activePipeline.filter(b => b.workflow_status === 'planification').length;
 
-  const hoursLeft = Math.max(1, 18 - new Date().getHours());
+  const hoursLeft = Math.max(1, 18 - getMoroccoHour());
   const enRouteRisk = Math.min(100, Math.round((45 / (hoursLeft * 60)) * 100));
   const planRisk = Math.round(planned * 5);
   const deliveredRisk = totalDeliveries > 0 ? Math.max(0, 100 - Math.round((delivered / totalDeliveries) * 100)) : 0;

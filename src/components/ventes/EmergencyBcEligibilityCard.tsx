@@ -6,6 +6,7 @@ import { useTightTimes } from '@/hooks/useTightTimes';
 import { format } from 'date-fns';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
+import { getMoroccoHour } from '@/utils/timezone';
 
 interface EmergencyBcEligibilityCardProps {
   deliveryDate: Date | undefined;
@@ -43,7 +44,7 @@ export function EmergencyBcEligibilityCard({ deliveryDate, onEligibilityChange }
 
   if (!deliveryDate) return null;
 
-  const currentHour = new Date().getHours();
+  const currentHour = getMoroccoHour();
   const isAfter18h = currentHour >= 18;
   const today = new Date();
   const isSameDay = deliveryDate.toDateString() === today.toDateString();

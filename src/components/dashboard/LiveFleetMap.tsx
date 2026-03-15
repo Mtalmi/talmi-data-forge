@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { getMoroccoToday } from '@/utils/timezone';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -194,7 +195,7 @@ export function LiveFleetMap() {
 
   const fetchFleetPositions = useCallback(async () => {
     try {
-      const today = format(new Date(), 'yyyy-MM-dd');
+      const today = getMoroccoToday();
 
       // Get all trucks
       const { data: flotte, error: flotteError } = await supabase

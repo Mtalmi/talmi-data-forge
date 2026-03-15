@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getMoroccoToday } from '@/utils/timezone';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
@@ -53,7 +54,7 @@ export function QuickActionFAB() {
 
   const fetchPendingTasks = async () => {
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getMoroccoToday();
       const quickTasks: QuickTask[] = [];
 
       const { data: productionData } = await supabase

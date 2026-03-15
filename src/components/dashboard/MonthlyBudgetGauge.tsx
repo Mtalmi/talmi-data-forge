@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { getMoroccoToday, getMoroccoYear, getMoroccoMonth, getMoroccoDay } from '@/utils/timezone';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
@@ -40,8 +41,9 @@ export function MonthlyBudgetGauge() {
 
   const fetchBudgetStats = useCallback(async () => {
     try {
-      const now = new Date();
-      const monthYear = now.toISOString().slice(0, 7);
+      const year = getMoroccoYear();
+      const month = getMoroccoMonth();
+      const monthYear = `${year}-${String(month + 1).padStart(2, '0')}`;
       
       // Get monthly cap data
       const { data: capData } = await supabase
@@ -55,8 +57,8 @@ export function MonthlyBudgetGauge() {
       const exceeded = capData?.cap_exceeded || false;
       
       // Calculate days remaining in month
-      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-      const daysRemaining = lastDay.getDate() - now.getDate();
+      const lastDay = new Date(year, month + 1, 0);
+      const daysRemaining = lastDay.getDate() - getMoroccoDay();
 
       setStats({
         spent,
