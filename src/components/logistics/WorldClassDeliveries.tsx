@@ -1600,7 +1600,7 @@ function IntelligenceIATab() {
       {/* ─── AGENT 2: OPTIMISEUR DE ROUTES ─── */}
       <Card style={{ borderTop: `2px solid ${T.success}` }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
-          <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: T.gold, letterSpacing: '2px' }}>✦ AGENT IA: OPTIMISEUR DE ROUTES</span>
+          <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: T.gold, letterSpacing: '0.15em' }}>✦ AGENT IA: OPTIMISEUR DE ROUTES</span>
           <IABadge />
         </div>
 
