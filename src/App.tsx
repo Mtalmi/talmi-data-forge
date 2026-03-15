@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import { Navigate } from "react-router-dom";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { OfflineIndicator } from "@/components/layout/OfflineIndicator";
 import { Toaster } from "@/components/ui/toaster";
@@ -277,7 +278,7 @@ const App = () => (
                      <Route path="/failure-fiesta" element={<FailureFiesta />} />
                      <Route path="/boundary-breaker" element={<BoundaryBreaker />} />
                       {/* Route aliases for deep links */}
-                      {/* Alias removed — canonical route is /bons */}
+                      <Route path="/bons-commande" element={<Navigate to="/bons" replace />} />
                       {/* Finance placeholder routes */}
                       <Route path="/tresorerie" element={<PlaceholderPage title="Trésorerie" />} />
                       <Route path="/finance/tresorerie" element={<PlaceholderPage title="Trésorerie" />} />
