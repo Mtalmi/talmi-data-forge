@@ -94,8 +94,8 @@ export function TaxComplianceCalendar({ obligations, onPayObligation }: TaxCompl
                     {ob.status === 'paid' ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : ob.status === 'overdue' ? <XCircle className="h-4 w-4 text-destructive" /> : <Clock className="h-4 w-4 text-amber-500" />}
                   </div>
                   <p className="font-medium text-sm">{ob.name}</p>
-                  <p className="font-bold mt-1">{Number(ob.amount).toLocaleString()} DH</p>
-                  {ob.status === 'overdue' && <p className="text-xs text-destructive mt-1">+{Number(ob.penalty_amount).toLocaleString()} DH {tc.colPenalty.toLowerCase()}</p>}
+                  <p className="font-bold mt-1">{Number(ob.amount).toLocaleString('fr-FR')} DH</p>
+                  {ob.status === 'overdue' && <p className="text-xs text-destructive mt-1">+{Number(ob.penalty_amount).toLocaleString('fr-FR')} DH {tc.colPenalty.toLowerCase()}</p>}
                   {ob.status !== 'paid' && (
                     <Button variant={ob.status === 'overdue' ? 'destructive' : 'outline'} size="sm" className="w-full mt-2" onClick={() => onPayObligation(ob.id)}>{tc.pay}</Button>
                   )}
