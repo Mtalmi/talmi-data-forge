@@ -48,7 +48,7 @@ function GoldTooltip({ active, payload, label }: any) {
 }
 
 /* ─── data ─── */
-const plants = ["All Plants", "Casablanca North", "Rabat Central", "Marrakech", "Tangier"];
+const plants = ["Toutes les Centrales", "Casablanca Nord", "Rabat Central", "Marrakech", "Tanger"];
 
 const equipmentData: Record<string, { name: string; overall: number; units: { id: string; type: string; health: number; status: string; nextService: string }[] }> = {
   "Casablanca North": {
