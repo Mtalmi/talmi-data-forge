@@ -261,9 +261,9 @@ export function AssetDetailDialog({ asset, open, onOpenChange }: AssetDetailDial
                             <TableRow key={entry.id} className={isCurrent ? 'bg-primary/5' : ''}>
                               <TableCell className="font-mono">{entry.period_number}</TableCell>
                               <TableCell>{format(new Date(entry.period_date), 'MMM yyyy', { locale: calendarLocale })}</TableCell>
-                              <TableCell className="text-right font-mono">{entry.depreciation_amount.toLocaleString()} DH</TableCell>
-                              <TableCell className="text-right font-mono text-orange-500">{entry.accumulated_depreciation.toLocaleString()} DH</TableCell>
-                              <TableCell className="text-right font-mono text-green-500">{entry.net_book_value.toLocaleString()} DH</TableCell>
+                              <TableCell className="text-right font-mono">{entry.depreciation_amount.toLocaleString('fr-FR')} DH</TableCell>
+                              <TableCell className="text-right font-mono text-orange-500">{entry.accumulated_depreciation.toLocaleString('fr-FR')} DH</TableCell>
+                              <TableCell className="text-right font-mono text-green-500">{entry.net_book_value.toLocaleString('fr-FR')} DH</TableCell>
                               <TableCell>
                                 {isCurrent ? (
                                   <Badge variant="default">{dt.current}</Badge>
