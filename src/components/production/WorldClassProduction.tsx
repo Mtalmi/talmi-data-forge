@@ -276,10 +276,15 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
       }}>
         <div className="flex justify-between items-start">
           <div className="flex-1">
-            <p style={{
-              fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em',
-              color: '#9CA3AF', fontWeight: 600, marginBottom: 10,
-            }}>{label}</p>
+            <div className="flex items-center justify-between">
+              <p style={{
+                fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em',
+                color: '#9CA3AF', fontWeight: 600, marginBottom: 10,
+              }}>{label}</p>
+              {tooltipTitle && tooltipBody && (
+                <MetricTooltip title={tooltipTitle}>{tooltipBody}</MetricTooltip>
+              )}
+            </div>
             <p style={{
               fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 30, fontWeight: 200,
               color: '#fff', letterSpacing: '-0.02em', lineHeight: 1,
