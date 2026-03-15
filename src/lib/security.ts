@@ -2,78 +2,91 @@
  * TITANIUM SHIELD - Security Hardening Utilities
  * 
  * This module provides comprehensive security measures including:
- * 1. Input sanitization (XSS/SQL injection prevention)
+ * 1. Input sanitization (XSS prevention — strips dangerous HTML/JS patterns)
  * 2. Session timeout management
  * 3. HTTPS enforcement
  * 4. Secure validation schemas
+ * 
+ * NOTE: SQL injection is NOT handled here because Supabase SDK uses
+ * parameterized queries, making SQL injection impossible at the application layer.
+ * Previous sanitizeSqlInput was actively corrupting legitimate data (O'Brien → OBrien,
+ * & → &amp without semicolon, B25/B30 → garbled encoding).
  */
 
 import { z } from 'zod';
 
 // ============================================
-// INPUT SANITIZATION - XSS & SQL Injection Prevention
+// INPUT SANITIZATION - XSS Prevention
 // ============================================
 
 /**
- * Sanitizes a string to prevent XSS attacks by encoding HTML entities
+ * Strips dangerous HTML/JS patterns from user input.
+ * Does NOT encode HTML entities — React handles that on render.
+ * Only removes actual attack vectors: script tags, event handlers, javascript: URIs.
  */
 export function sanitizeHtml(input: string): string {
   if (!input) return '';
   return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;')
-    .replace(/\//g, '&#x2F;');
+    // Remove script tags and their content
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    // Remove all HTML tags (but keep content)
+    .replace(/<[^>]*>/g, '')
+    // Remove javascript: protocol
+    .replace(/javascript\s*:/gi, '')
+    // Remove event handler attributes (even outside tags, for safety)
+    .replace(/\bon\w+\s*=\s*["'][^"']*["']/gi, '')
+    .replace(/\bon\w+\s*=\s*\S+/gi, '');
 }
 
 /**
- * Removes potentially dangerous SQL injection patterns
+ * @deprecated Supabase SDK uses parameterized queries — SQL injection is not possible.
+ * Kept only for backward compatibility; now just trims input.
  */
 export function sanitizeSqlInput(input: string): string {
   if (!input) return '';
-  // Remove common SQL injection patterns
-  return input
-    .replace(/['";\\]/g, '') // Remove quotes, semicolons, backslashes
-    .replace(/--/g, '') // Remove SQL comments
-    .replace(/\/\*/g, '') // Remove block comment start
-    .replace(/\*\//g, '') // Remove block comment end
-    .replace(/\b(DROP|DELETE|INSERT|UPDATE|SELECT|UNION|ALTER|CREATE|TRUNCATE|EXEC|EXECUTE)\b/gi, '') // Remove SQL keywords
-    .trim();
+  return input.trim();
 }
 
 /**
- * Combined sanitization for user inputs (XSS + SQL)
+ * Combined sanitization for user inputs (XSS only).
+ * Safe for all legitimate text: accents, apostrophes, ampersands, slashes,
+ * Arabic/RTL text, emoji, n° symbol, em dashes, etc.
  */
 export function sanitizeInput(input: string): string {
   if (!input) return '';
-  return sanitizeSqlInput(sanitizeHtml(input.trim()));
+  return sanitizeHtml(input.trim());
 }
 
 /**
- * Validates and sanitizes a reason/note field
+ * Validates and sanitizes a reason/note field.
+ * Strips dangerous patterns while preserving legitimate punctuation.
  */
 export function sanitizeReason(input: string): string {
   if (!input) return '';
-  // Allow alphanumeric, spaces, and common punctuation only
   return input
-    .replace(/[<>{}[\]\\]/g, '') // Remove potentially dangerous characters
-    .replace(/javascript:/gi, '') // Remove javascript protocol
-    .replace(/on\w+=/gi, '') // Remove event handlers
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<[^>]*>/g, '') // Strip HTML tags
+    .replace(/javascript\s*:/gi, '')
+    .replace(/\bon\w+\s*=\s*["'][^"']*["']/gi, '')
+    .replace(/\bon\w+\s*=\s*\S+/gi, '')
     .trim()
     .slice(0, 500); // Limit length
 }
 
 /**
- * Validates and sanitizes a client/company name
+ * Validates and sanitizes a client/company name.
+ * Allows: accents, apostrophes (O'Brien), ampersands (Béton & Fils),
+ * em dashes, parentheses, n° symbol, slashes (B25/B30), Arabic text, emoji.
+ * Strips: HTML tags, script injection, event handlers.
  */
 export function sanitizeClientName(input: string): string {
   if (!input) return '';
   return input
-    .replace(/[<>{}[\]\\;'"]/g, '') // Remove dangerous characters
-    .replace(/javascript:/gi, '')
-    .replace(/on\w+=/gi, '')
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<[^>]*>/g, '') // Strip HTML tags
+    .replace(/javascript\s*:/gi, '')
+    .replace(/\bon\w+\s*=\s*["'][^"']*["']/gi, '')
+    .replace(/\bon\w+\s*=\s*\S+/gi, '')
     .trim()
     .slice(0, 200); // Limit length
 }
@@ -90,9 +103,9 @@ export const rollbackReasonSchema = z.object({
     .string()
     .min(10, 'Le motif doit contenir au moins 10 caractères')
     .max(500, 'Le motif ne peut pas dépasser 500 caractères')
-    .refine((val) => !/[<>{}[\]\\]/.test(val), 'Caractères non autorisés détectés')
-    .refine((val) => !/javascript:/i.test(val), 'Contenu non autorisé')
-    .refine((val) => !/on\w+=/i.test(val), 'Contenu non autorisé')
+    .refine((val) => !/<script/i.test(val), 'Contenu non autorisé')
+    .refine((val) => !/javascript\s*:/i.test(val), 'Contenu non autorisé')
+    .refine((val) => !/\bon\w+\s*=/i.test(val), 'Contenu non autorisé')
     .transform((val) => sanitizeReason(val)),
 });
 
@@ -104,7 +117,7 @@ export const clientNameSchema = z.object({
     .string()
     .min(2, 'Le nom doit contenir au moins 2 caractères')
     .max(200, 'Le nom ne peut pas dépasser 200 caractères')
-    .refine((val) => !/[<>{}[\]\\;'"]/.test(val), 'Caractères non autorisés')
+    .refine((val) => !/<script/i.test(val), 'Caractères non autorisés')
     .transform((val) => sanitizeClientName(val)),
 });
 
