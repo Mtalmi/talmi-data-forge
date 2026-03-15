@@ -101,6 +101,22 @@ export default function Dashboard() {
   const [cameraTime, setCameraTime] = useState('');
   const [demoMarket, setDemoMarket] = useState<'ma' | 'eu' | 'us'>('ma');
 
+  // ─── Read location state for tab activation ───
+  useEffect(() => {
+    const state = location.state as { activeTab?: string; scrollTo?: string } | null;
+    if (state?.activeTab) {
+      setActiveTab(state.activeTab as any);
+      // Clear the state so back/forward doesn't re-trigger
+      window.history.replaceState({}, '');
+    }
+    if (state?.scrollTo === 'rapports') {
+      setTimeout(() => {
+        const el = document.querySelector('[data-section="rapports"]');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
+    }
+  }, [location.state]);
+
   // Camera ticking timestamp
   useEffect(() => {
     const tick = () => {
