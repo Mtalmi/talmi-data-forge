@@ -327,7 +327,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
                       <button
                         key={item.url}
                         onClick={() => handleNav(item.url)}
-                        className="relative w-full flex items-center text-left transition-all duration-200 group cursor-pointer"
+                        className="relative w-full flex items-center text-left transition-all duration-200 group cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4A843]"
                         style={{
                           padding: '8px 12px 8px 20px',
                           marginBottom: 2,
