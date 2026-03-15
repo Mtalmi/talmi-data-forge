@@ -98,6 +98,7 @@ export function FacturesTable({
 
   const [factures, setFactures] = useState<Facture[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFacture, setSelectedFacture] = useState<Facture | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
