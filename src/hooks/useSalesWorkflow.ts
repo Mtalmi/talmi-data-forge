@@ -128,7 +128,8 @@ export function useSalesWorkflow() {
             client:clients(nom_client, adresse, telephone),
             formule:formules_theoriques(designation)
           `)
-          .order('created_at', { ascending: false }),
+          .order('created_at', { ascending: false })
+          .limit(500),
         // Fetch linked BLs for each BC to show workflow status
         supabase
           .from('bons_livraison_reels')
