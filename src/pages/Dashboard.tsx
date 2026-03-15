@@ -1368,7 +1368,7 @@ export default function Dashboard() {
                       lineHeight: 1, letterSpacing: '-0.02em',
                       textShadow: '0 0 20px rgba(34,197,94,0.15)',
                     }}>
-                      {uf.rawCurrency(24200).toLocaleString('fr-FR')}
+                      {uf.rawCurrency(demoData.profitNet.total).toLocaleString('fr-FR')}
                     </span>
                     <span style={{ fontFamily: MONO, fontWeight: 300, fontSize: 18, color: '#9CA3AF' }}>{uf.currSym}</span>
                   </div>
