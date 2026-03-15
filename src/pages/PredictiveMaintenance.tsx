@@ -219,11 +219,11 @@ export default function PredictiveMaintenance() {
         {/* KPI Strip */}
         <motion.div variants={stagger} initial="hidden" animate="show" className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {[
-            { label: "Equipment Monitored", val: 38, suffix: " units", sub: "Across 4 plants", icon: "🏭", border: "#FFD700" },
-            { label: "Health Score", val: 87, suffix: "/100", sub: "▲ 3pts this month", icon: "💚", border: "#10B981" },
+            { label: "Equipment Monitored", val: 38, suffix: " units", sub: "Across 4 plants", icon: "🏭", border: "#D4A843" },
+            { label: "Health Score", val: 87, suffix: "/100", sub: "▲ 3pts this month", icon: "💚", border: "#22C55E" },
             { label: "Predicted Failures (30d)", val: 3, suffix: "", sub: "Action required", icon: "⚠️", border: "#F59E0B" },
-            { label: "Downtime Prevented", val: 284, prefix: "$", suffix: "K", sub: "This quarter", icon: "💰", border: "#FFD700" },
-            { label: "Maintenance Due", val: 7, suffix: " units", sub: "Next 14 days", icon: "🔧", border: "#3B82F6" },
+            { label: "Downtime Prevented", val: 284, prefix: "$", suffix: "K", sub: "This quarter", icon: "💰", border: "#D4A843" },
+            { label: "Maintenance Due", val: 7, suffix: " units", sub: "Next 14 days", icon: "🔧", border: "#E8C96A" },
           ].map((k, i) => (
             <motion.div key={i} variants={fadeUp} className="rounded-xl border border-[#2A3545] bg-[#161D26] p-4 hover:border-[#FFD700]/50 hover:-translate-y-0.5 transition-all duration-200" style={{ borderTop: `3px solid ${k.border}`, boxShadow: "0 4px 24px rgba(0,0,0,0.5)" }}>
               <div className="flex items-center justify-between mb-2">
