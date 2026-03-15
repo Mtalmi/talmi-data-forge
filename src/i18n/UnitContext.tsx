@@ -167,6 +167,8 @@ const fallback: UnitContextValue = {
   temp: (v) => v,
   pressure: (v) => v,
   distance: (v) => v,
+  speed: (v) => v,
+  slump: (v) => v,
   grade: (g) => g,
   norm: (n) => n,
   isConverted: false,
