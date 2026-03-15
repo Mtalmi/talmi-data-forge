@@ -35,7 +35,7 @@ export function RelanceIntelligenteCard() {
         <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 10, padding: '16px 18px', border: '1px solid rgba(255,255,255,0.06)' }}>
           <p style={{ color: '#9CA3AF', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, fontFamily: mono }}>Devis en Retard</p>
           <span style={{ fontFamily: mono, fontSize: 42, fontWeight: 100, color: '#F59E0B' }}>{retardVal}</span>
-          <p style={{ fontSize: 10, color: '#9CA3AF', fontFamily: mono, marginTop: 4 }}>&gt; 30 jours sans réponse</p>
+          <p style={{ fontSize: 12, color: '#9CA3AF', fontFamily: mono, marginTop: 4 }}>&gt; 30 jours sans réponse</p>
         </div>
         <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 10, padding: '16px 18px', border: '1px solid rgba(255,255,255,0.06)' }}>
           <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, fontFamily: mono }}>Revenu à Risque</p>
