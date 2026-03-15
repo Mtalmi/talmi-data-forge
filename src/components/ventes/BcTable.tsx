@@ -403,7 +403,7 @@ export function BcTable({
             className="gap-2 text-[13px] cursor-pointer rounded-md px-3 py-2 hover:bg-white/[0.06]"
             onClick={(e) => e.stopPropagation()}
           >
-            <span>💬</span>
+            <MessageCircle className="h-3.5 w-3.5" />
             <span className="flex-1">Message Client</span>
           </DropdownMenuItem>
 
@@ -412,7 +412,7 @@ export function BcTable({
             onClick={(e) => { e.stopPropagation(); onCopyBc(bc); }}
             className="gap-2 text-[13px] cursor-pointer rounded-md px-3 py-2 hover:bg-white/[0.06]"
           >
-            <span>📋</span>
+            <Copy className="h-3.5 w-3.5" />
             Dupliquer
           </DropdownMenuItem>
 
@@ -464,7 +464,7 @@ export function BcTable({
             <TableHead className="text-right" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.totalHt}</TableHead>
             <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.status}</TableHead>
             <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Suivi</TableHead>
-            <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>📎</TableHead>
+            <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Docs</TableHead>
             <TableHead className="text-center"></TableHead>
             <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Suivi Client</TableHead>
           </TableRow>
@@ -615,8 +615,8 @@ export function BcTable({
                     return (
                       <Tooltip>
                         <TooltipTrigger>
-                          <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: docCount > 0 ? '#D4A843' : '#EF4444', cursor: 'pointer' }}>
-                            📎 {docCount}
+                          <span className="flex items-center gap-1" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: docCount > 0 ? '#D4A843' : '#EF4444', cursor: 'pointer' }}>
+                            <FileText className="h-3 w-3" /> {docCount}
                           </span>
                         </TooltipTrigger>
                         <TooltipContent>

@@ -1,15 +1,16 @@
 import { CONSISTENCY_MATRIX } from './audit-data';
+import { CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
 
 function statusIcon(st: 'ok' | 'warn' | 'fail') {
-  if (st === 'ok') return <span className="text-green-400 font-bold">✅</span>;
-  if (st === 'warn') return <span className="text-yellow-400 font-bold">⚠️</span>;
-  return <span className="text-red-400 font-bold">🔴</span>;
+  if (st === 'ok') return <CheckCircle className="h-4 w-4 text-success" />;
+  if (st === 'warn') return <AlertTriangle className="h-4 w-4 text-warning" />;
+  return <XCircle className="h-4 w-4 text-destructive" />;
 }
 
 function statusLabel(st: 'ok' | 'warn' | 'fail') {
-  if (st === 'ok') return <span className="text-green-400 text-xs">Cohérent</span>;
-  if (st === 'warn') return <span className="text-yellow-400 text-xs">2 variants</span>;
-  return <span className="text-red-400 text-xs">Incohérent</span>;
+  if (st === 'ok') return <span className="text-success text-xs">Cohérent</span>;
+  if (st === 'warn') return <span className="text-warning text-xs">2 variants</span>;
+  return <span className="text-destructive text-xs">Incohérent</span>;
 }
 
 export default function ConsistencyMatrix() {

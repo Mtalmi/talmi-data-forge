@@ -686,7 +686,7 @@ export default function Dashboard() {
                   onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                   onClick={() => setBellOpen(false)}
                 >
-                  <span style={{ fontSize: 12, marginTop: 2, flexShrink: 0 }}>🔴</span>
+                  <span className="h-2.5 w-2.5 rounded-full bg-destructive mt-1.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div style={{ fontSize: 13, fontWeight: 500, color: '#fff', lineHeight: 1.4 }}>Alerte Stock: Niveau eau critique — commander avant le 18 mars</div>
                     <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 3 }}>il y a 2h</div>
@@ -701,7 +701,7 @@ export default function Dashboard() {
                   onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                   onClick={() => setBellOpen(false)}
                 >
-                  <span style={{ fontSize: 12, marginTop: 2, flexShrink: 0 }}>🟡</span>
+                  <span className="h-2.5 w-2.5 rounded-full bg-warning mt-1.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div style={{ fontSize: 13, fontWeight: 500, color: '#fff', lineHeight: 1.4 }}>Devis DEV-2602-316 — relance client recommandée par l'IA</div>
                     <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 3 }}>il y a 4h</div>
@@ -716,7 +716,7 @@ export default function Dashboard() {
                   onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                   onClick={() => setBellOpen(false)}
                 >
-                  <span style={{ fontSize: 12, marginTop: 2, flexShrink: 0 }}>🟢</span>
+                  <span className="h-2.5 w-2.5 rounded-full bg-success mt-1.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div style={{ fontSize: 13, fontWeight: 500, color: '#fff', lineHeight: 1.4 }}>Livraison BL-2026-0312 — Ciments & Béton du Sud livré avec succès</div>
                     <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 3 }}>il y a 6h</div>

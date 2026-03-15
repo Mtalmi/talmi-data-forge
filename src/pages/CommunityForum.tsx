@@ -104,9 +104,9 @@ function CategoryBadge({ category }: { category: Category }) {
 
 function StatusBadge({ solved, hot, pinned }: { solved: boolean; hot: boolean; pinned: boolean }) {
   if (pinned) return <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: `${T.gold}20`, color: T.gold }}><Pin size={10} /> PINNED</span>;
-  if (solved) return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: `${T.success}20`, color: T.success }}>✅ SOLVED</span>;
+  if (solved) return <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: `${T.success}20`, color: T.success }}><CheckCircle size={10} /> SOLVED</span>;
   if (hot) return <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: `${T.danger}20`, color: '#F97316' }}><Flame size={10} /> HOT</span>;
-  return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: `${T.elevated}`, color: T.text2 }}>💬 OPEN</span>;
+  return <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: `${T.elevated}`, color: T.text2 }}><MessageSquare size={10} /> OPEN</span>;
 }
 
 function Avatar({ name, isStaff = false, size = 32 }: { name: string; isStaff?: boolean; size?: number }) {
