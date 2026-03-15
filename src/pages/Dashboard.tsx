@@ -2315,6 +2315,9 @@ export default function Dashboard() {
           );
         })()}
 
+        {/* ── ROI CALCULATOR ── */}
+        <ROICalculator />
+
         {/* ESG Widget */}
         <div style={{
           borderTop: '2px solid #22C55E',
