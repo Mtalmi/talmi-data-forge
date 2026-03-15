@@ -3804,11 +3804,11 @@ nav,
 
 /* ─── Supplemental semantic tokens ─── */
 :root {
-  --clr-success: #10b981;
+  --clr-success: #22c55e;
   --clr-warning: #f59e0b;
   --clr-danger: #ef4444;
-  --clr-info: #3b82f6;
-  --clr-gold: #ffd700;
+  --clr-info: #D4A843;
+  --clr-gold: #D4A843;
   --clr-navy: #0f172a;
   --clr-card-dark: #1f2937;
   --clr-border-dark: #374151;
