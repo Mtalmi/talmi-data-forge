@@ -70,6 +70,15 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
       className="relative flex h-screen w-full overflow-hidden"
       style={{ background: 'linear-gradient(145deg, #11182E, #162036)' }}
     >
+      {/* Skip to content link — first focusable element */}
+      <a
+        href="#tbos-main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-semibold"
+        style={{ background: '#D4A843', color: '#0B1120' }}
+      >
+        Aller au contenu principal
+      </a>
+
       {/* Mobile overlay */}
       {isMobile && sidebarOpen && (
         <div
