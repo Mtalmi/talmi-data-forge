@@ -474,7 +474,7 @@ export default function PredictiveMaintenance() {
                     <td className="py-2.5 px-3">{s.parts}</td>
                     <td className="py-2.5 px-3"><span className={`px-2 py-0.5 rounded-full text-[10px] border ${statusBadge(s.status)}`}>{s.status}</span></td>
                     <td className="py-2.5 px-3">
-                      <button onClick={() => setScheduleModal(s.unit)} className={`px-2 py-1 rounded text-[10px] border ${s.status === "CRITICAL" ? "border-[#EF4444]/30 text-[#EF4444] hover:bg-[#EF4444]/10" : "border-[#FFD700]/30 text-[#FFD700] hover:bg-[#FFD700]/10"} transition-colors`}>
+                      <button onClick={() => setScheduleModal(s.unit)} className={`px-2 py-1 rounded text-[10px] border ${s.status === "CRITICAL" ? "border-[#EF4444]/30 text-[#EF4444] hover:bg-[#EF4444]/10" : "border-[#D4A843]/30 text-[#D4A843] hover:bg-[#D4A843]/10"} transition-colors`}>
                         {s.status === "CRITICAL" ? "Assign" : s.assigned === "TBD" ? "Schedule" : "View"}
                       </button>
                     </td>
