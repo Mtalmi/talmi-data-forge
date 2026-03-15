@@ -18,6 +18,7 @@ import {
 import { ReferenceLine } from 'recharts';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { PassationButton } from '@/components/ui/PassationButton';
+import { ExportButton } from '@/components/documents/ExportButton';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS

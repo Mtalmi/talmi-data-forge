@@ -16,6 +16,7 @@ import {
   AlertTriangle, UserX, ChevronRight, Search, Plus,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { ExportButton } from '@/components/documents/ExportButton';
 import { supabase } from '@/integrations/supabase/client';
 import { format, subMonths, subDays } from 'date-fns';
 import { getMoroccoToday, getMoroccoClockTime, getMoroccoDateDisplay } from '@/utils/timezone';
