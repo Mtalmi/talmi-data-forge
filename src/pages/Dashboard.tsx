@@ -2118,6 +2118,74 @@ export default function Dashboard() {
             </div>
           );
         })()}
+
+        {/* ── ÉCOSYSTÈME D'INTÉGRATIONS ── */}
+        {(() => {
+          const MN = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
+          const rows = [
+            { title: 'CONNECTÉ', items: [
+              { name: 'Supabase', desc: 'Base de données temps réel · 508 requêtes live', status: 'green', badge: 'Connecté' },
+              { name: 'n8n Cloud', desc: '9 workflows IA · 24 agents actifs', status: 'green', badge: 'Connecté' },
+              { name: 'Claude Opus', desc: 'Intelligence artificielle · Anthropic', status: 'green', badge: 'Actif' },
+              { name: 'Mapbox', desc: 'GPS flotte · 3 véhicules', status: 'green', badge: 'Connecté' },
+            ]},
+            { title: 'DISPONIBLE', items: [
+              { name: 'WhatsApp Business', desc: 'Relances clients · Confirmations chantier', status: 'amber', badge: 'Configurer' },
+              { name: 'QuickBooks / Sage', desc: 'Comptabilité & facturation · US/EU', status: 'amber', badge: 'Configurer' },
+              { name: 'Stripe', desc: 'Paiements en ligne · Multi-devises', status: 'amber', badge: 'Configurer' },
+              { name: 'Samsara / Verizon Connect', desc: 'Fleet GPS avancé · US market', status: 'amber', badge: 'Configurer' },
+            ]},
+            { title: 'BIENTÔT', items: [
+              { name: 'SAP Business One', desc: 'ERP enterprise · EU market', status: 'grey', badge: 'Q3 2026' },
+              { name: 'Command Alkon Bridge', desc: 'Migration depuis Command Alkon', status: 'grey', badge: 'Q3 2026' },
+              { name: 'Procore', desc: 'Construction project management · US', status: 'grey', badge: 'Q4 2026' },
+              { name: 'Salesforce', desc: 'CRM enterprise', status: 'grey', badge: 'Q4 2026' },
+            ]},
+          ];
+          const dotColor = (s: string) => s === 'green' ? '#22C55E' : s === 'amber' ? '#F59E0B' : '#6B7280';
+          const badgeStyle = (s: string): React.CSSProperties => s === 'green'
+            ? { background: 'rgba(34,197,94,0.12)', color: '#22C55E', border: '1px solid rgba(34,197,94,0.25)' }
+            : s === 'amber'
+            ? { background: 'transparent', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)', cursor: 'pointer' }
+            : { background: 'rgba(107,114,128,0.1)', color: '#6B7280', border: '1px solid rgba(107,114,128,0.2)' };
+          return (
+            <div className="mt-8">
+              {/* Header */}
+              <div className="flex items-center gap-3 mb-5">
+                <span style={{ fontFamily: MN, fontSize: 12, fontWeight: 600, letterSpacing: '2px', color: '#D4A843' }}>✦ ÉCOSYSTÈME D'INTÉGRATIONS</span>
+                <div className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(212,168,67,0.4), transparent)' }} />
+              </div>
+              {rows.map(row => (
+                <div key={row.title} className="mb-5">
+                  <div style={{ fontFamily: MN, fontSize: 10, fontWeight: 600, letterSpacing: '1.5px', color: row.title === 'CONNECTÉ' ? '#22C55E' : row.title === 'DISPONIBLE' ? '#F59E0B' : '#6B7280', marginBottom: 8, textTransform: 'uppercase' as const }}>
+                    {row.title}
+                  </div>
+                  <div className="grid grid-cols-4 gap-3">
+                    {row.items.map(item => (
+                      <div key={item.name} style={{
+                        border: '1px solid rgba(212,168,67,0.08)', borderRadius: 8, padding: 12,
+                        background: 'rgba(255,255,255,0.01)', transition: 'border-color 200ms',
+                      }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(212,168,67,0.2)'; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(212,168,67,0.08)'; }}
+                      >
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span style={{ width: 6, height: 6, borderRadius: '50%', background: dotColor(item.status), flexShrink: 0, boxShadow: item.status === 'green' ? `0 0 6px ${dotColor(item.status)}40` : 'none' }} />
+                          <span style={{ fontFamily: MN, fontSize: 13, fontWeight: 600, color: '#FFFFFF' }}>{item.name}</span>
+                        </div>
+                        <div style={{ fontFamily: MN, fontSize: 11, color: '#9CA3AF', lineHeight: 1.5, marginBottom: 8 }}>{item.desc}</div>
+                        <span style={{ fontFamily: MN, fontSize: 9, fontWeight: 600, borderRadius: 4, padding: '2px 8px', display: 'inline-block', ...badgeStyle(item.status) }}>
+                          {item.badge}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
+
         </div>
         )}
 
