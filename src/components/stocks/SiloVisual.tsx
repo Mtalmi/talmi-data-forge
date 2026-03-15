@@ -279,6 +279,9 @@ export function SiloVisual({
             <span style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF' }}>
               {t.pages.stocks.estimatedAutonomy}
             </span>
+            <MetricTooltip title={`AUTONOMIE ${materiau.toUpperCase()}`}>
+              {`Stock actuel: **${quantite.toLocaleString('fr-FR')} ${unite}**. ${avgDailyUsage ? `Consommation moyenne: **${avgDailyUsage.toFixed(0)} ${unite}/jour**. ` : ''}${daysRemaining !== undefined ? `Rupture estimée dans !!${displayAutonomy}!!. ` : ''}${daysRemaining !== undefined && daysRemaining <= 7 ? `~~Commande urgente recommandée~~. ` : ''}Capacité max: ${capacite.toLocaleString('fr-FR')} ${unite} (${percentage.toFixed(0)}% rempli).`}
+            </MetricTooltip>
           </div>
           <div className="mt-1 text-center" style={{
             fontFamily: MONO,
