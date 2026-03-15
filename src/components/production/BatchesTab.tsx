@@ -169,15 +169,27 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
           }}>
             <Play size={16} strokeWidth={1.5} /> Lancer Production
           </button>
-          {[{ icon: Download, label: 'Exporter' }, { icon: RefreshCw, label: 'Actualiser' }].map(b => (
-            <button key={b.label} style={{
+          <button onClick={() => {
+            const csvHeaders = 'BL;Client;Formule;Volume;Heure;Coût;Marge%;Statut';
+            const csvRows = filtered.map(r => `${r.bl_id};${r.client};${r.formule};${r.volume};${r.heure};${r.cout};${r.marge};${statusStyle(r.status).label}`).join('\n');
+            const blob = new Blob([`\uFEFF${csvHeaders}\n${csvRows}`], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = `TBOS_Production_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click(); URL.revokeObjectURL(a.href);
+          }} style={{
               border: '1px solid #D4A843', color: '#D4A843', background: 'transparent',
               borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', fontSize: '14px',
               display: 'inline-flex', alignItems: 'center', gap: '8px',
             }}>
-              <b.icon size={16} strokeWidth={1.5} /> {b.label}
+              <Download size={16} strokeWidth={1.5} /> Exporter
             </button>
-          ))}
+          <button onClick={() => window.location.reload()} style={{
+              border: '1px solid #D4A843', color: '#D4A843', background: 'transparent',
+              borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', fontSize: '14px',
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+            }}>
+              <RefreshCw size={16} strokeWidth={1.5} /> Actualiser
+            </button>
         </div>
         <InlineClock />
       </div>

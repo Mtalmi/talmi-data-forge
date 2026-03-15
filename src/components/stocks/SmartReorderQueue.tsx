@@ -189,9 +189,16 @@ export function SmartReorderQueue() {
             Coût total estimé : 15,422,500 DH
           </span>
           <div style={{ display: 'flex', gap: 10 }}>
-            <button onClick={() => toast.info('Export PDF en cours…')}
+            <button onClick={() => {
+              const headers = 'Matériau;Priorité;Stock Actuel;Seuil;Quantité Recommandée;Coût Estimé';
+              const data = 'Adjuvant Sika ViscoCrete;CRITIQUE;850 L;1000 L;5000 L;12 500 DH\nSable Concassé 0/3;URGENT;45 T;50 T;200 T;180 000 DH\nGravette 8/15;NORMAL;120 T;80 T;150 T;135 000 DH\nCiment CPJ-45;PLANIFIÉ;280 T;200 T;500 T;625 000 DH';
+              const blob = new Blob([`\uFEFF${headers}\n${data}`], { type: 'text/csv;charset=utf-8;' });
+              const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+              a.download = `TBOS_Reorder_${new Date().toISOString().slice(0,10)}.csv`;
+              a.click(); URL.revokeObjectURL(a.href);
+            }}
               style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: 8, padding: '8px 20px', cursor: 'pointer', fontSize: 13, fontFamily: MONO, fontWeight: 500 }}>
-              Exporter PDF
+              Exporter CSV
             </button>
             <button
               onClick={approveAll}

@@ -259,9 +259,17 @@ export default function Dettes() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button variant="outline" size="sm" onClick={() => toast.info('Export Excel en cours...')} style={{ border: '1px solid rgba(255,255,255,0.08)', color: '#9CA3AF', background: 'rgba(255,255,255,0.03)' }}>
+            <Button variant="outline" size="sm" onClick={() => {
+              if (!payables.length) return;
+              const headers = 'Fournisseur;N° Facture;Montant;Échéance;Statut';
+              const rows = payables.map(p => `${p.fournisseur_nom || ''};${p.numero_facture};${p.montant_ttc};${p.date_echeance};${p.statut}`).join('\n');
+              const blob = new Blob([`\uFEFF${headers}\n${rows}`], { type: 'text/csv;charset=utf-8;' });
+              const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+              a.download = `TBOS_Dettes_${new Date().toISOString().slice(0,10)}.csv`;
+              a.click(); URL.revokeObjectURL(a.href);
+            }} style={{ border: '1px solid rgba(255,255,255,0.08)', color: '#9CA3AF', background: 'rgba(255,255,255,0.03)' }}>
               <Download className="h-4 w-4 mr-2" />
-              Exporter Excel
+              Exporter CSV
             </Button>
 
             <Button size="sm" onClick={() => setShowFactureModal(true)} style={{ background: 'linear-gradient(135deg, #D4A843, #b8922e)', color: '#000', fontWeight: 600, border: 'none' }}>

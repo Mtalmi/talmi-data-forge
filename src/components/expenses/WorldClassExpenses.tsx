@@ -1251,7 +1251,10 @@ function AnomalyBannerWrapper({ anomalyCount, children }: { anomalyCount: number
               Montants supérieurs à la moyenne historique de la catégorie (&gt;2x)
             </p>
           </div>
-          <button onClick={() => {}} style={{
+          <button onClick={() => {
+            const btn = document.activeElement as HTMLButtonElement;
+            if (btn) { btn.textContent = '✓ Examiné'; btn.style.color = '#22C55E'; btn.style.borderColor = 'rgba(34,197,94,0.3)'; btn.disabled = true; }
+          }} style={{
             padding: '6px 14px', borderRadius: 6, fontSize: 11, fontWeight: 700,
             background: `${T.gold}15`, border: `1px solid ${T.gold}40`, color: T.gold,
             cursor: 'pointer', transition: 'all 150ms', fontFamily: 'DM Sans, sans-serif', flexShrink: 0,
