@@ -761,7 +761,8 @@ function useWorldClassLiveData() {
 
       const [stocksRes, arRes, batchesRes, blTodayRes] = await Promise.all([
         supabase.from('stocks').select('materiau, quantite_actuelle, seuil_alerte, capacite_max, unite'),
-        supabase.from('clients').select('solde_du, created_at').gt('solde_du', 0),
+        supabase.from('factures').select('total_ttc, date_facture, statut')
+          .in('statut', ['emise', 'envoyee', 'partiel', 'en_retard']),
         supabase.from('bons_livraison_reels')
           .select('bl_id, volume_m3, quality_status, date_livraison, created_at, formule_id, affaissement_conforme')
           .order('created_at', { ascending: false }).limit(6),
