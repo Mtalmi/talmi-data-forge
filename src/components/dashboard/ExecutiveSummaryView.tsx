@@ -80,7 +80,7 @@ function MetricTile({ label, value, numericValue, decimals = 0, trend, icon: Ico
           trend > 0 ? 'text-success' : trend < 0 ? 'text-destructive' : 'text-muted-foreground'
         )}>
           {trend > 0 ? <TrendingUp className="h-3 w-3" /> : trend < 0 ? <TrendingUp className="h-3 w-3 rotate-180" /> : null}
-          <span className="font-medium">{trend > 0 ? '+' : ''}{trend.toFixed(1)}% vs M-1</span>
+          <span className="font-medium">{trend > 0 ? '+' : ''}{trend.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}% vs M-1</span>
         </div>
       )}
     </motion.div>
