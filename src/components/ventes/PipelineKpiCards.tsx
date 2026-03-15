@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { differenceInDays } from 'date-fns';
 import { Devis } from '@/hooks/useSalesWorkflow';
 import { useCountUp } from '@/hooks/useCountUp';
+import { MetricTooltip } from '@/components/ui/MetricTooltip';
 
 interface PipelineKpiCardsProps {
   devisList: Devis[];
