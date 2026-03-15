@@ -1962,11 +1962,11 @@ export default function Dashboard() {
               </div>
               <div className="space-y-1">
                 {[
-                  { id: '#403-068', formula: uf.grade('F-B25'), vol: uf.fmtVolume(8), time: '15:42', status: 'ok' },
-                  { id: '#403-067', formula: uf.grade('F-B30'), vol: uf.fmtVolume(12), time: '14:28', status: 'ok' },
-                  { id: '#403-066', formula: uf.grade('F-B25'), vol: uf.fmtVolume(8), time: '13:15', status: 'warn' },
-                  { id: '#403-065', formula: uf.grade('F-B35'), vol: uf.fmtVolume(10), time: '12:03', status: 'ok' },
-                  { id: '#403-064', formula: uf.grade('F-B25'), vol: uf.fmtVolume(8), time: '11:21', status: 'ok' },
+                  { id: '#403-068', formula: plantData.formules[1] || uf.grade('F-B25'), vol: uf.fmtVolume(8), time: '15:42', status: 'ok' },
+                  { id: '#403-067', formula: plantData.formules[2] || uf.grade('F-B30'), vol: uf.fmtVolume(12), time: '14:28', status: 'ok' },
+                  { id: '#403-066', formula: plantData.formules[1] || uf.grade('F-B25'), vol: uf.fmtVolume(8), time: '13:15', status: 'warn' },
+                  { id: '#403-065', formula: plantData.formules[3] || uf.grade('F-B35'), vol: uf.fmtVolume(10), time: '12:03', status: 'ok' },
+                  { id: '#403-064', formula: plantData.formules[1] || uf.grade('F-B25'), vol: uf.fmtVolume(8), time: '11:21', status: 'ok' },
                 ].map((b) => (
                   <div key={b.id} className={`flex items-center justify-between py-1.5 px-2 rounded-md cursor-pointer transition-colors duration-150 hover:bg-white/[0.03]`} style={b.status === 'warn' ? { borderLeft: '2px solid rgba(245,158,11,0.6)', paddingLeft: '8px', background: 'rgba(245,158,11,0.04)' } : undefined}>
                     <div className="flex items-center gap-2 w-[70px]">
