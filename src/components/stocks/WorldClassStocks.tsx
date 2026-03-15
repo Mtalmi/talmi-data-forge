@@ -867,6 +867,10 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
         )}
 
       </div>
+
+      <NouveauMouvementModal open={showMouvementModal} onClose={() => setShowMouvementModal(false)} />
+      <ControleQualiteModal open={showControleModal} onClose={() => setShowControleModal(false)} />
+      <AjustementManuelModal open={showAjustementModal} onClose={() => setShowAjustementModal(false)} />
     </div>
   );
 }

@@ -1098,6 +1098,7 @@ export default function WorldClassClients() {
   const [search, setSearch] = useState('');
   const [selectedClient, setSelectedClient] = useState<ClientDisplay | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [showNewClientModal, setShowNewClientModal] = useState(false);
   const [newClient, setNewClient] = useState({ nom_client: '', segment: 'Mid-Market', email: '', telephone: '', ville: '' });
   const [creatingClient, setCreatingClient] = useState(false);
   const subTabs = [{ id: 'tous', label: 'Tous' }, { id: 'actifs', label: 'Actifs' }, { id: 'inactifs', label: 'Inactifs' }];

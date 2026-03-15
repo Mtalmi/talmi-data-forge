@@ -1263,6 +1263,8 @@ export default function WorldClassProduction() {
         </>}
 
       </div>
+
+      <NouvellePlanificationModal open={openPlanningModal} onClose={() => setOpenPlanningModal(false)} />
     </div>
   );
 }
