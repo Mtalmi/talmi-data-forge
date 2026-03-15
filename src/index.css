@@ -208,6 +208,7 @@
 /* ─── Smooth scroll globally ─── */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 64px;
 }
 
 /* ─── Gold shimmer keyframe for skeletons ─── */
