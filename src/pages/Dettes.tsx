@@ -2324,6 +2324,7 @@ export default function Dettes() {
         `}</style>
       </div>
       </div>
+      <NouvelleFactureModal open={showFactureModal} onClose={() => setShowFactureModal(false)} />
     </MainLayout>
   );
 }
