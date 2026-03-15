@@ -269,7 +269,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       </div>
 
       {/* ── NAVIGATION ── */}
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 pt-1 pb-2 tbos-sidebar-scroll" style={{ scrollbarWidth: 'thin' }}>
+      <div role="list" aria-label="Sections de navigation" className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 pt-1 pb-2 tbos-sidebar-scroll" style={{ scrollbarWidth: 'thin' }}>
         {filteredSections.map((section, si) => {
           const isOpen = openSections[section.key] ?? false;
           const sectionHasActive = section.items.some(item => isActive(item.url));

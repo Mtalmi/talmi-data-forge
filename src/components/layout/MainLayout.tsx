@@ -156,8 +156,11 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
           </div>
         </main>
 
-        {/* Conversion disclaimer */}
-        <ConversionNote />
+        {/* Footer */}
+        <footer role="contentinfo">
+          <ConversionNote />
+        </footer>
+
         {/* Back to top */}
         <BackToTop />
         {/* Quick Action FAB */}
