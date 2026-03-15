@@ -187,6 +187,7 @@ export function TBOSInput({ hasError, style, onFocus, onBlur, ...props }: TBOSIn
   return (
     <input
       {...props}
+      autoComplete={props.autoComplete ?? 'off'}
       aria-invalid={hasError || undefined}
       style={{
         ...inputBaseStyle,
