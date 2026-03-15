@@ -97,7 +97,7 @@ export function ProductionComparePanel({
             <div key={row.field} className="flex justify-between items-center py-2 px-3 bg-muted/30 rounded">
               <span className="text-sm font-medium">{row.label}</span>
               <span className="font-mono text-lg font-semibold">
-                {row.theoretical.toFixed(1)} <span className="text-xs text-muted-foreground">{row.unit}</span>
+                {isFinite(row.theoretical) ? row.theoretical.toFixed(1) : '--'} <span className="text-xs text-muted-foreground">{row.unit}</span>
               </span>
             </div>
           ))}
