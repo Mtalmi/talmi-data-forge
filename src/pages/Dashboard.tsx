@@ -1057,7 +1057,7 @@ export default function Dashboard() {
                 <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, letterSpacing: 2, color: '#D4A843', fontWeight: 400 }}>
                   ✦ BRIEFING MATINAL — {now.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase()}
                 </span>
-                <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 10, padding: '3px 10px', borderRadius: 4, border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', background: 'rgba(212,168,67,0.08)' }}>
+                <span className="tbos-ai-badge" style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 10, padding: '3px 10px', borderRadius: 4, border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', background: 'rgba(212,168,67,0.08)', transition: 'box-shadow 200ms ease' }}>
                   Généré par IA · Claude Opus
                 </span>
               </div>
