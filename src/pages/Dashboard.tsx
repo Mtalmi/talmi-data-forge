@@ -45,6 +45,7 @@ import { useCountUp } from '@/hooks/useCountUp';
 import { TiltCard } from '@/components/dashboard/TiltCard';
 import { MetricTooltip } from '@/components/ui/MetricTooltip';
 import { getShutdownUrgency, getTimeContextualTip, getSeasonalTip } from '@/utils/tbos-microcopy';
+import { useDashboardData } from '@/hooks/useDashboardData';
 
 // ─── Sparkline data (hourly production) ───
 const SPARKLINE_DATA = [
@@ -81,11 +82,51 @@ export default function Dashboard() {
   const uf = useUnitFormat();
   const navigate = useNavigate();
   const location = useLocation();
-  const { activePlant, plant: plantData, demoData, setPlant: setActivePlant, isDemo, fadeOpacity } = usePlant();
+  const { activePlant, plant: plantData, demoData: rawDemoData, setPlant: setActivePlant, isDemo, fadeOpacity } = usePlant();
   const { stats, loading: statsLoading, refresh } = useDashboardStats();
+  const liveData = useDashboardData();
   const [period] = useState<Period>('month');
   const { stats: periodStats, loading: periodLoading, refresh: refreshPeriod } = useDashboardStatsWithPeriod(period);
   const { checkPaymentDelays } = usePaymentDelays();
+
+  // Merge live Supabase data into demoData when on live plant (not demo)
+  const demoData = useMemo(() => {
+    if (isDemo || liveData.loading) return rawDemoData;
+    const ld = liveData;
+    return {
+      ...rawDemoData,
+      score: ld.score || rawDemoData.score,
+      production: {
+        ...rawDemoData.production,
+        volume: ld.production.volume || rawDemoData.production.volume,
+        batches: ld.production.batches || rawDemoData.production.batches,
+        conformite: ld.production.conformite || rawDemoData.production.conformite,
+        marge: ld.production.marge || rawDemoData.production.marge,
+        cadence: ld.production.cadence || rawDemoData.production.cadence,
+      },
+      revenue: {
+        today: ld.revenue.today || rawDemoData.revenue.today,
+        trend: ld.revenue.trend || rawDemoData.revenue.trend,
+      },
+      tresorerie: {
+        value: ld.tresorerie.value || rawDemoData.tresorerie.value,
+        trend: ld.tresorerie.trend || rawDemoData.tresorerie.trend,
+      },
+      profitNet: {
+        total: ld.profitNet.total || rawDemoData.profitNet.total,
+        revenu: ld.profitNet.revenu || rawDemoData.profitNet.revenu,
+        matieres: ld.profitNet.matieres || rawDemoData.profitNet.matieres,
+        logistique: ld.profitNet.logistique || rawDemoData.profitNet.logistique,
+        personnel: ld.profitNet.personnel || rawDemoData.profitNet.personnel,
+        marge: ld.profitNet.marge || rawDemoData.profitNet.marge,
+      },
+      pipeline: {
+        value: ld.pipeline.value || rawDemoData.pipeline.value,
+        devis: ld.pipeline.devisCount || rawDemoData.pipeline.devis,
+        conversion: ld.pipeline.conversion || rawDemoData.pipeline.conversion,
+      },
+    };
+  }, [isDemo, liveData, rawDemoData]);
   const [refreshing, setRefreshing] = useState(false);
   const [showExecutiveSummary, setShowExecutiveSummary] = useState(false);
   const [hoveredChartIdx, setHoveredChartIdx] = useState<number | null>(null);

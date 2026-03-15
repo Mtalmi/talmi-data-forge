@@ -3,6 +3,8 @@ import {
   TBOSModal, TBOSField, TBOSInput, TBOSSelect,
   TBOSPrimaryButton, TBOSGhostButton, TBOSFormRow, TBOSFormStack, showFormSuccess,
 } from '@/components/ui/TBOSModal';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const TRUCKS = [
   { value: 'T-04', label: 'T-04' },
@@ -37,10 +39,25 @@ export function ReleveCarburantModal({ open, onClose, onCreated }: Props) {
   const handleSubmit = async () => {
     if (!validate()) return;
     setLoading(true);
-    await new Promise(r => setTimeout(r, 800));
-    onCreated?.({ toupie, date, km: parseFloat(km), litres: parseFloat(litres), cout: parseFloat(cout), station, plein });
-    showFormSuccess(`✓ Relevé carburant enregistré — ${toupie}`);
-    resetAndClose();
+    try {
+      // Log as activity
+      await supabase.from('activity_log').insert({
+        type: 'action',
+        message: `Relevé carburant enregistré — ${toupie}: ${litres}L, ${km} km, ${cout} DH`,
+        source_page: 'logistique',
+        severite: 'info',
+        metadata: { toupie, date, km: parseFloat(km), litres: parseFloat(litres), cout: parseFloat(cout), station, plein },
+      });
+
+      const record = { toupie, date, km: parseFloat(km), litres: parseFloat(litres), cout: parseFloat(cout), station, plein };
+      onCreated?.(record);
+      showFormSuccess(`✓ Relevé carburant enregistré — ${toupie}`);
+      resetAndClose();
+    } catch (error: any) {
+      console.error('Error saving fuel record:', error);
+      toast.error('Erreur lors de l\'enregistrement');
+      setLoading(false);
+    }
   };
 
   const resetAndClose = () => {
