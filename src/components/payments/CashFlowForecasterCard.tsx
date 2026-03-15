@@ -76,7 +76,7 @@ export function CashFlowForecasterCard() {
           <div key={f.period} style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, padding: 16, textAlign: 'center' }}>
             <p style={{ color: T.gold, fontWeight: 700, fontSize: 12, marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{f.period}</p>
             <div style={{ marginBottom: 8 }}>
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 16, fontWeight: 700, color: T.success }}>↑ {(f.inflows / 1000).toFixed(0)}K DH</p>
+              <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 16, fontWeight: 200, color: T.success }}>↑ {(f.inflows / 1000).toFixed(0)}K DH</p>
               <p style={{ color: T.textDim, fontSize: 10 }}>Entrées prévues</p>
             </div>
             <div style={{ marginBottom: 8 }}>
