@@ -100,7 +100,7 @@ export function ExecutiveSummaryView({ periodStats, dashboardStats, onClose }: E
     },
     {
       label: "Chiffre d'Affaires",
-      value: `${(periodStats.chiffreAffaires / 1000).toFixed(1)}K`,
+      value: `${(periodStats.chiffreAffaires / 1000).toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}K`,
       numericValue: Math.round(periodStats.chiffreAffaires / 1000),
       trend: periodStats.caTrend,
       icon: DollarSign,
