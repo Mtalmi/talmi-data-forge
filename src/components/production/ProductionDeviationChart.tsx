@@ -104,4 +104,4 @@ export const ProductionDeviationChart = React.memo(function ProductionDeviationC
       </CardContent>
     </Card>
   );
-}
+});

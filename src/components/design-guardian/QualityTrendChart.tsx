@@ -28,4 +28,6 @@ const QualityTrendChart = React.memo(function QualityTrendChart() {
       </ResponsiveContainer>
     </div>
   );
-}
+});
+
+export default QualityTrendChart;

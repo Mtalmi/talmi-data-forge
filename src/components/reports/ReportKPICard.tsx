@@ -80,5 +80,5 @@ export const ReportKPICard = React.memo(function ReportKPICard({
       </CardContent>
     </Card>
   );
-}
+});
 

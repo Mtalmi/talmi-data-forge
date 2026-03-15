@@ -236,4 +236,4 @@ export const RevenueForecastChart = React.memo(function RevenueForecastChart({ b
       </div>
     </div>
   );
-}
+});
