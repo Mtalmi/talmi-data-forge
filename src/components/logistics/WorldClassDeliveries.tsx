@@ -2254,7 +2254,7 @@ export default function WorldClassDeliveries() {
             <section>
               <SectionHeader icon={Truck} label="✦ Santé Flotte IA" />
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-                {FLEET_HEALTH_DATA.map((v, i) => <FleetHealthCard key={v.name} v={v} delay={i * 100} />)}
+                {FLEET_HEALTH_RAW.map((v, i) => <FleetHealthCard key={v.name} v={v} delay={i * 100} uf={uf} />)}
               </div>
             </section>
 
