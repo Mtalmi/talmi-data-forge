@@ -285,7 +285,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                 return (
                   <span key={h} style={{
                     fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.12em',
-                    color: 'rgba(255,255,255,0.35)', fontWeight: 500,
+                    color: '#9CA3AF', fontWeight: 600,
                     textAlign: align,
                     display: 'flex',
                     width: '100%',
