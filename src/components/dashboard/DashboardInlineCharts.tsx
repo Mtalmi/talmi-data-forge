@@ -67,7 +67,7 @@ export const DashboardInlineCharts = memo(function DashboardInlineCharts() {
             <BarChart data={stockChartData} layout="vertical" margin={{ top: 5, right: 5, left: 10, bottom: 0 }}>
               <XAxis type="number" hide />
               <YAxis type="category" dataKey="name" tick={{ fill: 'rgba(148,163,184,0.4)', fontSize: 10, fontFamily: 'Inter, system-ui' }} axisLine={false} tickLine={false} width={60} />
-              <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(255,215,0,0.04)' }} />
+              <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(212,168,67,0.04)' }} />
               <Bar dataKey="value" radius={[0, 3, 3, 0]} animationDuration={1000} barSize={14}>
                 {stockChartData.map((_, i) => <Cell key={i} fill="rgba(253,185,19,0.7)" />)}
               </Bar>
