@@ -167,9 +167,9 @@ export function FixedAssetsDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-green-500">{totals.netBookValue.toLocaleString()} DH</p>
+            <p className="text-2xl font-bold text-green-500">{totals.netBookValue.toLocaleString('fr-FR')} DH</p>
             <p className="text-xs text-muted-foreground">
-              {((totals.netBookValue / totals.grossValue) * 100 || 0).toFixed(1)}% {fa.ofGrossValue}
+              {totals.grossValue > 0 ? ((totals.netBookValue / totals.grossValue) * 100).toLocaleString('fr-FR', { maximumFractionDigits: 1 }) : '0'}% {fa.ofGrossValue}
             </p>
           </CardContent>
         </Card>
