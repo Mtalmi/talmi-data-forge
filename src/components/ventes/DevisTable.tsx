@@ -53,7 +53,7 @@ import {
   Shield,
   Lock,
   ShieldCheck,
-  ChevronDown,
+  MoreVertical,
   Ban,
 } from 'lucide-react';
 import { Devis } from '@/hooks/useSalesWorkflow';
@@ -705,7 +705,7 @@ export function DevisTable({
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-white/30 hover:text-white/60">
-                          <ChevronDown className="h-3.5 w-3.5" />
+                          <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-44">
