@@ -114,7 +114,7 @@ export function BudgetManagementSim({ onComplete, onClose }: BudgetManagementSim
             indicatorClassName={totalSpent / totalBudget > 0.8 ? "bg-rose-500" : "bg-amber-500"}
           />
           <p className="text-xs text-muted-foreground mt-1">
-            Reste: {(totalBudget - totalSpent).toLocaleString()} DH ({Math.round(((totalBudget - totalSpent) / totalBudget) * 100)}%)
+            Reste: {(totalBudget - totalSpent).toLocaleString('fr-FR')} DH ({Math.round(((totalBudget - totalSpent) / totalBudget) * 100)}%)
           </p>
         </div>
 
