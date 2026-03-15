@@ -615,8 +615,8 @@ export function BcTable({
                     return (
                       <Tooltip>
                         <TooltipTrigger>
-                          <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: docCount > 0 ? '#D4A843' : '#EF4444', cursor: 'pointer' }}>
-                            📎 {docCount}
+                          <span className="flex items-center gap-1" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: docCount > 0 ? '#D4A843' : '#EF4444', cursor: 'pointer' }}>
+                            <FileText className="h-3 w-3" /> {docCount}
                           </span>
                         </TooltipTrigger>
                         <TooltipContent>

@@ -42,7 +42,7 @@ export function AIStockDepletionWidget() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Package className="h-4 w-4 text-primary" />
-          <h3 className="font-semibold text-sm">📦 Prédiction Rupture Stock</h3>
+          <h3 className="font-semibold text-sm">Prédiction Rupture Stock</h3>
         </div>
         <Button size="sm" variant="outline" onClick={runAnalysis} disabled={isLoading} className="h-8 gap-1.5 text-xs">
           {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}

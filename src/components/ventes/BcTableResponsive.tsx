@@ -63,7 +63,7 @@ export function BcTableResponsive(props: BcTableResponsiveProps) {
       <div className="space-y-3">
         {props.bcList.length === 0 ? (
           <div className="empty-state-mobile">
-            <div className="icon">📦</div>
+            <div className="icon"><Package className="h-8 w-8 text-muted-foreground" /></div>
             <div className="title">Aucun bon de commande</div>
             <div className="description">
               Aucun BC ne correspond aux critères de recherche.
