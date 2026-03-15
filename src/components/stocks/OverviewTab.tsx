@@ -770,19 +770,7 @@ function ReorderQueue() {
                 <td style={{ padding: '12px 16px', fontFamily: MONO, fontSize: 12, fontWeight: 200, color: '#D4A843' }}>{r.cost}</td>
                 <td style={{ padding: '12px 16px', fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>{r.delai}</td>
                 <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                  <button
-                    onClick={() => toast.success(`Commande ${r.mat} approuvée`)}
-                    style={{
-                      fontFamily: MONO, fontSize: 11, fontWeight: 600,
-                      background: '#D4A843', color: '#0F1629',
-                      border: 'none', borderRadius: 6, padding: '6px 14px',
-                      cursor: 'pointer', transition: 'opacity 200ms',
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; }}
-                    onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
-                  >
-                    Approuver
-                  </button>
+                  <OverviewApproveBtn mat={r.mat} qty={r.qty} />
                 </td>
               </tr>
             ))}
@@ -794,19 +782,7 @@ function ReorderQueue() {
                   <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>
                     Commande groupée : remise estimée <span style={{ color: '#22C55E', fontWeight: 600 }}>-4.2%</span> (<span style={{ color: '#22C55E', fontWeight: 600 }}>1,400 DH</span> économisés)
                   </span>
-                  <button
-                    onClick={() => toast.success('Toutes les commandes approuvées')}
-                    style={{
-                      fontFamily: MONO, fontSize: 12, fontWeight: 600,
-                      background: '#D4A843', color: '#0F1629',
-                      border: 'none', borderRadius: 8, padding: '10px 24px',
-                      cursor: 'pointer', transition: 'opacity 200ms',
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; }}
-                    onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
-                  >
-                    Approuver Tout
-                  </button>
+                  <OverviewApproveAllBtn />
                 </div>
               </td>
             </tr>
