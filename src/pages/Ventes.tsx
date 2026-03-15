@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { AIAgentCard } from "@/components/shared/AIAgentCard";
 import { PageHeader } from '@/components/layout/PageHeader';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
