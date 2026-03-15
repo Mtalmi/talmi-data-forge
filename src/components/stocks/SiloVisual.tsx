@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { AlertTriangle, TrendingDown, Clock, Gauge } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nContext';
 import { useState } from 'react';
+import { MetricTooltip } from '@/components/ui/MetricTooltip';
 
 const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
 
