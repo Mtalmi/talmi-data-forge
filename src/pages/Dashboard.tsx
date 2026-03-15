@@ -1441,7 +1441,7 @@ export default function Dashboard() {
               </div>
               <div className="flex flex-col" style={{ borderRight: '1px solid rgba(255,255,255,0.08)', paddingRight: '24px', marginRight: '24px' }}>
                 <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Cadence</span>
-                <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", lineHeight: 1.2 }}><span className="text-2xl font-light text-white">47</span> <span className="text-sm text-white/50 font-normal">m³/h</span></span>
+                <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", lineHeight: 1.2 }}><span className="text-2xl font-light text-white">{+(uf.rawVolume(47)).toFixed(0)}</span> <span className="text-sm text-white/50 font-normal">{uf.volUnit}/h</span></span>
               </div>
               <div className="flex flex-col">
                 <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Efficacité</span>
