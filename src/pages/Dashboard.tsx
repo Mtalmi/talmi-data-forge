@@ -1878,7 +1878,7 @@ export default function Dashboard() {
               {/* Vent */}
               <div className="flex flex-col items-center gap-0.5 px-3 py-2 -mx-3 -my-2 rounded-lg cursor-default transition-all duration-200 hover:bg-white/[0.03]">
                 <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/40 font-medium">Vent</span>
-                <span className="text-sm text-white font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>12 <span className="text-[10px] text-white/40">km/h</span></span>
+                <span className="text-sm text-white font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{uf.fmtDistance(12).split(' ')[0]} <span className="text-[10px] text-white/40">{uf.distUnit}/h</span></span>
                 <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium" style={{ background: 'rgba(212,168,67,0.1)', color: '#D4A843' }}>Calme</span>
               </div>
 
