@@ -957,11 +957,11 @@ export default function Creances() {
                 const oly = cyG + (r + sw / 2 + 12) * Math.sin(objAngle);
                 return (
                   <div className="flex flex-col items-center">
-                    <svg width={svgW} height={svgH} viewBox={`0 0 ${svgW} ${svgH}`}>
+                    <svg width={svgW} height={svgH} viewBox={`0 0 ${svgW} ${svgH}`} role="img" aria-label={`Taux de recouvrement: ${rate.toFixed(1)} pourcent`}>
                       <defs>
                         <linearGradient id="crGaugeGold" x1="0" y1="0" x2="1" y2="0">
-                          <stop offset="0%" stopColor="#B8860B" />
-                          <stop offset="100%" stopColor="#FFD700" />
+                          <stop offset="0%" stopColor="#C49A3C" />
+                          <stop offset="100%" stopColor="#D4A843" />
                         </linearGradient>
                         <filter id="crNeedleGlow"><feGaussianBlur stdDeviation="2" result="g" /><feMerge><feMergeNode in="g" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
                       </defs>
@@ -977,8 +977,8 @@ export default function Creances() {
                       {rate > 0 && <path d={arcPath(startDeg, usedEnd)} fill="none" stroke="url(#crGaugeGold)" strokeWidth={sw} strokeLinecap="round" />}
                       <line x1={ox1} y1={oy1} x2={ox2} y2={oy2} stroke="#22c55e" strokeWidth={2} strokeDasharray="3 2" />
                       <text x={olx} y={oly} textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 7, fill: '#22c55e', fontFamily: 'ui-monospace, monospace' }}>85%</text>
-                      <line x1={cxG} y1={cyG} x2={nx} y2={ny} stroke="#FFD700" strokeWidth={2} strokeLinecap="round" filter="url(#crNeedleGlow)" />
-                      <circle cx={cxG} cy={cyG} r={4} fill="#0B1120" stroke="#FFD700" strokeWidth={1.5} />
+                      <line x1={cxG} y1={cyG} x2={nx} y2={ny} stroke="#D4A843" strokeWidth={2} strokeLinecap="round" filter="url(#crNeedleGlow)" />
+                      <circle cx={cxG} cy={cyG} r={4} fill="#0B1120" stroke="#D4A843" strokeWidth={1.5} />
                     </svg>
                     <p style={{
                       fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',

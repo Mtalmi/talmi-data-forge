@@ -205,7 +205,7 @@ export function OverviewTab({ AUTONOMY, STOCK_ALERTS_DB, REORDER_RECS, STOCKS, o
                 const pct = Math.min(healthScore || 89, 100) / 100;
                 const offset = circ * (1 - pct);
                 return (
-                  <svg width={size} height={size / 2 + 20} viewBox={`0 0 ${size} ${size / 2 + 20}`}>
+                  <svg width={size} height={size / 2 + 20} viewBox={`0 0 ${size} ${size / 2 + 20}`} role="img" aria-label={`Santé stock: ${healthScore || 89} pourcent`}>
                     <defs>
                       <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="0">
                         <stop offset="0%" stopColor="#C49A3C" />

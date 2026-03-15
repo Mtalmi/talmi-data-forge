@@ -259,8 +259,8 @@ function ScoreRing({ score, size = 72 }: { score: number; size?: number }) {
   const offset = circumference - (score / 100) * circumference;
   const color = score >= 80 ? T.gold : score >= 60 ? T.warning : T.danger;
   return (
-    <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
-      <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={strokeWidth} />
+    <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }} role="img" aria-label={`Score santé flotte: ${score} pourcent`}>
+      <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={strokeWidth} />
       <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={color} strokeWidth={strokeWidth}
         strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round"
         style={{ transition: 'stroke-dashoffset 1s ease-out' }} />
@@ -1138,8 +1138,8 @@ function MiniGauge({ pct, label, size = 52 }: { pct: number; label: string; size
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
       <div style={{ position: 'relative', width: size, height: size }}>
-        <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
-          <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={strokeWidth} />
+        <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }} role="img" aria-label={`${label}: ${pct} pourcent`}>
+          <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={strokeWidth} />
           <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke={color} strokeWidth={strokeWidth}
             strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round" style={{ transition: 'stroke-dashoffset 1s ease-out' }} />
         </svg>

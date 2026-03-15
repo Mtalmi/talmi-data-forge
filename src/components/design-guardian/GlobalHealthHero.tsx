@@ -19,7 +19,7 @@ export default function GlobalHealthHero() {
   const animatedScore = useAnimatedCounter(avgScore, 1500, 1);
 
   const scoreColor = avgScore >= 8.5 ? 'text-green-400' : avgScore >= 7.0 ? 'text-yellow-400' : 'text-red-400';
-  const strokeColor = avgScore >= 8.5 ? '#22c55e' : avgScore >= 7.0 ? '#FFD700' : '#ef4444';
+  const strokeColor = avgScore >= 8.5 ? '#22c55e' : avgScore >= 7.0 ? '#D4A843' : '#ef4444';
 
   const circumference = 2 * Math.PI * 54;
   const progress = (avgScore / 10) * circumference;
@@ -30,8 +30,8 @@ export default function GlobalHealthHero() {
       <div className={`${T.card} p-8 flex items-center gap-8`}>
         {/* Circular score */}
         <div className="relative flex-shrink-0">
-          <svg width="140" height="140" viewBox="0 0 120 120">
-            <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="8" />
+          <svg width="140" height="140" viewBox="0 0 120 120" role="img" aria-label={`Score global: ${animatedScore} sur 10`}>
+            <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="8" />
             <circle
               cx="60" cy="60" r="54" fill="none"
               stroke={strokeColor}
@@ -44,7 +44,7 @@ export default function GlobalHealthHero() {
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className={`text-3xl font-extralight font-mono ${scoreColor}`}>{animatedScore}</span>
+            <span className={`text-3xl font-extralight font-mono ${scoreColor}`} style={{ fontWeight: 100 }}>{animatedScore}</span>
             <span className="text-xs text-slate-500 font-semibold">/10</span>
           </div>
         </div>

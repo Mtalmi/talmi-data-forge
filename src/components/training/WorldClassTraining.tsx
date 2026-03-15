@@ -376,8 +376,8 @@ export default function WorldClassTraining() {
             <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start', flexWrap: 'wrap' }}>
               {/* Arc */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                <svg width={140} height={140} viewBox="0 0 140 140" style={{ transform: 'rotate(-90deg)' }}>
-                  <circle cx="70" cy="70" r={R} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={12} />
+                <svg width={140} height={140} viewBox="0 0 140 140" style={{ transform: 'rotate(-90deg)' }} role="img" aria-label={`Progression formation: ${overallPct} pourcent`}>
+                  <circle cx="70" cy="70" r={R} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={12} />
                   <circle
                     cx="70" cy="70" r={R} fill="none"
                     stroke={overallPct === 100 ? GREEN : GOLD}

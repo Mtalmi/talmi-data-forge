@@ -580,9 +580,9 @@ function OpportunityRadar() {
                   {/* Score gauge */}
                   <div className="shrink-0 text-center">
                     <div className="relative h-14 w-14">
-                      <svg className="h-14 w-14 -rotate-90" viewBox="0 0 36 36">
-                        <circle cx="18" cy="18" r="15.5" fill="none" className="stroke-muted" strokeWidth="2" />
-                        <circle cx="18" cy="18" r="15.5" fill="none" className="stroke-primary" strokeWidth="2" strokeDasharray={`${opp.score} ${100 - opp.score}`} strokeLinecap="round" />
+                      <svg className="h-14 w-14 -rotate-90" viewBox="0 0 36 36" role="img" aria-label={`Score: ${opp.score} sur 100`}>
+                        <circle cx="18" cy="18" r="15.5" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="2" />
+                        <circle cx="18" cy="18" r="15.5" fill="none" stroke="#D4A843" strokeWidth="2" strokeDasharray={`${opp.score} ${100 - opp.score}`} strokeLinecap="round" />
                       </svg>
                       <span className="absolute inset-0 flex items-center justify-center text-xs font-bold">{opp.score}</span>
                     </div>
