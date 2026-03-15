@@ -108,7 +108,7 @@ export function BillingDashboardWidget() {
         const remaining = f.total_ttc - paid;
         if (remaining > 0) {
           const bucket = buckets.find(b => days >= b.min && days <= b.max);
-          if (bucket) bucket.montant += remaining;
+          if (bucket) { bucket.montant += remaining; bucket.count += 1; }
         }
       });
 
