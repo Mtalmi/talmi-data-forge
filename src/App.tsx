@@ -1,4 +1,6 @@
 import { lazy, Suspense } from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
+import { OfflineIndicator } from "@/components/layout/OfflineIndicator";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -137,6 +139,11 @@ function RouteLoader() {
   );
 }
 
+function PageTitleManager() {
+  usePageTitle();
+  return null;
+}
+
 const App = () => (
   <I18nProvider>
   <UnitProvider>
@@ -147,6 +154,8 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <ScrollToTop />
+          <PageTitleManager />
+          <OfflineIndicator />
           <AuthProvider>
             <PreviewRoleProvider>
               <SecurityProvider>
