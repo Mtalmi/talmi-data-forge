@@ -49,7 +49,7 @@ export function PassationButton({ shiftInfo }: { shiftInfo?: string }) {
               <><CheckCheck size={13} /> {state === 'done' ? '✓ Passation validée — Bon shift!' : 'Valider Passation'}</>
             )}
           </button>
-          <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', padding: '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4, background: 'rgba(212,168,67,0.06)' }}>
+          <span style={{ fontFamily: MONO, fontSize: 12, color: '#D4A843', padding: '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4, background: 'rgba(212,168,67,0.06)' }}>
             Généré par IA · Claude Opus
           </span>
         </div>
