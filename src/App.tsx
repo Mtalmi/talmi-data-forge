@@ -154,6 +154,8 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <ScrollToTop />
+          <PageTitleManager />
+          <OfflineIndicator />
           <AuthProvider>
             <PreviewRoleProvider>
               <SecurityProvider>
