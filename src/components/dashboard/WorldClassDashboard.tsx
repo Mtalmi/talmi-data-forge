@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { CheckCircle2 } from 'lucide-react';
 import { tbosToast } from '@/hooks/useTbosToast';
+import { useUnitFormat } from '@/hooks/useUnitFormat';
 
 const MATERIAL_QTY: Record<string, string> = {
   Adjuvant: '500L',
@@ -768,6 +769,7 @@ function useWorldClassLiveData() {
 // ═══════════════════════════════════════════════════════
 export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidgets = false, showOnlyOps = false, hideIntelWidgets = false, showOnlyIntel = false, stockOnly = false }: { hideProductionWidgets?: boolean; hideOpsWidgets?: boolean; showOnlyOps?: boolean; hideIntelWidgets?: boolean; showOnlyIntel?: boolean; stockOnly?: boolean } = {}) {
   const navigate = useNavigate();
+  const uf = useUnitFormat();
   const {
     stats, stockData, arAgingData, recentBatches: batches,
     hourlyProductionData, qualityData, loading,
@@ -1030,7 +1032,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                 </div>
                 <div>
                   <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '40px', color: '#D4A843', textShadow: '0 0 12px rgba(212,168,67,0.2)', letterSpacing: '-0.02em' }}>{prodTotal}</span>
-                  <span className="text-sm font-light text-white/40 ml-1">m³</span>
+                  <span className="text-sm font-light text-white/40 ml-1">{uf.volUnit}</span>
                 </div>
               </div>
               <div className="overflow-hidden w-full" style={{ height: 180, filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.25))', position: 'relative' }}>
@@ -1256,7 +1258,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   <div className="text-[10px] uppercase tracking-wider text-white/40">Vieillissement</div>
                 </div>
                 <div className="text-right">
-                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '20px', color: '#D4A843', textShadow: '0 0 15px rgba(212,168,67,0.15)' }}>{totalAR}K DH</span>
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '20px', color: '#D4A843', textShadow: '0 0 15px rgba(212,168,67,0.15)' }}>{uf.rawCurrencyK(totalAR * 1000).toFixed(0)}K {uf.currSym}</span>
                   <div style={{ fontSize:'10px', color:'rgba(255,255,255,0.3)', marginTop:'2px' }}>vs 65K DH mois dernier ↗</div>
                 </div>
               </div>
@@ -1275,7 +1277,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                     <div key={i} onClick={() => navigate('/creances')} style={{ cursor: 'pointer' }}>
                       <div className="flex justify-between mb-1">
                         <span className="text-[10px] uppercase tracking-wider text-white/40" style={{ fontFamily: "'JetBrains Mono', monospace", ...(d.label === '>90j' ? { color: 'rgb(248,113,113)', fontWeight: '500' } : {}) }}>{d.label}</span>
-                        <span style={{ fontSize: '13px', fontWeight: '500', color: 'white', fontFamily: "'JetBrains Mono', monospace" }}>{(d.value / 1000).toFixed(0)}K DH</span>
+                        <span style={{ fontSize: '13px', fontWeight: '500', color: 'white', fontFamily: "'JetBrains Mono', monospace" }}>{(uf.rawCurrency(d.value) / 1000).toFixed(0)}K {uf.currSym}</span>
                       </div>
                       <div className="h-[5px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
                         <div
@@ -1318,7 +1320,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
         {!hideOpsWidgets && (
            <div style={{ background: 'linear-gradient(90deg, rgba(212,168,67,0.04), transparent 60%)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '8px', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ color: '#D4A843', fontSize: '28px', fontWeight: 200, fontFamily: "ui-monospace, SFMono-Regular, monospace" }}>
-              +18.4K DH
+              +{uf.fmtCurrencyK(18400)}
             </div>
             <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.4)' }}>marge nette estimée</div>
             <div className="text-sm font-semibold px-3 py-1 rounded-full" style={{ background: 'rgba(34,197,94,0.1)', color: '#22C55E' }}>↗ +12% vs hier</div>

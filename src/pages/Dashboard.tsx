@@ -21,6 +21,7 @@ import { DailyScoreGauge } from '@/components/dashboard/DailyScoreGauge';
 import { MultiMarketCalendar } from '@/components/dashboard/MultiMarketCalendar';
 import { ScenarioSimulator } from '@/components/dashboard/ScenarioSimulator';
 import { tbosToast } from '@/hooks/useTbosToast';
+import { useUnitFormat } from '@/hooks/useUnitFormat';
 
 // Lazy-loaded heavy widgets
 const WorldClassDashboard = lazy(() => import('@/components/dashboard/WorldClassDashboard').then(m => ({ default: m.WorldClassDashboard })));
@@ -69,6 +70,7 @@ const NOW_INDEX = 9;
 export default function Dashboard() {
   const { t, lang } = useI18n();
   const { user, role, isCeo, isAccounting } = useAuth();
+  const uf = useUnitFormat();
   const navigate = useNavigate();
   const { stats, loading: statsLoading, refresh } = useDashboardStats();
   const [period] = useState<Period>('month');
@@ -260,10 +262,16 @@ export default function Dashboard() {
   }, [activeTab]);
 
   // Animated KPI values — locked for CEO demo determinism
-  const prodVolume = useCountUp(671, 1800, 200);
-  const ca = useCountUp(75.6, 1800, 400, 1);
+  // Raw MENA values for count-up
+  const rawProdVolume = useCountUp(671, 1800, 200);
+  const rawCa = useCountUp(75.6, 1800, 400, 1);
   const marge = useCountUp(49.9, 1800, 600, 1);
-  const tresorerie = useCountUp(551, 1800, 800);
+  const rawTresorerie = useCountUp(551, 1800, 800);
+
+  // Converted values for display
+  const prodVolume = uf.rawVolume(rawProdVolume);
+  const ca = +(uf.rawCurrencyK(rawCa * 1000)).toFixed(1);
+  const tresorerie = Math.round(uf.rawCurrencyK(rawTresorerie * 1000));
 
   // Build sparkline SVG path
   const maxV = Math.max(...SPARKLINE_DATA.map(d => d.v));
@@ -1134,60 +1142,60 @@ export default function Dashboard() {
             {
               label: 'VOLUME',
               value: prodVolume,
-              unit: 'm³',
-              watermark: 'm³',
+              unit: uf.volUnit,
+              watermark: uf.volUnit,
               sub: 'Total du jour',
               trend: '↗ +12%',
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,28 20,24 40,20 60,26 80,18 100,14 120,10',
               secondaryLabel: 'Obj. mensuel',
-              secondaryValue: '671 / 3 200 m³',
-              target: 280,
+              secondaryValue: `${uf.fmtVolume(671, 0)} / ${uf.fmtVolume(3200, 0)}`,
+              target: uf.rawVolume(280),
               targetLabel: 'OBJ',
             },
             {
               label: 'REVENUE',
               value: ca,
-              unit: 'K DH',
-              watermark: 'DH',
+              unit: uf.currKUnit,
+              watermark: uf.currSym,
               sub: `${periodStats.nbFactures || 11} factures`,
               trend: '↗ +8.2%',
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,26 20,22 40,28 60,20 80,16 100,12 120,8',
               secondaryLabel: 'Objectif',
-              secondaryValue: '250K DH · 30%',
+              secondaryValue: `${uf.fmtCurrencyK(250000)} · 30%`,
             },
             {
               label: 'MARGE',
               value: marge,
               unit: '%',
               watermark: '%',
-              sub: '37.8 K DH coûts matières',
+              sub: `${uf.fmtCurrencyK(37800)} coûts matières`,
               trend: '↗ +1.2%',
               healthyGlow: true,
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,24 20,20 40,22 60,18 80,16 100,14 120,10',
               secondaryLabel: 'P&L',
-              secondaryValue: 'Net: 24.2K DH',
+              secondaryValue: `Net: ${uf.fmtCurrencyK(24200)}`,
               target: 32,
               targetLabel: 'OBJ',
             },
             {
               label: 'TRÉSORERIE',
               value: tresorerie,
-              unit: 'K DH',
-              watermark: 'DH',
-              sub: '→ 502K fin mois',
+              unit: uf.currKUnit,
+              watermark: uf.currSym,
+              sub: `→ ${uf.fmtCurrencyK(502000)} fin mois`,
               trend: '↗ +9.7%',
               healthyGlow: true,
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,26 20,22 40,24 60,18 80,14 100,10 120,4',
               secondaryLabel: 'Net',
-              secondaryValue: '+49K DH',
+              secondaryValue: `+${uf.fmtCurrencyK(49000)}`,
             },
           ].map((kpi, i) => {
             const kpiRoutes = ['/production', '/ventes', '/production', '/creances'];
@@ -1296,11 +1304,11 @@ export default function Dashboard() {
           {(() => {
             const MONO = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
             const waterfall = [
-              { label: 'Revenu', amount: 75600, color: '#D4A843', pct: 100 },
-              { label: 'Matières', amount: -37800, color: '#EF4444', pct: 50 },
-              { label: 'Logistique', amount: -5200, color: '#EF4444', pct: 6.9 },
-              { label: 'Personnel', amount: -8400, color: '#EF4444', pct: 11.1 },
-              { label: 'Net', amount: 24200, color: '#22C55E', pct: 32 },
+              { label: 'Revenu', amount: uf.rawCurrency(75600), color: '#D4A843', pct: 100 },
+              { label: 'Matières', amount: -uf.rawCurrency(37800), color: '#EF4444', pct: 50 },
+              { label: 'Logistique', amount: -uf.rawCurrency(5200), color: '#EF4444', pct: 6.9 },
+              { label: 'Personnel', amount: -uf.rawCurrency(8400), color: '#EF4444', pct: 11.1 },
+              { label: 'Net', amount: uf.rawCurrency(24200), color: '#22C55E', pct: 32 },
             ];
             const plSparkline = '0,38 15,34 30,30 45,28 60,22 75,18 90,14 105,10 120,8';
             return (
@@ -1337,9 +1345,9 @@ export default function Dashboard() {
                       lineHeight: 1, letterSpacing: '-0.02em',
                       textShadow: '0 0 20px rgba(34,197,94,0.15)',
                     }}>
-                      24,200
+                      {uf.rawCurrency(24200).toLocaleString('fr-FR')}
                     </span>
-                    <span style={{ fontFamily: MONO, fontWeight: 300, fontSize: 18, color: '#9CA3AF' }}>DH</span>
+                    <span style={{ fontFamily: MONO, fontWeight: 300, fontSize: 18, color: '#9CA3AF' }}>{uf.currSym}</span>
                   </div>
                   <span style={{ fontFamily: MONO, fontSize: 11, color: '#22C55E', fontWeight: 600 }}>↗ +8% vs hier</span>
 
@@ -1433,7 +1441,7 @@ export default function Dashboard() {
               </div>
               <div className="flex flex-col" style={{ borderRight: '1px solid rgba(255,255,255,0.08)', paddingRight: '24px', marginRight: '24px' }}>
                 <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Cadence</span>
-                <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", lineHeight: 1.2 }}><span className="text-2xl font-light text-white">47</span> <span className="text-sm text-white/50 font-normal">m³/h</span></span>
+                <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", lineHeight: 1.2 }}><span className="text-2xl font-light text-white">{+(uf.rawVolume(47)).toFixed(0)}</span> <span className="text-sm text-white/50 font-normal">{uf.volUnit}/h</span></span>
               </div>
               <div className="flex flex-col">
                 <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Efficacité</span>
@@ -1474,7 +1482,7 @@ export default function Dashboard() {
                 <div className="flex justify-between items-center mb-1">
                   <div>
                     <div className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                      Production (m³/h) vs Target
+                      Production ({uf.volUnit}/h) vs Target
                     </div>
                     {/* Target legend */}
                       <div className="flex items-center mt-1">
@@ -1579,7 +1587,7 @@ export default function Dashboard() {
                         <g>
                           <rect x={nx - 11} y={ny - 10} width="22" height="7" rx="1.5" fill="#0f1729" stroke="rgba(212,168,67,0.4)" strokeWidth="0.4" />
                           <text x={nx} y={ny - 5} textAnchor="middle" fill="#D4A843" fontSize="3.5" fontFamily="ui-monospace, 'JetBrains Mono', monospace" fontWeight="600">
-                            {actualVal} m³/h
+                            {+(uf.rawVolume(actualVal)).toFixed(0)} {uf.volUnit}/h
                           </text>
                           <rect x={nx + 12} y={ny - 10} width="16" height="7" rx="3.5" fill={isAbove ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)'} />
                           <text x={nx + 20} y={ny - 5} textAnchor="middle" fill={isAbove ? 'rgba(52,211,153,0.9)' : 'rgba(248,113,113,0.9)'} fontSize="3" fontFamily="ui-monospace, 'JetBrains Mono', monospace" fontWeight="600">
@@ -1621,7 +1629,7 @@ export default function Dashboard() {
                       }}
                     >
                       <div className="font-semibold" style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace' }}>{hoveredPoint.h}</div>
-                      <div className="text-white text-[12px]">{hoveredPoint.v} m³/h</div>
+                      <div className="text-white text-[12px]">{+(uf.rawVolume(hoveredPoint.v)).toFixed(0)} {uf.volUnit}/h</div>
                       <div className="text-[10px]" style={{ color: hoveredPoint.diffPct >= 0 ? 'rgba(52,211,153,0.9)' : 'rgba(248,113,113,0.9)' }}>
                         {hoveredPoint.diffPct >= 0 ? '▲' : '▼'} {hoveredPoint.diffPct >= 0 ? '+' : ''}{hoveredPoint.diffPct}% vs target
                       </div>
@@ -1632,11 +1640,11 @@ export default function Dashboard() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', borderTop: '1px solid rgba(212,168,67,0.1)', marginTop: 'auto' }}>
                   <div>
                     <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>PIC</div>
-                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: '#D4A843' }}>98 m³/h · 15h</div>
+                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: '#D4A843' }}>{uf.fmtVolumeRate(98)} · 15h</div>
                   </div>
                   <div>
                     <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Moyenne</div>
-                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: 'white' }}>72 m³/h</div>
+                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: 'white' }}>{uf.fmtVolumeRate(72)}</div>
                   </div>
                   <div>
                     <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Écart moy.</div>
@@ -1644,7 +1652,7 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Hier</div>
-                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: '#9CA3AF' }}>645 m³</div>
+                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: '#9CA3AF' }}>{uf.fmtVolume(645)}</div>
                   </div>
                 </div>
               </div>
@@ -1693,14 +1701,14 @@ export default function Dashboard() {
                           <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden cursor-pointer" style={{ minHeight: '140px' }} onClick={() => setExpandedKpi(expandedKpi === 'produit' ? null : 'produit')}>
                             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Produit</div>
-                            <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '38px', color: 'white', lineHeight: 1.1 }}>{kpiProduit} <span className="text-sm text-muted-foreground/40">m³</span></div>
-                            <div className="text-[10px] text-muted-foreground/40 mb-1.5">sur 800 m³ objectif</div>
+                            <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '38px', color: 'white', lineHeight: 1.1 }}>{+(uf.rawVolume(kpiProduit)).toFixed(0)} <span className="text-sm text-muted-foreground/40">{uf.volUnit}</span></div>
+                            <div className="text-[10px] text-muted-foreground/40 mb-1.5">sur {uf.fmtVolume(800)} objectif</div>
                             <div className="h-[4px] rounded-full bg-white/[0.06] w-full">
                               <div className="h-full rounded-full" style={{ width: '84%', background: 'linear-gradient(90deg, #D4A843, #E8C96A)', boxShadow: '0 0 8px rgba(212, 168, 67, 0.25)', animation: 'progressGrow 1.2s ease forwards' }} />
                             </div>
                             <div style={{ maxHeight: expandedKpi === 'produit' ? '120px' : '0', overflow: 'hidden', transition: 'max-height 300ms ease' }}>
                               <div style={{ fontSize: '12px', color: '#9CA3AF', padding: '8px 12px', borderTop: '1px solid rgba(212,168,67,0.1)' }}>
-                                Objectif: 800 m³ · Réalisé: 671 m³ · Écart: -129 m³ · Tendance: ↗ rattrapage 15h
+                                Objectif: {uf.fmtVolume(800)} · Réalisé: {uf.fmtVolume(671)} · Écart: -{uf.fmtVolume(129)} · Tendance: ↗ rattrapage 15h
                               </div>
                             </div>
                           </div>
@@ -1781,7 +1789,7 @@ export default function Dashboard() {
                         <div className="absolute bottom-0 left-0 right-0 z-[3] p-2.5" style={{ background: 'rgba(212,168,67,0.04)', borderTop: '1px solid rgba(212,168,67,0.15)' }}>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <span className="text-[10px] text-white/80 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>47 m³/h</span>
+                              <span className="text-[10px] text-white/80 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{uf.fmtVolumeRate(47)}</span>
                               <span className="w-px h-3 bg-white/10" />
                               <span className="text-[10px] text-emerald-400/80" style={{ fontFamily: "'JetBrains Mono', monospace" }}>94%</span>
                             </div>
@@ -1805,7 +1813,7 @@ export default function Dashboard() {
                       <span className="text-[10px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#403-068</span>
                       <button onClick={() => tbosToast('Déchargement initié pour batch #403-068')} style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '4px 12px', cursor: 'pointer', fontSize: '13px', marginLeft: 'auto' }}>Déchargement</button>
                     </div>
-                    <div className="text-[8px] text-slate-400 mb-1.5">F-B25 · 8 m³ · BTP Maroc</div>
+                    <div className="text-[8px] text-slate-400 mb-1.5">{uf.grade('F-B25')} · {uf.fmtVolume(8)} · BTP Maroc</div>
                     <div className="flex items-center gap-2">
                       <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
                         <div className="h-1.5 rounded-full relative overflow-hidden" style={{ width: '72%', background: 'linear-gradient(90deg, #D4A843, #E8C96A)', animation: 'progressGrow 1s ease forwards' }}>
@@ -1820,8 +1828,8 @@ export default function Dashboard() {
                   </div>
                   <div className="space-y-0.5">
                     {[
-                      { id: '#403-069', formula: 'F-B30 · 12 m³', client: 'Atlas BTP' },
-                      { id: '#403-070', formula: 'F-B25 · 8 m³', client: 'Const. Modernes' },
+                      { id: '#403-069', formula: `${uf.grade('F-B30')} · ${uf.fmtVolume(12)}`, client: 'Atlas BTP' },
+                      { id: '#403-070', formula: `${uf.grade('F-B25')} · ${uf.fmtVolume(8)}`, client: 'Const. Modernes' },
                     ].map((batch, idx) => (
                       <div key={batch.id} className="flex items-center gap-1.5 rounded px-2 py-1 -mx-2" style={{ cursor: 'pointer', transition: 'all 0.2s', animation: `batchSlideIn 400ms ease forwards`, animationDelay: `${(idx + 1) * 100}ms`, opacity: 0 }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.03)'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
                         <span className="w-1 h-1 bg-slate-600 rounded-full" />
@@ -1837,13 +1845,13 @@ export default function Dashboard() {
                 <div className="mt-auto grid grid-cols-2 gap-2">
                   {[
                     { label: 'Disponibilité', value: '97%' },
-                    { label: 'Cadence', value: '47 m³/h' },
+                    { label: 'Cadence', value: uf.fmtVolumeRate(47) },
                     { label: 'Batches', value: '23' },
                     { label: 'Attente', value: '12 min' },
                   ].map((m) => (
                     <div key={m.label} className="p-1.5 rounded" style={{ background: 'rgba(255,255,255,0.02)' }}>
                       <div className="text-[10px] uppercase tracking-wider text-white/40 block mb-0.5">{m.label}</div>
-                      <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, color: '#D4A843' }}>{m.label === 'Cadence' ? <>{m.value.split(' ')[0]} <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>m³/h</span></> : m.value}</div>
+                      <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, color: '#D4A843' }}>{m.label === 'Cadence' ? <>{m.value.split(' ')[0]} <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>{uf.volUnit}/h</span></> : m.value}</div>
                     </div>
                   ))}
                 </div>
@@ -1870,7 +1878,7 @@ export default function Dashboard() {
               {/* Vent */}
               <div className="flex flex-col items-center gap-0.5 px-3 py-2 -mx-3 -my-2 rounded-lg cursor-default transition-all duration-200 hover:bg-white/[0.03]">
                 <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/40 font-medium">Vent</span>
-                <span className="text-sm text-white font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>12 <span className="text-[10px] text-white/40">km/h</span></span>
+                <span className="text-sm text-white font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{uf.fmtDistance(12).split(' ')[0]} <span className="text-[10px] text-white/40">{uf.distUnit}/h</span></span>
                 <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium" style={{ background: 'rgba(212,168,67,0.1)', color: '#D4A843' }}>Calme</span>
               </div>
 
@@ -1879,7 +1887,7 @@ export default function Dashboard() {
               {/* Température */}
               <div className="flex flex-col items-center gap-0.5 px-3 py-2 -mx-3 -my-2 rounded-lg cursor-default transition-all duration-200 hover:bg-white/[0.03]">
                 <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/40 font-medium">Température</span>
-                <span className="text-sm text-white font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>22°C</span>
+                <span className="text-sm text-white font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{uf.fmtTemp(22)}</span>
                 <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium" style={{ background: 'rgba(212,168,67,0.1)', color: '#D4A843' }}>Optimal</span>
               </div>
 
@@ -1898,7 +1906,7 @@ export default function Dashboard() {
               <div className="flex flex-col items-center gap-0.5 px-3 py-2 -mx-3 -my-2 rounded-lg cursor-default transition-all duration-200 hover:bg-white/[0.03] min-w-0 max-w-full overflow-hidden">
                 <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/40 font-medium whitespace-nowrap">Prochain camion</span>
                 <span className="text-sm font-semibold" style={{ color: '#D4A843', fontFamily: "'SF Mono', ui-monospace, monospace", fontWeight: 500 }}>32 min</span>
-                <span className="text-xs text-muted-foreground/50 truncate max-w-full">→ Constructions Modernes · 20 m³</span>
+                <span className="text-xs text-muted-foreground/50 truncate max-w-full">→ Constructions Modernes · {uf.fmtVolume(20)}</span>
               </div>
             </div>
           </div>
@@ -1930,11 +1938,11 @@ export default function Dashboard() {
               </div>
               <div className="space-y-1">
                 {[
-                  { id: '#403-068', formula: 'F-B25', vol: '8 m³', time: '15:42', status: 'ok' },
-                  { id: '#403-067', formula: 'F-B30', vol: '12 m³', time: '14:28', status: 'ok' },
-                  { id: '#403-066', formula: 'F-B25', vol: '8 m³', time: '13:15', status: 'warn' },
-                  { id: '#403-065', formula: 'F-B35', vol: '10 m³', time: '12:03', status: 'ok' },
-                  { id: '#403-064', formula: 'F-B25', vol: '8 m³', time: '11:21', status: 'ok' },
+                  { id: '#403-068', formula: uf.grade('F-B25'), vol: uf.fmtVolume(8), time: '15:42', status: 'ok' },
+                  { id: '#403-067', formula: uf.grade('F-B30'), vol: uf.fmtVolume(12), time: '14:28', status: 'ok' },
+                  { id: '#403-066', formula: uf.grade('F-B25'), vol: uf.fmtVolume(8), time: '13:15', status: 'warn' },
+                  { id: '#403-065', formula: uf.grade('F-B35'), vol: uf.fmtVolume(10), time: '12:03', status: 'ok' },
+                  { id: '#403-064', formula: uf.grade('F-B25'), vol: uf.fmtVolume(8), time: '11:21', status: 'ok' },
                 ].map((b) => (
                   <div key={b.id} className={`flex items-center justify-between py-1.5 px-2 rounded-md cursor-pointer transition-colors duration-150 hover:bg-white/[0.03]`} style={b.status === 'warn' ? { borderLeft: '2px solid rgba(245,158,11,0.6)', paddingLeft: '8px', background: 'rgba(245,158,11,0.04)' } : undefined}>
                     <div className="flex items-center gap-2 w-[70px]">
