@@ -595,6 +595,7 @@ function PipelineFunnel() {
             <div key={i} className="contents">
               <div
                 className="flex-1 flex flex-col items-center justify-center gap-1 rounded-lg py-4 px-2 hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 cursor-pointer relative z-[1]"
+                onClick={() => navigate(stageRoutes[i])}
                 style={{
                   background: isEmpty ? 'rgba(255,255,255,0.03)' : st.bg,
                   border: isEmpty ? '1px solid rgba(255,255,255,0.1)' : `1px solid ${st.border}`,
