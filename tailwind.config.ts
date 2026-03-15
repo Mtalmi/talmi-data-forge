@@ -18,9 +18,9 @@ export default {
         '3000': '3000ms',
       },
       fontFamily: {
-        sans: ['Cairo', 'DM Sans', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
-        display: ['Syne', 'DM Sans', 'system-ui', 'sans-serif'],
+        sans: ['ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'monospace'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'monospace'],
+        display: ['ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",
