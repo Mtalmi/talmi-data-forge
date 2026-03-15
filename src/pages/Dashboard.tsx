@@ -20,6 +20,7 @@ import { ResumeIABar } from '@/components/dashboard/ResumeIABar';
 import { DailyScoreGauge } from '@/components/dashboard/DailyScoreGauge';
 import { MultiMarketCalendar } from '@/components/dashboard/MultiMarketCalendar';
 import { ScenarioSimulator } from '@/components/dashboard/ScenarioSimulator';
+import { tbosToast } from '@/hooks/useTbosToast';
 
 // Lazy-loaded heavy widgets
 const WorldClassDashboard = lazy(() => import('@/components/dashboard/WorldClassDashboard').then(m => ({ default: m.WorldClassDashboard })));
