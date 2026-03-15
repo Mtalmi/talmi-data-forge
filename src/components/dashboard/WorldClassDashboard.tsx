@@ -736,13 +736,13 @@ const FALLBACK_STOCK = [
 ];
 
 const EMPTY_AR = [
-  { label: '0-30j', value: 32000 },
-  { label: '31-60j', value: 18000 },
-  { label: '61-90j', value: 12000 },
-  { label: '>90j', value: 15000 },
+  { label: '0-30j', value: 0, count: 0 },
+  { label: '31-60j', value: 0, count: 0 },
+  { label: '61-90j', value: 0, count: 0 },
+  { label: '>90j', value: 0, count: 0 },
 ];
 
-const AR_OPACITIES = [1, 0.65, 0.4, 0.2];
+const AR_COLORS = ['#22C55E', '#F59E0B', '#EA580C', '#EF4444'];
 
 // ─── Live Data Hook ───
 function useWorldClassLiveData() {
