@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, useCallback, forwardRef, createElement } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { CheckCircle2 } from 'lucide-react';
+import { tbosToast } from '@/hooks/useTbosToast';
 
 const MATERIAL_QTY: Record<string, string> = {
   Adjuvant: '500L',
@@ -561,6 +563,8 @@ function AIAnalystBrief() {
 // PIPELINE FUNNEL — Horizontal Stepped Funnel
 // ═══════════════════════════════════════════════════════
 function PipelineFunnel() {
+  const navigate = useNavigate();
+  const stageRoutes = ['/ventes', '/bons', '/production', '/creances'];
   const stages = [
     { label: 'Devis', value: 6 },
     { label: 'BC Validés', value: 3 },
@@ -591,6 +595,7 @@ function PipelineFunnel() {
             <div key={i} className="contents">
               <div
                 className="flex-1 flex flex-col items-center justify-center gap-1 rounded-lg py-4 px-2 hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 cursor-pointer relative z-[1]"
+                onClick={() => navigate(stageRoutes[i])}
                 style={{
                   background: isEmpty ? 'rgba(255,255,255,0.03)' : st.bg,
                   border: isEmpty ? '1px solid rgba(255,255,255,0.1)' : `1px solid ${st.border}`,
@@ -762,6 +767,7 @@ function useWorldClassLiveData() {
 // MAIN COMPONENT — Operations Zone
 // ═══════════════════════════════════════════════════════
 export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidgets = false, showOnlyOps = false, hideIntelWidgets = false, showOnlyIntel = false, stockOnly = false }: { hideProductionWidgets?: boolean; hideOpsWidgets?: boolean; showOnlyOps?: boolean; hideIntelWidgets?: boolean; showOnlyIntel?: boolean; stockOnly?: boolean } = {}) {
+  const navigate = useNavigate();
   const {
     stats, stockData, arAgingData, recentBatches: batches,
     hourlyProductionData, qualityData, loading,
@@ -1266,7 +1272,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                     ? { background: 'linear-gradient(90deg, #DC2626, #EF4444)' }
                     : { background: 'linear-gradient(90deg, #991B1B, #B91C1C)' };
                   return (
-                    <div key={i}>
+                    <div key={i} onClick={() => navigate('/creances')} style={{ cursor: 'pointer' }}>
                       <div className="flex justify-between mb-1">
                         <span className="text-[10px] uppercase tracking-wider text-white/40" style={{ fontFamily: "'JetBrains Mono', monospace", ...(d.label === '>90j' ? { color: 'rgb(248,113,113)', fontWeight: '500' } : {}) }}>{d.label}</span>
                         <span style={{ fontSize: '13px', fontWeight: '500', color: 'white', fontFamily: "'JetBrains Mono', monospace" }}>{(d.value / 1000).toFixed(0)}K DH</span>
@@ -1302,8 +1308,8 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               <span className="text-sm text-white/80">AGENT IA : 2 livraisons en retard potentiel — <span style={{ fontWeight:'500', color:'white' }}>Constructions Modernes SA</span> (14:30) arrive à 85% de la fenêtre de livraison. BTP Maroc (16:00) non confirmé.</span>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0 ml-4">
-              <button style={{ border: '1px solid #D4A843', color: '#0F1629', background: '#D4A843', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>Alerter Client</button>
-              <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px' }}>Ignorer</button>
+              <button onClick={() => tbosToast('Alerte envoyée au client par WhatsApp', 'success')} style={{ border: '1px solid #D4A843', color: '#0F1629', background: '#D4A843', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>Alerter Client</button>
+              <button onClick={() => tbosToast('Alerte ignorée')} style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px' }}>Ignorer</button>
             </div>
           </div>
         )}

@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
@@ -42,6 +43,7 @@ const statusIcons = {
 };
 
 export default function RecentDeliveries() {
+  const navigate = useNavigate();
   const { t, lang } = useI18n();
   const dateFnsLocale = getDateLocale(lang);
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
@@ -206,6 +208,7 @@ export default function RecentDeliveries() {
           <div
             key={d.id}
             className="group flex items-center gap-4 py-2 cursor-pointer rounded-md px-1"
+            onClick={() => navigate('/logistique')}
             style={{ 
               borderBottom: '1px solid rgba(255,255,255,0.03)',
               transition: 'background 200ms ease',

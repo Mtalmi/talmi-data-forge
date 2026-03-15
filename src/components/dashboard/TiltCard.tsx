@@ -5,9 +5,10 @@ interface TiltCardProps {
   children: ReactNode;
   className?: string;
   style?: React.CSSProperties;
+  onClick?: () => void;
 }
 
-export function TiltCard({ children, className, style }: TiltCardProps) {
+export function TiltCard({ children, className, style, onClick }: TiltCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0, active: false });
 
@@ -35,6 +36,7 @@ export function TiltCard({ children, className, style }: TiltCardProps) {
         ...style,
         perspective: '800px',
       }}
+      onClick={onClick}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >

@@ -20,6 +20,7 @@ import { ResumeIABar } from '@/components/dashboard/ResumeIABar';
 import { DailyScoreGauge } from '@/components/dashboard/DailyScoreGauge';
 import { MultiMarketCalendar } from '@/components/dashboard/MultiMarketCalendar';
 import { ScenarioSimulator } from '@/components/dashboard/ScenarioSimulator';
+import { tbosToast } from '@/hooks/useTbosToast';
 
 // Lazy-loaded heavy widgets
 const WorldClassDashboard = lazy(() => import('@/components/dashboard/WorldClassDashboard').then(m => ({ default: m.WorldClassDashboard })));
@@ -937,9 +938,9 @@ export default function Dashboard() {
                       <PlusCircle size={16} className="opacity-60" />
                       NOUVEAU DEVIS
                     </button>
-                    <button
-                      onClick={() => navigate('/recouvrement')}
-                      className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
+                     <button
+                       onClick={() => navigate('/clients')}
+                       className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
                       style={{ background: 'transparent', border: '1px solid #D4A843', color: '#D4A843' }}
                       onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.1)'; }}
                       onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
@@ -948,9 +949,9 @@ export default function Dashboard() {
                       RELANCER CLIENTS
                       <span className="absolute flex items-center justify-center rounded-full z-10" style={{ top: -8, right: -8, minWidth: 20, height: 20, fontSize: 10, fontWeight: 700, background: '#EF4444', color: '#fff', boxShadow: '0 0 8px rgba(239,68,68,0.5)' }}>2</span>
                     </button>
-                    <button
-                      onClick={() => navigate('/rapports')}
-                      className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
+                     <button
+                       onClick={() => { const el = document.querySelector('[data-tab="intelligence"]'); if (el) { setActiveTab('intelligence'); setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 100); } else { setActiveTab('intelligence'); } }}
+                       className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
                       style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid #D4A843', color: '#D4A843' }}
                       onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; e.currentTarget.style.color = '#D4A843'; }}
                       onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.08)'; e.currentTarget.style.color = '#D4A843'; }}
@@ -969,7 +970,7 @@ export default function Dashboard() {
                   </div>
 
                   {/* RIGHT: Prochaine Livraison */}
-                  <div className="hidden md:flex flex-col flex-shrink-0 hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: '8px', padding: '12px 16px', position: 'relative', overflow: 'hidden' }}>
+                  <div onClick={() => navigate('/logistique')} className="hidden md:flex flex-col flex-shrink-0 hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 cursor-pointer" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: '8px', padding: '12px 16px', position: 'relative', overflow: 'hidden' }}>
                     <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                     <div className="flex items-center gap-2.5 px-4 py-3">
                     <Truck size={16} style={{ color: '#D4A843', flexShrink: 0 }} />
@@ -1024,13 +1025,13 @@ export default function Dashboard() {
               </p>
               {/* Action buttons */}
               <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
-                <button style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: '#D4A843', color: '#0F1629', border: 'none', cursor: 'pointer', letterSpacing: '0.05em' }}>
+                <button onClick={() => setActiveTab('intelligence')} style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: '#D4A843', color: '#0F1629', border: 'none', cursor: 'pointer', letterSpacing: '0.05em' }}>
                   Voir Rapport Complet
                 </button>
-                <button style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: 'transparent', color: '#EF4444', border: '1px solid rgba(239,68,68,0.4)', cursor: 'pointer', letterSpacing: '0.05em' }}>
+                <button onClick={() => navigate('/creances')} style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: 'transparent', color: '#EF4444', border: '1px solid rgba(239,68,68,0.4)', cursor: 'pointer', letterSpacing: '0.05em' }}>
                   Relancer Sigma Bâtiment
                 </button>
-                <button style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: 'transparent', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)', cursor: 'pointer', letterSpacing: '0.05em' }}>
+                <button onClick={() => navigate('/laboratoire')} style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: 'transparent', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)', cursor: 'pointer', letterSpacing: '0.05em' }}>
                   Planifier Test NM
                 </button>
               </div>
@@ -1059,13 +1060,13 @@ export default function Dashboard() {
               flexWrap: 'wrap',
             }}>
               <span style={{ color: '#F59E0B' }}>⚠</span>
-              <span style={{ color: '#EF4444' }}>Créances: 189K DH retard (Sigma)</span>
+              <span onClick={() => navigate('/creances')} style={{ color: '#EF4444', cursor: 'pointer', transition: 'color 200ms' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#EF4444'; (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}>Créances: 189K DH retard (Sigma)</span>
               <span style={{ color: 'rgba(212,168,67,0.3)' }}>·</span>
-              <span style={{ color: '#F59E0B' }}>Logistique: T-09 maintenance</span>
+              <span onClick={() => navigate('/logistique')} style={{ color: '#F59E0B', cursor: 'pointer', transition: 'color 200ms' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#F59E0B'; (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}>Logistique: T-09 maintenance</span>
               <span style={{ color: 'rgba(212,168,67,0.3)' }}>·</span>
-              <span style={{ color: '#F59E0B' }}>Stocks: Adjuvant 6,7j</span>
+              <span onClick={() => navigate('/stocks')} style={{ color: '#F59E0B', cursor: 'pointer', transition: 'color 200ms' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#F59E0B'; (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}>Stocks: Adjuvant 6,7j</span>
               <span style={{ color: 'rgba(212,168,67,0.3)' }}>·</span>
-              <span style={{ color: '#EF4444' }}>Lab: NM expire 26j</span>
+              <span onClick={() => navigate('/laboratoire')} style={{ color: '#EF4444', cursor: 'pointer', transition: 'color 200ms' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#EF4444'; (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}>Lab: NM expire 26j</span>
             </div>
           </div>
 
@@ -1097,6 +1098,7 @@ export default function Dashboard() {
               {/* Buttons */}
               <div className="flex items-center gap-3 flex-wrap">
                 <button
+                  onClick={() => navigate('/stocks')}
                   className="flex items-center gap-2 px-5 py-2 rounded-lg text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg"
                   style={{ background: '#D4A843', color: '#0F1629', border: 'none', cursor: 'pointer' }}
                   onMouseEnter={e => { e.currentTarget.style.background = '#FDB913'; }}
@@ -1105,6 +1107,7 @@ export default function Dashboard() {
                   Commander Adjuvant Maintenant
                 </button>
                 <button
+                  onClick={() => navigate('/stocks')}
                   className="flex items-center gap-2 px-5 py-2 rounded-lg text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px"
                   style={{ background: 'transparent', border: '1px solid #D4A843', color: '#D4A843', cursor: 'pointer' }}
                   onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.1)'; }}
@@ -1187,6 +1190,7 @@ export default function Dashboard() {
               secondaryValue: '+49K DH',
             },
           ].map((kpi, i) => {
+            const kpiRoutes = ['/production', '/ventes', '/production', '/creances'];
             const numVal = typeof kpi.value === 'number' ? kpi.value : parseFloat(String(kpi.value));
             const hasTarget = 'target' in kpi && kpi.target !== undefined;
             const aboveTarget = hasTarget ? numVal >= (kpi.target as number) : false;
@@ -1194,6 +1198,7 @@ export default function Dashboard() {
             return (
             <TiltCard
               key={i}
+              onClick={() => navigate(kpiRoutes[i])}
               className="tbos-hero-card group cursor-pointer shimmer-effect h-full flex flex-col min-w-0 relative overflow-hidden hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 ease-out"
               style={{
                 height: '100%',
@@ -1300,6 +1305,7 @@ export default function Dashboard() {
             const plSparkline = '0,38 15,34 30,30 45,28 60,22 75,18 90,14 105,10 120,8';
             return (
               <TiltCard
+                onClick={() => navigate('/creances')}
                 className="tbos-hero-card group cursor-pointer shimmer-effect h-full flex flex-col min-w-0 relative overflow-hidden hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 ease-out"
                 style={{
                   background: 'rgba(255,255,255,0.02)',
@@ -1797,7 +1803,7 @@ export default function Dashboard() {
                     <div className="flex items-center gap-1.5 mb-1">
                       <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                       <span className="text-[10px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#403-068</span>
-                      <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '4px 12px', cursor: 'pointer', fontSize: '13px', marginLeft: 'auto' }}>Déchargement</button>
+                      <button onClick={() => tbosToast('Déchargement initié pour batch #403-068')} style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '4px 12px', cursor: 'pointer', fontSize: '13px', marginLeft: 'auto' }}>Déchargement</button>
                     </div>
                     <div className="text-[8px] text-slate-400 mb-1.5">F-B25 · 8 m³ · BTP Maroc</div>
                     <div className="flex items-center gap-2">
@@ -1951,7 +1957,7 @@ export default function Dashboard() {
                   { id: 'BL-2602-067', test: 'Slump 22cm', ok: false, time: '18:28' },
                   { id: 'BL-2602-073', test: 'Slump 17cm', ok: true, time: '19:13' },
                 ].map((q, i) => (
-                  <div key={i} className="group flex items-center justify-between gap-3 py-2 px-2 rounded-lg transition-all duration-150 hover:bg-white/[0.03]">
+                  <div key={i} onClick={() => navigate('/laboratoire')} className="group flex items-center justify-between gap-3 py-2 px-2 rounded-lg transition-all duration-150 hover:bg-white/[0.03] cursor-pointer">
                     <div className="flex items-center gap-2">
                       <span className={`w-2 h-2 rounded-full inline-block mr-2 flex-shrink-0 ${q.ok ? 'bg-green-400' : 'bg-amber-400 animate-pulse'}`} />
                       <span className="text-sm font-mono text-slate-400 tabular-nums">{q.id}</span>
