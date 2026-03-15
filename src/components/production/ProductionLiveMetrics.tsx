@@ -172,7 +172,7 @@ export function ProductionLiveMetrics({
           </div>
           <div className="flex items-baseline gap-2">
             <span className={cn(
-              "text-2xl font-bold",
+              "text-2xl font-extralight",
               unassignedTrucks > 0 ? "text-warning" : "text-success"
             )}>
               {bons.filter(b => b.camion_assigne).length}
