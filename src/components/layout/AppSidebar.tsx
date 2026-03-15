@@ -90,7 +90,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
         { title: nav.stocks || 'Stocks', url: '/stocks', icon: Package },
         { title: nav.laboratory || 'Laboratoire', url: '/laboratoire', icon: FlaskConical },
         { title: nav.logistics || 'Logistique', url: '/logistique', icon: Truck },
-        { title: nav.deliveries || 'Bons de Commande', url: '/bons', icon: FileText, badge: 3 },
+        { title: nav.deliveries || 'Bons de Cmd.', url: '/bons', icon: FileText, badge: 3 },
         { title: nav.receivables || 'Créances', url: '/creances', icon: Receipt, badge: 2 },
       ],
     },

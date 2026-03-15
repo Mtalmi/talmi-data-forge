@@ -35,7 +35,18 @@ export function PlantSelector() {
         <Building2 size={14} strokeWidth={1.5} style={{ color: '#D4A843', flexShrink: 0 }} />
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 0 }}>
           <span style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{current.name}</span>
-          <span style={{ fontFamily: M, fontSize: 9, color: '#9CA3AF', whiteSpace: 'nowrap' }}>{current.stats}</span>
+          <span style={{ fontFamily: M, fontSize: 9, color: '#9CA3AF', whiteSpace: 'nowrap' }}>
+            {current.stats.split('·').map((part, i) => {
+              const trimmed = part.trim();
+              const isGold = trimmed.includes('m³') || trimmed.includes('Score');
+              return (
+                <span key={i}>
+                  {i > 0 && <span> · </span>}
+                  <span style={isGold ? { color: '#D4A843', fontWeight: 600 } : {}}>{trimmed}</span>
+                </span>
+              );
+            })}
+          </span>
         </div>
         <ChevronDown size={12} style={{ color: '#9CA3AF', flexShrink: 0, transition: 'transform 200ms', transform: open ? 'rotate(180deg)' : 'none' }} />
       </button>
