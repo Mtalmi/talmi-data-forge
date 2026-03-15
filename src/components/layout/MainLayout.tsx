@@ -1,4 +1,5 @@
 import { ReactNode, useState, useEffect } from 'react';
+import { SectionErrorBoundary } from '@/components/error/SectionErrorBoundary';
 import { useUnits } from '@/i18n/UnitContext';
 import { usePlant } from '@/contexts/PlantContext';
 import { TopNavBar } from './TopNavBar';
