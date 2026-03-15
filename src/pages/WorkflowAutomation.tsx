@@ -285,7 +285,7 @@ export default function WorkflowAutomation() {
             <div className="flex flex-wrap items-center gap-3 mb-6">
               <div className="relative flex-1 min-w-[200px] max-w-md">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#B0B8C1' }} />
-                <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search workflows..."
+                <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher workflows..."
                   className="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm outline-none transition-all duration-200"
                   style={{ background: '#1C2533', border: '1px solid #2A3545', color: '#fff' }}
                   onFocus={e => e.target.style.borderColor = '#FFD700'} onBlur={e => e.target.style.borderColor = '#2A3545'} />
