@@ -821,19 +821,40 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
             );
           })}
         </div>
-        <button style={{
-          padding: '8px 24px', borderRadius: 8, background: '#D4A843', color: '#0F1629',
-          fontWeight: 600, fontSize: 14,
-          border: 'none', cursor: 'pointer',
-          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
-          transition: 'filter 150ms',
-        }}
-          onClick={() => setShowMouvementModal(true)}
-          onMouseEnter={e => (e.currentTarget.style.filter = 'brightness(1.15)')}
-          onMouseLeave={e => (e.currentTarget.style.filter = 'brightness(1)')}
-        >
-          + Nouveau Mouvement
-        </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button style={{
+            padding: '8px 16px', borderRadius: 8, background: 'transparent', color: '#D4A843',
+            fontWeight: 600, fontSize: 12, border: '1px solid rgba(212,168,67,0.3)', cursor: 'pointer',
+            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+            transition: 'all 150ms',
+          }}
+            onClick={() => setShowControleModal(true)}
+          >
+            Contrôle Qualité
+          </button>
+          <button style={{
+            padding: '8px 16px', borderRadius: 8, background: 'transparent', color: '#D4A843',
+            fontWeight: 600, fontSize: 12, border: '1px solid rgba(212,168,67,0.3)', cursor: 'pointer',
+            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+            transition: 'all 150ms',
+          }}
+            onClick={() => setShowAjustementModal(true)}
+          >
+            Ajustement
+          </button>
+          <button style={{
+            padding: '8px 24px', borderRadius: 8, background: '#D4A843', color: '#0F1629',
+            fontWeight: 600, fontSize: 14, border: 'none', cursor: 'pointer',
+            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+            transition: 'filter 150ms',
+          }}
+            onClick={() => setShowMouvementModal(true)}
+            onMouseEnter={e => (e.currentTarget.style.filter = 'brightness(1.15)')}
+            onMouseLeave={e => (e.currentTarget.style.filter = 'brightness(1)')}
+          >
+            + Nouveau Mouvement
+          </button>
+        </div>
       </div>
 
       {/* ── TAB: SILOS ── */}
