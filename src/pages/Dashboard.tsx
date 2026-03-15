@@ -1144,16 +1144,20 @@ export default function Dashboard() {
 
           {/* (2b) PRÉDICTION ARRÊT USINE */}
           <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" data-tour="shutdown-prediction" style={{ animation: 'ccSectionIn 300ms ease-out 150ms both' }}>
+            {(() => {
+              const urgency = getShutdownUrgency(demoData.shutdownRisk.daysUntil, uf.fmtCurrency(demoData.shutdownRisk.costPerDay));
+              return (
             <div className="tbos-shutdown-pulse" style={{
-              background: 'rgba(245, 158, 11, 0.05)',
-              borderLeft: '4px solid #F59E0B',
+              background: urgency.bgColor,
+              borderLeft: `4px solid ${urgency.borderColor}`,
               borderRadius: 8,
               padding: '16px 20px',
               position: 'relative',
+              animation: urgency.pulse ? 'pulse-alert 2s ease-in-out infinite' : undefined,
             }}>
               {/* Line 1: Alert headline */}
-              <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 14, fontWeight: 600, color: '#F59E0B', marginBottom: 8 }}>
-                ⚠ RISQUE ARRÊT DANS {demoData.shutdownRisk.daysUntil} JOURS
+              <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 14, fontWeight: 600, color: urgency.color, marginBottom: 8 }}>
+                {urgency.headline}
               </div>
               {/* Line 2: Detail */}
               <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, color: '#9CA3AF', marginBottom: 6, lineHeight: 1.6 }}>
