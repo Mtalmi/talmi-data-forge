@@ -162,14 +162,15 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
         </footer>
 
         {/* Back to top */}
-        <BackToTop />
-        {/* Quick Action FAB */}
-        <QuickActionFAB />
-        <CommandPalette />
-        <ShortcutsHelpModal />
-        <ScreenReaderAnnouncer />
-        <PWAInstallPrompt />
-        <NotificationSettings />
+        <div className="no-print">
+          <BackToTop />
+          <QuickActionFAB />
+          <CommandPalette />
+          <ShortcutsHelpModal />
+          <ScreenReaderAnnouncer />
+          <PWAInstallPrompt />
+          <NotificationSettings />
+        </div>
 
         {/* Mobile Bottom Navigation */}
         {!hideBottomNav && showMobileNav && <MobileBottomNav />}
