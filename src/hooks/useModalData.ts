@@ -13,9 +13,9 @@ export function useClients() {
         .from('clients')
         .select('client_id, nom_client, segment, score_sante')
         .eq('statut', 'actif')
-        .order('nom_client');
+        .order('nom_client') as any;
       if (data) {
-        setClients(data.map(c => ({
+        setClients(data.map((c: any) => ({
           value: c.client_id,
           label: c.nom_client,
           segment: c.segment,
@@ -41,22 +41,20 @@ export function useDeliveredBons() {
         .select('bl_id, client_id, volume_m3, prix_vente_m3, formule_id, date_livraison, facture_generee')
         .in('workflow_status', ['livre', 'validation_technique'])
         .order('date_livraison', { ascending: false })
-        .limit(50);
+        .limit(50) as any;
 
       if (data) {
-        // Filter out already invoiced
-        const available = data.filter(b => !b.facture_generee);
-        // Fetch client names
-        const clientIds = [...new Set(available.map(b => b.client_id))];
+        const available = (data as any[]).filter((b: any) => !b.facture_generee);
+        const clientIds = [...new Set(available.map((b: any) => b.client_id))];
         const { data: clientRows } = await supabase
           .from('clients')
           .select('client_id, nom_client')
-          .in('client_id', clientIds.length > 0 ? clientIds : ['__none__']);
+          .in('client_id', clientIds.length > 0 ? clientIds : ['__none__']) as any;
         
         const clientMap: Record<string, string> = {};
-        clientRows?.forEach(c => { clientMap[c.client_id] = c.nom_client; });
+        (clientRows as any[] || []).forEach((c: any) => { clientMap[c.client_id] = c.nom_client; });
 
-        setBons(available.map(b => ({
+        setBons(available.map((b: any) => ({
           value: b.bl_id,
           label: `${b.bl_id} — ${clientMap[b.client_id] || b.client_id} · ${b.volume_m3}m³`,
           client: clientMap[b.client_id] || b.client_id,
@@ -84,31 +82,32 @@ export function useTodayBatches() {
       const today = new Date().toISOString().split('T')[0];
       const { data } = await supabase
         .from('production_batches')
-        .select('batch_number, formule_id, volume_m3, status')
+        .select('batch_number, formule, volume_m3, status, bl_id')
         .gte('created_at', `${today}T00:00:00`)
         .order('created_at', { ascending: false })
-        .limit(20);
+        .limit(20) as any;
 
-      if (data && data.length > 0) {
-        setBatches(data.map(b => ({
-          value: b.batch_number,
-          label: `${b.batch_number} — ${b.formule_id} · ${b.volume_m3}m³`,
-          formule: b.formule_id,
-          blId: `BL-${today.slice(2, 4)}${today.slice(5, 7)}-${b.batch_number.slice(-3)}`,
+      const rows = (data as any[] || []);
+      if (rows.length > 0) {
+        setBatches(rows.map((b: any) => ({
+          value: `BN-${String(b.batch_number).padStart(4, '0')}`,
+          label: `BN-${String(b.batch_number).padStart(4, '0')} — ${b.formule || 'F-B25'} · ${b.volume_m3}m³`,
+          formule: b.formule || 'F-B25',
+          blId: b.bl_id || `BL-2603-${String(b.batch_number).slice(-3)}`,
         })));
       } else {
-        // Fallback to recent batches if none today
+        // Fallback to recent batches
         const { data: recent } = await supabase
           .from('production_batches')
-          .select('batch_number, formule_id, volume_m3, status')
+          .select('batch_number, formule, volume_m3, status, bl_id')
           .order('created_at', { ascending: false })
-          .limit(10);
+          .limit(10) as any;
         if (recent) {
-          setBatches(recent.map(b => ({
-            value: b.batch_number,
-            label: `${b.batch_number} — ${b.formule_id} · ${b.volume_m3}m³`,
-            formule: b.formule_id,
-            blId: `BL-2603-${b.batch_number.slice(-3)}`,
+          setBatches((recent as any[]).map((b: any) => ({
+            value: `BN-${String(b.batch_number).padStart(4, '0')}`,
+            label: `BN-${String(b.batch_number).padStart(4, '0')} — ${b.formule || 'F-B25'} · ${b.volume_m3}m³`,
+            formule: b.formule || 'F-B25',
+            blId: b.bl_id || `BL-2603-${String(b.batch_number).slice(-3)}`,
           })));
         }
       }
