@@ -239,6 +239,21 @@ body {
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(212, 168, 67, 0.3) transparent;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ─── iOS Safari: prevent zoom on input focus (font-size < 16px triggers zoom) ─── */
+input, textarea, select {
+  font-size: 16px;
+}
+
+/* ─── iOS Safari: 100vh fix (address bar included) ─── */
+.full-height {
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
 }
 
 /* ─── TBOS Top Navbar ─── */
