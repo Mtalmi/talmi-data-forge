@@ -43,6 +43,7 @@ const statusIcons = {
 };
 
 export default function RecentDeliveries() {
+  const navigate = useNavigate();
   const { t, lang } = useI18n();
   const dateFnsLocale = getDateLocale(lang);
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
