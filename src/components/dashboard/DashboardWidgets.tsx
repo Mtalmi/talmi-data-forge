@@ -186,14 +186,16 @@ export function ARAgingWidget() {
       if (factures) {
         const now = new Date();
         let current = 0, days30 = 0, days60 = 0, days90 = 0;
+        let c0 = 0, c30 = 0, c60 = 0, c90 = 0;
         factures.forEach(f => {
           const daysDiff = Math.floor((now.getTime() - new Date(f.date_facture).getTime()) / 86400000);
-          if (daysDiff <= 30) current += f.total_ttc;
-          else if (daysDiff <= 60) days30 += f.total_ttc;
-          else if (daysDiff <= 90) days60 += f.total_ttc;
-          else days90 += f.total_ttc;
+          if (daysDiff <= 30) { current += f.total_ttc; c0++; }
+          else if (daysDiff <= 60) { days30 += f.total_ttc; c30++; }
+          else if (daysDiff <= 90) { days60 += f.total_ttc; c60++; }
+          else { days90 += f.total_ttc; c90++; }
         });
         setData({ current, days30, days60, days90, total: current + days30 + days60 + days90 });
+        setCounts({ c0, c30, c60, c90 });
       }
       setLoading(false);
     };
