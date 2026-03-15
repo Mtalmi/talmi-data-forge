@@ -87,14 +87,15 @@ function SectionHeader({ icon: Icon, title, badges }: {
   badges?: { label: string; color: string; bg: string; pulse?: boolean }[];
 }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-      <div style={{ width: 4, height: 28, background: T.gold, borderRadius: 2, flexShrink: 0 }} />
-      {Icon && <Icon size={20} color={T.gold} />}
-      <h2 style={{ fontFamily: SANS, fontWeight: 700, fontSize: 18, color: T.textPri, margin: 0 }}>{title}</h2>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 20 }}>
+      <span style={{ color: '#D4A843', fontSize: 14, marginRight: 8, flexShrink: 0 }}>✦</span>
+      {Icon && <Icon size={14} style={{ color: '#D4A843', flexShrink: 0, marginRight: 8 }} />}
+      <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, fontWeight: 700, letterSpacing: '0.15em', color: '#D4A843', textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0 }}>{title}</span>
+      <span style={{ borderBottom: '1px dashed rgba(212, 168, 67, 0.2)', flexGrow: 1, marginLeft: 12, alignSelf: 'center', height: 0 }} />
       {badges?.map((b, i) => (
         <span key={i} style={{
-          fontFamily: SANS, fontSize: 11, fontWeight: 700, padding: '3px 10px',
-          borderRadius: 100, background: b.bg, color: b.color,
+          fontFamily: "ui-monospace, monospace", fontSize: 12, fontWeight: 700, padding: '3px 10px',
+          borderRadius: 100, background: b.bg, color: b.color, marginLeft: 8,
           animation: b.pulse ? 'pulse 2s infinite' : undefined,
         }}>{b.label}</span>
       ))}

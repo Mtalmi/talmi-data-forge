@@ -181,18 +181,19 @@ const CHECKLIST = [
 // ─────────────────────────────────────────────────────
 // SHARED COMPONENTS
 // ─────────────────────────────────────────────────────
-function SectionHeader({ title, badge, badge2, badgeColor = T.gold, badge2Color = T.warning, icon: Icon }:
+function SectionHeader({ title, badge, badge2, badgeColor = '#D4A843', badge2Color = '#F59E0B', icon: Icon }:
   { title: string; badge?: string; badge2?: string; badgeColor?: string; badge2Color?: string; icon?: React.ElementType }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-      <div style={{ width: 4, height: 24, background: T.gold, borderRadius: 2, flexShrink: 0 }} />
-      {Icon && <Icon size={18} color={T.gold} />}
-      <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 18, color: T.textPri, margin: 0 }}>{title}</h2>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 20, flexWrap: 'wrap' }}>
+      <span style={{ color: '#D4A843', fontSize: 14, marginRight: 8, flexShrink: 0 }}>✦</span>
+      {Icon && <Icon size={14} style={{ color: '#D4A843', flexShrink: 0, marginRight: 8 }} />}
+      <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, fontWeight: 700, letterSpacing: '0.15em', color: '#D4A843', textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0 }}>{title}</span>
+      <span style={{ borderBottom: '1px dashed rgba(212, 168, 67, 0.2)', flexGrow: 1, marginLeft: 12, alignSelf: 'center', height: 0 }} />
       {badge && (
-        <span style={{ background: `${badgeColor}22`, color: badgeColor, border: `1px solid ${badgeColor}44`, borderRadius: 100, padding: '2px 10px', fontSize: 12, fontWeight: 600 }}>{badge}</span>
+        <span style={{ background: `${badgeColor}22`, color: badgeColor, border: `1px solid ${badgeColor}44`, borderRadius: 100, padding: '2px 10px', fontSize: 12, fontWeight: 600, marginLeft: 8 }}>{badge}</span>
       )}
       {badge2 && (
-        <span style={{ background: `${badge2Color}22`, color: badge2Color, border: `1px solid ${badge2Color}44`, borderRadius: 100, padding: '2px 10px', fontSize: 12, fontWeight: 600 }}>{badge2}</span>
+        <span style={{ background: `${badge2Color}22`, color: badge2Color, border: `1px solid ${badge2Color}44`, borderRadius: 100, padding: '2px 10px', fontSize: 12, fontWeight: 600, marginLeft: 4 }}>{badge2}</span>
       )}
     </div>
   );

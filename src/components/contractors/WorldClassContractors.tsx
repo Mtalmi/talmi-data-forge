@@ -177,15 +177,16 @@ function AvatarCircle({ initials, bg, textColor, size = 44 }: { initials: string
   );
 }
 
-function SectionHeader({ title, badge, badgeColor = T.gold }: { title: string; badge?: string; badgeColor?: string }) {
+function SectionHeader({ title, badge, badgeColor = '#D4A843' }: { title: string; badge?: string; badgeColor?: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>
-      <div style={{ width: 4, height: 24, background: T.gold, borderRadius: 2, flexShrink: 0 }} />
-      <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 18, color: T.textPri, margin: 0 }}>{title}</h2>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 20 }}>
+      <span style={{ color: '#D4A843', fontSize: 14, marginRight: 8, flexShrink: 0 }}>✦</span>
+      <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, fontWeight: 700, letterSpacing: '0.15em', color: '#D4A843', textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0 }}>{title}</span>
+      <span style={{ borderBottom: '1px dashed rgba(212, 168, 67, 0.2)', flexGrow: 1, marginLeft: 12, alignSelf: 'center', height: 0 }} />
       {badge && (
         <span style={{
           background: `${badgeColor}22`, color: badgeColor, border: `1px solid ${badgeColor}44`,
-          borderRadius: 100, padding: '2px 10px', fontSize: 12, fontWeight: 600,
+          borderRadius: 100, padding: '2px 10px', fontSize: 12, fontWeight: 600, marginLeft: 8,
         }}>{badge}</span>
       )}
     </div>
