@@ -1019,7 +1019,7 @@ export default function WorldClassProduction() {
                     />
                     <ReferenceLine y={90} stroke="rgba(255,255,255,0.20)" strokeDasharray="6 4" label={{ value: 'Objectif', position: 'right', fill: 'rgba(255,255,255,0.25)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} />
                     <Area type="monotone" dataKey="lastWeek" stroke="rgba(212,168,67,0.25)" strokeWidth={1.5} strokeDasharray="6 4" fill="url(#prodGhostFill)" dot={false} activeDot={false} animationDuration={1200} name="Sem. dernière" />
-                    <Area type="monotone" dataKey="volume" stroke="#D4A843" strokeWidth={2} fill="url(#prodGoldFill)" dot={false} activeDot={{ r: 5, fill: '#D4A843' }} animationDuration={1200} name="Aujourd'hui" />
+                    <Area type="monotone" dataKey="volume" stroke="#D4A843" strokeWidth={2} fill="url(#prodGoldFill)" dot={false} activeDot={{ r: 6, fill: '#D4A843', stroke: '#0F1629', strokeWidth: 2 }} animationDuration={1200} name="Aujourd'hui" />
                   </AreaChart>
                 </ResponsiveContainer>
                 {/* Live pulse dot at rightmost point */}
