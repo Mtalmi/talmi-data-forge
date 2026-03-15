@@ -9,10 +9,6 @@ interface TablePaginationProps {
   className?: string;
 }
 
-/**
- * French-labeled pagination with gold active page.
- * Resets to page 1 externally when filters change.
- */
 export function TablePagination({
   currentPage,
   totalItems,
@@ -26,14 +22,14 @@ export function TablePagination({
 
   if (totalItems <= pageSize) return null;
 
-  const btnBase =
-    'inline-flex items-center justify-center h-8 min-w-[	2rem] px-2 rounded-md text-xs font-medium transition-colors select-none';
-  const btnEnabled = 'hover:bg-m    cursor
+  const btnBase = 'inline-flex items-center justify-center h-8 min-w-8 px-2 rounded-md text-xs font-medium transition-colors select-none';
+  const btnEnabled = 'hover:bg-muted cursor-pointer text-muted-foreground';
+  const btnDisabled = 'opacity-30 cursor-not-allowed text-muted-foreground';
 
   return (
-    <div className={cn('flex flex 	col sm:flex-row items-center justify-between gap-2 py-3 px-1', className)}>
+    <div className={cn('flex flex-col sm:flex-row items-center justify-between gap-2 py-3 px-1', className)}>
       <span className="text-xs text-muted-foreground" style={{ fontFamily: 'ui-monospace, monospace' }}>
-        Affichage de {start}–{end} sur {totalItems.toLocaleString('fr-FR')} résultats
+        Affichage de {start}-{end} sur {totalItems.toLocaleString('fr-FR')} resultats
       </span>
 
       <div className="flex items-center gap-1">
@@ -41,7 +37,7 @@ export function TablePagination({
           className={cn(btnBase, currentPage > 1 ? btnEnabled : btnDisabled)}
           onClick={() => currentPage > 1 && onPageChange(1)}
           disabled={currentPage <= 1}
-          aria-label="Première page"
+          aria-label="Premiere page"
         >
           <ChevronsLeft size={14} />
         </button>
@@ -50,15 +46,15 @@ export function TablePagination({
           className={cn(btnBase, currentPage > 1 ? btnEnabled : btnDisabled)}
           onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
           disabled={currentPage <= 1}
-          aria-label="Page précédente"
+          aria-label="Page precedente"
         >
           <ChevronLeft size={14} />
-          <span className="hidden sm:inline ml-1">Précédent</span>
+          <span className="hidden sm:inline ml-1">Precedent</span>
         </button>
 
         <span
           className="inline-flex items-center gap-1 px-3 h-8 rounded-md text-xs font-bold"
-          style={{ 
+          style={{
             fontFamily: 'ui-monospace, monospace',
             color: 'hsl(var(--primary))',
             background: 'hsl(var(--primary) / 0.1)',
@@ -81,7 +77,7 @@ export function TablePagination({
           className={cn(btnBase, currentPage < totalPages ? btnEnabled : btnDisabled)}
           onClick={() => currentPage < totalPages && onPageChange(totalPages)}
           disabled={currentPage >= totalPages}
-          aria-label="Dernière page"
+          aria-label="Derniere page"
         >
           <ChevronsRight size={14} />
         </button>
