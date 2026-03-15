@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import {
   TBOSModal, TBOSField, TBOSInput, TBOSSelect, TBOSTextarea,
   TBOSPrimaryButton, TBOSGhostButton, TBOSFormRow, TBOSFormStack, showFormSuccess,
@@ -36,16 +36,22 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
 
   const selectedMat = MATERIAUX.find(m => m.value === materiau);
 
+  const sanitize = (s: string) => s.replace(/<[^>]*>/g, '').trim();
+
   const validate = () => {
     const e: Record<string, string> = {};
     if (!materiau) e.materiau = 'Champ requis';
-    if (!quantite || parseFloat(quantite) <= 0) e.quantite = 'Valeur doit être positive';
+    const qty = parseFloat(quantite);
+    if (!quantite || isNaN(qty)) e.quantite = 'Champ requis';
+    else if (qty <= 0) e.quantite = 'Valeur doit être supérieure à 0';
+    else if (qty > 1000000) e.quantite = 'Valeur trop élevée';
     if (!responsable) e.responsable = 'Champ requis';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
   const handleSubmit = async () => {
+    if (loading) return; // double-submit guard
     if (!validate()) return;
     setLoading(true);
     try {
@@ -60,7 +66,15 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
         .maybeSingle();
 
       const currentQty = stockRow?.quantite_actuelle || 0;
-      const newQty = type === 'entree' ? currentQty + qty : Math.max(0, currentQty - qty);
+
+      // Prevent withdrawing more than available
+      if (type === 'sortie' && qty > currentQty) {
+        setErrors({ quantite: `Stock insuffisant (disponible: ${currentQty} ${selectedMat?.unit})` });
+        setLoading(false);
+        return;
+      }
+
+      const newQty = type === 'entree' ? currentQty + qty : currentQty - qty;
 
       // Insert mouvement
       const { error: mvtError } = await supabase
@@ -71,8 +85,8 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
           quantite: qty,
           quantite_avant: currentQty,
           quantite_apres: newQty,
-          fournisseur: fournisseur || null,
-          notes: notes || null,
+          fournisseur: sanitize(fournisseur) || null,
+          notes: sanitize(notes) || null,
         });
 
       if (mvtError) throw mvtError;
@@ -96,10 +110,10 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
         type: 'action',
         message: `Mouvement ${type === 'entree' ? 'entrée' : 'sortie'} enregistré — ${matLabel} ${qty} ${selectedMat?.unit}`,
         source_page: 'stocks',
-        severite: 'info',
-      });
+        severite: type === 'sortie' && newQty < (stockRow?.quantite_actuelle || 0) * 0.2 ? 'warning' : 'info',
+      }).then(() => {});
 
-      const mvt = { type, materiau: matLabel, quantite: qty, fournisseur, reference, date, responsable, notes };
+      const mvt = { type, materiau: matLabel, quantite: qty, fournisseur: sanitize(fournisseur), reference: sanitize(reference), date, responsable, notes: sanitize(notes) };
       onCreated?.(mvt);
       showFormSuccess(`✓ Mouvement ${type === 'entree' ? 'entrée' : 'sortie'} enregistré — ${matLabel} ${qty} ${selectedMat?.unit}`);
       resetAndClose();
@@ -120,7 +134,7 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
     <TBOSModal open={open} onClose={resetAndClose} title="Nouveau Mouvement de Stock" footer={
       <>
         <TBOSGhostButton onClick={resetAndClose}>Annuler</TBOSGhostButton>
-        <TBOSPrimaryButton onClick={handleSubmit} loading={loading}>Enregistrer</TBOSPrimaryButton>
+        <TBOSPrimaryButton onClick={handleSubmit} loading={loading} disabled={loading}>Enregistrer</TBOSPrimaryButton>
       </>
     }>
       <TBOSFormStack>
@@ -147,17 +161,17 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
               options={MATERIAUX.map(m => ({ value: m.value, label: `${m.label} (${m.unit})` }))} placeholder="Sélectionner" />
           </TBOSField>
           <TBOSField label={`Quantité${selectedMat ? ` (${selectedMat.unit})` : ''}`} required error={errors.quantite}>
-            <TBOSInput type="number" step="0.1" value={quantite} onChange={e => setQuantite(e.target.value)}
+            <TBOSInput type="number" step="0.1" min="0.1" value={quantite} onChange={e => setQuantite(e.target.value)}
               hasError={!!errors.quantite} placeholder="0" style={{ textAlign: 'right' }} />
           </TBOSField>
         </TBOSFormRow>
 
         <TBOSFormRow>
           <TBOSField label={type === 'entree' ? 'Fournisseur' : 'Destination'}>
-            <TBOSInput value={fournisseur} onChange={e => setFournisseur(e.target.value)} placeholder={type === 'entree' ? 'Nom fournisseur' : 'Destination'} />
+            <TBOSInput value={fournisseur} onChange={e => setFournisseur(e.target.value)} placeholder={type === 'entree' ? 'Nom fournisseur' : 'Destination'} maxLength={200} />
           </TBOSField>
           <TBOSField label="Référence">
-            <TBOSInput value={reference} onChange={e => setReference(e.target.value)} placeholder="N° BL ou référence interne" />
+            <TBOSInput value={reference} onChange={e => setReference(e.target.value)} placeholder="N° BL ou référence interne" maxLength={100} />
           </TBOSField>
         </TBOSFormRow>
 
@@ -172,7 +186,7 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
         </TBOSFormRow>
 
         <TBOSField label="Notes">
-          <TBOSTextarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes..." />
+          <TBOSTextarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes..." maxLength={500} />
         </TBOSField>
       </TBOSFormStack>
     </TBOSModal>
