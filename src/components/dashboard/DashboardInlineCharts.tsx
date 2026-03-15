@@ -50,7 +50,7 @@ export const DashboardInlineCharts = memo(function DashboardInlineCharts() {
             <BarChart data={arChartData} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
               <XAxis dataKey="name" tick={{ fill: 'rgba(148,163,184,0.4)', fontSize: 9, fontFamily: 'Inter, system-ui' }} axisLine={false} tickLine={false} />
               <YAxis hide />
-              <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(255,215,0,0.04)' }} />
+              <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(212,168,67,0.04)' }} />
               <Bar dataKey="value" radius={[3, 3, 0, 0]} animationDuration={1000}>
                 {arChartData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
               </Bar>
