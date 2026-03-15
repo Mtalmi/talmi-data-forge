@@ -300,9 +300,9 @@ export function OverviewTab({ AUTONOMY, STOCK_ALERTS_DB, REORDER_RECS, STOCKS, o
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke={T.amberGrid} vertical={false} />
-              <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11, fontFamily: MONO }} />
-              <YAxis domain={[60, 100]} axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10, fontFamily: MONO }} />
-              <ReferenceLine y={80} stroke="#D4A843" strokeDasharray="6 4" strokeOpacity={0.4} label={{ value: 'Seuil 80', fill: '#9CA3AF', fontSize: 10, fontFamily: MONO, position: 'right' }} />
+              <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 12, fontFamily: MONO }} />
+              <YAxis domain={[60, 100]} axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 12, fontFamily: MONO }} />
+              <ReferenceLine y={80} stroke="#D4A843" strokeDasharray="6 4" strokeOpacity={0.4} label={{ value: 'Seuil 80', fill: '#9CA3AF', fontSize: 12, fontFamily: MONO, position: 'right' }} />
               <RechartsTooltip content={<TrendTooltip />} cursor={{ stroke: '#D4A843', strokeDasharray: '3 3', strokeOpacity: 0.3 }} />
               <Area type="monotone" dataKey="score" stroke="#D4A843" strokeWidth={2} fill="url(#trendFillGrad)" dot={false} activeDot={{ r: 5, fill: '#D4A843', stroke: '#0F1629', strokeWidth: 2 }} />
               {/* Pulse dot on last point */}
