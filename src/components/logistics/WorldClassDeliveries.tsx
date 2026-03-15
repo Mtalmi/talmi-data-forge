@@ -1769,9 +1769,9 @@ function IntelligenceIATab() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
-          <IAKPICard label="RETOURS ÉVITÉS CE MOIS" value="2" color={T.success} subtitle="8,400 DH sauvés" borderColor={T.success} />
+          <IAKPICard label="RETOURS ÉVITÉS CE MOIS" value="2" color={T.success} subtitle="8 400 DH sauvés" borderColor={T.success} />
           <IAKPICard label="PROBABILITÉ MOY. RETOUR" value="12%" color={T.warning} subtitle="flotte aujourd'hui" borderColor={T.warning} />
-          <IAKPICard label="PERTES RETOURS YTD" value="4,200 DH" color={T.danger} subtitle="1 retour (Sigma 06/03)" borderColor={T.danger} />
+          <IAKPICard label="PERTES RETOURS YTD" value="4 200 DH" color={T.danger} subtitle="1 retour (Sigma 06/03)" borderColor={T.danger} />
         </div>
 
         <p style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '1.5px', color: T.textDim, marginBottom: 14, textTransform: 'uppercase' as const }}>ANALYSE PRÉ-DÉPART — LIVRAISONS DU JOUR</p>
