@@ -977,8 +977,8 @@ export default function Creances() {
                       {rate > 0 && <path d={arcPath(startDeg, usedEnd)} fill="none" stroke="url(#crGaugeGold)" strokeWidth={sw} strokeLinecap="round" />}
                       <line x1={ox1} y1={oy1} x2={ox2} y2={oy2} stroke="#22c55e" strokeWidth={2} strokeDasharray="3 2" />
                       <text x={olx} y={oly} textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 7, fill: '#22c55e', fontFamily: 'ui-monospace, monospace' }}>85%</text>
-                      <line x1={cxG} y1={cyG} x2={nx} y2={ny} stroke="#FFD700" strokeWidth={2} strokeLinecap="round" filter="url(#crNeedleGlow)" />
-                      <circle cx={cxG} cy={cyG} r={4} fill="#0B1120" stroke="#FFD700" strokeWidth={1.5} />
+                      <line x1={cxG} y1={cyG} x2={nx} y2={ny} stroke="#D4A843" strokeWidth={2} strokeLinecap="round" filter="url(#crNeedleGlow)" />
+                      <circle cx={cxG} cy={cyG} r={4} fill="#0B1120" stroke="#D4A843" strokeWidth={1.5} />
                     </svg>
                     <p style={{
                       fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
