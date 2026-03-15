@@ -67,6 +67,7 @@ function useFadeIn(delay = 0) {
 // LIVE DATA HOOK
 // ─────────────────────────────────────────────────────
 function useReportsLiveData() {
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState({ totalReports: 12, exports: 34, scheduled: 3, trendData: TREND_DATA, pieData: PIE_DATA });
   const fetchData = useCallback(async () => {
     try {
