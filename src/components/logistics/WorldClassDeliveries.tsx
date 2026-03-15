@@ -16,6 +16,7 @@ import {
   Activity, AlertTriangle,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { PageLoadingSkeleton } from '@/components/ui/PageLoadingSkeleton';
 import { PassationButton } from '@/components/ui/PassationButton';
 import WorldClassDeliveryArchive from '@/components/archive/WorldClassDeliveryArchive';
 import { FleetGPSMap } from '@/components/fleet/FleetGPSMap';
@@ -2140,6 +2141,14 @@ export default function WorldClassDeliveries() {
   ];
 
   const revenuTotal = activePipeline.reduce((s, b) => s + ((b.volume_m3 || 0) * (b.prix_vente_m3 || 1510)), 0);
+
+  if (loading) {
+    return (
+      <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace", color: T.textPri }}>
+        <PageLoadingSkeleton message="Chargement de la logistique..." />
+      </div>
+    );
+  }
 
   return (
     <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace", color: T.textPri, paddingBottom: 60 }}>

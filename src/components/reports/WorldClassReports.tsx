@@ -12,6 +12,7 @@ import {
   Eye, Bell,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { PageLoadingSkeleton } from '@/components/ui/PageLoadingSkeleton';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -67,6 +68,7 @@ function useFadeIn(delay = 0) {
 // LIVE DATA HOOK
 // ─────────────────────────────────────────────────────
 function useReportsLiveData() {
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState({ totalReports: 12, exports: 34, scheduled: 3, trendData: TREND_DATA, pieData: PIE_DATA });
   const fetchData = useCallback(async () => {
     try {
@@ -94,6 +96,7 @@ function useReportsLiveData() {
         ] : PIE_DATA,
       }));
     } catch (err) { console.error('Reports live data error:', err); }
+    finally { setLoading(false); }
   }, []);
   useEffect(() => {
     fetchData();
@@ -104,7 +107,7 @@ function useReportsLiveData() {
       .subscribe();
     return () => { throttledFetch.cancel(); supabase.removeChannel(channel); };
   }, [fetchData]);
-  return data;
+  return { ...data, loading };
 }
 
 // ─────────────────────────────────────────────────────
@@ -653,6 +656,15 @@ export default function WorldClassReports() {
     { id: 'financier',  label: 'Financier' },
     { id: 'custom',     label: 'Custom' },
   ];
+
+  if (liveData.loading) {
+    return (
+      <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace", background: T.navy, minHeight: '100vh', color: T.textPri }}>
+        <PageHeader icon={FileText} title="Rapports" subtitle="Chargement..." />
+        <PageLoadingSkeleton message="Chargement des rapports..." />
+      </div>
+    );
+  }
 
   return (
     <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace", background: T.navy, minHeight: '100vh', color: T.textPri }}>

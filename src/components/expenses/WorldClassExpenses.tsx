@@ -13,6 +13,7 @@ import {
   ArrowRight, Repeat, ToggleLeft, ToggleRight,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { PageLoadingSkeleton } from '@/components/ui/PageLoadingSkeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { throttle } from '@/utils/debounce';
 
@@ -55,6 +56,7 @@ function getCatConfig(cat: string) {
 // LIVE DATA HOOK
 // ─────────────────────────────────────────────────────
 function useExpensesLiveData() {
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState({
     totalThisMonth: 0,
     budgetRemaining: 0,
@@ -318,6 +320,7 @@ function useExpensesLiveData() {
       todaySpend,
       dailyBudget: budgetTotal > 0 ? Math.round((budgetTotal * 1000) / daysInMonth) : 8000,
     });
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -331,7 +334,7 @@ function useExpensesLiveData() {
     return () => { clearInterval(interval); throttledFetch.cancel(); supabase.removeChannel(ch); };
   }, [fetch]);
 
-  return data;
+  return { ...data, loading };
 }
 
 // ─────────────────────────────────────────────────────
@@ -2002,6 +2005,15 @@ export default function WorldClassExpenses() {
       <g><Sector cx={cx} cy={cy} innerRadius={innerRadius - 4} outerRadius={outerRadius + 6} startAngle={startAngle} endAngle={endAngle} fill={fill} /></g>
     );
   };
+
+  if (live.loading) {
+    return (
+      <div style={{ minHeight: '100vh', background: T.navy, fontFamily: 'DM Sans, sans-serif', color: T.textPri }}>
+        <PageHeader icon={CreditCard} title="Dépenses" subtitle="Chargement..." />
+        <PageLoadingSkeleton message="Chargement des dépenses..." />
+      </div>
+    );
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: T.navy, fontFamily: 'DM Sans, sans-serif', color: T.textPri, padding: '0 0 60px 0' }}>
