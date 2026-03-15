@@ -583,7 +583,7 @@ export default function Dashboard() {
             >
               <Bell className="h-3.5 w-3.5 text-slate-500" />
               {!bellSeen && (
-                <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] flex items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white px-1" style={{ border: '2px solid #0a0f1e' }}>2</span>
+                <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] flex items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white px-1 tbos-notif-bounce" style={{ border: '2px solid #0a0f1e' }}>2</span>
               )}
             </button>
             {bellOpen && (
