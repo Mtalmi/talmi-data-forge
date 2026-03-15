@@ -4213,7 +4213,7 @@ textarea.valid {
 /* Recharts axis text — unified monospace */
 .recharts-cartesian-axis-tick-value {
   fill: #9CA3AF !important;
-  font-size: 10px !important;
+  font-size: 12px !important;
   font-family: ui-monospace, SFMono-Regular, monospace !important;
   letter-spacing: 0.5px !important;
 }
