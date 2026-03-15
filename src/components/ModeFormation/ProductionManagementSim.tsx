@@ -64,10 +64,6 @@ export function ProductionManagementSim({ onComplete, onClose }: ProductionManag
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulation submitted
-      productionProgress,
-      metricsRecorded,
-    });
 
     await new Promise(resolve => setTimeout(resolve, 1500));
     

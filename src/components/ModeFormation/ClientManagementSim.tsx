@@ -46,11 +46,6 @@ export function ClientManagementSim({ onComplete, onClose }: ClientManagementSim
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulation submitted
-      clientEmail,
-      historyViewed,
-      receivablesChecked,
-    });
 
     await new Promise(resolve => setTimeout(resolve, 1500));
     

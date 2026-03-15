@@ -69,8 +69,6 @@ export function CeoOverrideSim({ onComplete, onClose }: CeoOverrideSimProps) {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulation submitted
-    });
 
     await new Promise(resolve => setTimeout(resolve, 1500));
     

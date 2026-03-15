@@ -47,10 +47,6 @@ export function QualityControlSim({ onComplete, onClose }: QualityControlSimProp
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulation submitted
-      photoTaken,
-      reportGenerated,
-    });
 
     await new Promise(resolve => setTimeout(resolve, 1500));
     

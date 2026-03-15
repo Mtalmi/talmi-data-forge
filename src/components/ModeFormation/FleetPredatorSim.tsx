@@ -48,10 +48,6 @@ export function FleetPredatorSim({ onComplete, onClose }: FleetPredatorSimProps)
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulation submitted
-      maintenanceChecked,
-      geofenceSet,
-    });
 
     await new Promise(resolve => setTimeout(resolve, 1500));
     
