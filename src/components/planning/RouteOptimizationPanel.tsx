@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { X, MapPin, Package } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
+import { getMoroccoToday } from '@/utils/timezone';
 import { getStatusConfig } from '@/lib/workflowStatus';
 
 interface Delivery {
