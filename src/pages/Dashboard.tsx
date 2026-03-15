@@ -1635,7 +1635,7 @@ export default function Dashboard() {
                   {/* Header with toggle */}
                   <div className="flex items-center justify-between mb-1">
                     <div className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                      {midPanelView === 'data' ? 'Performance du jour' : 'Caméra Centrale'}
+                      {midPanelView === 'data' ? 'Performance du jour' : <><SmartLabel term="Centrale à béton">Caméra Centrale</SmartLabel></>}
                     </div>
                     <div className="flex items-center gap-2">
                       {midPanelView === 'data' && (
