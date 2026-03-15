@@ -5,6 +5,7 @@ import { exportToCSV } from '@/lib/exportUtils';
 import { triggerPrint } from '@/lib/printUtils';
 import { toast } from 'sonner';
 import { useI18n } from '@/i18n/I18nContext';
+import { logActivityEvent } from '@/contexts/ActivityContext';
 
 interface Column<T> {
   key: keyof T;
