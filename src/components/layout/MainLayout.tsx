@@ -106,10 +106,10 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
         >
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="ml-3 p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/[0.04] transition-all z-20 lg:hidden"
+            className="ml-3 p-2.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/[0.04] transition-all z-20 lg:hidden"
             aria-label="Menu"
           >
-            {sidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
           <div className="flex-1">
             <TopNavBar
@@ -136,7 +136,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
               {plant.flag} Données de démonstration — {plant.pillLabel}
             </div>
           )}
-          <div className="mobile-content safe-area-bottom overflow-x-hidden w-full min-w-0" style={{ padding: '0 32px', margin: 0 }}>
+          <div className="mobile-content safe-area-bottom overflow-x-hidden w-full min-w-0 px-4 md:px-8" style={{ margin: 0 }}>
             <div className="tbos-content-wrapper w-full">
               <SectionErrorBoundary section="Contenu principal">
                 <PageTransition>

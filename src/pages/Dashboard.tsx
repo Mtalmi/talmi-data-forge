@@ -1283,7 +1283,7 @@ export default function Dashboard() {
           </div>
 
           {/* (3) 4 KPI Cards Row */}
-          <div data-tour="kpi-cards" className="tbos-kpi-grid grid grid-cols-5 gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch', animation: 'ccSectionIn 300ms ease-out 200ms both' }}>
+          <div data-tour="kpi-cards" className="tbos-kpi-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch', animation: 'ccSectionIn 300ms ease-out 200ms both' }}>
           {[
             {
               label: 'VOLUME',
@@ -2082,7 +2082,7 @@ export default function Dashboard() {
           </div>
 
           {/* Additional Production Widgets */}
-          <div className="grid grid-cols-3 gap-4 mt-5 relative z-[1] items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5 relative z-[1] items-stretch">
             <div className="min-w-0 h-full">
               <Suspense fallback={<div className="h-48 rounded-lg bg-white/[0.02] animate-pulse" />}>
                 <LiveBatchProgress />
@@ -2421,7 +2421,7 @@ export default function Dashboard() {
                   <div style={{ fontFamily: MN, fontSize: 10, fontWeight: 600, letterSpacing: '1.5px', color: row.title === 'CONNECTÉ' ? '#22C55E' : row.title === 'DISPONIBLE' ? '#F59E0B' : '#6B7280', marginBottom: 8, textTransform: 'uppercase' as const }}>
                     {row.title}
                   </div>
-                  <div className="grid grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {row.items.map(item => (
                       <div key={item.name} style={{
                         border: '1px solid rgba(212,168,67,0.08)', borderRadius: 8, padding: 12,
