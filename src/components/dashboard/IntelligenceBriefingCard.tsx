@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Brain, Clock, Loader2, RefreshCw, Sun, Moon } from 'lucide-react';
+import { ScheduledReportsSection } from './ScheduledReportsSection';
 
 interface Briefing {
   id: string;
