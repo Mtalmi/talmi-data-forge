@@ -1060,7 +1060,7 @@ export default function Dashboard() {
                   Voir Rapport Complet
                 </button>
                 <button onClick={() => navigate('/creances')} style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: 'transparent', color: '#EF4444', border: '1px solid rgba(239,68,68,0.4)', cursor: 'pointer', letterSpacing: '0.05em' }}>
-                  Relancer Sigma Bâtiment
+                  Relancer {demoData.riskClient.name}
                 </button>
                 <button onClick={() => navigate('/laboratoire')} style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: 'transparent', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)', cursor: 'pointer', letterSpacing: '0.05em' }}>
                   Planifier Test NM
