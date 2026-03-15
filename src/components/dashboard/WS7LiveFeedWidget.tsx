@@ -106,7 +106,7 @@ export function WS7LiveFeedWidget() {
             <div key={b.id} className="flex items-center gap-2 bg-muted/20 rounded-lg px-3 py-2 text-xs">
               {statusIcon(b.link_status)}
               <span className="font-mono font-medium">#{b.batch_number}</span>
-              <span className="text-muted-foreground truncate flex-1">{b.client_name}</span>
+              <span className="text-muted-foreground truncate flex-1" title={b.client_name}>{b.client_name}</span>
               <Badge variant="outline" className="text-[10px] font-mono">{b.formula}</Badge>
               <span className="font-mono">{b.total_volume_m3}m³</span>
             </div>

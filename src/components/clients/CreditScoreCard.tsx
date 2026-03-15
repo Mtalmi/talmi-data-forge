@@ -60,7 +60,7 @@ export function CreditScoreCard({ client, compact = false }: CreditScoreCardProp
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="font-medium truncate">{client.nom_client}</span>
+            <span className="font-medium truncate" title={client.nom_client}>{client.nom_client}</span>
             {client.is_blocked && <Ban className="h-3 w-3 text-destructive flex-shrink-0" />}
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">

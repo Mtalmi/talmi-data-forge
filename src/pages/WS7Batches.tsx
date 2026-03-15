@@ -272,7 +272,7 @@ export default function WS7Batches() {
                         <TableCell className="whitespace-nowrap text-sm">
                           {format(new Date(batch.batch_datetime), 'dd/MM HH:mm', fmtOpts)}
                         </TableCell>
-                        <TableCell className="max-w-[180px] truncate">{batch.client_name}</TableCell>
+                        <TableCell className="max-w-[180px] truncate" title={batch.client_name}>{batch.client_name}</TableCell>
                         <TableCell>
                           <Badge variant="outline" className="font-mono">{batch.formula}</Badge>
                         </TableCell>

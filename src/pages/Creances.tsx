@@ -1862,7 +1862,7 @@ export default function Creances() {
                 <Card key={client.client_name} className="border-warning/30">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-base flex items-center justify-between">
-                      <span className="truncate">{client.client_name}</span>
+                      <span className="truncate" title={client.client_name}>{client.client_name}</span>
                       <div className="flex items-center gap-2">
                         {/* AI Credit Score */}
                         <div 
