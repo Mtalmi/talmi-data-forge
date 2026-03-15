@@ -40,7 +40,7 @@ export default function NotificationCenter() {
       >
         <Bell size={16} strokeWidth={1.5} />
         {unreadCount > 0 && (
-          <span style={{
+          <span className={badgeBounce} style={{
             position: 'absolute', top: 0, right: 0, transform: 'translate(2px, -2px)',
             minWidth: 16, height: 16, borderRadius: '50%', background: '#EF4444',
             color: '#FFFFFF', fontFamily: MONO, fontSize: 9, fontWeight: 600,
