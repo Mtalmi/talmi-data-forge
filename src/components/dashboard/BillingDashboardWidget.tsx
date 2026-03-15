@@ -217,9 +217,12 @@ export function BillingDashboardWidget() {
           <div className="h-[120px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={stats.agingData}>
-                <XAxis dataKey="label" className="text-[10px]" tick={{ fontSize: 10 }} />
-                <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} className="text-[10px]" tick={{ fontSize: 10 }} />
-                <Tooltip formatter={(v: number) => `${v.toLocaleString()} DH`} contentStyle={{ background: 'rgba(15,23,42,0.95)', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 8, backdropFilter: 'blur(12px)', color: '#fff' }} />
+                <XAxis dataKey="label" tick={{ fill: '#9CA3AF', fontSize: 10 }} axisLine={false} tickLine={false} />
+                <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k DH`} tick={{ fill: '#9CA3AF', fontSize: 10 }} axisLine={false} tickLine={false} />
+                <Tooltip
+                  contentStyle={{ background: '#1A1F35', border: '1px solid #D4A843', borderRadius: 8, color: '#fff' }}
+                  formatter={(v: number, name: string, entry: any) => [`${v.toLocaleString('fr-FR')} DH · ${entry?.payload?.count ?? 0} fact.`, '']}
+                />
                 <Bar dataKey="montant" radius={[4, 4, 0, 0]}>
                   {stats.agingData.map((entry, i) => (
                     <Cell key={i} fill={entry.color} />
