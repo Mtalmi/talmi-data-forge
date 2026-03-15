@@ -584,6 +584,10 @@ export function DevisTable({
                     );
                   })()}
                 </TableCell>
+                {/* ═══ Date Column ═══ */}
+                <TableCell className="text-center" style={{ padding: '10px 8px', color: 'rgba(255,255,255,0.7)', fontFamily: 'ui-monospace, monospace', fontSize: 12 }}>
+                  {format(new Date(devis.created_at), 'dd/MM/yyyy', { locale: dateLocale })}
+                </TableCell>
                 <TableCell className="text-center">
                   {priorityIndicator}
                 </TableCell>
