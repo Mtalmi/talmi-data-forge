@@ -1218,7 +1218,7 @@ export default function Dashboard() {
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,26 20,22 40,24 60,18 80,14 100,10 120,4',
               secondaryLabel: 'Net',
-              secondaryValue: `+${uf.fmtCurrencyK(49000)}`,
+              secondaryValue: `+${uf.fmtCurrencyK(demoData.profitNet.total * 2)}`,
             },
           ].map((kpi, i) => {
             const kpiRoutes = ['/production', '/ventes', '/production', '/creances'];
