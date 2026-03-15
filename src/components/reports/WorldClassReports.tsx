@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { throttle } from '@/utils/debounce';
 import {
   AreaChart, Area, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, ResponsiveContainer,
@@ -96,11 +97,12 @@ function useReportsLiveData() {
   }, []);
   useEffect(() => {
     fetchData();
+    const throttledFetch = throttle(() => fetchData(), 2000);
     const channel = supabase.channel('wc-reports-live')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, fetchData)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'factures' }, fetchData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, throttledFetch)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'factures' }, throttledFetch)
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => { throttledFetch.cancel(); supabase.removeChannel(channel); };
   }, [fetchData]);
   return data;
 }

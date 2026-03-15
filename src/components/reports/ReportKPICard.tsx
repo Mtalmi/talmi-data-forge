@@ -1,3 +1,4 @@
+import React from 'react';
 import { LucideIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -24,7 +25,7 @@ function splitUnit(value: string): { num: string; unit: string } {
   return { num: value, unit: '' };
 }
 
-export function ReportKPICard({
+export const ReportKPICard = React.memo(function ReportKPICard({
   title,
   value,
   icon: Icon,
@@ -79,5 +80,5 @@ export function ReportKPICard({
       </CardContent>
     </Card>
   );
-}
+});
 

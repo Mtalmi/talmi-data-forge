@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from 'recharts';
 import { TrendingUp } from 'lucide-react';
@@ -26,7 +26,7 @@ interface ProductionDeviationChartProps {
   className?: string;
 }
 
-export function ProductionDeviationChart({ bons, formules, className }: ProductionDeviationChartProps) {
+export const ProductionDeviationChart = React.memo(function ProductionDeviationChart({ bons, formules, className }: ProductionDeviationChartProps) {
   const chartData = useMemo(() => {
     return bons.slice(0, 8).map(bon => {
       const formule = formules.find(f => f.formule_id === bon.formule_id);
@@ -104,4 +104,4 @@ export function ProductionDeviationChart({ bons, formules, className }: Producti
       </CardContent>
     </Card>
   );
-}
+});

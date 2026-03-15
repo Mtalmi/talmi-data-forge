@@ -1,8 +1,9 @@
+import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceArea } from 'recharts';
 import { TREND_DATA } from './audit-data';
 import { crosshairCursor, EnhancedActiveDot, TbosChartTooltip } from '@/lib/chart-config';
 
-export default function QualityTrendChart() {
+const QualityTrendChart = React.memo(function QualityTrendChart() {
   return (
     <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
       <div className="flex items-center justify-between mb-4">
@@ -27,4 +28,6 @@ export default function QualityTrendChart() {
       </ResponsiveContainer>
     </div>
   );
-}
+});
+
+export default QualityTrendChart;

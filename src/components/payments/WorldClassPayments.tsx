@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { supabase } from '@/integrations/supabase/client';
+import { throttle } from '@/utils/debounce';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -220,13 +221,14 @@ function usePaymentsLiveData() {
 
   useEffect(() => {
     fetch();
+    const throttledFetch = throttle(() => fetch(), 2000);
     const ch = supabase.channel('wc-payments-live')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'factures' }, () => fetch())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'cash_deposits' }, () => fetch())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, () => fetch())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'devis' }, () => fetch())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'factures' }, throttledFetch)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'cash_deposits' }, throttledFetch)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, throttledFetch)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'devis' }, throttledFetch)
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => { throttledFetch.cancel(); supabase.removeChannel(ch); };
   }, [fetch]);
 
   return { ...data, loading };

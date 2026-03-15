@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { throttle } from '@/utils/debounce';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   ResponsiveContainer, Tooltip as RechartsTooltip, ReferenceLine,
@@ -102,11 +103,12 @@ function useMaintenanceLiveData() {
   }, []);
   useEffect(() => {
     fetchData();
+    const throttledFetch = throttle(() => fetchData(), 2000);
     const channel = supabase.channel('wc-maintenance-live')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'fleet_service_records' }, fetchData)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'flotte' }, fetchData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'fleet_service_records' }, throttledFetch)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'flotte' }, throttledFetch)
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => { throttledFetch.cancel(); supabase.removeChannel(channel); };
   }, [fetchData]);
   return { kpis, serviceRecords };
 }

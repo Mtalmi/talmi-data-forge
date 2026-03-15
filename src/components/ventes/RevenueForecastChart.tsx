@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceDot,
 } from 'recharts';
@@ -95,7 +95,7 @@ function GoldCrosshair(props: any) {
   );
 }
 
-export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChartProps) {
+export const RevenueForecastChart = React.memo(function RevenueForecastChart({ bcList, devisList }: RevenueForecastChartProps) {
   const { t, lang } = useI18n();
   const rf = t.revenueForecast;
   const dateLocale = getDateLocale(lang);
@@ -236,4 +236,4 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
       </div>
     </div>
   );
-}
+});

@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { useCountUp } from '@/hooks/useCountUp';
 import { MetricTooltip } from '@/components/ui/MetricTooltip';
 import { supabase } from '@/integrations/supabase/client';
+import { throttle } from '@/utils/debounce';
 import { format, startOfDay, endOfDay, startOfWeek, endOfWeek } from 'date-fns';
 import { getMoroccoToday } from '@/utils/timezone';
 import BatchesTab from './BatchesTab';
@@ -240,12 +241,13 @@ function useProductionLiveData() {
 
   useEffect(() => {
     fetchAll();
+    const throttledFetch = throttle(() => fetchAll(), 2000);
     const channel = supabase
       .channel('wc-production-live')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, () => fetchAll())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'production_batches' }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, throttledFetch)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'production_batches' }, throttledFetch)
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => { throttledFetch.cancel(); supabase.removeChannel(channel); };
   }, [fetchAll]);
 
   return { bons, batches, weekBons, loading };
