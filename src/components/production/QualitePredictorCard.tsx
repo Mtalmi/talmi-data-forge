@@ -117,6 +117,25 @@ export function QualitePredictorCard() {
         </div>
       </div>
 
+      {/* KPI Triplet Summary */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 16 }}>
+        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,168,67,0.06)', borderRadius: 8, padding: 16 }}>
+          <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase', marginBottom: 6 }}>Conformité Globale</div>
+          <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: 28, color: conformiteColor(globalConformite), lineHeight: 1.1 }}>{globalConformite}%</div>
+          <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>{totalBatches} batches analysés</div>
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,168,67,0.06)', borderRadius: 8, padding: 16 }}>
+          <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase', marginBottom: 6 }}>Écarts Détectés</div>
+          <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: 28, color: totalEcarts > 0 ? '#EF4444' : '#22C55E', lineHeight: 1.1 }}>{totalEcarts}</div>
+          <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>aujourd'hui</div>
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,168,67,0.06)', borderRadius: 8, padding: 16 }}>
+          <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase', marginBottom: 6 }}>Formules Actives</div>
+          <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: 28, color: '#D4A843', lineHeight: 1.1 }}>{totalFormules}</div>
+          <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>sous surveillance</div>
+        </div>
+      </div>
+
       {/* Table card */}
       <div style={{
         background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
