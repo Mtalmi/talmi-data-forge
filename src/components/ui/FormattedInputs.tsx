@@ -50,7 +50,7 @@ export function PhoneInput({ value, onChange, className, ...props }: PhoneInputP
       className={cn(
         className,
         touched && valid === false && 'border-destructive focus-visible:ring-destructive/30',
-        touched && valid === true && 'border-emerald-500/50 focus-visible:ring-emerald-500/20',
+        touched && valid === true && 'border-green-500/50 focus-visible:ring-green-500/20',
       )}
       {...props}
     />
