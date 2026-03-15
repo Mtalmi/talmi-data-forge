@@ -212,19 +212,37 @@ export function BcTable({
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>☐</TableHead>
+            <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>N° BC</TableHead>
+            <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Client</TableHead>
+            <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Formule</TableHead>
+            <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Volume</TableHead>
+            <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Statut</TableHead>
+            <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableSkeletonRows columns={7} />
+        </TableBody>
+      </Table>
     );
   }
 
   if (bcList.length === 0) {
     return (
-      <EmptyState
-        icon={ShoppingCart}
-        title={bt.noBc}
-        description={bt.convertQuoteToBc}
-      />
+      <Table>
+        <TableBody>
+          <TableEmptyState
+            columns={7}
+            icon={ShoppingCart}
+            title={bt.noBc}
+            description={bt.convertQuoteToBc}
+          />
+        </TableBody>
+      </Table>
     );
   }
 

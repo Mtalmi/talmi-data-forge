@@ -330,13 +330,20 @@ export function FacturesTable({
       </div>
 
       {filteredFactures.length === 0 ? (
-        <div className="text-center py-12">
-          <Receipt className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
-          <p className="text-muted-foreground">{ft.noInvoiceFound}</p>
-          <p className="text-sm text-muted-foreground mt-1">
-            {ft.invoicesAppearAfterDelivery}
-          </p>
-        </div>
+        <Table>
+          <TableBody>
+            {factures.length === 0 ? (
+              <TableEmptyState
+                columns={COL_COUNT}
+                icon={Receipt}
+                title={ft.noInvoiceFound}
+                description={ft.invoicesAppearAfterDelivery}
+              />
+            ) : (
+              <TableFilteredEmpty columns={COL_COUNT} onClearFilters={() => setSearchTerm('')} />
+            )}
+          </TableBody>
+        </Table>
       ) : (
         <>
         <Table>
