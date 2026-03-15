@@ -567,8 +567,9 @@ export default function WorldClassUsers() {
           <>
             <button
               onClick={() => {
-                const headers = 'Nom;Email;Rôle;Statut';
-                const blob = new Blob([`\uFEFF${headers}\nMax Talmi;max@tbos.ma;CEO;Actif`], { type: 'text/csv;charset=utf-8;' });
+                const headers = 'Nom;Email;Rôle;Département;Dernier Accès;Sessions;Statut';
+                const csvRows = USERS_DATA.map(u => `${u.name};${u.email};${u.role};${u.dept};${u.access};${u.sessions};${u.active ? 'Actif' : 'Inactif'}`).join('\n');
+                const blob = new Blob([`\uFEFF${headers}\n${csvRows}`], { type: 'text/csv;charset=utf-8;' });
                 const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
                 a.download = `TBOS_Utilisateurs_${new Date().toISOString().slice(0,10)}.csv`;
                 a.click(); URL.revokeObjectURL(a.href);
