@@ -73,6 +73,7 @@ const timelineMarkers = [
 ];
 
 export function MultiMarketCalendar() {
+  const navigate = useNavigate();
   return (
     <div className="mb-3 space-y-3">
       {/* ═══ 1. CALENDRIER OPÉRATIONNEL ═══ */}
