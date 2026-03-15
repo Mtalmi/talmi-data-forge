@@ -8,6 +8,7 @@ import MainLayout from '@/components/layout/MainLayout';
 import AlertBanner from '@/components/dashboard/AlertBanner';
 import LeakageAlertBanner from '@/components/dashboard/LeakageAlertBanner';
 import { type Period } from '@/components/dashboard/PeriodSelector';
+import { SmartLabel } from '@/components/ui/SmartLabel';
 import { LazyDashboardSection } from '@/components/dashboard/LazyDashboardSection';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
