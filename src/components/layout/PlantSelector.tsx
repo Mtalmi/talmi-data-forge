@@ -17,7 +17,7 @@ export function PlantSelector() {
   }, []);
 
   return (
-    <div ref={ref} style={{ position: 'relative' }}>
+    <div ref={ref} style={{ position: 'relative' }} data-tour="plant-selector">
       <button
         onClick={() => setOpen(!open)}
         className="hidden md:flex items-center gap-2 transition-colors duration-200"
