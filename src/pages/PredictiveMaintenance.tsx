@@ -101,12 +101,12 @@ const predictions = [
 ];
 
 const sensors = [
-  { name: "Vibration", unit: "mm/s", value: 12.4, status: "HIGH", normal: "<6.0", color: "#EF4444", data: [3.8, 4.0, 4.2, 4.1, 4.5, 4.8, 5.0, 5.2, 5.1, 5.5, 5.8, 6.0, 6.2, 6.8, 7.2, 7.8, 8.5, 9.2, 10.0, 12.4] },
-  { name: "Temperature", unit: "°C", value: 87, status: "ELEVATED", normal: "<65", color: "#F59E0B", data: [58, 59, 60, 60, 61, 62, 63, 63, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 85, 87] },
-  { name: "Current Draw", unit: "A", value: 48.2, status: "HIGH", normal: "<42", color: "#F59E0B", data: [38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 46, 47, 47, 48, 48.2] },
-  { name: "Oil Pressure", unit: "bar", value: 2.1, status: "CRITICAL", normal: ">3.5", color: "#FF2D2D", data: [4.2, 4.1, 4.0, 4.0, 3.9, 3.8, 3.7, 3.6, 3.5, 3.4, 3.3, 3.1, 3.0, 2.9, 2.8, 2.6, 2.5, 2.3, 2.2, 2.1] },
-  { name: "Noise Level", unit: "dB", value: 78, status: "ELEVATED", normal: "<65", color: "#F59E0B", data: [60, 61, 61, 62, 62, 63, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 75, 76, 78] },
-  { name: "Rotation Speed", unit: "RPM", value: 1847, status: "NORMAL", normal: "1800-1900", color: "#10B981", data: [1850, 1848, 1852, 1847, 1849, 1851, 1848, 1850, 1847, 1849, 1851, 1848, 1850, 1847, 1849, 1851, 1848, 1850, 1847, 1847] },
+  { name: "Vibration", unit: "mm/s", value: 12.4, status: "ÉLEVÉ", normal: "<6.0", color: "#EF4444", data: [3.8, 4.0, 4.2, 4.1, 4.5, 4.8, 5.0, 5.2, 5.1, 5.5, 5.8, 6.0, 6.2, 6.8, 7.2, 7.8, 8.5, 9.2, 10.0, 12.4] },
+  { name: "Température", unit: "°C", value: 87, status: "ÉLEVÉ", normal: "<65", color: "#F59E0B", data: [58, 59, 60, 60, 61, 62, 63, 63, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 85, 87] },
+  { name: "Intensité", unit: "A", value: 48.2, status: "ÉLEVÉ", normal: "<42", color: "#F59E0B", data: [38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 46, 47, 47, 48, 48.2] },
+  { name: "Pression Huile", unit: "bar", value: 2.1, status: "CRITIQUE", normal: ">3.5", color: "#FF2D2D", data: [4.2, 4.1, 4.0, 4.0, 3.9, 3.8, 3.7, 3.6, 3.5, 3.4, 3.3, 3.1, 3.0, 2.9, 2.8, 2.6, 2.5, 2.3, 2.2, 2.1] },
+  { name: "Niveau Bruit", unit: "dB", value: 78, status: "ÉLEVÉ", normal: "<65", color: "#F59E0B", data: [60, 61, 61, 62, 62, 63, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 75, 76, 78] },
+  { name: "Vitesse Rotation", unit: "RPM", value: 1847, status: "NORMAL", normal: "1800-1900", color: "#10B981", data: [1850, 1848, 1852, 1847, 1849, 1851, 1848, 1850, 1847, 1849, 1851, 1848, 1850, 1847, 1849, 1851, 1848, 1850, 1847, 1847] },
 ];
 
 const vibTempData = Array.from({ length: 30 }, (_, i) => ({
