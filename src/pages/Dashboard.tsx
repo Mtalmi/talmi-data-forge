@@ -262,10 +262,16 @@ export default function Dashboard() {
   }, [activeTab]);
 
   // Animated KPI values — locked for CEO demo determinism
-  const prodVolume = useCountUp(671, 1800, 200);
-  const ca = useCountUp(75.6, 1800, 400, 1);
+  // Raw MENA values for count-up
+  const rawProdVolume = useCountUp(671, 1800, 200);
+  const rawCa = useCountUp(75.6, 1800, 400, 1);
   const marge = useCountUp(49.9, 1800, 600, 1);
-  const tresorerie = useCountUp(551, 1800, 800);
+  const rawTresorerie = useCountUp(551, 1800, 800);
+
+  // Converted values for display
+  const prodVolume = uf.rawVolume(rawProdVolume);
+  const ca = +(uf.rawCurrencyK(rawCa * 1000)).toFixed(1);
+  const tresorerie = Math.round(uf.rawCurrencyK(rawTresorerie * 1000));
 
   // Build sparkline SVG path
   const maxV = Math.max(...SPARKLINE_DATA.map(d => d.v));
