@@ -544,7 +544,7 @@ export default function Fournisseurs() {
                         
                         return (
                           <TableRow key={f.id} className={isOverdue ? 'bg-red-50' : ''}>
-                            <TableCell className="font-mono">{f.numero_facture}</TableCell>
+                            <TableCell className="font-mono"><CopyableText text={f.numero_facture}>{f.numero_facture}</CopyableText></TableCell>
                             <TableCell>{f.fournisseur?.nom_fournisseur || '-'}</TableCell>
                             <TableCell>{format(new Date(f.date_facture), 'dd/MM/yyyy')}</TableCell>
                             <TableCell className={isOverdue ? 'text-red-600 font-medium' : ''}>

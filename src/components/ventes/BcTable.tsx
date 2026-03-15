@@ -516,11 +516,7 @@ export function BcTable({
                 <TableCell>
                   <div className="flex items-center gap-1.5">
                     {renderPriorityDot(bc)}
-                    <span
-                      style={{ fontFamily: 'ui-monospace, monospace', color: '#D4A843', fontWeight: 500, fontSize: 12, cursor: 'pointer', whiteSpace: 'nowrap' }}
-                      onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
-                      onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
-                    >{bc.bc_id}</span>
+                    <CopyableText text={bc.bc_id} style={{ fontFamily: 'ui-monospace, monospace', color: '#D4A843', fontWeight: 500, fontSize: 12, whiteSpace: 'nowrap' }}>{bc.bc_id}</CopyableText>
                     {bcIsEmergency && (
                       <Zap className="h-3 w-3 text-red-500 shrink-0" />
                     )}
