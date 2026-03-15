@@ -153,7 +153,7 @@ export function useDashboardData() {
       const labTests = labRes.data || [];
       const totalTests = labTests.length;
       const nonConform = labTests.filter(t => t.alerte_qualite || t.resistance_conforme === false || t.affaissement_conforme === false).length;
-      const conformRate = totalTests > 0 ? ((totalTests - nonConform) / totalTests) * 100 : 100;
+      const conformRate = safeDivide((totalTests - nonConform), totalTests, 1) * 100;
 
       // Marge — match revenue to costs using same data scope
       // When few bons are delivered but many batches produced, revenue << cost → nonsensical marge
@@ -161,8 +161,8 @@ export function useDashboardData() {
       const estimatedRevenue = prodVolume * 850; // avg price/m³ across formulas
       const effectiveRevenue = revenueToday > estimatedRevenue * 0.3 ? revenueToday : estimatedRevenue;
       const effectiveCost = totalCoutMatiere > 0 ? totalCoutMatiere : effectiveRevenue * 0.50;
-      let margeValue = effectiveRevenue > 0 ? ((effectiveRevenue - effectiveCost) / effectiveRevenue) * 100 : 0;
-      // Guard: clamp unreasonable values (data incomplete)
+      let margeValue = roundPercent(safeDivide(effectiveRevenue - effectiveCost, effectiveRevenue) * 100);
+      // Guard: clamp unreasonable values (data incomplete) — NEVER show -470.6%
       if (margeValue < -100 || margeValue > 100 || !isFinite(margeValue)) margeValue = 0;
 
       // Trésorerie
