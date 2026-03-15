@@ -75,7 +75,7 @@ export function MobileBottomNav() {
                 isMoreActive && "mobile-nav-item-active"
               )}
             >
-              <MoreHorizontal className="mobile-nav-icon" />
+              <MoreHorizontal className="mobile-nav-icon" aria-hidden="true" />
               <span className="mobile-nav-label">{mn.more}</span>
               {isMoreActive && <div className="mobile-nav-indicator" />}
             </button>

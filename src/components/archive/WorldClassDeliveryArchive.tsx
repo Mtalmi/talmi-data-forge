@@ -484,8 +484,10 @@ export default function WorldClassDeliveryArchive() {
             </div>
             <button
               onClick={() => {
-                const headers = 'BL;Client;Formule;Volume;Date;Statut';
-                const blob = new Blob([`\uFEFF${headers}\nBL-2602-003;TGCC;F-B25;30;2026-03-14;Livré`], { type: 'text/csv;charset=utf-8;' });
+                const rows = (liveEntries.length ? liveEntries : ENTRIES);
+                const headers = 'BL;Date;Client;Destination;Formule;Volume (m³);Camion;Chauffeur;Durée;Statut';
+                const csvRows = rows.map(e => `${e.bl};${e.date};${e.client};${e.dest};${e.product};${e.vol};${e.truck};${e.driver};${e.duree};${e.status}`).join('\n');
+                const blob = new Blob([`\uFEFF${headers}\n${csvRows}`], { type: 'text/csv;charset=utf-8;' });
                 const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
                 a.download = `TBOS_Archive_${new Date().toISOString().slice(0,10)}.csv`;
                 a.click(); URL.revokeObjectURL(a.href);
