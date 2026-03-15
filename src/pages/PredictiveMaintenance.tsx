@@ -116,9 +116,9 @@ const vibTempData = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 const scheduleData = [
-  { unit: "MX-003", plant: "Casablanca N.", type: "Emergency Repair", date: "ASAP 🔴", assigned: "Unassigned", parts: "⏳ Pending", status: "CRITICAL" },
-  { unit: "PMP-001", plant: "Casablanca N.", type: "Preventive", date: "Mar 8, 2025", assigned: "Ahmed K.", parts: "✅ Ordered", status: "Scheduled" },
-  { unit: "MX-007", plant: "Marrakech", type: "Routine Service", date: "Mar 12, 2025", assigned: "Hassan M.", parts: "✅ In Stock", status: "Scheduled" },
+  { unit: "MX-003", plant: "Casablanca N.", type: "Réparation Urgente", date: "ASAP 🔴", assigned: "Non assigné", parts: "⏳ En attente", status: "CRITIQUE" },
+  { unit: "PMP-001", plant: "Casablanca N.", type: "Préventif", date: "8 mars 2025", assigned: "Ahmed K.", parts: "✅ Commandé", status: "Planifié" },
+  { unit: "MX-007", plant: "Marrakech", type: "Entretien Routinier", date: "12 mars 2025", assigned: "Hassan M.", parts: "✅ En stock", status: "Planifié" },
   { unit: "CNV-002", plant: "Marrakech", type: "Belt Inspection", date: "Mar 18, 2025", assigned: "TBD", parts: "—", status: "AI Recommended" },
   { unit: "WGH-002", plant: "Rabat", type: "Calibration", date: "Mar 20, 2025", assigned: "Said A.", parts: "—", status: "Scheduled" },
   { unit: "MX-011", plant: "Tangier", type: "Routine Service", date: "Mar 25, 2025", assigned: "TBD", parts: "—", status: "Due" },
