@@ -893,11 +893,11 @@ export default function Dashboard() {
                     </span>
                     <span className="text-muted-foreground/20">|</span>
                     <span className="text-muted-foreground/40">
-                      {now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} · {plantData.location}
+                      {now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} · {demoData.location}
                     </span>
                     <span className="text-muted-foreground/20">|</span>
                     <span className="text-muted-foreground/40">
-                      <span className="text-sm">{plantData.weather.optimal ? '☀️' : '🌧'}</span> {plantData.weather.temp} {plantData.weather.condition} · {plantData.weather.humidity} · <span className={`${plantData.weather.optimal ? 'text-emerald-400/80' : 'text-amber-400/80'} font-semibold`}>● {plantData.weather.optimal ? 'Optimal' : 'Attention'}</span>
+                      <span className="text-sm">{demoData.weather.temp > 25 ? '☀️' : demoData.weather.temp < 10 ? '🌧' : '⛅'}</span> {uf.fmtTemp(demoData.weather.temp)} {demoData.weather.condition} · {demoData.weather.humidity}% · <span className={`${demoData.weather.humidity < 50 ? 'text-emerald-400/80' : 'text-amber-400/80'} font-semibold`}>● {demoData.weather.humidity < 50 ? 'Optimal' : 'Attention'}</span>
                     </span>
                   </div>
                 </div>
