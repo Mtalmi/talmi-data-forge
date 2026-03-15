@@ -243,6 +243,7 @@ export function TBOSTextarea({ hasError, style, ...props }: TBOSTextareaProps) {
   return (
     <textarea
       {...props}
+      autoComplete="off"
       aria-invalid={hasError || undefined}
       style={{
         ...inputBaseStyle, minHeight: 80, resize: 'vertical',
