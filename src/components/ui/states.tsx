@@ -17,8 +17,8 @@ interface EmptyStateProps {
 
 export function EmptyState({
   icon: Icon = Inbox,
-  title = 'Contenu en cours de déploiement...',
-  subtitle = 'Cette section sera disponible prochainement.',
+  title = 'Rien à signaler pour le moment.',
+  subtitle = 'Le prochain événement apparaîtra ici automatiquement.',
   className = '',
 }: EmptyStateProps) {
   return (
