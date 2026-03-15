@@ -676,11 +676,6 @@ html {
   from { width: 0%; }
 }
 
-@media (min-width: 769px) {
-  .modal-body-scroll {
-    padding: 24px !important;
-  }
-}
 
 /* ─── Link hover — gold underline animation ─── */
 .link-gold {
