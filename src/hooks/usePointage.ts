@@ -150,7 +150,7 @@ export function usePointage() {
   // Clock out function
   const clockOut = useCallback(async (employeId: string): Promise<boolean> => {
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getMoroccoToday();
       
       const { data: existing } = await supabase
         .from('pointages')
