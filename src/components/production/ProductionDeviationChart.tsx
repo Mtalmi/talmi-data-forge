@@ -84,9 +84,12 @@ export function ProductionDeviationChart({ bons, formules, className }: Producti
             <Tooltip 
               formatter={(value: number) => [`${value}%`, '']}
               contentStyle={{ 
-                backgroundColor: 'hsl(var(--card))', 
-                borderColor: 'hsl(var(--border))',
-                fontSize: 12 
+                backgroundColor: '#1A2332', 
+                borderColor: 'rgba(212, 168, 67, 0.2)',
+                borderRadius: 8,
+                fontSize: 12,
+                fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
               }}
             />
             <Legend wrapperStyle={{ fontSize: 10 }} />
