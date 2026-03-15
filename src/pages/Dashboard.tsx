@@ -1049,7 +1049,7 @@ export default function Dashboard() {
           </div>
 
           {/* (0) BRIEFING MATINAL — Full AI Intelligence Summary */}
-          <div className="relative z-[1] mb-5" style={{ animation: 'ccSectionIn 300ms ease-out 80ms both' }}>
+          <div className="relative z-[1] mb-5" data-tour="briefing" style={{ animation: 'ccSectionIn 300ms ease-out 80ms both' }}>
             <div style={{
               borderTop: '2px solid #D4A843',
               background: 'rgba(212, 168, 67, 0.03)',
