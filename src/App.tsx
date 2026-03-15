@@ -153,6 +153,7 @@ function PageTitleManager() {
 }
 
 const App = () => (
+  <RootErrorBoundary>
   <I18nProvider>
   <UnitProvider>
   <PlantProvider>
