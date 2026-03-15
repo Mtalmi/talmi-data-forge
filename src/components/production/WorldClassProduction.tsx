@@ -998,7 +998,7 @@ export default function WorldClassProduction() {
                     <XAxis dataKey="hour" tick={{ fill: 'rgba(255,255,255,0.30)', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fill: 'rgba(255,255,255,0.25)', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} width={35} domain={[0, 'auto']} />
                     <Tooltip
-                      cursor={{ stroke: '#D4A843', strokeDasharray: '3 3', strokeOpacity: 0.3 }}
+                      cursor={{ stroke: '#D4A843', strokeDasharray: '4 4', strokeOpacity: 0.35, strokeWidth: 1 }}
                       content={({ active, payload, label }: any) => {
                         if (!active || !payload?.length) return null;
                         const today = payload.find((p: any) => p.dataKey === 'volume');
