@@ -154,8 +154,8 @@ export function FixedAssetsDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-orange-500">-{totals.accumulatedDepreciation.toLocaleString()} DH</p>
-            <p className="text-xs text-muted-foreground">{fa.monthly}: {totals.monthlyDepreciation.toLocaleString()} DH</p>
+            <p className="text-2xl font-bold text-orange-500">-{totals.accumulatedDepreciation.toLocaleString('fr-FR')} DH</p>
+            <p className="text-xs text-muted-foreground">{fa.monthly}: {totals.monthlyDepreciation.toLocaleString('fr-FR')} DH</p>
           </CardContent>
         </Card>
 
