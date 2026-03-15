@@ -158,6 +158,7 @@ export default function Dashboard() {
   const [showCursor, setShowCursor] = useState(true);
   const [showLancerToast, setShowLancerToast] = useState(false);
   const [lancerToastVisible, setLancerToastVisible] = useState(false);
+  const [agentBannerDismissed, setAgentBannerDismissed] = useState(false);
   const [midPanelView, setMidPanelView] = useState<'data' | 'camera'>('data');
   const [expandedKpi, setExpandedKpi] = useState<string | null>(null);
   const [cameraTime, setCameraTime] = useState('');
