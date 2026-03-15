@@ -192,7 +192,7 @@ export function usePaymentDelays() {
         .from('clients')
         .select('*')
         .eq('client_id', clientId)
-        .single();
+        .maybeSingle();
 
       if (clientError || !client) {
         toast.error('Client non trouvé');

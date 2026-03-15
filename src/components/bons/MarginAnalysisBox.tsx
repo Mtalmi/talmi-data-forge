@@ -66,7 +66,7 @@ export function MarginAnalysisBox({
         .from('formules_theoriques')
         .select('ciment_kg_m3, sable_kg_m3, gravier_kg_m3, eau_l_m3, adjuvant_l_m3')
         .eq('formule_id', formuleId)
-        .single();
+        .maybeSingle();
 
       if (pricesData) {
         const getPrice = (keyword: string) => {

@@ -102,13 +102,14 @@ export function useCashPaymentControls() {
   }, [fetchStats, fetchSuppliers]);
 
   const getSupplierMonthlyTotal = async (fournisseurId: string): Promise<number> => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('supplier_cash_tracking')
       .select('total_cash_amount')
       .eq('fournisseur_id', fournisseurId)
       .eq('month_year', currentMonthYear)
-      .single();
+      .maybeSingle();
     
+    if (error) console.error('Error fetching supplier monthly total:', error);
     return data?.total_cash_amount || 0;
   };
 

@@ -105,8 +105,9 @@ export function RotationStepperModal({
           .from('flotte')
           .select('km_compteur')
           .eq('id_camion', camionId)
-          .single()
-          .then(({ data }) => {
+          .maybeSingle()
+          .then(({ data, error }) => {
+            if (error) console.error('Error fetching km reading:', error);
             setLastKmReading(data?.km_compteur || null);
           });
       }
@@ -245,7 +246,7 @@ export function RotationStepperModal({
           .from('bons_livraison_reels')
           .select('validated_at')
           .eq('bl_id', blId)
-          .single();
+          .maybeSingle();
         
         if (blData?.validated_at) {
           tempsAttente = differenceInMinutes(new Date(blData.validated_at), new Date(localHeureArrivee));

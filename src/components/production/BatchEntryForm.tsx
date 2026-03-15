@@ -202,7 +202,7 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
         .from('profiles')
         .select('full_name')
         .eq('user_id', user?.id)
-        .single();
+        .maybeSingle();
 
       const theoValues = {
         ciment: formule.ciment_kg_m3 * volume,

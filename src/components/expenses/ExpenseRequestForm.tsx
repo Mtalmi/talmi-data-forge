@@ -222,7 +222,7 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
 
     setSubmitting(true);
     try {
-      const { data: profile } = await supabase.from('profiles').select('full_name').eq('user_id', user?.id).single();
+      const { data: profile } = await supabase.from('profiles').select('full_name').eq('user_id', user?.id).maybeSingle();
       const calculatedLevel = montantTTC <= 2000 ? 'level_1' : montantTTC <= 20000 ? 'level_2' : 'level_3';
       const { error } = await supabase.from('expenses_controlled').insert({
         description: description.trim(),

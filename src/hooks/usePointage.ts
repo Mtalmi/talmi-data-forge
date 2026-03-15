@@ -105,7 +105,7 @@ export function usePointage() {
         .select('id, heure_entree')
         .eq('employe_id', employeId)
         .eq('date_pointage', today)
-        .single();
+        .maybeSingle();
 
       if (existing?.heure_entree) {
         toast.error('Déjà pointé aujourd\'hui');
@@ -157,7 +157,7 @@ export function usePointage() {
         .select('id, heure_entree, heure_sortie')
         .eq('employe_id', employeId)
         .eq('date_pointage', today)
-        .single();
+        .maybeSingle();
 
       if (!existing) {
         toast.error('Aucun pointage d\'entrée trouvé');
@@ -205,7 +205,7 @@ export function usePointage() {
         .select('id')
         .eq('employe_id', employeId)
         .eq('date_rapport', today)
-        .single();
+        .maybeSingle();
 
       if (existing) {
         toast.error('Rapport déjà soumis aujourd\'hui');

@@ -236,7 +236,7 @@ export function useTightTimes() {
             .from('emergency_bc_approvals')
             .select('bc_id')
             .eq('id', approvalId)
-            .single();
+            .maybeSingle();
           
           if (approval?.bc_id) {
             // Send email notifications via edge function

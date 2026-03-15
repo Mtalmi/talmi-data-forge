@@ -50,8 +50,12 @@ export function DeliveryOrchestrationPanel() {
       const [activeRes, totalRes, blRes] = await Promise.all([
         supabase.from('prestataires_transport').select('id', { count: 'exact', head: true }).eq('actif', true),
         supabase.from('prestataires_transport').select('id', { count: 'exact', head: true }),
-        supabase.from('bons_livraison_reels').select('bl_id, temps_rotation_minutes, workflow_status, updated_at, heure_prevue, date_livraison').eq('date_livraison', todayStr),
+        supabase.from('bons_livraison_reels').select('bl_id, temps_rotation_minutes, workflow_status, updated_at, heure_prevue, date_livraison').eq('date_livraison', todayStr).order('created_at', { ascending: false }),
       ]);
+
+      if (activeRes.error) console.error('Error fetching active transport:', activeRes.error);
+      if (totalRes.error) console.error('Error fetching total transport:', totalRes.error);
+      if (blRes.error) console.error('Error fetching today BLs:', blRes.error);
 
       const activeTrucks = activeRes.count ?? 0;
       const totalTrucks = totalRes.count ?? 0;

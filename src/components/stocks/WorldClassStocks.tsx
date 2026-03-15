@@ -166,7 +166,7 @@ function useStocksLiveData() {
     try {
       const sevenDaysAgo = startOfDay(subDays(new Date(), 7)).toISOString();
       const [stocksRes, movementsRes, autonomyRes, consumptionRes, stockAlertsRes, reorderRes] = await Promise.all([
-        supabase.from('stocks').select('*'),
+        supabase.from('stocks').select('*').order('materiau', { ascending: true }),
         supabase.from('mouvements_stock')
           .select('id, materiau, type_mouvement, quantite, reference_id, created_by, created_at, fournisseur')
           .order('created_at', { ascending: false })
@@ -186,6 +186,13 @@ function useStocksLiveData() {
           .eq('is_active', true)
           .order('created_at', { ascending: false }),
       ]);
+
+      if (stocksRes.error) console.error('Error fetching stocks:', stocksRes.error);
+      if (movementsRes.error) console.error('Error fetching movements:', movementsRes.error);
+      if (autonomyRes.error) console.error('Error fetching autonomy:', autonomyRes.error);
+      if (consumptionRes.error) console.error('Error fetching consumption:', consumptionRes.error);
+      if (stockAlertsRes.error) console.error('Error fetching stock alerts:', stockAlertsRes.error);
+      if (reorderRes.error) console.error('Error fetching reorder recs:', reorderRes.error);
 
       // Stock alerts from DB
       if (stockAlertsRes.data) {

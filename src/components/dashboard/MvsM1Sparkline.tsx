@@ -80,7 +80,7 @@ export function MvsM1Sparkline({ className }: MvsM1SparklineProps) {
         const prevStart = startOfMonth(subMonths(now, 1));
         const prevEnd = endOfMonth(subMonths(now, 1));
 
-        const [{ data: currentBLs }, { data: prevBLs }, { data: currentFact }, { data: prevFact }] = await Promise.all([
+        const [currentBLsRes, prevBLsRes, currentFactRes, prevFactRes] = await Promise.all([
           supabase.from('bons_livraison_reels').select('date_livraison, volume_m3')
             .gte('date_livraison', format(currentStart, 'yyyy-MM-dd'))
             .lte('date_livraison', format(currentEnd, 'yyyy-MM-dd')),
@@ -94,6 +94,16 @@ export function MvsM1Sparkline({ className }: MvsM1SparklineProps) {
             .gte('date_facture', format(prevStart, 'yyyy-MM-dd'))
             .lte('date_facture', format(prevEnd, 'yyyy-MM-dd')),
         ]);
+
+        if (currentBLsRes.error) console.error('Error fetching current BLs:', currentBLsRes.error);
+        if (prevBLsRes.error) console.error('Error fetching previous BLs:', prevBLsRes.error);
+        if (currentFactRes.error) console.error('Error fetching current factures:', currentFactRes.error);
+        if (prevFactRes.error) console.error('Error fetching previous factures:', prevFactRes.error);
+
+        const currentBLs = currentBLsRes.data;
+        const prevBLs = prevBLsRes.data;
+        const currentFact = currentFactRes.data;
+        const prevFact = prevFactRes.data;
 
         // Aggregate by day of month
         const today = now.getDate();
