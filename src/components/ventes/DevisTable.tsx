@@ -69,6 +69,8 @@ import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
 
 const DEVIS_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode; isLocked?: boolean }> = {
+  brouillon: { label: 'Brouillon', color: 'text-[#94A3B8] bg-[rgba(148,163,184,0.08)] border border-[rgba(148,163,184,0.15)]', icon: <FileText className="h-3 w-3" />, isLocked: false },
+  envoye: { label: 'Envoyé', color: 'text-[#3B82F6] bg-[rgba(59,130,246,0.08)] border border-[rgba(59,130,246,0.15)]', icon: <Mail className="h-3 w-3" />, isLocked: false },
   en_attente: { label: 'En Attente', color: 'text-[#E8C96A] bg-[rgba(212,168,67,0.08)] border border-[rgba(212,168,67,0.15)]', icon: <Clock className="h-3 w-3" />, isLocked: false },
   attente_validation_tiers: { label: 'Attente validation client', color: 'text-[#E8C96A] bg-[rgba(212,168,67,0.08)] border border-[rgba(212,168,67,0.15)]', icon: <Clock className="h-3 w-3" />, isLocked: false },
   valide: { label: 'Validé', color: 'text-[#22C55E] bg-[rgba(34,197,94,0.08)] border border-[rgba(34,197,94,0.15)]', icon: <ShieldCheck className="h-3 w-3" />, isLocked: true },
@@ -385,13 +387,14 @@ export function DevisTable({
         <colgroup>
           <col style={{ width: 40 }} />
           <col style={{ width: 140 }} />
-          <col style={{ width: 200 }} />
+          <col style={{ width: 180 }} />
           <col style={{ width: 80 }} />
           <col style={{ width: 70 }} />
           <col style={{ width: 120 }} />
           <col style={{ width: 110 }} />
           <col style={{ width: 100 }} />
           <col style={{ width: 90 }} />
+          <col style={{ width: 85 }} />
           <col style={{ width: 50 }} />
           <col style={{ width: 200 }} />
         </colgroup>
@@ -405,7 +408,7 @@ export function DevisTable({
                 className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
               />
             </TableHead>
-            {(['N° Devis', 'Client', 'Formule', 'Vol (m³)', 'Total HT (DH)', 'Statut', 'Score IA', 'Conversion', 'Prté', 'Actions'] as const).map((label, i) => (
+            {(['N° Devis', 'Client', 'Formule', 'Vol (m³)', 'Total HT (DH)', 'Statut', 'Score IA', 'Conversion', 'Date', 'Prté', 'Actions'] as const).map((label, i) => (
               <TableHead
                 key={label}
                 style={{
@@ -580,6 +583,10 @@ export function DevisTable({
                       </span>
                     );
                   })()}
+                </TableCell>
+                {/* ═══ Date Column ═══ */}
+                <TableCell className="text-center" style={{ padding: '10px 8px', color: 'rgba(255,255,255,0.7)', fontFamily: 'ui-monospace, monospace', fontSize: 12 }}>
+                  {format(new Date(devis.created_at), 'dd/MM/yyyy', { locale: dateLocale })}
                 </TableCell>
                 <TableCell className="text-center">
                   {priorityIndicator}
