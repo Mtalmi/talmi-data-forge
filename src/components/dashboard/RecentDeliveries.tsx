@@ -220,10 +220,15 @@ export default function RecentDeliveries() {
             <span
               className={`text-xs px-2 py-0.5 rounded font-medium text-right w-[80px] ${
                 d.status === 'done' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
-                d.status === 'enRoute' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30 animate-pulse' :
-                d.status === 'late' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
-                'bg-white/5 text-white/40 border border-white/10'
+                d.status === 'late' ? 'border border-red-500/30' :
+                d.status === 'planned' ? 'bg-white/5 text-white/40 border border-white/10' :
+                ''
               }`}
+              style={
+                d.status === 'enRoute' ? { background: 'transparent', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)', animation: 'pulse-alert 2s ease-in-out infinite' } :
+                d.status === 'late' ? { background: 'rgba(239,68,68,0.15)', color: '#EF4444' } :
+                {}
+              }
             >
               {d.statusLabel}
             </span>

@@ -502,7 +502,7 @@ function AIAnalystBrief() {
                   transform: i < visibleLines ? 'translateY(0)' : 'translateY(8px)',
                 }}
               >
-                <span className="w-1.5 h-1.5 rounded-full mt-[6px] shrink-0" style={{ background: '#D4A843', boxShadow: '0 0 8px rgba(212,168,67,0.5)' }} />
+                <span className="w-1.5 h-1.5 rounded-full mt-[6px] shrink-0" style={{ background: insight.tone === 'positive' ? '#22C55E' : insight.tone === 'warning' ? '#F59E0B' : '#EF4444', boxShadow: insight.tone === 'positive' ? '0 0 8px rgba(34,197,94,0.5)' : insight.tone === 'warning' ? '0 0 8px rgba(245,158,11,0.5)' : '0 0 8px rgba(239,68,68,0.5)' }} />
                 <span className="text-sm leading-relaxed">
                   {(() => {
                     const { headline, detail } = splitHeadlineDetail(insight.text);

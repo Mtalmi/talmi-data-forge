@@ -1374,6 +1374,11 @@ export default function Dashboard() {
           })()}
           </div>
 
+          {/* (3b) CALENDRIER OPÉRATIONNEL — reference material, below KPIs */}
+          <div className="relative z-[1] mb-5" style={{ animation: 'ccSectionIn 300ms ease-out 400ms both' }}>
+            <MultiMarketCalendar />
+          </div>
+
           {/* (4) Intelligence IA section */}
           <div className="relative z-[1] mb-2" style={{ animation: 'ccSectionIn 300ms ease-out 450ms both' }}>
             <IntelligenceBriefingCard />
