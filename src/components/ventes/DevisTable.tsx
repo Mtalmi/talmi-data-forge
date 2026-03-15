@@ -434,7 +434,7 @@ export function DevisTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {devisList.map((devis) => {
+          {sortedDevis.map((devis) => {
             const statusConfig = DEVIS_STATUS_CONFIG[devis.statut] || DEVIS_STATUS_CONFIG.en_attente;
             const expirationBadge = renderExpirationBadge(devis);
             const priorityIndicator = renderPriorityIndicator(devis);
