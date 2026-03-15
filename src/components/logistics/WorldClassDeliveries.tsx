@@ -356,6 +356,7 @@ function FreshnessRing({ min, max, done, planned }: { min: number; max: number; 
 }
 
 function DeliveryCard({ d, index }: { d: any; index: number }) {
+  const uf = useUnitFormat();
   const [hov, setHov] = useState(false);
   const status = getStatusDisplay(d.workflow_status);
   const isOdd = index % 2 !== 0;
