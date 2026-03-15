@@ -1698,7 +1698,7 @@ function IntelligenceIATab() {
 
       {/* ── HEADER ── */}
       <div>
-        <p style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: T.gold, letterSpacing: '2px', textTransform: 'uppercase' as const, margin: '0 0 6px' }}>
+        <p style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: T.gold, letterSpacing: '0.15em', textTransform: 'uppercase' as const, margin: '0 0 6px' }}>
           ✦ Centre d'Intelligence Laboratoire
         </p>
         <p style={{ fontFamily: MONO, fontSize: 12, color: T.gold, margin: 0 }}>
