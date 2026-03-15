@@ -60,7 +60,6 @@ export default function FixPromptGenerator() {
           >
             <Copy className="w-3 h-3" /> Copier
           </button>
-          </button>
         </div>
       )}
     </div>
