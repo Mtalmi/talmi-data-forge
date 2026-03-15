@@ -255,7 +255,7 @@ export default function AnalyticsDashboard() {
                     yAxisId="right"
                     type="monotone"
                     dataKey="revenue"
-                    stroke="#FFA500"
+                    stroke="#E8C96A"
                     strokeWidth={2}
                     name="Revenue ($M)"
                   />
