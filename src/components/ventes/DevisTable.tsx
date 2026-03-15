@@ -709,6 +709,12 @@ export function DevisTable({
         </TableBody>
       </Table>
       </div>
+      <TablePagination
+        currentPage={currentPage}
+        totalItems={sortedDevis.length}
+        pageSize={PAGE_SIZE}
+        onPageChange={setCurrentPage}
+      />
       
       {/* Confirmation Dialog for Annulé Status */}
       <AlertDialog open={!!cancelConfirmDevis} onOpenChange={(open) => !open && setCancelConfirmDevis(null)}>
