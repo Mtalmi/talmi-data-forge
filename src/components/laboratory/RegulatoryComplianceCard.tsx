@@ -165,7 +165,14 @@ export function RegulatoryComplianceCard() {
             <strong style={{ color: T.danger }}>🔴 ALERTE PRIORITAIRE</strong> — Certification NM 10.1.271 (Granulats) expire dans <strong>26 jours</strong>. 0 des 2 tests de conformité requis n'ont été effectués. Planifier le premier test <strong>cette semaine impérativement</strong>. Perte de certification = <span style={{ color: T.danger, fontWeight: 700 }}>interdiction de livrer aux marchés publics</span>.
           </p>
           <div style={{ marginTop: 10 }}>
-            <button style={{
+            <button onClick={(e) => {
+              const btn = e.currentTarget;
+              btn.textContent = '✓ Test Planifié';
+              btn.style.background = 'rgba(34,197,94,0.15)';
+              btn.style.color = '#22C55E';
+              btn.style.border = '1px solid rgba(34,197,94,0.3)';
+              (btn as HTMLButtonElement).disabled = true;
+            }} style={{
               padding: '6px 14px', borderRadius: 8, fontSize: 11, fontWeight: 700,
               background: T.danger, color: '#fff', border: 'none',
               cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5,

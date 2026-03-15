@@ -646,7 +646,14 @@ function GrowthRow({ client, vol, trend, trendColor, potentiel, action, actionFi
       <td style={{ padding: '10px 12px', fontFamily: MONO, color: trendColor, fontSize: 13, fontWeight: 600 }}>{trend}</td>
       <td style={{ padding: '10px 12px', fontFamily: MONO, color: potentiel === '—' ? '#9CA3AF' : '#D4A843', fontSize: 13, fontWeight: 600 }}>{potentiel}</td>
       <td style={{ padding: '10px 12px' }}>
-        <button style={{
+        <button onClick={(e) => {
+          const btn = e.currentTarget;
+          btn.textContent = '✓ Envoyé';
+          btn.style.background = 'rgba(34,197,94,0.15)';
+          btn.style.color = '#22C55E';
+          btn.style.border = '1px solid rgba(34,197,94,0.3)';
+          (btn as HTMLButtonElement).disabled = true;
+        }} style={{
           fontFamily: MONO, fontSize: 11, fontWeight: 600, padding: '4px 12px', borderRadius: 6, cursor: 'pointer', whiteSpace: 'nowrap',
           ...(actionFilled
             ? { background: '#D4A843', color: '#0F1629', border: 'none' }
