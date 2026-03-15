@@ -261,7 +261,7 @@ export function OverviewTab({ AUTONOMY, STOCK_ALERTS_DB, REORDER_RECS, STOCKS, o
               ✦ INTELLIGENCE IA — SANTÉ STOCK
             </span>
             <span style={{
-              fontFamily: MONO, fontSize: 10, color: '#D4A843',
+              fontFamily: MONO, fontSize: 12, color: '#D4A843',
               background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)',
               padding: '4px 10px', borderRadius: 999,
             }}>
