@@ -1852,8 +1852,8 @@ export default function Dashboard() {
                   </div>
                   <div className="space-y-0.5">
                     {[
-                      { id: '#403-069', formula: `${uf.grade('F-B30')} · ${uf.fmtVolume(12)}`, client: 'Atlas BTP' },
-                      { id: '#403-070', formula: `${uf.grade('F-B25')} · ${uf.fmtVolume(8)}`, client: 'Const. Modernes' },
+                      { id: '#403-069', formula: `${plantData.formules[2] || uf.grade('F-B30')} · ${uf.fmtVolume(12)}`, client: plantData.clients[0] || 'Atlas BTP' },
+                      { id: '#403-070', formula: `${plantData.formules[1] || uf.grade('F-B25')} · ${uf.fmtVolume(8)}`, client: plantData.clients[1] || 'Const. Modernes' },
                     ].map((batch, idx) => (
                       <div key={batch.id} className="flex items-center gap-1.5 rounded px-2 py-1 -mx-2" style={{ cursor: 'pointer', transition: 'all 0.2s', animation: `batchSlideIn 400ms ease forwards`, animationDelay: `${(idx + 1) * 100}ms`, opacity: 0 }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.03)'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
                         <span className="w-1 h-1 bg-slate-600 rounded-full" />
