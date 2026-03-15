@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState, useCallback, forwardRef, createElement } from 'react';
+import { useEffect, useRef, useState, useCallback, forwardRef, createElement, useMemo } from 'react';
+import { useValueFlash } from '@/hooks/useRealtimeVisuals';
+import { LiveIndicator } from '@/components/ui/LiveIndicator';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { CheckCircle2 } from 'lucide-react';
