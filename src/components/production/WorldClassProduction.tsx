@@ -675,7 +675,7 @@ export default function WorldClassProduction() {
         actions={
           <>
             <button
-              onClick={() => { setActiveTab('planning'); setOpenPlanningModal(prev => !prev); }}
+              onClick={() => setOpenPlanningModal(true)}
               style={{
                 padding: '6px 16px',
                 borderRadius: 8,

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Thermometer, X } from 'lucide-react';
 import { format, addDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -10,6 +11,7 @@ const T = {
 };
 
 export function WeatherAlertBanner() {
+  const navigate = useNavigate();
   const [dismissed, setDismissed] = useState(false);
 
   if (dismissed) return null;
@@ -41,7 +43,7 @@ export function WeatherAlertBanner() {
         </p>
       </div>
       <button
-        onClick={() => {/* scroll or navigate to forecast */}}
+        onClick={() => navigate('/logistique', { state: { activeTab: 'analytique' } })}
         style={{
           padding: '5px 14px', borderRadius: 6,
           background: 'transparent', border: '1px solid #D4A843',
