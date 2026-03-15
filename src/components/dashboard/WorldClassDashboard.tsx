@@ -440,8 +440,10 @@ function splitHeadlineDetail(text: string): { headline: string; detail: string }
 }
 
 function AIAnalystBrief() {
+  const navigate = useNavigate();
   const [visibleLines, setVisibleLines] = useState(0);
   const [showReco, setShowReco] = useState(false);
+  const [recoState, setRecoState] = useState<'visible' | 'launched' | 'passed'>('visible');
   const insights = [
     { icon: '◆', text: 'Recouvrement à 91% — seuil d\'excellence maintenu.', tone: 'positive' as const },
     { icon: '◆', text: 'Marge brute 49.9% malgré CA modéré — pricing sain.', tone: 'positive' as const },
@@ -526,28 +528,63 @@ function AIAnalystBrief() {
           style={{
             position: 'relative',
             overflow: 'hidden',
-            background: 'rgba(212,168,67,0.04)',
-            borderLeft: '3px solid #D4A843',
+            background: recoState === 'passed' ? 'rgba(100,100,100,0.04)' : 'rgba(212,168,67,0.04)',
+            borderLeft: recoState === 'passed' ? '3px solid #6B7280' : '3px solid #D4A843',
             opacity: showReco ? 1 : 0,
             transform: showReco ? 'translateY(0)' : 'translateY(8px)',
           }}
         >
-          <div className="flex items-start gap-2">
-            <span className="text-sm mt-0.5" style={{ color: '#D4A843' }}>💡</span>
-            <div>
-              <span className="text-[10px] tracking-wider uppercase" style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation</span>
-              <p className="mt-1 text-sm leading-relaxed">
-                {(() => {
-                  const recoText = 'Relancez les devis DEV-2602-316 et DEV-2602-895 — diversifiez le portefeuille client avant fin de mois.';
-                  const { headline, detail } = splitHeadlineDetail(recoText);
-                  return <>
-                    <span className="font-medium text-white">{headline}</span>
-                    {detail && <span className="font-normal text-muted-foreground/60"> {detail}</span>}
-                  </>;
-                })()}
-              </p>
-            </div>
-          </div>
+          {recoState === 'passed' ? (
+            <p className="text-sm" style={{ color: '#6B7280' }}>Recommandation passée — prochaine analyse dans 1h</p>
+          ) : (
+            <>
+              <div className="flex items-start gap-2">
+                <span className="text-sm mt-0.5" style={{ color: '#D4A843' }}>💡</span>
+                <div>
+                  <span className="text-[10px] tracking-wider uppercase" style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation</span>
+                  <p className="mt-1 text-sm leading-relaxed">
+                    <span className="font-medium text-white">Relancez les devis </span>
+                    <span
+                      onClick={() => navigate('/ventes', { state: { mainTab: 'orders', activeTab: 'devis' } })}
+                      style={{ color: '#D4A843', cursor: 'pointer', textDecoration: 'none', transition: 'all 200ms' }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}
+                    >DEV-2602-316</span>
+                    <span className="font-medium text-white"> et </span>
+                    <span
+                      onClick={() => navigate('/ventes', { state: { mainTab: 'orders', activeTab: 'devis' } })}
+                      style={{ color: '#D4A843', cursor: 'pointer', textDecoration: 'none', transition: 'all 200ms' }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}
+                    >DEV-2602-895</span>
+                    <span className="font-normal text-muted-foreground/60"> — diversifiez le portefeuille client avant fin de mois.</span>
+                  </p>
+                  {recoState === 'launched' && (
+                    <div className="mt-2">
+                      <span className="text-xs font-semibold" style={{ color: '#22C55E' }}>✓ Lancé</span>
+                      <span className="block text-[10px] mt-0.5" style={{ color: '#D4A843' }}>Action en cours...</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              {recoState === 'visible' && (
+                <div className="flex gap-2 mt-3">
+                  <button
+                    onClick={() => setRecoState('launched')}
+                    style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, fontWeight: 600, padding: '5px 14px', borderRadius: 5, background: '#D4A843', color: '#0F1629', border: 'none', cursor: 'pointer' }}
+                  >
+                    Lancer
+                  </button>
+                  <button
+                    onClick={() => setRecoState('passed')}
+                    style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, fontWeight: 400, padding: '5px 14px', borderRadius: 5, background: 'transparent', color: '#9CA3AF', border: '1px solid rgba(156,163,175,0.3)', cursor: 'pointer' }}
+                  >
+                    Passer
+                  </button>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
 
