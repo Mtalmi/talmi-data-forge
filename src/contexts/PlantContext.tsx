@@ -1,8 +1,13 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { useUnits, type UnitSystem } from '@/i18n/UnitContext';
+import {
+  ATLAS_CONCRETE, EUROBETON_GMBH, LIBERTY_READYMIX,
+  type PlantData as DemoPlantData,
+} from '@/data/demoPlantData';
 
 export type PlantId = 'ma' | 'eu' | 'us';
 
+/** Legacy shape kept for backward compat — components can use either */
 export interface PlantData {
   id: PlantId;
   company: string;
@@ -38,16 +43,16 @@ const PLANTS: Record<PlantId, PlantData> = {
     stats: '14 mars · 671 m³ · 14 batches · Score 87/100',
     unitSystem: 'mena',
     currency: 'DH',
-    clients: ['TGCC', 'Constructions Modernes SA', 'BTP Maroc SARL', 'Saudi Readymix Co.', 'Ciments & Béton du Sud', 'Sigma Bâtiment'],
-    trucks: ['T-04', 'T-07', 'T-09', 'T-12'],
-    drivers: ['Youssef Benali', 'Karim Idrissi', 'Mehdi Tazi', 'Omar Fassi'],
-    formules: ['F-B20', 'F-B25', 'F-B30', 'F-B35'],
-    norms: ['NM 10.1.008', 'NM 10.1.271'],
-    production: { volume: 671, volumeUnit: 'm³', batches: 14 },
+    clients: ATLAS_CONCRETE.clients.map(c => c.name),
+    trucks: ATLAS_CONCRETE.trucks.map(t => t.id),
+    drivers: ATLAS_CONCRETE.trucks.map(t => t.driver),
+    formules: ATLAS_CONCRETE.formules.map(f => f.id),
+    norms: ATLAS_CONCRETE.norms.map(n => n.code),
+    production: { volume: ATLAS_CONCRETE.production.volume, volumeUnit: 'm³', batches: ATLAS_CONCRETE.production.batches },
     lab: { slump: '18cm', resistance: '28.5 MPa' },
-    weather: { temp: '22°C', condition: 'Ensoleillé', humidity: '45%', optimal: true },
+    weather: { temp: `${ATLAS_CONCRETE.weather.temp}°C`, condition: ATLAS_CONCRETE.weather.condition, humidity: `${ATLAS_CONCRETE.weather.humidity}%`, optimal: true },
     seasonal: 'Conditions optimales — production nominale',
-    flaggedClient: 'Sigma Bâtiment',
+    flaggedClient: ATLAS_CONCRETE.riskClient.name,
     flaggedClientDebt: '189K DH',
     nextDeliveryClient: 'Ciments & Béton du Sud',
   },
@@ -61,17 +66,17 @@ const PLANTS: Record<PlantId, PlantData> = {
     stats: 'Demo · données simulées',
     unitSystem: 'eu',
     currency: 'EUR',
-    clients: ['Hochtief AG', 'STRABAG SE', 'Vinci Construction', 'Bouygues Bâtiment', 'HeidelbergCement', 'Porr Group'],
-    trucks: ['LKW-01', 'LKW-02', 'LKW-03', 'LKW-04'],
-    drivers: ['Hans Müller', 'Stefan Weber', 'Klaus Fischer', 'Thomas Schmidt'],
-    formules: ['C20/25', 'C25/30', 'C30/37', 'C35/45'],
-    norms: ['EN 206-1', 'EN 12350', 'CE Marking'],
-    production: { volume: 520, volumeUnit: 'm³', batches: 11 },
+    clients: EUROBETON_GMBH.clients.map(c => c.name),
+    trucks: EUROBETON_GMBH.trucks.map(t => t.id),
+    drivers: EUROBETON_GMBH.trucks.map(t => t.driver),
+    formules: EUROBETON_GMBH.formules.map(f => f.id),
+    norms: EUROBETON_GMBH.norms.map(n => n.code),
+    production: { volume: EUROBETON_GMBH.production.volume, volumeUnit: 'm³', batches: EUROBETON_GMBH.production.batches },
     lab: { slump: '17cm', resistance: '31.2 MPa' },
-    weather: { temp: '8°C', condition: 'Bewölkt', humidity: '72%', optimal: false },
-    seasonal: 'Winterbau Regelung aktiv — Frostschutz additiv erforderlich',
-    flaggedClient: 'Porr Group',
-    flaggedClientDebt: '€47K',
+    weather: { temp: `${EUROBETON_GMBH.weather.temp}°C`, condition: EUROBETON_GMBH.weather.condition, humidity: `${EUROBETON_GMBH.weather.humidity}%`, optimal: false },
+    seasonal: 'Construction hivernale — additif antigel requis',
+    flaggedClient: EUROBETON_GMBH.riskClient.name,
+    flaggedClientDebt: `€${Math.round(EUROBETON_GMBH.riskClient.amount / 1000)}K`,
     nextDeliveryClient: 'Hochtief AG',
   },
   us: {
@@ -84,24 +89,33 @@ const PLANTS: Record<PlantId, PlantData> = {
     stats: 'Demo · données simulées',
     unitSystem: 'us',
     currency: 'USD',
-    clients: ['Turner Construction', 'Bechtel Corp', 'Kiewit Infrastructure', 'McCarthy Building', 'Webcor Builders', 'Smith & Sons Contractors'],
-    trucks: ['TRK-01', 'TRK-02', 'TRK-03', 'TRK-04'],
-    drivers: ['James Wilson', 'Robert Johnson', 'Michael Davis', 'William Brown'],
-    formules: ['2500 PSI', '3500 PSI', '4500 PSI', '5000 PSI'],
-    norms: ['ASTM C94', 'ACI 318', 'State DOT Spec'],
-    production: { volume: 877, volumeUnit: 'yd³', batches: 16 },
+    clients: LIBERTY_READYMIX.clients.map(c => c.name),
+    trucks: LIBERTY_READYMIX.trucks.map(t => t.id),
+    drivers: LIBERTY_READYMIX.trucks.map(t => t.driver),
+    formules: LIBERTY_READYMIX.formules.map(f => f.id),
+    norms: LIBERTY_READYMIX.norms.map(n => n.code),
+    production: { volume: LIBERTY_READYMIX.production.volume, volumeUnit: 'yd³', batches: LIBERTY_READYMIX.production.batches },
     lab: { slump: '7 in', resistance: '4,100 PSI' },
-    weather: { temp: '92°F', condition: 'Humid', humidity: '85%', optimal: false },
-    seasonal: 'Hurricane season advisory — supply chain contingency active',
-    flaggedClient: 'Smith & Sons Contractors',
-    flaggedClientDebt: '$52K',
+    weather: { temp: `${LIBERTY_READYMIX.weather.temp}°C`, condition: LIBERTY_READYMIX.weather.condition, humidity: `${LIBERTY_READYMIX.weather.humidity}%`, optimal: false },
+    seasonal: 'Saison ouragans — plan de contingence actif',
+    flaggedClient: LIBERTY_READYMIX.riskClient.name,
+    flaggedClientDebt: `$${Math.round(LIBERTY_READYMIX.riskClient.amount / 1000)}K`,
     nextDeliveryClient: 'Turner Construction',
   },
+};
+
+/** Map PlantId → rich demo data */
+const DEMO_MAP: Record<PlantId, DemoPlantData> = {
+  ma: ATLAS_CONCRETE,
+  eu: EUROBETON_GMBH,
+  us: LIBERTY_READYMIX,
 };
 
 interface PlantContextValue {
   activePlant: PlantId;
   plant: PlantData;
+  /** Rich demo plant data from demoPlantData.ts */
+  demoData: DemoPlantData;
   setPlant: (id: PlantId) => void;
   isDemo: boolean;
   /** Fade state: 0..1. Content should multiply opacity by this. */
@@ -143,6 +157,7 @@ export function PlantProvider({ children }: { children: ReactNode }) {
   const ctx: PlantContextValue = {
     activePlant,
     plant: PLANTS[activePlant],
+    demoData: DEMO_MAP[activePlant],
     setPlant,
     isDemo: activePlant !== 'ma',
     fadeOpacity,
@@ -159,6 +174,7 @@ export function usePlant() {
     return {
       activePlant: 'ma' as PlantId,
       plant: PLANTS.ma,
+      demoData: ATLAS_CONCRETE,
       setPlant: () => {},
       isDemo: false,
       fadeOpacity: 1,

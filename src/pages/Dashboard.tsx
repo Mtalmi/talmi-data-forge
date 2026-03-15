@@ -74,7 +74,7 @@ export default function Dashboard() {
   const uf = useUnitFormat();
   const navigate = useNavigate();
   const location = useLocation();
-  const { activePlant, plant: plantData, setPlant: setActivePlant, isDemo, fadeOpacity } = usePlant();
+  const { activePlant, plant: plantData, demoData, setPlant: setActivePlant, isDemo, fadeOpacity } = usePlant();
   const { stats, loading: statsLoading, refresh } = useDashboardStats();
   const [period] = useState<Period>('month');
   const { stats: periodStats, loading: periodLoading, refresh: refreshPeriod } = useDashboardStatsWithPeriod(period);
@@ -280,12 +280,11 @@ export default function Dashboard() {
     }
   }, [activeTab]);
 
-  // Animated KPI values — locked for CEO demo determinism
-  // Raw MENA values for count-up
-  const rawProdVolume = useCountUp(671, 1800, 200);
-  const rawCa = useCountUp(75.6, 1800, 400, 1);
-  const marge = useCountUp(49.9, 1800, 600, 1);
-  const rawTresorerie = useCountUp(551, 1800, 800);
+  // Animated KPI values — driven by plant data
+  const rawProdVolume = useCountUp(demoData.production.volume, 1800, 200);
+  const rawCa = useCountUp(demoData.revenue.today / 1000, 1800, 400, 1);
+  const marge = useCountUp(demoData.production.marge, 1800, 600, 1);
+  const rawTresorerie = useCountUp(demoData.tresorerie.value / 1000, 1800, 800);
 
   // Converted values for display
   const prodVolume = uf.rawVolume(rawProdVolume);
@@ -882,7 +881,7 @@ export default function Dashboard() {
                     {showCursor && <span className="inline-block w-[2px] h-[20px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
                   </h1>
                   <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 13, color: '#9CA3AF', marginTop: 4 }}>
-                    Briefing matinal prêt. <span style={{ color: '#F59E0B' }}>3 alertes</span> nécessitent votre attention.
+                    Briefing matinal prêt. <span style={{ color: '#F59E0B' }}>{demoData.shutdownRisk.active ? '3 alertes' : '0 alertes'}</span> nécessitent votre attention.
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5 mt-1" style={{ fontSize: 11 }}>
                     <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full" style={{ background: 'rgba(34, 197, 94, 0.08)', boxShadow: '0 0 8px rgba(34, 197, 94, 0.2)' }}>
@@ -894,17 +893,17 @@ export default function Dashboard() {
                     </span>
                     <span className="text-muted-foreground/20">|</span>
                     <span className="text-muted-foreground/40">
-                      {now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} · {plantData.location}
+                      {now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} · {demoData.location}
                     </span>
                     <span className="text-muted-foreground/20">|</span>
                     <span className="text-muted-foreground/40">
-                      <span className="text-sm">{plantData.weather.optimal ? '☀️' : '🌧'}</span> {plantData.weather.temp} {plantData.weather.condition} · {plantData.weather.humidity} · <span className={`${plantData.weather.optimal ? 'text-emerald-400/80' : 'text-amber-400/80'} font-semibold`}>● {plantData.weather.optimal ? 'Optimal' : 'Attention'}</span>
+                      <span className="text-sm">{demoData.weather.temp > 25 ? '☀️' : demoData.weather.temp < 10 ? '🌧' : '⛅'}</span> {uf.fmtTemp(demoData.weather.temp)} {demoData.weather.condition} · {demoData.weather.humidity}% · <span className={`${demoData.weather.humidity < 50 ? 'text-emerald-400/80' : 'text-amber-400/80'} font-semibold`}>● {demoData.weather.humidity < 50 ? 'Optimal' : 'Attention'}</span>
                     </span>
                   </div>
                 </div>
                 {/* DAILY SCORE GAUGE */}
                 <div className="hidden md:block">
-                  <DailyScoreGauge score={87} deltaVsYesterday={3} streak={12} weeklyRecord={{ score: 94, day: 'jeudi' }} />
+                  <DailyScoreGauge score={demoData.score} deltaVsYesterday={3} streak={demoData.streak} weeklyRecord={{ score: demoData.recordScore, day: 'jeudi' }} />
                 </div>
               </div>
 
@@ -1045,7 +1044,7 @@ export default function Dashboard() {
               {/* Header */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
                 <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, letterSpacing: 2, color: '#D4A843', fontWeight: 400 }}>
-                  ✦ BRIEFING MATINAL — 14 MARS 2026
+                  ✦ BRIEFING MATINAL — {now.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase()}
                 </span>
                 <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 10, padding: '3px 10px', borderRadius: 4, border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', background: 'rgba(212,168,67,0.08)' }}>
                   Généré par IA · Claude Opus
@@ -1053,7 +1052,7 @@ export default function Dashboard() {
               </div>
               {/* Body */}
               <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, color: '#9CA3AF', lineHeight: 1.7, margin: 0 }}>
-                Production nominale prévue à <strong style={{ color: '#D4A843' }}>280 m³</strong>. Stock ciment à <strong style={{ color: '#D4A843' }}>53%</strong> (7,5j autonomie). 1 non-conformité traitée (BN-0140 <SmartLabel term="Affaissement">affaissement</SmartLabel>). <strong style={{ color: '#D4A843' }}>3 livraisons</strong> planifiées — alerte retard Résidences Atlas (+14 min, béton à 47 min/90). T-09 en maintenance (retour demain 08:00). Pipeline commercial : <strong style={{ color: '#D4A843' }}>155K DH</strong>, 6 devis en attente. Point critique : Sigma Bâtiment — <strong style={{ color: '#EF4444' }}>189K DH impayés</strong>, probabilité défaut <strong style={{ color: '#EF4444' }}>78%</strong>, livraisons suspendues. Certification NM 10.1.271 expire dans 26 jours — 0/2 tests effectués, <strong style={{ color: '#EF4444' }}>action urgente</strong>.
+                Production nominale prévue à <strong style={{ color: '#D4A843' }}>{uf.fmtVolume(demoData.production.volume, 0)}</strong>. Stock {demoData.shutdownRisk.material} à <strong style={{ color: '#D4A843' }}>{demoData.shutdownRisk.currentStock}</strong>. <strong style={{ color: '#D4A843' }}>{demoData.production.batches} batches</strong>. Pipeline commercial : <strong style={{ color: '#D4A843' }}>{uf.fmtCurrencyK(demoData.pipeline.value)}</strong>, {demoData.pipeline.devis} devis en attente. Point critique : {demoData.riskClient.name} — <strong style={{ color: '#EF4444' }}>{uf.fmtCurrencyK(demoData.riskClient.amount)} impayés</strong>, probabilité défaut <strong style={{ color: '#EF4444' }}>{demoData.riskClient.defaultProb}%</strong>, livraisons suspendues.
               </p>
               {/* Action buttons */}
               <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
@@ -1061,7 +1060,7 @@ export default function Dashboard() {
                   Voir Rapport Complet
                 </button>
                 <button onClick={() => navigate('/creances')} style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: 'transparent', color: '#EF4444', border: '1px solid rgba(239,68,68,0.4)', cursor: 'pointer', letterSpacing: '0.05em' }}>
-                  Relancer Sigma Bâtiment
+                  Relancer {demoData.riskClient.name}
                 </button>
                 <button onClick={() => navigate('/laboratoire')} style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: 'transparent', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)', cursor: 'pointer', letterSpacing: '0.05em' }}>
                   Planifier Test NM
@@ -1092,13 +1091,13 @@ export default function Dashboard() {
               flexWrap: 'wrap',
             }}>
               <span style={{ color: '#F59E0B' }}>⚠</span>
-              <span onClick={() => navigate('/creances')} style={{ color: '#EF4444', cursor: 'pointer', transition: 'color 200ms' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#EF4444'; (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}>Créances: 189K DH retard (Sigma)</span>
+              <span onClick={() => navigate('/creances')} style={{ color: '#EF4444', cursor: 'pointer', transition: 'color 200ms' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#EF4444'; (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}>Créances: {uf.fmtCurrencyK(demoData.riskClient.amount)} retard ({demoData.riskClient.name})</span>
               <span style={{ color: 'rgba(212,168,67,0.3)' }}>·</span>
-              <span onClick={() => navigate('/logistique')} style={{ color: '#F59E0B', cursor: 'pointer', transition: 'color 200ms' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#F59E0B'; (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}>Logistique: T-09 maintenance</span>
+              <span onClick={() => navigate('/logistique')} style={{ color: '#F59E0B', cursor: 'pointer', transition: 'color 200ms' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#F59E0B'; (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}>Logistique: {demoData.trucks.find(t => t.status === 'maintenance')?.id || 'OK'} maintenance</span>
               <span style={{ color: 'rgba(212,168,67,0.3)' }}>·</span>
-              <span onClick={() => navigate('/stocks')} style={{ color: '#F59E0B', cursor: 'pointer', transition: 'color 200ms' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#F59E0B'; (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}>Stocks: Adjuvant 6,7j</span>
+              <span onClick={() => navigate('/stocks')} style={{ color: '#F59E0B', cursor: 'pointer', transition: 'color 200ms' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#F59E0B'; (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}>Stocks: {demoData.shutdownRisk.material} {demoData.shutdownRisk.daysUntil}j</span>
               <span style={{ color: 'rgba(212,168,67,0.3)' }}>·</span>
-              <span onClick={() => navigate('/laboratoire')} style={{ color: '#EF4444', cursor: 'pointer', transition: 'color 200ms' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#EF4444'; (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}>Lab: NM expire 26j</span>
+              <span onClick={() => navigate('/laboratoire')} style={{ color: '#EF4444', cursor: 'pointer', transition: 'color 200ms' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#EF4444'; (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}>Lab: {demoData.norms.find(n => n.status === 'urgent')?.code || demoData.norms[0]?.code}</span>
             </div>
           </div>
 
@@ -1113,19 +1112,19 @@ export default function Dashboard() {
             }}>
               {/* Line 1: Alert headline */}
               <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 14, fontWeight: 600, color: '#F59E0B', marginBottom: 8 }}>
-                ⚠ RISQUE ARRÊT DANS 4 JOURS
+                ⚠ RISQUE ARRÊT DANS {demoData.shutdownRisk.daysUntil} JOURS
               </div>
               {/* Line 2: Detail */}
               <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, color: '#9CA3AF', marginBottom: 6, lineHeight: 1.6 }}>
-                <SmartLabel term="Adjuvant" /> insuffisant pour production prévue. Stock actuel: 200 L (6,7j). Commandes confirmées J+4 à J+7: 380 L nécessaires. Déficit: <span style={{ color: '#F59E0B', fontWeight: 600 }}>180 L</span>.
+                <SmartLabel term={demoData.shutdownRisk.material}>{demoData.shutdownRisk.material}</SmartLabel> insuffisant pour production prévue. Stock actuel: {demoData.shutdownRisk.currentStock}. Commandes confirmées: {demoData.shutdownRisk.needed}. Déficit: <span style={{ color: '#F59E0B', fontWeight: 600 }}>{demoData.shutdownRisk.deficit}</span>.
               </div>
               {/* Line 3: Cost */}
               <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, color: '#EF4444', marginBottom: 6 }}>
-                <span style={{ color: '#EF4444' }}>Coût arrêt estimé: 85,000 MAD/jour</span> <span style={{ color: '#9CA3AF' }}>(perte production + pénalités livraison + personnel inactif)</span>
+                <span style={{ color: '#EF4444' }}>Coût arrêt estimé: {uf.fmtCurrency(demoData.shutdownRisk.costPerDay)}/jour</span> <span style={{ color: '#9CA3AF' }}>(perte production + pénalités livraison + personnel inactif)</span>
               </div>
               {/* Line 4: Solution */}
               <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, color: '#FFFFFF', marginBottom: 12 }}>
-                Commande urgente Sika Maroc: 500 L · Délai: 2-3 jours · Coût: 42,500 DH
+                Commande urgente {demoData.shutdownRisk.supplier}: {demoData.shutdownRisk.orderQty} · Délai: {demoData.shutdownRisk.orderDelay} · Coût: {uf.fmtCurrency(demoData.shutdownRisk.orderCost)}
               </div>
               {/* Buttons */}
               <div className="flex items-center gap-3 flex-wrap">
@@ -1136,7 +1135,7 @@ export default function Dashboard() {
                   onMouseEnter={e => { e.currentTarget.style.background = '#FDB913'; }}
                   onMouseLeave={e => { e.currentTarget.style.background = '#D4A843'; }}
                 >
-                  Commander Adjuvant Maintenant
+                  Commander {demoData.shutdownRisk.material} Maintenant
                 </button>
                 <button
                   onClick={() => navigate('/stocks')}
@@ -1174,7 +1173,7 @@ export default function Dashboard() {
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,28 20,24 40,20 60,26 80,18 100,14 120,10',
               secondaryLabel: 'Obj. mensuel',
-              secondaryValue: `${uf.fmtVolume(671, 0)} / ${uf.fmtVolume(3200, 0)}`,
+              secondaryValue: `${uf.fmtVolume(demoData.production.volume, 0)} / ${uf.fmtVolume(3200, 0)}`,
               target: uf.rawVolume(280),
               targetLabel: 'OBJ',
             },
@@ -1196,14 +1195,14 @@ export default function Dashboard() {
               value: marge,
               unit: '%',
               watermark: '%',
-              sub: `${uf.fmtCurrencyK(37800)} coûts matières`,
+              sub: `${uf.fmtCurrencyK(demoData.profitNet.matieres)} coûts matières`,
               trend: '↗ +1.2%',
               healthyGlow: true,
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,24 20,20 40,22 60,18 80,16 100,14 120,10',
               secondaryLabel: 'P&L',
-              secondaryValue: `Net: ${uf.fmtCurrencyK(24200)}`,
+              secondaryValue: `Net: ${uf.fmtCurrencyK(demoData.profitNet.total)}`,
               target: 32,
               targetLabel: 'OBJ',
             },
@@ -1212,14 +1211,14 @@ export default function Dashboard() {
               value: tresorerie,
               unit: uf.currKUnit,
               watermark: uf.currSym,
-              sub: `→ ${uf.fmtCurrencyK(502000)} fin mois`,
+              sub: `→ ${uf.fmtCurrencyK(demoData.tresorerie.value * 0.9)} fin mois`,
               trend: '↗ +9.7%',
               healthyGlow: true,
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,26 20,22 40,24 60,18 80,14 100,10 120,4',
               secondaryLabel: 'Net',
-              secondaryValue: `+${uf.fmtCurrencyK(49000)}`,
+              secondaryValue: `+${uf.fmtCurrencyK(demoData.profitNet.total * 2)}`,
             },
           ].map((kpi, i) => {
             const kpiRoutes = ['/production', '/ventes', '/production', '/creances'];
@@ -1328,11 +1327,11 @@ export default function Dashboard() {
           {(() => {
             const MONO = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
             const waterfall = [
-              { label: 'Revenu', amount: uf.rawCurrency(75600), color: '#D4A843', pct: 100 },
-              { label: 'Matières', amount: -uf.rawCurrency(37800), color: '#EF4444', pct: 50 },
-              { label: 'Logistique', amount: -uf.rawCurrency(5200), color: '#EF4444', pct: 6.9 },
-              { label: 'Personnel', amount: -uf.rawCurrency(8400), color: '#EF4444', pct: 11.1 },
-              { label: 'Net', amount: uf.rawCurrency(24200), color: '#22C55E', pct: 32 },
+              { label: 'Revenu', amount: uf.rawCurrency(demoData.profitNet.revenu), color: '#D4A843', pct: 100 },
+              { label: 'Matières', amount: -uf.rawCurrency(demoData.profitNet.matieres), color: '#EF4444', pct: Math.round(demoData.profitNet.matieres / demoData.profitNet.revenu * 100) },
+              { label: 'Logistique', amount: -uf.rawCurrency(demoData.profitNet.logistique), color: '#EF4444', pct: Math.round(demoData.profitNet.logistique / demoData.profitNet.revenu * 100) },
+              { label: 'Personnel', amount: -uf.rawCurrency(demoData.profitNet.personnel), color: '#EF4444', pct: Math.round(demoData.profitNet.personnel / demoData.profitNet.revenu * 100) },
+              { label: 'Net', amount: uf.rawCurrency(demoData.profitNet.total), color: '#22C55E', pct: Math.round(demoData.profitNet.marge) },
             ];
             const plSparkline = '0,38 15,34 30,30 45,28 60,22 75,18 90,14 105,10 120,8';
             return (
@@ -1369,7 +1368,7 @@ export default function Dashboard() {
                       lineHeight: 1, letterSpacing: '-0.02em',
                       textShadow: '0 0 20px rgba(34,197,94,0.15)',
                     }}>
-                      {uf.rawCurrency(24200).toLocaleString('fr-FR')}
+                      {uf.rawCurrency(demoData.profitNet.total).toLocaleString('fr-FR')}
                     </span>
                     <span style={{ fontFamily: MONO, fontWeight: 300, fontSize: 18, color: '#9CA3AF' }}>{uf.currSym}</span>
                   </div>
