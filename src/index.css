@@ -2000,7 +2000,7 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: hsl(0 0% 4%);
+  background: transparent;
   border-radius: 3px;
 }
 
@@ -5678,4 +5678,219 @@ table tbody tr:hover,
 @keyframes tbos-ticker-scroll {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TBOS GLOBAL DESIGN SYSTEM — Standardized Utility Classes v30
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── BUTTON SYSTEM ── */
+.tbos-btn {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  border-radius: 6px !important;
+  padding: 8px 20px !important;
+  transition: all 200ms ease !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  white-space: nowrap !important;
+}
+.tbos-btn:active { transform: scale(0.98) !important; }
+
+.tbos-btn-primary {
+  background: #D4A843 !important;
+  color: #0F1629 !important;
+  border: none !important;
+}
+.tbos-btn-primary:hover { background: #E8C96A !important; }
+
+.tbos-btn-secondary {
+  background: transparent !important;
+  color: #D4A843 !important;
+  border: 1px solid #D4A843 !important;
+}
+.tbos-btn-secondary:hover { background: rgba(212, 168, 67, 0.1) !important; }
+
+.tbos-btn-danger {
+  background: #EF4444 !important;
+  color: #FFFFFF !important;
+  border: none !important;
+}
+.tbos-btn-danger:hover { background: #DC2626 !important; }
+
+.tbos-btn-whatsapp {
+  background: #25D366 !important;
+  color: #FFFFFF !important;
+  border: none !important;
+}
+.tbos-btn-whatsapp:hover { background: #1FAE52 !important; }
+
+.tbos-btn-ghost {
+  background: transparent !important;
+  color: #9CA3AF !important;
+  border: none !important;
+}
+.tbos-btn-ghost:hover { color: #D4A843 !important; }
+
+/* ── BADGE SYSTEM ── */
+.tbos-badge {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+  font-size: 11px;
+  border-radius: 4px;
+  padding: 3px 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.tbos-badge-green {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22C55E;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+.tbos-badge-amber {
+  background: rgba(245, 158, 11, 0.15);
+  color: #F59E0B;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+.tbos-badge-red {
+  background: rgba(239, 68, 68, 0.15);
+  color: #EF4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+.tbos-badge-gold {
+  background: rgba(212, 168, 67, 0.15);
+  color: #D4A843;
+  border: 1px solid rgba(212, 168, 67, 0.3);
+}
+.tbos-badge-ai {
+  background: transparent;
+  color: #D4A843;
+  border: 1px solid rgba(212, 168, 67, 0.3);
+  border-radius: 4px;
+  font-size: 11px;
+  padding: 4px 8px;
+}
+.tbos-badge-tab {
+  background: rgba(212, 168, 67, 0.2);
+  color: #D4A843;
+  font-size: 10px;
+  border-radius: 10px;
+  padding: 2px 6px;
+}
+
+/* ── LIVE PULSE ── */
+@keyframes tbos-live-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 0.4; }
+}
+.tbos-live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #22C55E;
+  animation: tbos-live-pulse 1.5s infinite;
+  display: inline-block;
+}
+
+/* ── TABLE SYSTEM ── */
+.tbos-table th {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace !important;
+  font-size: 11px !important;
+  letter-spacing: 1.5px !important;
+  color: #9CA3AF !important;
+  text-transform: uppercase !important;
+  font-weight: 600 !important;
+  border-bottom: none !important;
+}
+.tbos-table tr:nth-child(odd) td {
+  background: rgba(212, 168, 67, 0.03);
+}
+.tbos-table tr {
+  transition: background 150ms ease;
+  border: none !important;
+}
+.tbos-table tr:hover td {
+  background: rgba(212, 168, 67, 0.06) !important;
+}
+.tbos-table td {
+  border: none !important;
+}
+.tbos-table .numeric {
+  text-align: right;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+  font-weight: 200;
+}
+
+/* ── TAB BAR SYSTEM ── */
+.tbos-tabs {
+  display: flex;
+  gap: 32px;
+  background: transparent;
+  border-bottom: none;
+}
+.tbos-tab {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  color: #9CA3AF;
+  background: transparent;
+  border: none;
+  padding: 8px 0;
+  cursor: pointer;
+  transition: color 200ms ease;
+  text-transform: uppercase;
+  border-bottom: 2px solid transparent;
+}
+.tbos-tab:hover { color: #FFFFFF; }
+.tbos-tab-active {
+  color: #D4A843 !important;
+  border-bottom: 2px solid #D4A843 !important;
+}
+
+/* ── CARD SYSTEM ── */
+.tbos-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(212, 168, 67, 0.08);
+  border-radius: 8px;
+  transition: border-color 200ms ease;
+}
+.tbos-card:hover {
+  border-color: rgba(212, 168, 67, 0.15);
+}
+.tbos-card-kpi {
+  border-top: 2px solid #D4A843;
+  box-shadow: 0 -1px 8px rgba(212, 168, 67, 0.08);
+}
+
+/* ── TOOLTIP SYSTEM ── */
+.tbos-tooltip {
+  background: #1A2332 !important;
+  color: #FFFFFF !important;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace !important;
+  font-size: 11px !important;
+  padding: 6px 10px !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(212, 168, 67, 0.15) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+  max-width: 280px !important;
+  animation: tbos-tooltip-fade 200ms ease !important;
+}
+@keyframes tbos-tooltip-fade {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── LINK / ACTION TEXT ── */
+.tbos-link {
+  color: #D4A843;
+  text-decoration: none;
+  transition: color 200ms ease, text-decoration 200ms ease;
+  cursor: pointer;
+}
+.tbos-link:hover {
+  color: #E8C96A;
+  text-decoration: underline;
 }
