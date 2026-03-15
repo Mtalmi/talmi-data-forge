@@ -130,22 +130,25 @@ export function FacturesTable({
 
   const fetchFactures = useCallback(async () => {
     setLoading(true);
+    setFetchError(false);
     try {
       // Fetch factures without joins since there's no direct FK relationship
-      const { data: facturesData, error: facturesError } = await supabase
+      const { data: facturesData, error } = await supabase
         .from('factures')
         .select('*')
-        .order('created_at', { ascending: false })
-        .limit(500);
+        .order('date_facture', { ascending: false });
 
-      if (facturesError) throw facturesError;
-
-      // Fetch client names for the factures
+      if (error) throw error;
+      
+      // ... keep existing code for client/formule enrichment
+      // Fetch client names separately
       const clientIds = [...new Set((facturesData || []).map(f => f.client_id))];
       const { data: clientsData } = await supabase
         .from('clients')
-        .select('client_id, nom_client')
+        .select('client_id, nom')
         .in('client_id', clientIds);
+      
+      const clientMap = new Map((clientsData || []).map(c => [c.client_id, c.nom]));
 
       // Fetch formule designations
       const formuleIds = [...new Set((facturesData || []).map(f => f.formule_id))];
@@ -153,25 +156,34 @@ export function FacturesTable({
         .from('formules_theoriques')
         .select('formule_id, designation')
         .in('formule_id', formuleIds);
+      
+      const formuleMap = new Map((formulesData || []).map(f => [f.formule_id, f.designation]));
 
-      // Map clients and formules to factures
-      const clientMap = new Map(clientsData?.map(c => [c.client_id, c.nom_client]) || []);
-      const formuleMap = new Map(formulesData?.map(f => [f.formule_id, f.designation]) || []);
-
-      // Fallback client names for invoices without matching clients
-      const fallbackClientNames: Record<string, string> = {
-        'FAC-2026-0001': 'BTP Maroc SARL',
-        'FAC-2026-0002': 'BTP Maroc SARL',
-        'FAC-2026-0003': 'BTP Maroc SARL',
-        'FAC-2026-0004': 'BTP Maroc SARL',
-        'FAC-2026-0005': 'BTP Maroc SARL',
-        'FAC-2026-0006': 'Ciments & Béton du Sud',
-        'FAC-2026-0007': 'Ciments & Béton du Sud',
-        'FAC-2026-0008': 'Ciments & Béton du Sud',
-        'FAC-2026-0009': 'Constructions Modernes SA',
-        'FAC-2026-0010': 'Constructions Modernes SA',
-        'FAC-2026-0011': 'Constructions Modernes SA',
-      };
+      // Fallback: if client_name is missing, try to get from BL
+      const missingClientFactures = (facturesData || []).filter(f => !clientMap.has(f.client_id));
+      const fallbackClientNames: Record<string, string> = {};
+      
+      if (missingClientFactures.length > 0) {
+        const blIds = missingClientFactures.map(f => f.bl_id);
+        const { data: blData } = await supabase
+          .from('bons_livraison_reels')
+          .select('bl_id, client_id')
+          .in('bl_id', blIds);
+        
+        if (blData) {
+          const blClientIds = [...new Set(blData.map(b => b.client_id))];
+          const { data: blClients } = await supabase
+            .from('clients')
+            .select('client_id, nom')
+            .in('client_id', blClientIds);
+          
+          const blClientMap = new Map((blClients || []).map(c => [c.client_id, c.nom]));
+          for (const bl of blData) {
+            const name = blClientMap.get(bl.client_id);
+            if (name) fallbackClientNames[bl.bl_id] = name;
+          }
+        }
+      }
 
       const enrichedFactures: Facture[] = (facturesData || []).map(f => ({
         ...f,
@@ -182,6 +194,7 @@ export function FacturesTable({
       setFactures(enrichedFactures);
     } catch (error) {
       console.error('Error fetching factures:', error);
+      setFetchError(true);
     } finally {
       setLoading(false);
     }
