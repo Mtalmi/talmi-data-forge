@@ -871,6 +871,7 @@ function NextActionRow({ action, delay }: { action: typeof nextActions[0]; delay
 ══════════════════════════════════════════════════════ */
 export function WorldClassVentes() {
   const [activeTab, setActiveTab] = useState<'pipeline' | 'performance' | 'previsions' | 'activites'>('pipeline');
+  const [showDevisModal, setShowDevisModal] = useState(false);
   const { t } = useI18n();
   const { triggerWorkflow, isSubmitting: isScoring } = useN8nWorkflow();
   const vt = t.pages.ventes;
