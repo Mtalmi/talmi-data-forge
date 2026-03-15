@@ -4,6 +4,7 @@ import { triggerPrint } from '@/lib/printUtils';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
 import { AnimatePresence } from 'framer-motion';
+import { NouveauDevisModal } from '@/components/modals/NouveauDevisModal';
 
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
@@ -150,6 +151,7 @@ export default function Dashboard() {
   const [expandedKpi, setExpandedKpi] = useState<string | null>(null);
   const [cameraTime, setCameraTime] = useState('');
   const [demoMarket] = useState<'ma' | 'eu' | 'us'>(activePlant);
+  const [showDevisModal, setShowDevisModal] = useState(false);
 
   // ─── Read location state for tab activation ───
   useEffect(() => {
@@ -1042,7 +1044,7 @@ export default function Dashboard() {
                   {/* LEFT: Action Buttons */}
                   <div className="flex flex-wrap items-center gap-3">
                     <button
-                      onClick={() => navigate('/ventes')}
+                      onClick={() => setShowDevisModal(true)}
                       className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
                       style={{ background: 'transparent', border: '1px solid #D4A843', color: '#D4A843' }}
                       onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.1)'; }}
@@ -1063,7 +1065,7 @@ export default function Dashboard() {
                       <span className="absolute flex items-center justify-center rounded-full z-10" style={{ top: -8, right: -8, minWidth: 20, height: 20, fontSize: 10, fontWeight: 700, background: '#EF4444', color: '#fff', boxShadow: '0 0 8px rgba(239,68,68,0.5)' }}>2</span>
                     </button>
                      <button
-                       onClick={() => triggerPrint()}
+                       onClick={() => setActiveTab('intelligence')}
                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
                       style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid #D4A843', color: '#D4A843' }}
                       onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; e.currentTarget.style.color = '#D4A843'; }}
@@ -2478,6 +2480,8 @@ export default function Dashboard() {
           </Suspense>
         )}
       </AnimatePresence>
+      {/* Nouveau Devis Modal */}
+      <NouveauDevisModal open={showDevisModal} onClose={() => setShowDevisModal(false)} onCreated={() => setShowDevisModal(false)} />
     </MainLayout>
   );
 }
