@@ -1661,6 +1661,7 @@ export default function Dashboard() {
                 <div className="relative">
                   <svg
                     width="100%" height="220" viewBox={`0 0 ${svgW} ${svgH}`} preserveAspectRatio="none"
+                    role="img" aria-label={`Graphique production horaire: pic ${Math.max(...SPARKLINE_DATA.map(d => d.v))} ${uf.volUnit}/h`}
                     className="cursor-crosshair"
                     onMouseMove={handleChartMouseMove}
                     onMouseLeave={handleChartMouseLeave}
@@ -1675,7 +1676,12 @@ export default function Dashboard() {
                     {/* Subtle horizontal grid lines (item 4) */}
                     {[20, 40, 60, 80, 100].map(val => {
                       const gy = svgH - (val / allMax) * svgH * 0.85 - 5;
-                      return <line key={val} x1="0" y1={gy} x2={svgW} y2={gy} stroke="rgba(212,168,67,0.04)" strokeWidth="0.5" />;
+                      return (
+                        <g key={val}>
+                          <line x1="12" y1={gy} x2={svgW} y2={gy} stroke="rgba(212,168,67,0.04)" strokeWidth="0.5" />
+                          <text x="10" y={gy + 1.5} textAnchor="end" fill="rgba(148,163,184,0.3)" fontSize="4" fontFamily="ui-monospace, 'JetBrains Mono', monospace">{val}</text>
+                        </g>
+                      );
                     })}
                     {/* Area fill under production line (item 3) */}
                     <polygon
