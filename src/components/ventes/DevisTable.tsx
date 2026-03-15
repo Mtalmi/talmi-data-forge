@@ -158,7 +158,7 @@ export function DevisTable({
   const scoreDevis = async (devisId: string, devisDbId: string) => {
     setScoringId(devisDbId);
     try {
-      console.log('[ScoreIA] Calling webhook for devis:', devisId);
+      // Call webhook for AI scoring
       const res = await fetch('https://talmi.app.n8n.cloud/webhook/deal-scorer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
