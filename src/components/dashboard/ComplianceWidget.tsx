@@ -71,7 +71,7 @@ export function ComplianceWidget() {
       </div>
 
       <button
-        onClick={() => navigate('/laboratoire')}
+        onClick={() => navigate('/laboratoire', { state: { activeTab: 'intelligence-ia' } })}
         style={{
           marginTop: 12, width: '100%',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,

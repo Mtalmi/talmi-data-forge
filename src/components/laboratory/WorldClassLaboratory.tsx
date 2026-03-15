@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -2057,9 +2058,28 @@ function IntelligenceIATab() {
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────
 export default function WorldClassLaboratory() {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('essais');
   const [hoverNew, setHoverNew] = useState(false);
   const { kpis: labKpis } = useLaboratoryLiveData();
+
+  // Read location state for tab activation
+  useEffect(() => {
+    const state = location.state as { activeTab?: string } | null;
+    if (state?.activeTab) {
+      const tabMap: Record<string, string> = {
+        'intelligence-ia': 'ia',
+        'ia': 'ia',
+        'essais': 'essais',
+        'essais-du-jour': 'essais',
+        'historique': 'historique',
+        'analytique': 'analytique',
+      };
+      const mapped = tabMap[state.activeTab] || state.activeTab;
+      setActiveTab(mapped);
+      window.history.replaceState({}, '');
+    }
+  }, [location.state]);
 
   const TABS = [
     { id: 'essais', label: 'ESSAIS DU JOUR' },

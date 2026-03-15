@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, lazy, Suspense, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
 import { AnimatePresence } from 'framer-motion';
 
@@ -72,6 +72,7 @@ export default function Dashboard() {
   const { user, role, isCeo, isAccounting } = useAuth();
   const uf = useUnitFormat();
   const navigate = useNavigate();
+  const location = useLocation();
   const { stats, loading: statsLoading, refresh } = useDashboardStats();
   const [period] = useState<Period>('month');
   const { stats: periodStats, loading: periodLoading, refresh: refreshPeriod } = useDashboardStatsWithPeriod(period);
@@ -99,6 +100,22 @@ export default function Dashboard() {
   const [expandedKpi, setExpandedKpi] = useState<string | null>(null);
   const [cameraTime, setCameraTime] = useState('');
   const [demoMarket, setDemoMarket] = useState<'ma' | 'eu' | 'us'>('ma');
+
+  // ─── Read location state for tab activation ───
+  useEffect(() => {
+    const state = location.state as { activeTab?: string; scrollTo?: string } | null;
+    if (state?.activeTab) {
+      setActiveTab(state.activeTab as any);
+      // Clear the state so back/forward doesn't re-trigger
+      window.history.replaceState({}, '');
+    }
+    if (state?.scrollTo === 'rapports') {
+      setTimeout(() => {
+        const el = document.querySelector('[data-section="rapports"]');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
+    }
+  }, [location.state]);
 
   // Camera ticking timestamp
   useEffect(() => {

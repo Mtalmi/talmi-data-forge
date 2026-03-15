@@ -124,11 +124,11 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       key: 'intelligence',
       label: nav.sectionIntelligence || 'INTELLIGENCE',
       items: [
-        { title: 'Résumé IA', url: '/resume-ia', icon: Sparkles },
-        { title: 'Alertes Actives', url: '/alertes', icon: Bell, badge: 5, badgeStyle: 'red' },
-        { title: 'Agents IA', url: '/operations-agent', icon: Brain, badge: 24, badgeStyle: 'gold' },
-        { title: 'Rapports', url: '/rapports', icon: FileBarChart },
-        { title: 'Historique', url: '/historique-ia', icon: Clock },
+        { title: 'Résumé IA', url: '/__dashboard_intel', icon: Sparkles },
+        { title: 'Alertes Actives', url: '/__dashboard_intel_alerts', icon: Bell, badge: 5, badgeStyle: 'red' },
+        { title: 'Agents IA', url: '/__dashboard_intel_agents', icon: Brain, badge: 24, badgeStyle: 'gold' },
+        { title: 'Rapports', url: '/__dashboard_rapports', icon: FileBarChart },
+        { title: 'Historique', url: '/__dashboard_intel_history', icon: Clock },
         { title: nav.analytics || 'Analytics', url: '/analytics', icon: TrendingUp },
         { title: 'Design Guardian', url: '/design-guardian', icon: Shield },
       ],
@@ -182,11 +182,19 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
 
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/' || location.pathname === '/dashboard';
+    if (path.startsWith('/__dashboard_')) return location.pathname === '/' || location.pathname === '/dashboard';
     return location.pathname === path;
   };
 
   const handleNav = (url: string) => {
-    navigate(url);
+    // Intelligence section items → navigate to dashboard with tab state
+    if (url === '/__dashboard_intel' || url === '/__dashboard_intel_alerts' || url === '/__dashboard_intel_agents' || url === '/__dashboard_intel_history') {
+      navigate('/', { state: { activeTab: 'intelligence' } });
+    } else if (url === '/__dashboard_rapports') {
+      navigate('/', { state: { activeTab: 'command', scrollTo: 'rapports' } });
+    } else {
+      navigate(url);
+    }
     if (window.innerWidth < 768) onClose();
   };
 
