@@ -114,11 +114,11 @@ const ExecutiveGauge = forwardRef<HTMLDivElement, GaugeProps>(
         {/* Center content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className={cn(
-            'text-lg font-bold tabular-nums',
+            'text-lg tabular-nums',
             color === 'success' && 'text-success',
             color === 'warning' && 'text-warning',
             color === 'destructive' && 'text-destructive'
-          )}>
+          )} style={{ fontWeight: 200 }}>
             {value.toFixed(1)}%
           </span>
         </div>
@@ -136,7 +136,7 @@ const ExecutiveGauge = forwardRef<HTMLDivElement, GaugeProps>(
           </span>
           <span className="font-semibold text-xs">{label}</span>
         </div>
-        <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">{subtitle}</p>
+        <p className="text-xs text-muted-foreground mt-0.5 leading-tight">{subtitle}</p>
       </div>
     </div>
   );
@@ -217,7 +217,7 @@ export function ExecutiveCommandCenter() {
             <h2 className="text-sm sm:text-base font-bold tracking-tight truncate">
               Centre de Commande Exécutif
             </h2>
-            <p className="text-[10px] sm:text-xs text-muted-foreground">Vue Hawaii • Mise à jour en temps réel</p>
+            <p className="text-xs text-muted-foreground">Vue Hawaii • Mise à jour en temps réel</p>
           </div>
         </div>
         {/* Material Variance Status Badge */}
@@ -225,7 +225,7 @@ export function ExecutiveCommandCenter() {
           <Badge 
             variant={metrics.varianceStatus === 'red' ? 'destructive' : 'secondary'}
             className={cn(
-              "text-[9px] gap-1",
+              "text-xs gap-1",
               metrics.varianceStatus === 'red' && "animate-pulse",
               metrics.varianceStatus === 'yellow' && "bg-warning text-warning-foreground"
             )}
@@ -357,7 +357,7 @@ export function ExecutiveCommandCenter() {
       </div>
 
       {/* AI Intelligence Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border border-red-500 min-h-[200px]">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-[200px]">
         <AIAgentCard type="score_global" title="Score Global" icon={<BarChart3 className="h-4 w-4 text-[#D4A843]" />} />
         <AIAgentCard type="stock_analysis" title="Analyse Stocks" icon={<Package className="h-4 w-4 text-[#D4A843]" />} />
         <AIAgentCard type="ventes_forecast" title="Prévisions Ventes" icon={<TrendingUp className="h-4 w-4 text-[#D4A843]" />} />

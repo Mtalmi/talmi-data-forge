@@ -999,7 +999,7 @@ export default function Dashboard() {
                    <div className="w-[80px] h-[3px] bg-white/10 rounded-full mt-1.5">
                      <div className="h-full rounded-full bg-gradient-to-r from-[#D4A843]/80 to-[#D4A843] tbos-bar-grow" style={{ width: '87%' }} />
                   </div>
-                  <span className="text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase mt-1.5">CAPACITÉ</span>
+                  <span className="text-xs tracking-[0.2em] text-muted-foreground/40 uppercase mt-1.5">CAPACITÉ</span>
                 </div>
 
                 {/* Divider */}
@@ -1011,7 +1011,7 @@ export default function Dashboard() {
                     <span className="tbos-hero-stat-number text-2xl text-red-400 font-bold" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", textShadow: '0 0 12px rgba(239, 68, 68, 0.3)' }}>2</span>
                     <span className="text-sm text-red-400/60 ml-1">URGENT</span>
                   </div>
-                  <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">ALERTES ACTIVES</span>
+                  <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground/50">ALERTES ACTIVES</span>
                 </div>
 
                 {/* Divider */}
@@ -1026,7 +1026,7 @@ export default function Dashboard() {
                       {`Production cumulée aujourd'hui. **14 batches** complétés. Cadence actuelle: **47 m³/h**. Objectif journalier: !!800 m³!! (84% atteint). Formule dominante: F-B25 (60%). Prévision fin de journée: ~780 m³ si cadence maintenue.`}
                     </MetricTooltip>
                   </div>
-                  <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">PRODUCTION DU JOUR</span>
+                  <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground/50">PRODUCTION DU JOUR</span>
                 </div>
 
                 {/* Divider */}
@@ -1040,7 +1040,7 @@ export default function Dashboard() {
                        {`Marge brute = (Revenu − Coût matières) / Revenu. Revenu: **75,600 DH**. Coût matières: **37,800 DH**. La marge est stable vs hier (+0.1pt). Objectif: !!>45%!!. Principal levier: optimisation dosage ciment F-B25 (~~−24.8% sur-dosage~~ identifié = !!+14 DH/m³!! récupérable).`}
                      </MetricTooltip>
                    </div>
-                   <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">MARGE BRUTE</span>
+                   <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground/50">MARGE BRUTE</span>
                 </div>
               </div>
 
@@ -1569,10 +1569,10 @@ export default function Dashboard() {
           {/* (6) Niveaux de Stock — stock only */}
           <div className="mt-5" style={{ animation: 'ccSectionIn 300ms ease-out 650ms both' }}>
             {/* Section Header */}
-            <div className="flex items-center gap-2.5 mb-3">
-              <span style={{ fontSize: 14 }}>📦</span>
-              <span className="text-xs uppercase tracking-wider font-medium" style={{ color: '#D4A843' }}>Niveaux de Stock</span>
-              <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(212,168,67,0.4), rgba(212,168,67,0.05))' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 20 }}>
+              <span style={{ color: '#D4A843', fontSize: 14, marginRight: 8, flexShrink: 0 }}>✦</span>
+              <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, fontWeight: 700, letterSpacing: '0.15em', color: '#D4A843', textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0 }}>Niveaux de Stock</span>
+              <span style={{ borderBottom: '1px dashed rgba(212, 168, 67, 0.2)', flexGrow: 1, marginLeft: 12, alignSelf: 'center', height: 0 }} />
             </div>
             <Suspense fallback={<div className="h-[300px] rounded-lg bg-white/[0.02] animate-pulse" />}>
               <WorldClassDashboard stockOnly />
