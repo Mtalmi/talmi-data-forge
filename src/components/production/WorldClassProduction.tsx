@@ -494,7 +494,7 @@ export default function WorldClassProduction() {
   // ── Derived KPIs (with realistic fallbacks when DB is empty) ──
   const kpis = useMemo(() => {
     // Use production_batches as primary source (seeded data)
-    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    const todayStr = getMoroccoToday();
     const todayBatches = batches.filter(b => b.created_at?.startsWith(todayStr));
     const completedBatches = todayBatches.filter(b => b.status === 'complete' || b.status === 'decharge');
     const inProgressBatches = todayBatches.filter(b => b.status === 'en_cours');
