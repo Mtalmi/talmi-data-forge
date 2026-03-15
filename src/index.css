@@ -3146,7 +3146,7 @@ html {
   gap: 4px;
   padding: 2px 8px;
   border-radius: 100px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   background: hsl(var(--muted));
   color: hsl(var(--muted-foreground));
