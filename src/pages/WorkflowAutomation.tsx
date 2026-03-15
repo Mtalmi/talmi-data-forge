@@ -170,7 +170,7 @@ export default function WorkflowAutomation() {
   const toggleWf = (id: number, current: string) => {
     const next = current === 'active' ? 'paused' : 'active';
     setWfStates(prev => ({ ...prev, [id]: next }));
-    setToast(next === 'active' ? '⚡ Workflow activated' : '⏸️ Workflow paused');
+    setToast(next === 'active' ? '⚡ Workflow activé' : '⏸️ Workflow en pause');
   };
 
   const barColor = (b: string) => b === 'gold' ? '#D4A843' : b === 'blue' ? '#D4A843' : '#22C55E';
