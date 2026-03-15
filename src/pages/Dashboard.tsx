@@ -101,7 +101,7 @@ export default function Dashboard() {
   const [midPanelView, setMidPanelView] = useState<'data' | 'camera'>('data');
   const [expandedKpi, setExpandedKpi] = useState<string | null>(null);
   const [cameraTime, setCameraTime] = useState('');
-  const [demoMarket, setDemoMarket] = useState<'ma' | 'eu' | 'us'>('ma');
+  const [demoMarket] = useState<'ma' | 'eu' | 'us'>(activePlant);
 
   // ─── Read location state for tab activation ───
   useEffect(() => {
