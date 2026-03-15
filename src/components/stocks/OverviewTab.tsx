@@ -183,7 +183,7 @@ export function OverviewTab({ AUTONOMY, STOCK_ALERTS_DB, REORDER_RECS, STOCKS, o
                   { label: 'Rotation ⚠', color: '#F59E0B' },
                 ].map(pill => (
                   <span key={pill.label} style={{
-                    fontFamily: MONO, fontSize: 10, fontWeight: 600,
+                    fontFamily: MONO, fontSize: 12, fontWeight: 600,
                     padding: '4px 10px', borderRadius: 999,
                     background: `${pill.color}15`, border: `1px solid ${pill.color}40`,
                     color: pill.color,
