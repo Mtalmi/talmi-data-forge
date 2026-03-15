@@ -1086,7 +1086,7 @@ function HistoriqueNormesTab() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <FlaskConical size={16} color={T.gold} />
-              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>✦ Historique des Essais</span>
+              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 12, textTransform: 'uppercase' as const, letterSpacing: '0.15em' }}>✦ Historique des Essais</span>
             </div>
             <span style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF' }}>dernière mise à jour : à l'instant</span>
           </div>
