@@ -4148,8 +4148,8 @@ textarea.error {
 }
 input:not([type="checkbox"]):not([type="radio"]).valid,
 textarea.valid {
-  border-color: #10b981 !important;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+  border-color: #22c55e !important;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15) !important;
 }
 
 /* ══════════════════════════════════════════════════════════════
