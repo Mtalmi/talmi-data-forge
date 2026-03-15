@@ -249,7 +249,7 @@ export default function AnalyticsDashboard() {
                     dataKey="customers"
                     stroke="#D4A843"
                     strokeWidth={2}
-                    name="Active Customers"
+                    name="Clients Actifs"
                   />
                   <Line
                     yAxisId="right"
@@ -257,7 +257,7 @@ export default function AnalyticsDashboard() {
                     dataKey="revenue"
                     stroke="#E8C96A"
                     strokeWidth={2}
-                    name="Revenue ($M)"
+                    name="CA (M$)"
                   />
                 </LineChart>
               </ResponsiveContainer>
