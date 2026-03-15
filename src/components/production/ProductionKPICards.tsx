@@ -54,7 +54,7 @@ export function ProductionKPICards({
             <TrendingUp className="h-4 w-4 text-emerald-500" />
             <span className="text-xs text-muted-foreground">CUR Moyen</span>
           </div>
-          <p className="text-2xl font-bold text-emerald-500 mt-1">
+          <p className="text-2xl font-extralight text-emerald-500 mt-1">
             {avgCUR > 0 ? avgCUR.toFixed(0) : '—'}
           </p>
           <p className="text-xs text-muted-foreground">DH/m³</p>
