@@ -311,13 +311,20 @@ export default function Creances() {
 
   const canManageReceivables = isCeo || role === 'agent_administratif' || role === 'superviseur';
 
-  const filteredReceivables = receivables.filter(r => {
+  const filteredReceivables = useMemo(() => receivables.filter(r => {
     const matchesSearch = 
       r.client_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       r.invoice_number.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || r.status === statusFilter;
     return matchesSearch && matchesStatus;
-  });
+  }).map(r => ({
+    ...r,
+    _due_date: r.due_date || '',
+    _amount: r.amount_due ?? 0,
+    _delay: r.days_overdue ?? 0,
+  })), [receivables, searchTerm, statusFilter]);
+
+  const { sortedData: sortedReceivables, sortKey: crSortKey, sortDirection: crSortDir, handleSort: crHandleSort } = useTableSort(filteredReceivables, '_due_date', 'asc');
 
   const overdueByClient = getOverdueByClient();
 
