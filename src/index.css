@@ -2971,7 +2971,7 @@ html {
 
 /* ── Timeline enhancements ───────────────────────────────── */
 .timeline-time {
-  font-family: "JetBrains Mono", monospace;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   font-size: 13px;
   font-weight: 600;
   min-width: 52px;
