@@ -12,6 +12,9 @@ import { CommandPalette } from '@/components/command/CommandPalette';
 import { OfflineIndicator } from '@/components/pwa/OfflineIndicator';
 import { PWAInstallPrompt } from '@/components/pwa/PWAInstallPrompt';
 import { NotificationSettings } from '@/components/pwa/NotificationSettings';
+import { ShortcutsHelpModal } from '@/components/accessibility/ShortcutsHelpModal';
+import { ScreenReaderAnnouncer } from '@/components/accessibility/ScreenReaderAnnouncer';
+import { useGlobalShortcuts } from '@/hooks/useGlobalShortcuts';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { usePreviewRole } from '@/hooks/usePreviewRole';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
@@ -41,6 +44,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
   const { previewRole, setPreviewRole } = usePreviewRole();
   const { isDemo, plant } = usePlant();
   usePushNotifications();
+  useGlobalShortcuts();
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -102,6 +106,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="ml-3 p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/[0.04] transition-all z-20 lg:hidden"
+            aria-label="Menu"
           >
             {sidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
@@ -146,6 +151,8 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
         {/* Quick Action FAB */}
         <QuickActionFAB />
         <CommandPalette />
+        <ShortcutsHelpModal />
+        <ScreenReaderAnnouncer />
         <PWAInstallPrompt />
         <NotificationSettings />
 

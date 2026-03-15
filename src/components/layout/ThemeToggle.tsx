@@ -9,7 +9,7 @@ export function ThemeToggle() {
       <button
         className="relative flex items-center justify-center"
         style={{ width: 32, height: 32, borderRadius: 6, background: 'transparent', color: '#9CA3AF', border: 'none', cursor: 'default', opacity: 0.5 }}
-        aria-label="Dark theme active"
+        aria-label="Changer de thème"
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
       >
