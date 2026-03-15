@@ -1550,7 +1550,7 @@ function IntelligenceIATab() {
       <Card style={{ borderTop: `2px solid ${T.gold}` }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: T.gold, letterSpacing: '2px' }}>✦ AGENT IA: RENTABILITÉ PAR TOUPIE</span>
+            <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: T.gold, letterSpacing: '0.15em' }}>✦ AGENT IA: RENTABILITÉ PAR TOUPIE</span>
             <Bdg label="● LIVE" color={T.success} bg="rgba(34,197,94,0.12)" pulse />
           </div>
           <IABadge />
