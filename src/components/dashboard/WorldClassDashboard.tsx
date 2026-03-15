@@ -1216,7 +1216,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <span className="text-slate-500">{q.test}</span>
-                    <span className="min-w-[48px] text-center text-xs font-medium px-2 py-0.5 rounded" style={{ background: q.ok ? 'rgba(52,211,153,0.1)' : 'rgba(251,191,36,0.1)', color: q.ok ? 'rgb(52,211,153)' : 'rgba(251,191,36,0.8)' }}>{q.ok ? 'OK' : 'VAR'}</span>
+                    <span className="min-w-[48px] text-center text-xs font-medium px-2 py-0.5 rounded" style={{ background: q.ok ? 'rgba(52,211,153,0.1)' : 'transparent', color: q.ok ? 'rgb(52,211,153)' : '#F59E0B', border: q.ok ? 'none' : '1px solid rgba(245,158,11,0.4)' }}>{q.ok ? 'OK' : 'VAR'}</span>
                     <span className="text-xs font-mono text-slate-600 tabular-nums">{q.time}</span>
                   </div>
                 </div>
