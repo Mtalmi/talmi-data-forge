@@ -852,13 +852,13 @@ export default function MobileField() {
 
           <button className="w-full h-16 rounded-xl flex items-center justify-center gap-2 text-sm font-bold text-[#B0B8C1] active:scale-95"
             style={{ background: '#1C2533', border: '2px dashed #2A3545' }}>
-            <Camera className="w-5 h-5" /> Add Photo
+            <Camera className="w-5 h-5" /> Ajouter Photo
           </button>
 
-          {!isOnline && <p className="text-xs text-[#F59E0B] text-center">📡 Test saved — will sync when connected</p>}
+          {!isOnline && <p className="text-xs text-[#F59E0B] text-center">📡 Test sauvegardé — sera synchronisé à la reconnexion</p>}
           <button onClick={handleSubmitTest} className="w-full h-16 rounded-xl text-base font-bold text-black active:scale-95 transition-transform"
             style={{ background: 'linear-gradient(135deg, #FFD700, #B8960C)' }}>
-            Submit Test
+            Soumettre Test
           </button>
         </div>
       </BottomSheet>
