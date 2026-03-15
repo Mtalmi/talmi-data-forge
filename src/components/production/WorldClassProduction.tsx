@@ -763,6 +763,28 @@ export default function WorldClassProduction() {
               <Upload size={13} />
               Importer BC
             </button>
+            <ExportButton
+              data={bons.map(b => ({
+                bl_id: b.bl_id,
+                date: b.date_livraison,
+                client: b.client_id,
+                formule: b.formule_id,
+                volume_m3: b.volume_m3,
+                workflow: b.workflow_status || 'planification',
+                paiement: b.statut_paiement || '',
+              }))}
+              columns={[
+                { key: 'bl_id', label: 'N° Bon' },
+                { key: 'date', label: 'Date' },
+                { key: 'client', label: 'Client' },
+                { key: 'formule', label: 'Formule' },
+                { key: 'volume_m3', label: 'Volume (m³)' },
+                { key: 'workflow', label: 'Workflow' },
+                { key: 'paiement', label: 'Paiement' },
+              ]}
+              filename={`TBOS_Production_${new Date().toISOString().split('T')[0]}`}
+              style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: 8 }}
+            />
           </>
         }
       />
