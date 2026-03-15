@@ -96,10 +96,6 @@ export function KeyboardShortcutsHint() {
         <div className="space-y-2">
           <p className="font-semibold">{ks.title}</p>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-            <span className="font-mono bg-muted px-1 rounded">N</span>
-            <span>{ks.newQuote}</span>
-            <span className="font-mono bg-muted px-1 rounded">⇧N</span>
-            <span>{ks.newOrder}</span>
             <span className="font-mono bg-muted px-1 rounded">/</span>
             <span>{ks.search}</span>
             <span className="font-mono bg-muted px-1 rounded">J</span>

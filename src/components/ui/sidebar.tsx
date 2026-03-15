@@ -79,6 +79,8 @@ const SidebarProvider = React.forwardRef<
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
+        const tag = (event.target as HTMLElement).tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (event.target as HTMLElement).isContentEditable) return;
         event.preventDefault();
         toggleSidebar();
       }
