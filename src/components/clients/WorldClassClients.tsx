@@ -835,6 +835,8 @@ function MiniSparkline({ data }: { data: number[] }) {
 function ClientDetailDrawer({ client, onClose }: { client: ClientDisplay | null; onClose: () => void }) {
   const navigate = useNavigate();
   const [closing, setClosing] = useState(false);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
 
   useEffect(() => {
     if (!client) return;
@@ -842,6 +844,25 @@ function ClientDetailDrawer({ client, onClose }: { client: ClientDisplay | null;
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
   }, [client]);
+
+  // Fetch real order data when client changes
+  useEffect(() => {
+    if (!client?.clientId) return;
+    setLoadingOrders(true);
+    const fetchOrders = async () => {
+      try {
+        const { data } = await supabase
+          .from('bons_livraison_reels')
+          .select('bl_id, date_livraison, volume_m3, montant, statut_paiement, formule_id')
+          .eq('client_id', client.clientId)
+          .order('date_livraison', { ascending: false })
+          .limit(6);
+        setOrders(data || []);
+      } catch (e) { console.error(e); }
+      finally { setLoadingOrders(false); }
+    };
+    fetchOrders();
+  }, [client?.clientId]);
 
   const handleClose = () => {
     setClosing(true);
@@ -851,6 +872,12 @@ function ClientDetailDrawer({ client, onClose }: { client: ClientDisplay | null;
   if (!client) return null;
 
   const initial = client.name.charAt(0).toUpperCase();
+  const healthScore = HEALTH_SCORES[client.name] ?? 65;
+
+  // Build sparkline from orders
+  const sparkData = orders.length > 1
+    ? orders.slice().reverse().map(o => o.montant || o.volume_m3 * 850 || 0)
+    : [0, 0, 0, 0, 0, 0];
 
   return (
     <>
@@ -887,13 +914,12 @@ function ClientDetailDrawer({ client, onClose }: { client: ClientDisplay | null;
                 <p style={{ fontFamily: MONO, fontSize: 22, fontWeight: 500, color: '#FFFFFF' }}>{client.name}</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4, flexWrap: 'wrap' }}>
                   <Badge label={client.segment} color={SEGMENT_COLORS[client.segment] || '#D4A843'} bg={`${SEGMENT_COLORS[client.segment] || '#D4A843'}18`} />
-                  <Badge label="Actif" color="#22C55E" bg="rgba(34,197,94,0.12)" />
-                  <span style={{ color: '#9CA3AF', fontSize: 12, fontFamily: MONO }}>Membre depuis 2023</span>
+                  <Badge label={client.status} color={client.status === 'Actif' ? '#22C55E' : '#F59E0B'} bg={client.status === 'Actif' ? 'rgba(34,197,94,0.12)' : 'rgba(245,158,11,0.12)'} />
                 </div>
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
-              <DrawerHealthGauge score={92} />
+              <DrawerHealthGauge score={healthScore} />
               <button onClick={handleClose} style={{ border: 'none', background: 'none', color: '#9CA3AF', fontSize: 20, cursor: 'pointer', lineHeight: 1, padding: 4 }}
                 onMouseEnter={e => (e.currentTarget.style.color = '#D4A843')}
                 onMouseLeave={e => (e.currentTarget.style.color = '#9CA3AF')}
@@ -902,70 +928,73 @@ function ClientDetailDrawer({ client, onClose }: { client: ClientDisplay | null;
           </div>
 
           {/* KEY METRICS */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
             {[
-              { label: 'CA YTD', value: '2,520K', unit: ' DH', sub: '' },
-              { label: 'COMMANDES', value: '12', unit: '', sub: 'cette année' },
-              { label: 'DÉLAI PAIEMENT', value: '22', unit: ' jours', sub: 'moyenne', color: '#22C55E' },
-              { label: 'SATISFACTION', value: '4.8', unit: '/5', sub: '★★★★★', subColor: '#D4A843' },
+              { label: 'CA YTD', value: client.ca, unit: '', sub: '' },
+              { label: 'COMMANDES', value: `${orders.length}`, unit: '', sub: 'récentes' },
+              { label: 'SOLDE DÛ', value: client.solde === 0 ? '0' : `${(client.solde / 1000).toFixed(0)}K`, unit: ' DH', sub: '', color: client.solde === 0 ? '#22C55E' : '#EF4444' },
             ].map((m, i) => (
               <div key={i} style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 8, border: '1px solid #1E2D4A', borderTop: '2px solid #D4A843', padding: '10px 12px' }}>
                 <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', marginBottom: 6 }}>{m.label}</p>
                 <p style={{ fontFamily: MONO, fontSize: 18, fontWeight: 300, color: m.color || '#D4A843', lineHeight: 1 }}>
                   {m.value}<span style={{ fontSize: 13, color: '#9CA3AF' }}>{m.unit}</span>
                 </p>
-                {m.sub && <p style={{ fontFamily: MONO, fontSize: 10, color: m.subColor || '#9CA3AF', marginTop: 4 }}>{m.sub}</p>}
+                {m.sub && <p style={{ fontFamily: MONO, fontSize: 10, color: '#9CA3AF', marginTop: 4 }}>{m.sub}</p>}
               </div>
             ))}
           </div>
 
           {/* SPARKLINE */}
-          <div>
-            <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', marginBottom: 8 }}>ÉVOLUTION CA · 6 MOIS</p>
-            <MiniSparkline data={TGCC_SPARKLINE} />
-          </div>
+          {sparkData.some(v => v > 0) && (
+            <div>
+              <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', marginBottom: 8 }}>ÉVOLUTION · DERNIÈRES LIVRAISONS</p>
+              <MiniSparkline data={sparkData} />
+            </div>
+          )}
 
           {/* COMMANDES RÉCENTES */}
           <div style={{ borderTop: '1px solid rgba(212,168,67,0.15)', paddingTop: 16 }}>
             <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', marginBottom: 10 }}>COMMANDES RÉCENTES</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {TGCC_ORDERS.map((o, i) => (
-                <OrderRow key={i} {...o} />
-              ))}
-            </div>
-            <p onClick={() => navigate('/bons')} style={{ fontFamily: MONO, fontSize: 12, color: '#D4A843', marginTop: 10, cursor: 'pointer' }}>Voir tout →</p>
-          </div>
-
-          {/* COMPORTEMENT PAIEMENT */}
-          <div style={{ borderTop: '1px solid rgba(212,168,67,0.15)', paddingTop: 16 }}>
-            <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', marginBottom: 10 }}>COMPORTEMENT PAIEMENT</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-              <span style={{ fontFamily: MONO, fontSize: 13, color: '#9CA3AF' }}>Score Paiement:</span>
-              <span style={{ fontFamily: MONO, fontSize: 24, color: '#D4A843', fontWeight: 600 }}>98<span style={{ fontSize: 14, color: '#9CA3AF' }}>/100</span></span>
-              <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700, background: 'rgba(34,197,94,0.12)', color: '#22C55E', border: '1px solid rgba(34,197,94,0.3)' }}>Excellent payeur</span>
-            </div>
-            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-              <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>Délai moyen: <span style={{ color: '#F1F5F9' }}>22 jours</span></span>
-              <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>Retard: <span style={{ color: '#22C55E' }}>0 factures</span></span>
-              <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>Historique: <span style={{ color: '#22C55E' }}>12/12</span> à temps</span>
-            </div>
+            {loadingOrders ? (
+              <p style={{ color: '#64748B', fontSize: 12 }}>Chargement...</p>
+            ) : orders.length === 0 ? (
+              <p style={{ color: '#64748B', fontSize: 12, fontStyle: 'italic' }}>Aucune commande trouvée</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {orders.map((o, i) => (
+                  <OrderRow key={i}
+                    bl={o.bl_id}
+                    date={format(new Date(o.date_livraison), 'dd/MM/yy')}
+                    vol={`${o.volume_m3} m³`}
+                    amount={`${(o.montant || 0).toLocaleString('fr-FR')} DH`}
+                    status={o.statut_paiement === 'paye' ? 'Payée' : 'En attente'}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* CONTACT */}
           <div style={{ borderTop: '1px solid rgba(212,168,67,0.15)', paddingTop: 16 }}>
-            <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', marginBottom: 10 }}>CONTACT PRINCIPAL</p>
-            <p style={{ color: '#F1F5F9', fontWeight: 500, fontSize: 14 }}>Mohammed Alami</p>
-            <p style={{ color: '#9CA3AF', fontSize: 13, marginTop: 2 }}>Directeur des Achats</p>
-            <p style={{ color: '#D4A843', fontSize: 13, marginTop: 4, cursor: 'pointer' }}>m.alami@tgcc.ma</p>
-            <p style={{ fontFamily: MONO, color: '#9CA3AF', fontSize: 13, marginTop: 2 }}>+212 6XX XXX XXX</p>
-            <p style={{ color: '#9CA3AF', fontSize: 12, marginTop: 6 }}>Dernier contact : 28 Feb 2026</p>
+            <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', marginBottom: 10 }}>CONTACT</p>
+            {client.email !== '—' && <p style={{ color: '#D4A843', fontSize: 13, cursor: 'pointer' }}>{client.email}</p>}
+            {client.telephone !== '—' && <p style={{ fontFamily: MONO, color: '#9CA3AF', fontSize: 13, marginTop: 2 }}>{client.telephone}</p>}
+            {client.ville !== '—' && <p style={{ color: '#9CA3AF', fontSize: 12, marginTop: 4 }}>{client.ville}</p>}
+            {client.email === '—' && client.telephone === '—' && (
+              <p style={{ color: '#64748B', fontSize: 12, fontStyle: 'italic' }}>Aucune information de contact</p>
+            )}
           </div>
 
           {/* AI INSIGHT */}
           <div style={{ borderTop: '1px solid rgba(212,168,67,0.15)', paddingTop: 16 }}>
             <div style={{ background: 'rgba(212,168,67,0.03)', borderLeft: '3px solid #D4A843', borderRadius: '0 8px 8px 0', padding: 12 }}>
               <p style={{ fontSize: 13, lineHeight: 1.7, color: '#94A3B8' }}>
-                Client fidèle depuis 2023 avec un historique de paiement parfait. Volume stable à <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>350-420 m³</span>/trimestre. <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation :</span> proposer tarif préférentiel pour volumes &gt;<span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>500 m³</span>/mois afin de verrouiller la relation long terme et anticiper l'offre concurrente.
+                {healthScore >= 80
+                  ? <>Client fiable avec un score santé de <span style={{ fontFamily: MONO, color: '#D4A843', fontWeight: 600 }}>{healthScore}/100</span>. Historique de paiement solide. <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation :</span> proposer un contrat cadre pour sécuriser le volume.</>
+                  : healthScore >= 50
+                  ? <>Client à surveiller — score santé <span style={{ fontFamily: MONO, color: '#F59E0B', fontWeight: 600 }}>{healthScore}/100</span>. Des retards de paiement ponctuels ont été observés. <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation :</span> limiter l'exposition crédit et relancer proactivement.</>
+                  : <>Client à risque — score santé <span style={{ fontFamily: MONO, color: '#EF4444', fontWeight: 600 }}>{healthScore}/100</span>. Impayés significatifs détectés. <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation :</span> suspendre les nouvelles livraisons jusqu'à régularisation.</>
+                }
               </p>
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
                 <span style={{ background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', fontSize: 11, borderRadius: 9999, padding: '2px 10px', fontWeight: 600, fontFamily: MONO }}>✨ Généré par IA · Claude Opus · Live</span>
@@ -975,8 +1004,8 @@ function ClientDetailDrawer({ client, onClose }: { client: ClientDisplay | null;
 
           {/* FOOTER BUTTONS */}
           <div style={{ display: 'flex', gap: 12, paddingTop: 8 }}>
-            <button style={{ flex: 1, background: '#D4A843', color: '#0F1629', border: 'none', borderRadius: 8, padding: '10px 24px', cursor: 'pointer', fontSize: 14, fontWeight: 600, fontFamily: MONO }}>Nouveau Devis</button>
-            <button style={{ flex: 1, background: 'transparent', color: '#D4A843', border: '1px solid #D4A843', borderRadius: 8, padding: '10px 24px', cursor: 'pointer', fontSize: 14, fontWeight: 600, fontFamily: MONO }}>Historique Complet</button>
+            <button onClick={() => navigate('/ventes')} style={{ flex: 1, background: '#D4A843', color: '#0F1629', border: 'none', borderRadius: 8, padding: '10px 24px', cursor: 'pointer', fontSize: 14, fontWeight: 600, fontFamily: MONO }}>Nouveau Devis</button>
+            <button onClick={() => navigate('/ventes', { state: { activeTab: 'bc' } })} style={{ flex: 1, background: 'transparent', color: '#D4A843', border: '1px solid #D4A843', borderRadius: 8, padding: '10px 24px', cursor: 'pointer', fontSize: 14, fontWeight: 600, fontFamily: MONO }}>Historique Complet</button>
           </div>
         </div>
       </div>
@@ -1294,7 +1323,7 @@ export default function WorldClassClients() {
               }}
             >
               <Plus size={13} />
-              Add new client
+              Nouveau Client
             </button>
             <span style={{ fontFamily: MONO, fontSize: 13, color: '#9CA3AF', letterSpacing: '0.5px' }}>{liveClock}</span>
           </>
