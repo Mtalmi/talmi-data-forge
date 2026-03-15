@@ -729,8 +729,27 @@ function HeroScoreCounter({ target }: { target: number }) {
 // MAIN
 // ─────────────────────────────────────────────────────
 export default function WorldClassStocks({ silosContent, onNewMovement }: { silosContent?: React.ReactNode; onNewMovement?: () => void }) {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('silos');
   const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, REORDER_RECS, loading } = useStocksLiveData();
+
+  // Read location state for tab activation
+  useEffect(() => {
+    const state = location.state as { activeTab?: string } | null;
+    if (state?.activeTab) {
+      const tabMap: Record<string, string> = {
+        'surveillance-ia': 'alertes',
+        'alertes': 'alertes',
+        'silos': 'silos',
+        'vue-ensemble': 'overview',
+        'overview': 'overview',
+        'mouvements': 'mouvements',
+      };
+      const mapped = tabMap[state.activeTab] || state.activeTab;
+      setActiveTab(mapped);
+      window.history.replaceState({}, '');
+    }
+  }, [location.state]);
   const tabs = [
     { id: 'silos', label: 'SILOS' },
     { id: 'overview', label: "VUE D'ENSEMBLE" },

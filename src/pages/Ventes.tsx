@@ -121,9 +121,26 @@ export default function Ventes() {
   } = useVentesFilters(devisList, bcList, fetchData);
   
   // Main page tab
+  const location = useLocation();
   const [mainTab, setMainTab] = useState('overview');
   // Sub-tab for orders section
   const [activeTab, setActiveTab] = useState('devis');
+
+  // Read location state for tab activation
+  useEffect(() => {
+    const state = location.state as { activeTab?: string; mainTab?: string } | null;
+    if (state?.activeTab) {
+      setActiveTab(state.activeTab);
+      if (state.activeTab === 'devis' || state.activeTab === 'bc' || state.activeTab === 'factures') {
+        setMainTab('orders');
+      }
+      window.history.replaceState({}, '');
+    }
+    if (state?.mainTab) {
+      setMainTab(state.mainTab);
+      window.history.replaceState({}, '');
+    }
+  }, [location.state]);
   
   // Bulk selection state
   const [selectedDevisIds, setSelectedDevisIds] = useState<string[]>([]);
