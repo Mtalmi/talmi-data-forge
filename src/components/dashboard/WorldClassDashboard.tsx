@@ -1307,8 +1307,8 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               <span className="text-sm text-white/80">AGENT IA : 2 livraisons en retard potentiel — <span style={{ fontWeight:'500', color:'white' }}>Constructions Modernes SA</span> (14:30) arrive à 85% de la fenêtre de livraison. BTP Maroc (16:00) non confirmé.</span>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0 ml-4">
-              <button style={{ border: '1px solid #D4A843', color: '#0F1629', background: '#D4A843', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>Alerter Client</button>
-              <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px' }}>Ignorer</button>
+              <button onClick={() => tbosToast('Alerte envoyée au client par WhatsApp', 'success')} style={{ border: '1px solid #D4A843', color: '#0F1629', background: '#D4A843', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>Alerter Client</button>
+              <button onClick={() => tbosToast('Alerte ignorée')} style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px' }}>Ignorer</button>
             </div>
           </div>
         )}
