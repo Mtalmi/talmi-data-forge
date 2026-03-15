@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { NouveauMouvementModal } from '@/components/modals/NouveauMouvementModal';
 import { ControleQualiteModal, AjustementManuelModal } from '@/components/modals/StockControlModals';
-import { useLocation } from 'react-router-dom';
+import { useTabSync } from '@/hooks/useTabSync';
 import { toast } from 'sonner';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip,
