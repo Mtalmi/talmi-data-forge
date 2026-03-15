@@ -110,6 +110,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#9CA3AF'; }}
             title="AI Assistant"
+            aria-label="Assistant IA"
           >
             <Sparkles size={16} strokeWidth={1.5} />
           </button>
