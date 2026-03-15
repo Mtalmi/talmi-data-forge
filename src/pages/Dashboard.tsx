@@ -45,6 +45,7 @@ import { useCountUp } from '@/hooks/useCountUp';
 import { TiltCard } from '@/components/dashboard/TiltCard';
 import { MetricTooltip } from '@/components/ui/MetricTooltip';
 import { getShutdownUrgency, getTimeContextualTip, getSeasonalTip } from '@/utils/tbos-microcopy';
+import { useDashboardData } from '@/hooks/useDashboardData';
 
 // ─── Sparkline data (hourly production) ───
 const SPARKLINE_DATA = [
