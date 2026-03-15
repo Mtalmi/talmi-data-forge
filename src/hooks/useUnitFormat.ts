@@ -134,9 +134,6 @@ export function useUnitFormat() {
   /** Convert norm name */
   const norm = u.norm;
 
-  /** Volume unit only */
-  const volUnit = u.config.volume.unit;
-
   /** Pressure unit only */
   const presUnit = u.config.pressure.unit;
 
