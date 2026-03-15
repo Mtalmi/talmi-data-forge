@@ -220,18 +220,23 @@ export default function Dashboard() {
   useEffect(() => {
     const name = firstName;
     let i = 0;
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+    let cursorTimeout: ReturnType<typeof setTimeout> | null = null;
     const delay = setTimeout(() => {
-      const interval = setInterval(() => {
+      intervalId = setInterval(() => {
         setTypedName(name.slice(0, i + 1));
         i++;
         if (i >= name.length) {
-          clearInterval(interval);
-          setTimeout(() => setShowCursor(false), 1200);
+          if (intervalId) clearInterval(intervalId);
+          cursorTimeout = setTimeout(() => setShowCursor(false), 1200);
         }
       }, 90);
-      return () => clearInterval(interval);
     }, 600);
-    return () => clearTimeout(delay);
+    return () => {
+      clearTimeout(delay);
+      if (intervalId) clearInterval(intervalId);
+      if (cursorTimeout) clearTimeout(cursorTimeout);
+    };
   }, [firstName]);
 
   // Close bell dropdown on outside click
