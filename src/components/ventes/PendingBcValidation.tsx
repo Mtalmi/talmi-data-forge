@@ -337,7 +337,7 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">{pv.pricePerM3}</p>
-                  <p className="font-mono">{selectedBc.prix_vente_m3.toLocaleString()} DH</p>
+                  <p className="font-mono">{selectedBc.prix_vente_m3.toLocaleString('fr-FR')} DH</p>
                 </div>
               </div>
 
