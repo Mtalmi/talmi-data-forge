@@ -1319,7 +1319,7 @@ export default function Dashboard() {
                                 <text x={130 - pad} y={targetY - 3} textAnchor="end" fill="rgba(255,255,255,0.35)" fontSize="9" fontFamily="ui-monospace, monospace">{(kpi as any).targetLabel || 'OBJ'}</text>
                               </>
                             )}
-                            <polyline fill="none" stroke="#D4A843" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={polyStr} style={{ opacity: 0.7 }} />
+                            <polyline className="tbos-sparkline-draw" fill="none" stroke="#D4A843" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={polyStr} style={{ opacity: 0.7, '--dash-total': '500' } as React.CSSProperties} />
                             {last && <circle cx={last.x} cy={last.y} r="2.5" fill="#D4A843" style={{ opacity: 0.9 }} />}
                           </>
                         );
