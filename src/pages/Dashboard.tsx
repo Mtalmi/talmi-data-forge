@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, lazy, Suspense, useCallback, useMemo } from 'react';
 import { useLiveSimulation } from '@/hooks/useLiveSimulation';
+import { triggerPrint } from '@/lib/printUtils';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
 import { AnimatePresence } from 'framer-motion';
