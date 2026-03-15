@@ -1957,7 +1957,14 @@ function IntelligenceIATab() {
         </div>
 
         <div style={{ marginTop: 12 }}>
-          <button style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px', background: '#D4A843', border: 'none', borderRadius: 9, color: '#0F1629', fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+          <button onClick={(e) => {
+            const btn = e.currentTarget;
+            btn.textContent = '✓ Test Planifié';
+            btn.style.background = 'rgba(34,197,94,0.15)';
+            btn.style.color = '#22C55E';
+            btn.style.border = '1px solid rgba(34,197,94,0.3)';
+            (btn as HTMLButtonElement).disabled = true;
+          }} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px', background: '#D4A843', border: 'none', borderRadius: 9, color: '#0F1629', fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
             <FileText size={13} /> Planifier Test
           </button>
         </div>

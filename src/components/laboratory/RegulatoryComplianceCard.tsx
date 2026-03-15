@@ -126,7 +126,14 @@ export function RegulatoryComplianceCard() {
                     <td style={{ padding: '12px 16px', fontSize: 11, color: T.textSec, textAlign: 'center' }}>{c.tests}</td>
                     <td style={{ padding: '12px 16px', textAlign: 'center' }}>
                       {c.action !== '—' ? (
-                        <button style={{
+                        <button onClick={(e) => {
+                          const btn = e.currentTarget;
+                          btn.textContent = '✓ Planifié';
+                          btn.style.background = 'rgba(34,197,94,0.15)';
+                          btn.style.color = '#22C55E';
+                          btn.style.border = '1px solid rgba(34,197,94,0.3)';
+                          (btn as HTMLButtonElement).disabled = true;
+                        }} style={{
                           padding: '4px 10px', borderRadius: 6, fontSize: 10, fontWeight: 600,
                           background: c.actionUrgent ? T.danger : 'transparent',
                           color: c.actionUrgent ? '#fff' : T.gold,
