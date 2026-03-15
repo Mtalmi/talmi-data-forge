@@ -19,7 +19,8 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
-import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio, Sparkles, PhoneCall, FileText, PlusCircle, BarChart3, CheckCircle2, Bell, ChevronRight, AlertTriangle, Camera, Settings } from 'lucide-react';
+import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio, Sparkles, PhoneCall, FileText, PlusCircle, BarChart3, CheckCircle2, Bell, ChevronRight, AlertTriangle, Camera, Settings, Calculator, Sun, ShieldCheck } from 'lucide-react';
+import { AIAgentCard } from '@/components/shared/AIAgentCard';
 import { IntelligenceBriefingCard } from '@/components/dashboard/IntelligenceBriefingCard';
 import { ResumeIABar } from '@/components/dashboard/ResumeIABar';
 import { DailyScoreGauge } from '@/components/dashboard/DailyScoreGauge';
@@ -1116,6 +1117,17 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* ═══ AI INTELLIGENCE GRID ═══ */}
+          {(() => { console.log("COMMAND CENTER RENDERING"); return null; })()}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-5" style={{ animation: 'ccSectionIn 300ms ease-out 70ms both' }}>
+            <AIAgentCard type="score_global" title="Score Global" icon={<BarChart3 className="h-4 w-4 text-[#D4A843]" />} />
+            <AIAgentCard type="stock_analysis" title="Analyse Stocks" icon={<Package className="h-4 w-4 text-[#D4A843]" />} />
+            <AIAgentCard type="ventes_forecast" title="Prévisions Ventes" icon={<TrendingUp className="h-4 w-4 text-[#D4A843]" />} />
+            <AIAgentCard type="compliance_check" title="Conformité" icon={<ShieldCheck className="h-4 w-4 text-[#D4A843]" />} />
+            <AIAgentCard type="cost_optimization" title="Optimisation Coûts" icon={<Calculator className="h-4 w-4 text-[#D4A843]" />} />
+            <AIAgentCard type="briefing_matin" title="Briefing du Jour" icon={<Sun className="h-4 w-4 text-[#D4A843]" />} />
           </div>
 
           {/* (0) BRIEFING MATINAL — Full AI Intelligence Summary */}
