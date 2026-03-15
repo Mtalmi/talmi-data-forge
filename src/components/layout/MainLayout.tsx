@@ -35,6 +35,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
   const { isMobile } = useDeviceType();
   const showMobileNav = isMobile;
   const { previewRole, setPreviewRole } = usePreviewRole();
+  const { isDemo, plant } = usePlant();
   usePushNotifications();
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
