@@ -18,6 +18,7 @@ import { useCountUp } from '@/hooks/useCountUp';
 import { MetricTooltip } from '@/components/ui/MetricTooltip';
 import { supabase } from '@/integrations/supabase/client';
 import { format, startOfDay, endOfDay, startOfWeek, endOfWeek } from 'date-fns';
+import { getMoroccoToday } from '@/utils/timezone';
 import BatchesTab from './BatchesTab';
 import { PassationButton } from '@/components/ui/PassationButton';
 import RecettesTab from './RecettesTab';
