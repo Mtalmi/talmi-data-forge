@@ -2000,7 +2000,7 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: hsl(0 0% 4%);
+  background: transparent;
   border-radius: 3px;
 }
 
