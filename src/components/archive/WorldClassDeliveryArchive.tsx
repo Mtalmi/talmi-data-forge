@@ -483,6 +483,13 @@ export default function WorldClassDeliveryArchive() {
               01 Fév — 20 Fév 2024
             </div>
             <button
+              onClick={() => {
+                const headers = 'BL;Client;Formule;Volume;Date;Statut';
+                const blob = new Blob([`\uFEFF${headers}\nBL-2602-003;TGCC;F-B25;30;2026-03-14;Livré`], { type: 'text/csv;charset=utf-8;' });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+                a.download = `TBOS_Archive_${new Date().toISOString().slice(0,10)}.csv`;
+                a.click(); URL.revokeObjectURL(a.href);
+              }}
               onMouseEnter={() => setHoverExport(true)} onMouseLeave={() => setHoverExport(false)}
               style={{
                 display: 'flex', alignItems: 'center', gap: 7, padding: '10px 20px',

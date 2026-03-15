@@ -73,7 +73,14 @@ export function RelanceIntelligenteCard() {
                     {r.channel === 'whatsapp' ? (
                       <WhatsAppButton label="Relancer par WhatsApp" />
                     ) : (
-                      <button style={{ background: 'transparent', color: '#D4A843', fontSize: 12, fontWeight: 600, padding: '6px 14px', borderRadius: 6, border: '1px solid rgba(212,168,67,0.4)', cursor: 'pointer', fontFamily: mono }}>Relancer par Email</button>
+                      <button onClick={(e) => {
+                        const btn = e.currentTarget;
+                        btn.textContent = '✓ Envoyé';
+                        btn.style.background = 'rgba(34,197,94,0.1)';
+                        btn.style.color = '#22C55E';
+                        btn.style.border = '1px solid rgba(34,197,94,0.3)';
+                        (btn as HTMLButtonElement).disabled = true;
+                      }} style={{ background: 'transparent', color: '#D4A843', fontSize: 12, fontWeight: 600, padding: '6px 14px', borderRadius: 6, border: '1px solid rgba(212,168,67,0.4)', cursor: 'pointer', fontFamily: mono }}>Relancer par Email</button>
                     )}
                   </div>
                 </td>

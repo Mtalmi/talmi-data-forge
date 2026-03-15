@@ -149,14 +149,24 @@ export function FormulaOptimizationCard() {
             <strong style={{ color: T.textPri }}>Action:</strong> Lancer série de 5 tests avec formule ajustée pour validation.
           </p>
           <div style={{ display: 'flex', gap: 10 }}>
-            <button style={{
+            <button onClick={(e) => {
+              const btn = e.currentTarget;
+              btn.innerHTML = '✓ Test Lancé';
+              btn.style.background = 'rgba(34,197,94,0.15)';
+              btn.style.color = '#22C55E';
+              btn.style.border = '1px solid rgba(34,197,94,0.3)';
+              (btn as HTMLButtonElement).disabled = true;
+            }} style={{
               padding: '6px 14px', borderRadius: 8, fontSize: 11, fontWeight: 700,
               background: `${T.success}22`, color: T.success, border: `1px solid ${T.success}40`,
               cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5,
             }}>
               <TestTube size={12} /> 🧪 Lancer Test
             </button>
-            <button style={{
+            <button onClick={() => {
+              const el = document.querySelector('[data-tab="historique"]') as HTMLElement;
+              if (el) el.click();
+            }} style={{
               padding: '6px 14px', borderRadius: 8, fontSize: 11, fontWeight: 700,
               background: `${T.cardBorder}40`, color: T.textSec, border: `1px solid ${T.cardBorder}`,
               cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5,

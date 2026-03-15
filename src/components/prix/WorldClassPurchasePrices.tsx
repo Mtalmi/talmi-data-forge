@@ -447,6 +447,13 @@ export default function WorldClassPurchasePrices() {
         actions={
           <>
             <button
+              onClick={() => {
+                const headers = 'Matériau;Fournisseur;Prix Unitaire;Unité;Dernière MAJ';
+                const blob = new Blob([`\uFEFF${headers}\nCiment CPJ-45;LafargeHolcim;1250;DH/T;2026-03-14`], { type: 'text/csv;charset=utf-8;' });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+                a.download = `TBOS_Prix_${new Date().toISOString().slice(0,10)}.csv`;
+                a.click(); URL.revokeObjectURL(a.href);
+              }}
               onMouseEnter={() => setHoverExport(true)} onMouseLeave={() => setHoverExport(false)}
               style={{
                 background: hoverExport ? 'rgba(212,168,67,0.12)' : 'transparent',
