@@ -169,13 +169,13 @@ export default function PredictiveMaintenance() {
   const healthColor = (h: number) => h > 80 ? "#22C55E" : h > 50 ? "#F59E0B" : "#EF4444";
   const statusBadge = (s: string) => {
     const map: Record<string, string> = {
-      CRITICAL: "bg-[#EF4444]/20 text-[#EF4444] border-[#EF4444]/30",
-      "AI Recommended": "bg-[#D4A843]/10 text-[#D4A843] border-[#D4A843]/30",
-      Scheduled: "bg-[#D4A843]/15 text-[#D4A843] border-[#D4A843]/30",
-      Due: "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30",
-      Upcoming: "bg-[#9CA3AF]/10 text-[#9CA3AF] border-[#9CA3AF]/30",
+      CRITICAL: "bg-[rgba(239,68,68,0.15)] text-[#EF4444] border-[#EF4444]/30",
+      "AI Recommended": "bg-[rgba(212,168,67,0.1)] text-[#D4A843] border-[#D4A843]/30",
+      Scheduled: "bg-[rgba(212,168,67,0.12)] text-[#D4A843] border-[#D4A843]/30",
+      Due: "bg-[rgba(245,158,11,0.12)] text-[#F59E0B] border-[#F59E0B]/30",
+      Upcoming: "bg-[rgba(156,163,175,0.1)] text-[#9CA3AF] border-[#9CA3AF]/30",
     };
-    return map[s] || "bg-[#22C55E]/15 text-[#22C55E] border-[#22C55E]/30";
+    return map[s] || "bg-[rgba(34,197,94,0.12)] text-[#22C55E] border-[#22C55E]/30";
   };
 
   return (
@@ -474,7 +474,7 @@ export default function PredictiveMaintenance() {
                     <td className="py-2.5 px-3">{s.parts}</td>
                     <td className="py-2.5 px-3"><span className={`px-2 py-0.5 rounded-full text-[10px] border ${statusBadge(s.status)}`}>{s.status}</span></td>
                     <td className="py-2.5 px-3">
-                      <button onClick={() => setScheduleModal(s.unit)} className={`px-2 py-1 rounded text-[10px] border ${s.status === "CRITICAL" ? "border-[#EF4444]/30 text-[#EF4444] hover:bg-[#EF4444]/10" : "border-[#FFD700]/30 text-[#FFD700] hover:bg-[#FFD700]/10"} transition-colors`}>
+                      <button onClick={() => setScheduleModal(s.unit)} className={`px-2 py-1 rounded text-[10px] border ${s.status === "CRITICAL" ? "border-[#EF4444]/30 text-[#EF4444] hover:bg-[#EF4444]/10" : "border-[#D4A843]/30 text-[#D4A843] hover:bg-[#D4A843]/10"} transition-colors`}>
                         {s.status === "CRITICAL" ? "Assign" : s.assigned === "TBD" ? "Schedule" : "View"}
                       </button>
                     </td>
