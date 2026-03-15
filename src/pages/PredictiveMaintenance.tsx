@@ -513,12 +513,12 @@ export default function PredictiveMaintenance() {
               <p className="text-xs text-[#B0B8C1] mb-3">Savings vs Module Cost (Quarterly)</p>
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={roiQuarters} barGap={4}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#2A3545" />
-                  <XAxis dataKey="q" tick={{ fill: "#B0B8C1", fontSize: 11 }} />
-                  <YAxis tick={{ fill: "#B0B8C1", fontSize: 11 }} tickFormatter={v => `$${v}K`} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                  <XAxis dataKey="q" tick={{ fill: "#9CA3AF", fontSize: 11 }} />
+                  <YAxis tick={{ fill: "#9CA3AF", fontSize: 11 }} tickFormatter={v => `$${v}K`} />
                   <Tooltip content={<GoldTooltip />} />
-                  <Bar dataKey="savings" fill="#FFD700" radius={[4, 4, 0, 0]} name="Savings ($K)" />
-                  <Bar dataKey="cost" fill="#B0B8C1" radius={[4, 4, 0, 0]} name="Cost ($K)" />
+                  <Bar dataKey="savings" fill="#D4A843" radius={[4, 4, 0, 0]} name="Savings ($K)" />
+                  <Bar dataKey="cost" fill="#9CA3AF" radius={[4, 4, 0, 0]} name="Cost ($K)" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
