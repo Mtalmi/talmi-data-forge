@@ -428,7 +428,7 @@ export default function WorldClassAttendance() {
                   <AlertTriangle size={12} color={T.red} />
                   <span style={{ fontFamily: SANS, fontSize: 10, color: T.textDim }}>Absents</span>
                 </div>
-                <div style={{ fontFamily: MONO, fontSize: 24, fontWeight: 800, color: T.red }}>2</div>
+                <div style={{ fontFamily: MONO, fontSize: 24, fontWeight: 200, color: T.red }}>2</div>
               </div>
             </div>
           </div>
