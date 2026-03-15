@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Sparkles, TrendingDown, TrendingUp } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfDay, endOfDay, subDays, differenceInMinutes } from 'date-fns';
+import { getHourInMorocco } from '@/utils/timezone';
 
 interface RendementData {
   producedVolume: number;

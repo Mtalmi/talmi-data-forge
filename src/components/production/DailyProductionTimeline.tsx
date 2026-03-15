@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Clock, Factory, CheckCircle, Play, AlertTriangle, User, Truck, ExternalLink, Send, Lock, Unlock } from 'lucide-react';
 import { format, isToday } from 'date-fns';
+import { getMoroccoHour } from '@/utils/timezone';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';

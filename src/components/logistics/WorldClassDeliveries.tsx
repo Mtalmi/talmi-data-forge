@@ -24,6 +24,7 @@ import { Shield, Map as MapIcon, Users, TrendingDown, Minus, Leaf } from 'lucide
 import { supabase } from '@/integrations/supabase/client';
 import { format, startOfWeek, endOfWeek, subDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { getMoroccoHour, getMoroccoToday } from '@/utils/timezone';
 
 // ─────────────────────────────────────────────────────
 // WhatsApp/Call action buttons with state transitions

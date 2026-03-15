@@ -7,6 +7,7 @@ import {
 import { Clock, Truck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nContext';
+import { getMoroccoHour } from '@/utils/timezone';
 
 interface BonLivraison {
   bl_id: string;
