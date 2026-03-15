@@ -33,7 +33,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
 const T = {
-  gold: '#FFD700',
+  gold: '#D4A843',
   cardBg: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
   cardBorder: '#1E2D4A',
   textSec: '#94A3B8',

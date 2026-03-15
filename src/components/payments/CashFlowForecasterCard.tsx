@@ -4,7 +4,7 @@ import { Brain, TrendingUp, TrendingDown, AlertTriangle, RefreshCw, ChevronDown,
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
 
 const T = {
-  gold: '#FFD700', success: '#10B981', danger: '#EF4444', warning: '#F59E0B',
+  gold: '#D4A843', success: '#22C55E', danger: '#EF4444', warning: '#F59E0B',
   cardBg: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', cardBorder: '#1E2D4A',
   textPri: '#F1F5F9', textSec: '#94A3B8', textDim: '#64748B',
 };

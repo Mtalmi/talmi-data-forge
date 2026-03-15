@@ -6,8 +6,8 @@ import { formatCurrencyDH } from '@/lib/formatters';
 import { useToast } from '@/hooks/use-toast';
 
 const T = {
-  gold: '#FFD700', goldDim: 'rgba(255,215,0,0.15)',
-  success: '#10B981', warning: '#F59E0B', danger: '#EF4444',
+  gold: '#D4A843', goldDim: 'rgba(212,168,67,0.15)',
+  success: '#22C55E', warning: '#F59E0B', danger: '#EF4444',
   textPri: '#F1F5F9', textSec: '#94A3B8', textDim: '#64748B',
   cardBorder: '#1E2D4A',
 };

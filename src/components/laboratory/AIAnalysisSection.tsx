@@ -38,7 +38,7 @@ export function AIAnalysisSection() {
     return () => { supabase.removeChannel(ch); };
   }, []);
 
-  const T = { gold: '#FFD700', danger: '#EF4444', textPri: '#F1F5F9', textSec: '#94A3B8', textDim: '#64748B', warning: '#F59E0B' };
+  const T = { gold: '#D4A843', danger: '#EF4444', textPri: '#F1F5F9', textSec: '#94A3B8', textDim: '#64748B', warning: '#F59E0B' };
 
   if (loading) return (
     <div style={{ borderTop: `1px solid ${T.danger}20`, marginTop: 16, paddingTop: 16, display: 'flex', alignItems: 'center', gap: 8 }}>

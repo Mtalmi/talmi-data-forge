@@ -11,12 +11,12 @@ import {
 // DESIGN TOKENS
 // ─────────────────────────────────────────────────────
 const T = {
-  gold: '#FFD700',
+  gold: '#D4A843',
   cardBg: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
   cardBorder: '#1E2D4A',
-  success: '#10B981',
+  success: '#22C55E',
   danger: '#EF4444',
-  info: '#3B82F6',
+  info: '#D4A843',
   textDim: '#64748B',
 };
 

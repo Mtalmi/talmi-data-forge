@@ -12,13 +12,13 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 // DESIGN TOKENS
 // ============================================================================
 const T = {
-  base: '#0F1419', card: '#161D26', elevated: '#1C2533',
-  gold: '#FFD700', goldDim: '#B8960C', goldGlow: '#FFD70015',
-  text1: '#FFFFFF', text2: '#B0B8C1',
-  success: '#10B981', warning: '#F59E0B', danger: '#EF4444',
-  border: '#2A3545',
-  certBronze: '#CD7F32', certSilver: '#C0C0C0', certGold: '#FFD700',
-  linkedin: '#0077B5',
+  base: '#0F1629', card: '#141929', elevated: '#1A1F35',
+  gold: '#D4A843', goldDim: '#C49A3C', goldGlow: 'rgba(212,168,67,0.08)',
+  text1: '#FFFFFF', text2: '#9CA3AF',
+  success: '#22C55E', warning: '#F59E0B', danger: '#EF4444',
+  border: '#2A3048',
+  certBronze: '#C49A3C', certSilver: '#9CA3AF', certGold: '#D4A843',
+  linkedin: '#D4A843',
 };
 
 // ============================================================================

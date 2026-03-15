@@ -5,7 +5,7 @@ import { AUDIT_PAGES, AUDIT_ISSUES } from './audit-data';
 const T = {
   card: 'bg-slate-800/50 border border-slate-700 rounded-xl',
   label: 'text-[10px] uppercase tracking-widest text-slate-500 font-semibold',
-  gold: '#FFD700',
+  gold: '#D4A843',
 };
 
 export default function GlobalHealthHero() {

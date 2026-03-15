@@ -3,7 +3,7 @@ import { ShieldCheck, Sparkles, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const T = {
-  gold: '#FFD700', goldDim: 'rgba(255,215,0,0.15)',
+  gold: '#D4A843', goldDim: 'rgba(212,168,67,0.15)',
   warning: '#F59E0B', danger: '#EF4444',
   textPri: '#F1F5F9', textSec: '#94A3B8', textDim: '#64748B',
   cardBorder: '#1E2D4A',
