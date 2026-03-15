@@ -956,10 +956,13 @@ export default function Dashboard() {
                 <div className="w-px h-10 bg-white/10 flex-shrink-0" />
 
                 {/* Production */}
-                <div className="flex flex-col">
+                <div className="flex flex-col relative">
                   <div className="flex items-baseline">
                     <span className="tbos-hero-stat-number text-2xl text-white" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200, textShadow: '0 0 15px rgba(255, 255, 255, 0.08)' }}>{prodVolume}</span>
                     <span className="text-sm text-white/40 ml-1">{plantData.production.volumeUnit}</span>
+                    <MetricTooltip title="PRODUCTION CUMULÉE" className="ml-1.5">
+                      {`Production cumulée aujourd'hui. **14 batches** complétés. Cadence actuelle: **47 m³/h**. Objectif journalier: !!800 m³!! (84% atteint). Formule dominante: F-B25 (60%). Prévision fin de journée: ~780 m³ si cadence maintenue.`}
+                    </MetricTooltip>
                   </div>
                   <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">PRODUCTION DU JOUR</span>
                 </div>
