@@ -16,6 +16,7 @@ import { UnitProvider } from "@/i18n/UnitContext";
 import { PlantProvider } from "@/contexts/PlantContext";
 import { ActivityProvider } from "@/contexts/ActivityContext";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
+import { NavigationLogger } from "@/components/logging/NavigationLogger";
 import { lazyRetry } from "@/lib/lazyRetry";
 
 // Critical path — Auth is eager (LCP element), others lazy
