@@ -238,29 +238,34 @@ export default function OperationsAgent() {
   // Fetch all agent data
   useEffect(() => {
     async function fetchAll() {
-      const [
-        { data: b },
-        { data: m },
-        { data: p },
-        { data: q },
-        { data: devisData },
-      ] = await Promise.all([
-        supabase.from("ai_briefings").select("*").order("generated_at", { ascending: false }).limit(20),
-        supabase.from("maintenance_orders").select("*").order("created_at", { ascending: false }).limit(50),
-        supabase.from("purchase_orders").select("*").order("created_at", { ascending: false }).limit(50),
-        supabase.from("quality_failure_tickets").select("*").order("created_at", { ascending: false }).limit(50),
-        supabase.from("devis").select("devis_id, score_ia, niveau_score").not("score_ia", "is", null),
-      ]);
-      if (b) setBriefings(b as AiBriefing[]);
-      if (m) setMaintenanceOrders(m as MaintenanceOrder[]);
-      if (p) setPurchaseOrders(p as PurchaseOrder[]);
-      if (q) setQualityTickets(q as QualityTicket[]);
-      if (devisData && devisData.length > 0) {
-        const scores = devisData.map((d: any) => d.score_ia).filter((s: any) => s != null);
-        setDevisStats({
-          count: scores.length,
-          avgScore: scores.length > 0 ? Math.round((scores.reduce((a: number, b: number) => a + b, 0) / scores.length) * 10) / 10 : 0,
-        });
+      try {
+        const [bRes, mRes, pRes, qRes, devisRes] = await Promise.all([
+          supabase.from("ai_briefings").select("*").order("generated_at", { ascending: false }).limit(20),
+          supabase.from("maintenance_orders").select("*").order("created_at", { ascending: false }).limit(50),
+          supabase.from("purchase_orders").select("*").order("created_at", { ascending: false }).limit(50),
+          supabase.from("quality_failure_tickets").select("*").order("created_at", { ascending: false }).limit(50),
+          supabase.from("devis").select("devis_id, score_ia, niveau_score").not("score_ia", "is", null).limit(500),
+        ]);
+
+        if (bRes.error) console.error('Error fetching briefings:', bRes.error);
+        if (mRes.error) console.error('Error fetching maintenance:', mRes.error);
+        if (pRes.error) console.error('Error fetching POs:', pRes.error);
+        if (qRes.error) console.error('Error fetching quality tickets:', qRes.error);
+        if (devisRes.error) console.error('Error fetching devis:', devisRes.error);
+
+        if (bRes.data) setBriefings(bRes.data as AiBriefing[]);
+        if (mRes.data) setMaintenanceOrders(mRes.data as MaintenanceOrder[]);
+        if (pRes.data) setPurchaseOrders(pRes.data as PurchaseOrder[]);
+        if (qRes.data) setQualityTickets(qRes.data as QualityTicket[]);
+        if (devisRes.data && devisRes.data.length > 0) {
+          const scores = devisRes.data.map((d: any) => d.score_ia).filter((s: any) => s != null);
+          setDevisStats({
+            count: scores.length,
+            avgScore: scores.length > 0 ? Math.round((scores.reduce((a: number, b: number) => a + b, 0) / scores.length) * 10) / 10 : 0,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching operations agent data:', error);
       }
     }
     fetchAll();
