@@ -302,9 +302,9 @@ export default function OperationsAgent() {
         "CEO",
         "medium"
       );
-      toast.success(`🚀 ${workflow.name} triggered`);
+      toast.success(`🚀 ${workflow.name} déclenché`);
     } catch (e: any) {
-      toast.error(`Failed: ${e.message}`);
+      toast.error(`Échec : ${e.message}`);
     } finally {
       setTriggering(null);
     }
