@@ -1094,6 +1094,7 @@ function RevenueHeatmap() {
 // MAIN
 // ─────────────────────────────────────────────────────
 export default function WorldClassClients() {
+  const navigate = useNavigate();
   const [pageTab, setPageTab] = useState('portefeuille');
   const [activeTab, setActiveTab] = useState('tous');
   const [search, setSearch] = useState('');
