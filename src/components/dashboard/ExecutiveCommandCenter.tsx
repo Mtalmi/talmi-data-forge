@@ -225,7 +225,7 @@ export function ExecutiveCommandCenter() {
           <Badge 
             variant={metrics.varianceStatus === 'red' ? 'destructive' : 'secondary'}
             className={cn(
-              "text-[9px] gap-1",
+              "text-xs gap-1",
               metrics.varianceStatus === 'red' && "animate-pulse",
               metrics.varianceStatus === 'yellow' && "bg-warning text-warning-foreground"
             )}
