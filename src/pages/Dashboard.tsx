@@ -1112,19 +1112,19 @@ export default function Dashboard() {
             }}>
               {/* Line 1: Alert headline */}
               <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 14, fontWeight: 600, color: '#F59E0B', marginBottom: 8 }}>
-                ⚠ RISQUE ARRÊT DANS 4 JOURS
+                ⚠ RISQUE ARRÊT DANS {demoData.shutdownRisk.daysUntil} JOURS
               </div>
               {/* Line 2: Detail */}
               <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, color: '#9CA3AF', marginBottom: 6, lineHeight: 1.6 }}>
-                <SmartLabel term="Adjuvant" /> insuffisant pour production prévue. Stock actuel: 200 L (6,7j). Commandes confirmées J+4 à J+7: 380 L nécessaires. Déficit: <span style={{ color: '#F59E0B', fontWeight: 600 }}>180 L</span>.
+                <SmartLabel term={demoData.shutdownRisk.material}>{demoData.shutdownRisk.material}</SmartLabel> insuffisant pour production prévue. Stock actuel: {demoData.shutdownRisk.currentStock}. Commandes confirmées: {demoData.shutdownRisk.needed}. Déficit: <span style={{ color: '#F59E0B', fontWeight: 600 }}>{demoData.shutdownRisk.deficit}</span>.
               </div>
               {/* Line 3: Cost */}
               <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, color: '#EF4444', marginBottom: 6 }}>
-                <span style={{ color: '#EF4444' }}>Coût arrêt estimé: 85,000 MAD/jour</span> <span style={{ color: '#9CA3AF' }}>(perte production + pénalités livraison + personnel inactif)</span>
+                <span style={{ color: '#EF4444' }}>Coût arrêt estimé: {uf.fmtCurrency(demoData.shutdownRisk.costPerDay)}/jour</span> <span style={{ color: '#9CA3AF' }}>(perte production + pénalités livraison + personnel inactif)</span>
               </div>
               {/* Line 4: Solution */}
               <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, color: '#FFFFFF', marginBottom: 12 }}>
-                Commande urgente Sika Maroc: 500 L · Délai: 2-3 jours · Coût: 42,500 DH
+                Commande urgente {demoData.shutdownRisk.supplier}: {demoData.shutdownRisk.orderQty} · Délai: {demoData.shutdownRisk.orderDelay} · Coût: {uf.fmtCurrency(demoData.shutdownRisk.orderCost)}
               </div>
               {/* Buttons */}
               <div className="flex items-center gap-3 flex-wrap">
