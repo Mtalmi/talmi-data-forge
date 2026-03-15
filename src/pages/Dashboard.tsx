@@ -969,7 +969,7 @@ export default function Dashboard() {
                   </div>
 
                   {/* RIGHT: Prochaine Livraison */}
-                  <div className="hidden md:flex flex-col flex-shrink-0 hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: '8px', padding: '12px 16px', position: 'relative', overflow: 'hidden' }}>
+                  <div onClick={() => navigate('/logistique')} className="hidden md:flex flex-col flex-shrink-0 hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 cursor-pointer" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: '8px', padding: '12px 16px', position: 'relative', overflow: 'hidden' }}>
                     <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                     <div className="flex items-center gap-2.5 px-4 py-3">
                     <Truck size={16} style={{ color: '#D4A843', flexShrink: 0 }} />
