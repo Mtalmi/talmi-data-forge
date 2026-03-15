@@ -7,12 +7,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { generateNumero } from '@/lib/generateNumero';
 import { toast } from 'sonner';
-
-const BLS = [
-  { value: 'bl1', label: 'BL-2603-005 — TGCC · 8m³ · 26/03', client: 'TGCC', clientId: 'TGCC', montant: 6800 },
-  { value: 'bl2', label: 'BL-2603-006 — Constructions Modernes · 10m³ · 26/03', client: 'Constructions Modernes SA', clientId: 'CMOD', montant: 8500 },
-  { value: 'bl3', label: 'BL-2603-007 — BTP Maroc · 6m³ · 25/03', client: 'BTP Maroc SARL', clientId: 'BTPM', montant: 5100 },
-];
+import { useDeliveredBons } from '@/hooks/useModalData';
 
 const TVA_OPTIONS = [
   { value: '0', label: '0%' },
@@ -30,6 +25,7 @@ const MODES = [
 interface Props { open: boolean; onClose: () => void; onCreated?: (f: any) => void; }
 
 export function NouvelleFactureModal({ open, onClose, onCreated }: Props) {
+  const { bons } = useDeliveredBons();
   const [bl, setBl] = useState('');
   const [montantHT, setMontantHT] = useState('');
   const [tva, setTva] = useState('20');
@@ -40,11 +36,11 @@ export function NouvelleFactureModal({ open, onClose, onCreated }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
-  const selectedBL = BLS.find(b => b.value === bl);
+  const selectedBL = bons.find(b => b.value === bl);
 
   const handleBLChange = (val: string) => {
     setBl(val);
-    const found = BLS.find(b => b.value === val);
+    const found = bons.find(b => b.value === val);
     if (found) {
       setMontantHT(String(found.montant));
       const d = new Date();
@@ -77,17 +73,16 @@ export function NouvelleFactureModal({ open, onClose, onCreated }: Props) {
       const tvaRate = parseFloat(tva);
       const ttc = ht * (1 + tvaRate / 100);
 
-      // Insert into factures table
       const { error: insertError } = await supabase
         .from('factures')
         .insert({
           facture_id: facId,
-          bl_id: selectedBL?.label?.split(' — ')[0] || 'BL-UNKNOWN',
+          bl_id: selectedBL?.value || 'BL-UNKNOWN',
           client_id: selectedBL?.clientId || 'UNKNOWN',
           client_nom: selectedBL?.client || null,
-          formule_id: 'F-B25',
-          volume_m3: 8,
-          prix_vente_m3: ht / 8,
+          formule_id: selectedBL?.formuleId || 'F-B25',
+          volume_m3: selectedBL?.volume || 8,
+          prix_vente_m3: selectedBL?.prixM3 || (ht / 8),
           total_ht: ht,
           tva_pct: tvaRate,
           total_ttc: ttc,
@@ -101,7 +96,6 @@ export function NouvelleFactureModal({ open, onClose, onCreated }: Props) {
 
       if (insertError) throw insertError;
 
-      // Log activity
       await supabase.from('activity_log').insert({
         type: 'action',
         message: `Facture ${facId} émise — ${selectedBL?.client} · ${ttc.toLocaleString('fr-FR')} DH TTC`,
@@ -134,7 +128,7 @@ export function NouvelleFactureModal({ open, onClose, onCreated }: Props) {
       <TBOSFormStack>
         <TBOSField label="Bon de livraison" required error={errors.bl}>
           <TBOSSelect value={bl} onChange={e => handleBLChange(e.target.value)} hasError={!!errors.bl}
-            options={BLS.map(b => ({ value: b.value, label: b.label }))} placeholder="Sélectionner un BL" />
+            options={bons.map(b => ({ value: b.value, label: b.label }))} placeholder={bons.length === 0 ? 'Aucun BL livré disponible' : 'Sélectionner un BL'} />
         </TBOSField>
 
         {selectedBL && <TBOSDisplayField label="Client" value={selectedBL.client} />}
