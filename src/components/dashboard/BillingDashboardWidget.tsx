@@ -22,7 +22,7 @@ interface BillingStats {
   nbPayees: number;
   nbRetard: number;
   topImpayes: { client: string; montant: number }[];
-  agingData: { label: string; montant: number; color: string }[];
+  agingData: { label: string; montant: number; count: number; color: string }[];
 }
 
 export function BillingDashboardWidget() {
