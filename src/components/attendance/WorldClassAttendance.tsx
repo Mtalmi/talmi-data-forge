@@ -319,7 +319,7 @@ function MonthlySummary() {
               <c.Icon size={18} color={c.color} />
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
-              <span style={{ fontFamily: MONO, fontSize: 28, fontWeight: 800, color: c.color }}>{c.count}</span>
+              <span style={{ fontFamily: MONO, fontSize: 28, fontWeight: 200, color: c.color }}>{c.count}</span>
               <span style={{ fontFamily: MONO, fontSize: 13, color: T.textDim }}>{c.suffix}</span>
             </div>
             <div style={{ fontFamily: SANS, fontSize: 12, color: T.textDim, marginTop: 4 }}>{c.label}</div>
