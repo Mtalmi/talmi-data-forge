@@ -79,7 +79,7 @@ export function EnergyCostAnomalyWidget() {
       </p>
 
       <button
-        onClick={() => navigate('/maintenance')}
+        onClick={() => navigate('/stocks', { state: { activeTab: 'surveillance-ia' } })}
         style={{
           width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
           padding: '8px 24px', borderRadius: 6, fontSize: 13,
