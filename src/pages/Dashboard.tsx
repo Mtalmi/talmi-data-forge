@@ -1644,7 +1644,7 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Moyenne</div>
-                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: 'white' }}>72 m³/h</div>
+                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: 'white' }}>{uf.fmtVolumeRate(72)}</div>
                   </div>
                   <div>
                     <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Écart moy.</div>
