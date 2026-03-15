@@ -184,11 +184,11 @@ export function useDashboardStatsWithPeriod(period: Period) {
         const totalDepenses = currentDepenses?.reduce((sum, d) => sum + (d.montant || 0), 0) || 0;
         
         const margeBrute = chiffreAffaires - totalCoutReel;
-        const margeBrutePct = chiffreAffaires > 0 ? (margeBrute / chiffreAffaires) * 100 : 0;
+        const margeBrutePct = roundPercent(safeDivide(margeBrute, chiffreAffaires) * 100);
         const profitNet = margeBrute - totalDepenses;
         
         const curValues = currentDeliveries?.filter(d => d.cur_reel).map(d => d.cur_reel!) || [];
-        const curMoyen = curValues.length > 0 ? curValues.reduce((a, b) => a + b, 0) / curValues.length : 0;
+        const curMoyen = safeDivide(curValues.reduce((a, b) => a + b, 0), curValues.length);
         
         const nbLivraisons = currentDeliveries?.length || 0;
         const nbFactures = currentFactures?.length || 0;
