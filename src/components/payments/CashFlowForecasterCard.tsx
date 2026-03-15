@@ -80,7 +80,7 @@ export function CashFlowForecasterCard() {
               <p style={{ color: T.textDim, fontSize: 10 }}>Entrées prévues</p>
             </div>
             <div style={{ marginBottom: 8 }}>
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 16, fontWeight: 700, color: T.danger }}>↓ {(f.outflows / 1000).toFixed(0)}K DH</p>
+              <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 16, fontWeight: 200, color: T.danger }}>↓ {(f.outflows / 1000).toFixed(0)}K DH</p>
               <p style={{ color: T.textDim, fontSize: 10 }}>Sorties prévues</p>
             </div>
             <div style={{ marginBottom: 8 }}>
