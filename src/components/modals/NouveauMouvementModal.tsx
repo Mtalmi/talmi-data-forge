@@ -71,12 +71,12 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
         <div style={{ display: 'flex', gap: 8 }}>
           {(['entree', 'sortie'] as const).map(t => (
             <button key={t} onClick={() => setType(t)} style={{
-              flex: 1, padding: '10px 16px', borderRadius: 6, border: 'none', cursor: 'pointer',
+              flex: 1, padding: '10px 16px', borderRadius: 6, cursor: 'pointer',
               fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, fontWeight: 700,
               letterSpacing: '1.5px', textTransform: 'uppercase',
               background: type === t ? (t === 'entree' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)') : 'rgba(255,255,255,0.03)',
               color: type === t ? (t === 'entree' ? '#22C55E' : '#EF4444') : '#9CA3AF',
-              border: type === t ? `1px solid ${t === 'entree' ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'}` : '1px solid rgba(255,255,255,0.08)',
+              border: `1px solid ${type === t ? (t === 'entree' ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)') : 'rgba(255,255,255,0.08)'}`,
               transition: 'all 150ms',
             }}>
               {t === 'entree' ? '↓ ENTRÉE' : '↑ SORTIE'}
