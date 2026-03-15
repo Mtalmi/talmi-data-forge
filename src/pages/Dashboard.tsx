@@ -1169,7 +1169,6 @@ export default function Dashboard() {
               sparkline: '0,24 20,20 40,22 60,18 80,16 100,14 120,10',
               secondaryLabel: 'P&L',
               secondaryValue: 'Net: 24.2K DH',
-              plBreakdown: true,
               target: 32,
               targetLabel: 'OBJ',
             },
