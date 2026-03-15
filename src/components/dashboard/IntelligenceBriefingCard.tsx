@@ -84,9 +84,8 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
       backdropFilter: 'blur(8px)',
       borderTop: `2px solid ${isMorning ? '#D4A843' : '#9CA3AF'}`,
       border: `1px solid ${isMorning ? 'rgba(212,168,67,0.15)' : 'rgba(139,159,204,0.15)'}`,
-      borderLeft: '2px solid rgba(212,168,67,0.4)',
       boxShadow: isMorning ? '0 -1px 8px rgba(212,168,67,0.08), 0 0 12px rgba(212,168,67,0.2)' : '0 0 12px rgba(139,159,204,0.2)',
-      borderRadius: 10, padding: '14px 16px',
+      borderRadius: 8, padding: '14px 16px',
       flex: 1, minWidth: 0,
       transition: 'all 200ms ease-out',
     }}
