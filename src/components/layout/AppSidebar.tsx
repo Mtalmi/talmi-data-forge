@@ -224,7 +224,8 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
   const userInitials = userName.slice(0, 2).toUpperCase();
 
   return (
-    <aside
+    <nav
+      aria-label="Navigation principale"
       data-tour="sidebar"
       className={cn(
         'fixed top-0 left-0 bottom-0 z-50 flex flex-col transition-transform duration-300 ease-out',
