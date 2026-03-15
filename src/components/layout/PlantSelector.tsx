@@ -1,27 +1,20 @@
 import { useState, useRef, useEffect } from 'react';
 import { Building2, ChevronDown, Plus } from 'lucide-react';
+import { usePlant } from '@/contexts/PlantContext';
 
 const M = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
 
-const PLANTS = [
-  { id: 'ma', name: 'Atlas Concrete Morocco', location: 'Casablanca', live: true, stats: '14 mars · 671 m³ · 14 batches · Score 87/100' },
-  { id: 'eu', name: 'EuroBeton München', location: 'Allemagne', live: false, stats: 'Demo · données simulées' },
-  { id: 'us', name: 'Liberty Ready-Mix', location: 'Houston, TX', live: false, stats: 'Demo · données simulées' },
-];
-
 export function PlantSelector() {
   const [open, setOpen] = useState(false);
-  const [active, setActive] = useState('ma');
   const [hovered, setHovered] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
+  const { activePlant, plant, setPlant, allPlants } = usePlant();
 
   useEffect(() => {
     const h = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
     document.addEventListener('mousedown', h);
     return () => document.removeEventListener('mousedown', h);
   }, []);
-
-  const current = PLANTS.find(p => p.id === active)!;
 
   return (
     <div ref={ref} style={{ position: 'relative' }}>
@@ -34,11 +27,11 @@ export function PlantSelector() {
       >
         <Building2 size={14} strokeWidth={1.5} style={{ color: '#D4A843', flexShrink: 0 }} />
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 0 }}>
-          <span style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{current.name}</span>
+          <span style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{plant.flag} {plant.pillLabel}</span>
           <span style={{ fontFamily: M, fontSize: 9, color: '#9CA3AF', whiteSpace: 'nowrap' }}>
-            {current.stats.split('·').map((part, i) => {
+            {plant.stats.split('·').map((part, i) => {
               const trimmed = part.trim();
-              const isGold = trimmed.includes('m³') || trimmed.includes('Score');
+              const isGold = trimmed.includes('m³') || trimmed.includes('Score') || trimmed.includes('yd³');
               return (
                 <span key={i}>
                   {i > 0 && <span> · </span>}
@@ -57,16 +50,15 @@ export function PlantSelector() {
           background: '#1A2332', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 8,
           boxShadow: '0 8px 32px rgba(0,0,0,0.4)', minWidth: 320, overflow: 'hidden',
         }}>
-          {PLANTS.map(plant => {
-            const isActive = plant.id === active;
-            const isHovered = hovered === plant.id;
+          {allPlants.map(p => {
+            const isActive = p.id === activePlant;
             return (
-              <div key={plant.id} style={{ position: 'relative' }}
-                onMouseEnter={() => setHovered(plant.id)}
+              <div key={p.id} style={{ position: 'relative' }}
+                onMouseEnter={() => setHovered(p.id)}
                 onMouseLeave={() => setHovered(null)}
               >
                 <button
-                  onClick={() => { setActive(plant.id); setOpen(false); }}
+                  onClick={() => { setPlant(p.id); setOpen(false); }}
                   style={{
                     display: 'flex', alignItems: 'center', gap: 10, width: '100%',
                     padding: '10px 14px', border: 'none', cursor: 'pointer', textAlign: 'left',
@@ -80,13 +72,13 @@ export function PlantSelector() {
                     <div className="flex items-center gap-2">
                       {isActive && <span style={{ fontFamily: M, fontSize: 11, color: '#D4A843' }}>✓</span>}
                       <span style={{ fontFamily: M, fontSize: 12, fontWeight: isActive ? 600 : 400, color: isActive ? '#D4A843' : '#FFFFFF' }}>
-                        {plant.name}
+                        {p.flag} {p.pillLabel}
                       </span>
-                      <span style={{ fontFamily: M, fontSize: 10, color: '#9CA3AF' }}>· {plant.location}</span>
+                      <span style={{ fontFamily: M, fontSize: 10, color: '#9CA3AF' }}>· {p.location}</span>
                     </div>
-                    <div style={{ fontFamily: M, fontSize: 9, color: '#9CA3AF', marginTop: 2, marginLeft: isActive ? 19 : 0 }}>{plant.stats}</div>
+                    <div style={{ fontFamily: M, fontSize: 9, color: '#9CA3AF', marginTop: 2, marginLeft: isActive ? 19 : 0 }}>{p.stats}</div>
                   </div>
-                  {plant.live ? (
+                  {p.live ? (
                     <span style={{ fontFamily: M, fontSize: 9, fontWeight: 600, color: '#22C55E', background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.25)', borderRadius: 4, padding: '2px 6px', whiteSpace: 'nowrap' }}>● LIVE</span>
                   ) : (
                     <span style={{ fontFamily: M, fontSize: 9, fontWeight: 600, color: '#6B7280', background: 'rgba(107,114,128,0.1)', border: '1px solid rgba(107,114,128,0.2)', borderRadius: 4, padding: '2px 6px' }}>Demo</span>
@@ -95,7 +87,7 @@ export function PlantSelector() {
                 </button>
 
                 {/* Demo tooltip */}
-                {!plant.live && isHovered && (
+                {!p.live && hovered === p.id && (
                   <div style={{
                     position: 'absolute', left: '100%', top: '50%', transform: 'translateY(-50%)', marginLeft: 8,
                     background: '#1A2332', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 8,

@@ -5,6 +5,7 @@ import { AnimatePresence } from 'framer-motion';
 
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
+import { usePlant } from '@/contexts/PlantContext';
 import AlertBanner from '@/components/dashboard/AlertBanner';
 import LeakageAlertBanner from '@/components/dashboard/LeakageAlertBanner';
 import { type Period } from '@/components/dashboard/PeriodSelector';
@@ -73,6 +74,7 @@ export default function Dashboard() {
   const uf = useUnitFormat();
   const navigate = useNavigate();
   const location = useLocation();
+  const { activePlant, plant: plantData, setPlant: setActivePlant, isDemo, fadeOpacity } = usePlant();
   const { stats, loading: statsLoading, refresh } = useDashboardStats();
   const [period] = useState<Period>('month');
   const { stats: periodStats, loading: periodLoading, refresh: refreshPeriod } = useDashboardStatsWithPeriod(period);
@@ -99,7 +101,7 @@ export default function Dashboard() {
   const [midPanelView, setMidPanelView] = useState<'data' | 'camera'>('data');
   const [expandedKpi, setExpandedKpi] = useState<string | null>(null);
   const [cameraTime, setCameraTime] = useState('');
-  const [demoMarket, setDemoMarket] = useState<'ma' | 'eu' | 'us'>('ma');
+  const [demoMarket] = useState<'ma' | 'eu' | 'us'>(activePlant);
 
   // ─── Read location state for tab activation ───
   useEffect(() => {
@@ -409,6 +411,8 @@ export default function Dashboard() {
         className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-full min-w-0 px-3 sm:px-4 md:px-6 lg:px-8 pt-3 sm:pt-4 md:pt-6 lg:pt-2 pb-3 sm:pb-4 md:pb-6 lg:pb-8 box-border"
         style={{
           background: 'linear-gradient(145deg, #11182E, #162036)',
+          opacity: fadeOpacity,
+          transition: 'opacity 300ms ease',
         }}
       >
 
@@ -744,16 +748,16 @@ export default function Dashboard() {
 
                 {/* Market Selector Pills */}
                 <div className="flex items-center gap-2" style={{ marginTop: 8 }}>
-                  {([
-                    { id: 'ma', flag: '🇲🇦', label: 'Atlas Concrete Morocco' },
-                    { id: 'eu', flag: '🇪🇺', label: 'Demo EU Plant' },
-                    { id: 'us', flag: '🇺🇸', label: 'Demo US Plant' },
-                  ] as const).map(market => {
-                    const active = demoMarket === market.id;
+                  {plantData && [
+                    { id: 'ma' as const, flag: '🇲🇦', label: 'Atlas Concrete Morocco' },
+                    { id: 'eu' as const, flag: '🇪🇺', label: 'Demo EU Plant' },
+                    { id: 'us' as const, flag: '🇺🇸', label: 'Demo US Plant' },
+                  ].map(market => {
+                    const active = activePlant === market.id;
                     return (
                       <button
                         key={market.id}
-                        onClick={() => setDemoMarket(market.id)}
+                        onClick={() => setActivePlant(market.id)}
                         style={{
                           fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
                           fontSize: 10,
@@ -767,9 +771,12 @@ export default function Dashboard() {
                           fontWeight: active ? 700 : 500,
                           transition: 'all 200ms',
                           whiteSpace: 'nowrap',
+                          transform: 'scale(1)',
                         }}
+                        onMouseDown={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(0.97)'; }}
+                        onMouseUp={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)'; }}
                         onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.color = '#D4A843'; }}
-                        onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.color = '#9CA3AF'; }}
+                        onMouseLeave={e => { if (!active) { (e.currentTarget as HTMLElement).style.color = '#9CA3AF'; (e.currentTarget as HTMLElement).style.transform = 'scale(1)'; } }}
                       >
                         {market.flag} {market.label}
                       </button>
@@ -887,11 +894,11 @@ export default function Dashboard() {
                     </span>
                     <span className="text-muted-foreground/20">|</span>
                     <span className="text-muted-foreground/40">
-                      {now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} · Casablanca
+                      {now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} · {plantData.location}
                     </span>
                     <span className="text-muted-foreground/20">|</span>
                     <span className="text-muted-foreground/40">
-                      <span className="text-sm">☀️</span> 22°C Ensoleillé · 45% · <span className="text-emerald-400/80 font-semibold">● Optimal</span>
+                      <span className="text-sm">{plantData.weather.optimal ? '☀️' : '🌧'}</span> {plantData.weather.temp} {plantData.weather.condition} · {plantData.weather.humidity} · <span className={`${plantData.weather.optimal ? 'text-emerald-400/80' : 'text-amber-400/80'} font-semibold`}>● {plantData.weather.optimal ? 'Optimal' : 'Attention'}</span>
                     </span>
                   </div>
                 </div>
@@ -931,7 +938,7 @@ export default function Dashboard() {
                 <div className="flex flex-col">
                   <div className="flex items-baseline">
                     <span className="tbos-hero-stat-number text-2xl text-white" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200, textShadow: '0 0 15px rgba(255, 255, 255, 0.08)' }}>{prodVolume}</span>
-                    <span className="text-sm text-white/40 ml-1">m³</span>
+                    <span className="text-sm text-white/40 ml-1">{plantData.production.volumeUnit}</span>
                   </div>
                   <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">PRODUCTION DU JOUR</span>
                 </div>
@@ -1012,7 +1019,7 @@ export default function Dashboard() {
                       ) : (
                         <>
                           <span className="text-[11px] text-muted-foreground/50">Prochaine: demain 08:00</span>
-                          <span className="text-[11px] text-white/70">Ciments & Béton du Sud · 45 m³</span>
+                          <span className="text-[11px] text-white/70">{plantData.nextDeliveryClient} · 45 {plantData.production.volumeUnit}</span>
                         </>
                       )}
                     </div>
@@ -1830,7 +1837,7 @@ export default function Dashboard() {
                       <span className="text-[10px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#403-068</span>
                       <button onClick={() => tbosToast('Déchargement initié pour batch #403-068')} style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '4px 12px', cursor: 'pointer', fontSize: '13px', marginLeft: 'auto' }}>Déchargement</button>
                     </div>
-                    <div className="text-[8px] text-slate-400 mb-1.5">{uf.grade('F-B25')} · {uf.fmtVolume(8)} · BTP Maroc</div>
+                    <div className="text-[8px] text-slate-400 mb-1.5">{plantData.formules[1] || uf.grade('F-B25')} · {uf.fmtVolume(8)} · {plantData.clients[2] || 'BTP Maroc'}</div>
                     <div className="flex items-center gap-2">
                       <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
                         <div className="h-1.5 rounded-full relative overflow-hidden" style={{ width: '72%', background: 'linear-gradient(90deg, #D4A843, #E8C96A)', animation: 'progressGrow 1s ease forwards' }}>
@@ -1845,8 +1852,8 @@ export default function Dashboard() {
                   </div>
                   <div className="space-y-0.5">
                     {[
-                      { id: '#403-069', formula: `${uf.grade('F-B30')} · ${uf.fmtVolume(12)}`, client: 'Atlas BTP' },
-                      { id: '#403-070', formula: `${uf.grade('F-B25')} · ${uf.fmtVolume(8)}`, client: 'Const. Modernes' },
+                      { id: '#403-069', formula: `${plantData.formules[2] || uf.grade('F-B30')} · ${uf.fmtVolume(12)}`, client: plantData.clients[0] || 'Atlas BTP' },
+                      { id: '#403-070', formula: `${plantData.formules[1] || uf.grade('F-B25')} · ${uf.fmtVolume(8)}`, client: plantData.clients[1] || 'Const. Modernes' },
                     ].map((batch, idx) => (
                       <div key={batch.id} className="flex items-center gap-1.5 rounded px-2 py-1 -mx-2" style={{ cursor: 'pointer', transition: 'all 0.2s', animation: `batchSlideIn 400ms ease forwards`, animationDelay: `${(idx + 1) * 100}ms`, opacity: 0 }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.03)'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
                         <span className="w-1 h-1 bg-slate-600 rounded-full" />
@@ -1923,7 +1930,7 @@ export default function Dashboard() {
               <div className="flex flex-col items-center gap-0.5 px-3 py-2 -mx-3 -my-2 rounded-lg cursor-default transition-all duration-200 hover:bg-white/[0.03] min-w-0 max-w-full overflow-hidden">
                 <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/40 font-medium whitespace-nowrap">Prochain camion</span>
                 <span className="text-sm font-semibold" style={{ color: '#D4A843', fontFamily: "'SF Mono', ui-monospace, monospace", fontWeight: 500 }}>32 min</span>
-                <span className="text-xs text-muted-foreground/50 truncate max-w-full">→ Constructions Modernes · {uf.fmtVolume(20)}</span>
+                <span className="text-xs text-muted-foreground/50 truncate max-w-full">→ {plantData.clients[1] || 'Constructions Modernes'} · {uf.fmtVolume(20)}</span>
               </div>
             </div>
           </div>
@@ -1955,11 +1962,11 @@ export default function Dashboard() {
               </div>
               <div className="space-y-1">
                 {[
-                  { id: '#403-068', formula: uf.grade('F-B25'), vol: uf.fmtVolume(8), time: '15:42', status: 'ok' },
-                  { id: '#403-067', formula: uf.grade('F-B30'), vol: uf.fmtVolume(12), time: '14:28', status: 'ok' },
-                  { id: '#403-066', formula: uf.grade('F-B25'), vol: uf.fmtVolume(8), time: '13:15', status: 'warn' },
-                  { id: '#403-065', formula: uf.grade('F-B35'), vol: uf.fmtVolume(10), time: '12:03', status: 'ok' },
-                  { id: '#403-064', formula: uf.grade('F-B25'), vol: uf.fmtVolume(8), time: '11:21', status: 'ok' },
+                  { id: '#403-068', formula: plantData.formules[1] || uf.grade('F-B25'), vol: uf.fmtVolume(8), time: '15:42', status: 'ok' },
+                  { id: '#403-067', formula: plantData.formules[2] || uf.grade('F-B30'), vol: uf.fmtVolume(12), time: '14:28', status: 'ok' },
+                  { id: '#403-066', formula: plantData.formules[1] || uf.grade('F-B25'), vol: uf.fmtVolume(8), time: '13:15', status: 'warn' },
+                  { id: '#403-065', formula: plantData.formules[3] || uf.grade('F-B35'), vol: uf.fmtVolume(10), time: '12:03', status: 'ok' },
+                  { id: '#403-064', formula: plantData.formules[1] || uf.grade('F-B25'), vol: uf.fmtVolume(8), time: '11:21', status: 'ok' },
                 ].map((b) => (
                   <div key={b.id} className={`flex items-center justify-between py-1.5 px-2 rounded-md cursor-pointer transition-colors duration-150 hover:bg-white/[0.03]`} style={b.status === 'warn' ? { borderLeft: '2px solid rgba(245,158,11,0.6)', paddingLeft: '8px', background: 'rgba(245,158,11,0.04)' } : undefined}>
                     <div className="flex items-center gap-2 w-[70px]">
@@ -2021,7 +2028,7 @@ export default function Dashboard() {
             <div className="flex-1 min-w-0">
               <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#D4A843' }}>Agent IA: </span>
               <span className="text-xs" style={{ color: 'rgba(241,245,249,0.8)' }}>
-                Prochain batch recommandé — <span style={{ fontWeight: '500', color: 'white' }}>Béton B25 Standard</span> <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span> <span className="font-mono">14 m³</span> <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span> <span style={{ color: '#D4A843', fontWeight: '500' }}>TGCC</span> <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span> Optimisation séquence activée
+                Prochain batch recommandé — <span style={{ fontWeight: '500', color: 'white' }}>Béton {plantData.formules[1] || 'B25'} Standard</span> <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span> <span className="font-mono">14 {plantData.production.volumeUnit}</span> <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span> <span style={{ color: '#D4A843', fontWeight: '500' }}>{plantData.clients[0] || 'TGCC'}</span> <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span> Optimisation séquence activée
               </span>
             </div>
             <div className="flex items-center gap-2 shrink-0">
@@ -2329,7 +2336,7 @@ export default function Dashboard() {
               Prochaine sync: <span style={{ color: '#D4A843', fontFamily: 'monospace', fontWeight: '500' }}>{syncCountdown}s</span>
             </span>
           </span>
-          <span>✦ Propulsé par Claude Opus · Atlas Concrete Morocco</span>
+          <span>✦ Propulsé par Claude Opus · {plantData.pillLabel}</span>
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 import { ReactNode, useState, useEffect } from 'react';
 import { useUnits } from '@/i18n/UnitContext';
+import { usePlant } from '@/contexts/PlantContext';
 import { TopNavBar } from './TopNavBar';
 import { QuickActionFAB } from './QuickActionFAB';
 import { BackToTop } from './BackToTop';
@@ -34,6 +35,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
   const { isMobile } = useDeviceType();
   const showMobileNav = isMobile;
   const { previewRole, setPreviewRole } = usePreviewRole();
+  const { isDemo, plant } = usePlant();
   usePushNotifications();
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -109,6 +111,21 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
 
         {/* Main Content Area */}
         <main className={`flex-1 min-w-0 overflow-x-hidden ${previewRole ? 'pt-1' : ''}`}>
+          {/* Demo plant banner on non-dashboard pages */}
+          {isDemo && (
+            <div style={{
+              fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
+              fontSize: 11,
+              textAlign: 'center',
+              padding: '6px 16px',
+              background: 'rgba(212,168,67,0.06)',
+              borderBottom: '1px solid rgba(212,168,67,0.12)',
+              color: '#D4A843',
+              letterSpacing: '0.5px',
+            }}>
+              {plant.flag} Données de démonstration — {plant.pillLabel}
+            </div>
+          )}
           <div className="mobile-content safe-area-bottom overflow-x-hidden w-full min-w-0" style={{ padding: '0 32px', margin: 0 }}>
             <div className="tbos-content-wrapper w-full mx-auto" style={{ maxWidth: 1800 }}>
               <PageTransition>
