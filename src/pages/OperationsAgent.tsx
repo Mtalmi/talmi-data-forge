@@ -845,7 +845,7 @@ QUALITY_TEAM_WHATSAPP=+212...
 SUPPLIER_EMAIL=supplier@vendor.ma`}</pre>
                   <Button size="sm" variant="ghost" className="mt-3 text-xs" onClick={() => {
                     navigator.clipboard.writeText(`ANTHROPIC_API_KEY=sk-ant-...\nTBOS_QUALITY_WEBHOOK=${SUPABASE_URL}/functions/v1/n8n-quality-failure\nTBOS_MAINTENANCE_WEBHOOK=${SUPABASE_URL}/functions/v1/n8n-maintenance-alert\nTBOS_DELIVERY_WEBHOOK=${SUPABASE_URL}/functions/v1/n8n-delivery-event\nTBOS_REORDER_WEBHOOK=${SUPABASE_URL}/functions/v1/n8n-inventory-alert\nTBOS_BRIEFING_WEBHOOK=${SUPABASE_URL}/functions/v1/n8n-save-briefing`);
-                    toast.success("Environment variables copied");
+                    toast.success("Variables d'environnement copiées");
                   }}>
                     <Copy className="w-3 h-3 mr-1" /> Copy all vars
                   </Button>

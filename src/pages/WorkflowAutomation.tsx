@@ -744,7 +744,7 @@ export default function WorkflowAutomation() {
                         </p>
                         <p className="text-[10px] mt-1" style={{ color: '#B0B8C1' }}>Retry attempts: 3/3</p>
                       </div>
-                      <button onClick={() => { setRetrying(true); setTimeout(() => { setRetrying(false); setToast('✅ Retried Successfully'); setSelectedExec(null); }, 1000); }}
+                      <button onClick={() => { setRetrying(true); setTimeout(() => { setRetrying(false); setToast('✅ Relance réussie'); setSelectedExec(null); }, 1000); }}
                         disabled={retrying}
                         className="w-full py-2.5 rounded-lg text-sm font-bold mt-4 flex items-center justify-center gap-2 transition-all"
                         style={{ background: 'linear-gradient(135deg, #FFD700, #B8960C)', color: '#0F1419' }}>
