@@ -57,11 +57,13 @@ export function ClientHoverPreview({ clientId, clientName, children }: ClientHov
     
     try {
       // Fetch client details
-      const { data: clientData } = await supabase
+      const { data: clientData, error: clientError } = await supabase
         .from('clients')
         .select('*')
         .eq('client_id', clientId)
-        .single();
+        .maybeSingle();
+
+      if (clientError) console.error('Error fetching client:', clientError);
 
       if (clientData) {
         setClient(clientData);
