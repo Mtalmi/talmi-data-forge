@@ -141,7 +141,7 @@ export function FixedAssetsDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{totals.grossValue.toLocaleString()} DH</p>
+            <p className="text-2xl font-bold">{totals.grossValue.toLocaleString('fr-FR')} DH</p>
             <p className="text-xs text-muted-foreground">{fa.assetsCount.replace('{count}', String(totals.assetCount))}</p>
           </CardContent>
         </Card>
