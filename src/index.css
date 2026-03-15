@@ -4746,16 +4746,87 @@ textarea.valid {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   PRINT — Hide decorative elements
+   PRINT — Professional report output
    ══════════════════════════════════════════════════════════════ */
 @media print {
-  .live-badge,
-  .status-dot,
-  [class*="glow"],
-  .animate-pulse,
-  .spinner-gold {
-    display: none !important;
+  /* Hide non-essential UI */
+  nav, aside, .sidebar, .tbos-top-navbar-shell, .mobile-bottom-nav,
+  button:not(.print-keep), .tooltip, [data-tbos-modal],
+  .live-badge, .status-dot, [class*="glow"], .animate-pulse, .spinner-gold,
+  .tbos-fab, .back-to-top-btn, [data-lovable-badge],
+  .command-palette-overlay { display: none !important; }
+
+  /* Reset background to white */
+  body, main, [data-main-scroll], .page-content,
+  .tbos-content-wrapper, div[style*="background"] {
+    background: #FFFFFF !important;
+    color: #000000 !important;
   }
+
+  /* Gold accents → dark gold for print */
+  [style*="color: #D4A843"], [style*="color: rgb(212, 168, 67)"],
+  .text-primary { color: #8B6914 !important; }
+  [style*="border"] { border-color: #CCCCCC !important; }
+
+  /* Tables: visible borders */
+  table { border-collapse: collapse !important; width: 100% !important; }
+  th, td { border: 1px solid #CCCCCC !important; padding: 4px 8px !important; font-size: 11px !important; color: #000 !important; }
+  th { background: #F0F0F0 !important; font-weight: 600 !important; }
+
+  /* Cards: clean borders */
+  [style*="border-radius"], .rounded-xl, .rounded-lg {
+    border: 1px solid #E0E0E0 !important;
+    box-shadow: none !important;
+    background: #FFFFFF !important;
+  }
+
+  /* Charts: avoid page break inside */
+  .chart-container, svg { page-break-inside: avoid; }
+
+  /* Badges: border only */
+  .badge, [class*="badge"] {
+    border: 1px solid #666 !important;
+    background: transparent !important;
+    color: #333 !important;
+  }
+
+  /* Sections: avoid breaks */
+  section, .section, [class*="card"] { page-break-inside: avoid; }
+
+  /* Page margins + footer */
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+
+  /* TBOS branding header */
+  body::before {
+    content: "TBOS · Atlas Concrete Morocco · Rapport généré le " attr(data-print-date);
+    display: block;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 10px;
+    color: #666;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #8B6914;
+    padding-bottom: 8px;
+  }
+
+  /* Footer on print */
+  body::after {
+    content: "TBOS v2.0 · Confidentiel · Atlas Concrete Morocco";
+    display: block;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 8px;
+    color: #999;
+    margin-top: 24px;
+    border-top: 1px solid #CCC;
+    padding-top: 8px;
+    text-align: center;
+  }
+
+  /* Force text to be black */
+  * { color: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  th { color: #333 !important; }
 }
 
 /* (tbos-card and tbos-stagger classes defined above — single source of truth) */

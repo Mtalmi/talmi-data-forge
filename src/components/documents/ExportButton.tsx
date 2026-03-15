@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { FileSpreadsheet, FileText, Copy, ChevronDown } from 'lucide-react';
+import { FileSpreadsheet, FileText, Copy, ChevronDown, Printer } from 'lucide-react';
 import { exportToCSV } from '@/lib/exportUtils';
+import { triggerPrint } from '@/lib/printUtils';
 import { toast } from 'sonner';
 import { useI18n } from '@/i18n/I18nContext';
 
@@ -50,20 +51,9 @@ export function ExportButton<T extends Record<string, unknown>>({
     setOpen(false);
   };
 
-  const handlePDF = () => {
-    // Generate a simple branded text export
-    const header = columns.map(c => c.label).join(' | ');
-    const rows = data.map(row => columns.map(c => String(row[c.key] ?? '')).join(' | ')).join('\n');
-    const content = `Atlas Concrete Morocco — ${filename}\n${'═'.repeat(60)}\n\n${header}\n${'─'.repeat(60)}\n${rows}\n\n${'─'.repeat(60)}\nAtlas Concrete Morocco · Score ESG: A · 0.8T CO₂/mois · Powered by TBOS AI Platform`;
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${filename.replace('.csv', '')}.pdf.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success('Export PDF généré');
+  const handlePrint = () => {
     setOpen(false);
+    triggerPrint();
   };
 
   const handleCopyLink = () => {
@@ -73,9 +63,9 @@ export function ExportButton<T extends Record<string, unknown>>({
   };
 
   const menuItems = [
-    { icon: <FileText size={13} />, label: '📄 Exporter PDF', onClick: handlePDF },
-    { icon: <FileSpreadsheet size={13} />, label: '📊 Exporter Excel', onClick: handleCSV },
-    { icon: <Copy size={13} />, label: '📋 Copier le lien', onClick: handleCopyLink },
+    { label: '📄 Exporter CSV', onClick: handleCSV },
+    { label: '🖨 Imprimer', onClick: handlePrint },
+    { label: '📋 Copier le lien', onClick: handleCopyLink },
   ];
 
   return (

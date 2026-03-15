@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, lazy, Suspense, useCallback, useMemo } from 'react';
 import { useLiveSimulation } from '@/hooks/useLiveSimulation';
+import { triggerPrint } from '@/lib/printUtils';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
 import { AnimatePresence } from 'framer-motion';
@@ -992,7 +993,7 @@ export default function Dashboard() {
                       <span className="absolute flex items-center justify-center rounded-full z-10" style={{ top: -8, right: -8, minWidth: 20, height: 20, fontSize: 10, fontWeight: 700, background: '#EF4444', color: '#fff', boxShadow: '0 0 8px rgba(239,68,68,0.5)' }}>2</span>
                     </button>
                      <button
-                       onClick={() => { const el = document.querySelector('[data-tab="intelligence"]'); if (el) { setActiveTab('intelligence'); setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 100); } else { setActiveTab('intelligence'); } }}
+                       onClick={() => triggerPrint()}
                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
                       style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid #D4A843', color: '#D4A843' }}
                       onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; e.currentTarget.style.color = '#D4A843'; }}
