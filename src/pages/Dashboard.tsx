@@ -1640,7 +1640,7 @@ export default function Dashboard() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', borderTop: '1px solid rgba(212,168,67,0.1)', marginTop: 'auto' }}>
                   <div>
                     <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>PIC</div>
-                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: '#D4A843' }}>98 m³/h · 15h</div>
+                    <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '13px', color: '#D4A843' }}>{uf.fmtVolumeRate(98)} · 15h</div>
                   </div>
                   <div>
                     <div style={{ fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Moyenne</div>
