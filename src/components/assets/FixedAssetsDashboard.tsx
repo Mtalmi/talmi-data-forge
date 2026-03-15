@@ -360,13 +360,13 @@ export function FixedAssetsDashboard() {
                           </TableCell>
                           <TableCell className="text-right">{s.asset_count}</TableCell>
                           <TableCell className="text-right font-mono">
-                            {s.gross_value.toLocaleString()} DH
+                            {s.gross_value.toLocaleString('fr-FR')} DH
                           </TableCell>
                           <TableCell className="text-right font-mono text-orange-500">
-                            -{s.accumulated_depreciation.toLocaleString()} DH
+                            -{s.accumulated_depreciation.toLocaleString('fr-FR')} DH
                           </TableCell>
                           <TableCell className="text-right font-mono text-green-500">
-                            {s.net_value.toLocaleString()} DH
+                            {s.net_value.toLocaleString('fr-FR')} DH
                           </TableCell>
                         </TableRow>
                       );
