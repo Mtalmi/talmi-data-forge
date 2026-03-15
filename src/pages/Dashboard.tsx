@@ -8,6 +8,7 @@ import MainLayout from '@/components/layout/MainLayout';
 import AlertBanner from '@/components/dashboard/AlertBanner';
 import LeakageAlertBanner from '@/components/dashboard/LeakageAlertBanner';
 import { type Period } from '@/components/dashboard/PeriodSelector';
+import { SmartLabel } from '@/components/ui/SmartLabel';
 import { LazyDashboardSection } from '@/components/dashboard/LazyDashboardSection';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
@@ -851,7 +852,7 @@ export default function Dashboard() {
               </div>
               {/* Body */}
               <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, color: '#9CA3AF', lineHeight: 1.7, margin: 0 }}>
-                Production nominale prévue à <strong style={{ color: '#D4A843' }}>280 m³</strong>. Stock ciment à <strong style={{ color: '#D4A843' }}>53%</strong> (7,5j autonomie). 1 non-conformité traitée (BN-0140 affaissement). <strong style={{ color: '#D4A843' }}>3 livraisons</strong> planifiées — alerte retard Résidences Atlas (+14 min, béton à 47 min/90). T-09 en maintenance (retour demain 08:00). Pipeline commercial : <strong style={{ color: '#D4A843' }}>155K DH</strong>, 6 devis en attente. Point critique : Sigma Bâtiment — <strong style={{ color: '#EF4444' }}>189K DH impayés</strong>, probabilité défaut <strong style={{ color: '#EF4444' }}>78%</strong>, livraisons suspendues. Certification NM 10.1.271 expire dans 26 jours — 0/2 tests effectués, <strong style={{ color: '#EF4444' }}>action urgente</strong>.
+                Production nominale prévue à <strong style={{ color: '#D4A843' }}>280 m³</strong>. Stock ciment à <strong style={{ color: '#D4A843' }}>53%</strong> (7,5j autonomie). 1 non-conformité traitée (BN-0140 <SmartLabel term="Affaissement">affaissement</SmartLabel>). <strong style={{ color: '#D4A843' }}>3 livraisons</strong> planifiées — alerte retard Résidences Atlas (+14 min, béton à 47 min/90). T-09 en maintenance (retour demain 08:00). Pipeline commercial : <strong style={{ color: '#D4A843' }}>155K DH</strong>, 6 devis en attente. Point critique : Sigma Bâtiment — <strong style={{ color: '#EF4444' }}>189K DH impayés</strong>, probabilité défaut <strong style={{ color: '#EF4444' }}>78%</strong>, livraisons suspendues. Certification NM 10.1.271 expire dans 26 jours — 0/2 tests effectués, <strong style={{ color: '#EF4444' }}>action urgente</strong>.
               </p>
               {/* Action buttons */}
               <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
@@ -1056,7 +1057,7 @@ export default function Dashboard() {
               </div>
               {/* Line 2: Detail */}
               <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, color: '#9CA3AF', marginBottom: 6, lineHeight: 1.6 }}>
-                Adjuvant insuffisant pour production prévue. Stock actuel: 200 L (6,7j). Commandes confirmées J+4 à J+7: 380 L nécessaires. Déficit: <span style={{ color: '#F59E0B', fontWeight: 600 }}>180 L</span>.
+                <SmartLabel term="Adjuvant" /> insuffisant pour production prévue. Stock actuel: 200 L (6,7j). Commandes confirmées J+4 à J+7: 380 L nécessaires. Déficit: <span style={{ color: '#F59E0B', fontWeight: 600 }}>180 L</span>.
               </div>
               {/* Line 3: Cost */}
               <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, color: '#EF4444', marginBottom: 6 }}>
@@ -1634,7 +1635,7 @@ export default function Dashboard() {
                   {/* Header with toggle */}
                   <div className="flex items-center justify-between mb-1">
                     <div className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                      {midPanelView === 'data' ? 'Performance du jour' : 'Caméra Centrale'}
+                      {midPanelView === 'data' ? 'Performance du jour' : <><SmartLabel term="Centrale à béton">Caméra Centrale</SmartLabel></>}
                     </div>
                     <div className="flex items-center gap-2">
                       {midPanelView === 'data' && (
