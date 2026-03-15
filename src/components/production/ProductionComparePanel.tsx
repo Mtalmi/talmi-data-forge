@@ -177,7 +177,7 @@ export function ProductionComparePanel({
               {deviations.map((d) => (
                 <div key={d.field} className="flex justify-between items-center text-sm text-destructive">
                   <span className="capitalize">{d.field}</span>
-                  <span className="font-mono font-semibold">+{d.percent.toFixed(1)}% écart</span>
+                  <span className="font-mono font-semibold">+{isFinite(d.percent) ? d.percent.toFixed(1) : '--'}% écart</span>
                 </div>
               ))}
             </div>
