@@ -961,6 +961,7 @@ export default function Creances() {
                         {`Facturé: **${Math.round(stats.totalInvoiced / 1000)}K DH**. Encaissé: **${Math.round(stats.totalCollected / 1000)}K DH**. En attente: !!${Math.round(stats.totalPending / 1000)}K DH!!. En retard: ~~${Math.round(stats.totalOverdue / 1000)}K DH~~. Sans les clients à risque, le taux serait **${Math.min(99.2, stats.collectionRate + 5).toFixed(1)}%**.`}
                       </MetricTooltip>
                     </div>
+                  </div>
                 );
               })()}
             </CardContent>
