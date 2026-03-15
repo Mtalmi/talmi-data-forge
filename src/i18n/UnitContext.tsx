@@ -98,6 +98,10 @@ interface UnitContextValue {
   pressure: (mpa: number) => number;
   /** Convert distance from km */
   distance: (km: number) => number;
+  /** Convert speed from km/h */
+  speed: (kmh: number) => number;
+  /** Convert slump from cm */
+  slump: (cm: number) => number;
   /** Convert concrete grade name */
   grade: (g: string) => string;
   /** Convert norm name */
