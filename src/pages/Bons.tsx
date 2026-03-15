@@ -517,16 +517,19 @@ export default function Bons() {
             </tr>
           </thead>
           <tbody>
-            {sortedData.length === 0 ? (
-              <tr>
-                <td colSpan={9} style={{ padding: '60px 20px', textAlign: 'center' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                    <Package size={40} style={{ color: 'rgba(255,255,255,0.08)' }} />
-                    <span style={{ fontFamily: MONO, fontSize: 13, color: 'rgba(255,255,255,0.25)' }}>Aucun bon de livraison</span>
-                    <span style={{ fontFamily: MONO, fontSize: 11, color: 'rgba(255,255,255,0.15)' }}>Les bons apparaîtront ici une fois créés</span>
-                  </div>
-                </td>
-              </tr>
+            {loading ? (
+              <RawTableSkeletonRows columns={9} />
+            ) : sortedData.length === 0 ? (
+              bonsList.length === 0 ? (
+                <RawTableEmptyState
+                  columns={9}
+                  icon={Package}
+                  title="Aucun bon de livraison"
+                  description="Les bons apparaîtront ici une fois créés"
+                />
+              ) : (
+                <RawTableFilteredEmpty columns={9} onClearFilters={() => {}} />
+              )
             ) : sortedData.map((b, i) => {
               const ws = b.workflow_status || 'planification';
               const isPaid = b.statut_paiement === 'Payé';
