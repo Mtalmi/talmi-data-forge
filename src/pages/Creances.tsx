@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { EmptyState } from '@/components/ui/states';
+import { NouvelleFactureModal } from '@/components/modals/NouvelleFactureModal';
+import { Plus } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nContext';
 import MainLayout from '@/components/layout/MainLayout';
 import { useReceivables, Receivable } from '@/hooks/useReceivables';
@@ -302,6 +304,7 @@ export default function Creances() {
   const [actionNotes, setActionNotes] = useState('');
   const [processingAction, setProcessingAction] = useState(false);
   const [creancesTab, setCreancesTab] = useState('overview');
+  const [showFactureModal, setShowFactureModal] = useState(false);
 
   const canManageReceivables = isCeo || role === 'agent_administratif' || role === 'superviseur';
 
@@ -438,6 +441,14 @@ export default function Creances() {
             }}>
               {new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
             </span>
+            <Button
+              size="sm"
+              onClick={() => setShowFactureModal(true)}
+              style={{ background: 'linear-gradient(135deg, #D4A843, #b8922e)', color: '#000', fontWeight: 600, border: 'none' }}
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              Nouvelle Facture
+            </Button>
             <Button
               variant="outline"
               size="sm"
@@ -2287,6 +2298,7 @@ export default function Creances() {
           </DialogContent>
         </Dialog>
       </div>
+      <NouvelleFactureModal open={showFactureModal} onClose={() => setShowFactureModal(false)} onCreated={() => refetch()} />
     </MainLayout>
   );
 }

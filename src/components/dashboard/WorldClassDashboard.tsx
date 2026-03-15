@@ -812,6 +812,9 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
     hourlyProductionData, qualityData, loading,
   } = useWorldClassLiveData();
 
+  const [alertBarDismissed, setAlertBarDismissed] = useState(false);
+  const [alertBarState, setAlertBarState] = useState<'idle' | 'alerted'>('idle');
+
   const totalAR = useAnimatedCounter(Math.round(arAgingData.reduce((s, d) => s + d.value, 0) / 1000) || 77);
   const prodTotal = useAnimatedCounter(Math.round(stats.totalVolume) || 851, 1500);
 
@@ -1340,15 +1343,21 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
         )}
 
         {/* ─── Agent IA Intelligence Bar ─── */}
-        {!hideOpsWidgets && (
+        {!hideOpsWidgets && !alertBarDismissed && (
           <div style={{ background: 'linear-gradient(135deg, rgba(212,168,67,0.08) 0%, rgba(212,168,67,0.02) 100%)', border: '1px solid rgba(212,168,67,0.25)', borderLeft: '3px solid #D4A843', borderRadius: '8px', padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }} className="mb-4 relative z-[1] w-full">
             <div className="flex items-center min-w-0">
               <span className="text-[#D4A843] animate-pulse mr-2 flex-shrink-0">✦</span>
               <span className="text-sm text-white/80">AGENT IA : 2 livraisons en retard potentiel — <span style={{ fontWeight:'500', color:'white' }}>Constructions Modernes SA</span> (14:30) arrive à 85% de la fenêtre de livraison. BTP Maroc (16:00) non confirmé.</span>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0 ml-4">
-              <button onClick={() => tbosToast('Alerte envoyée au client par WhatsApp', 'success')} style={{ border: '1px solid #D4A843', color: '#0F1629', background: '#D4A843', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>Alerter Client</button>
-              <button onClick={() => tbosToast('Alerte ignorée')} style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px' }}>Ignorer</button>
+              {alertBarState === 'alerted' ? (
+                <span style={{ color: '#22c55e', fontSize: '13px', fontWeight: 600 }}>✓ Alerte envoyée</span>
+              ) : (
+                <>
+                  <button onClick={() => { setAlertBarState('alerted'); tbosToast('Alerte envoyée au client par WhatsApp', 'success'); }} style={{ border: '1px solid #D4A843', color: '#0F1629', background: '#D4A843', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>Alerter Client</button>
+                  <button onClick={() => { setAlertBarDismissed(true); tbosToast('Alerte ignorée'); }} style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '13px' }}>Ignorer</button>
+                </>
+              )}
             </div>
           </div>
         )}
