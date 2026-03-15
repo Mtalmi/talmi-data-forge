@@ -29,9 +29,9 @@ const pipelineChartData = [
 const ChartTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: 'rgba(15,23,42,0.95)', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 8, padding: '8px 14px', boxShadow: '0 12px 40px rgba(0,0,0,0.6)', backdropFilter: 'blur(12px)' }}>
+    <div style={{ background: '#1A2332', border: '1px solid rgba(212,168,67,0.2)', borderRadius: 8, padding: '8px 14px', boxShadow: '0 12px 40px rgba(0,0,0,0.6)', backdropFilter: 'blur(12px)' }}>
       <p style={{ color: 'rgba(148,163,184,0.5)', fontSize: 10 }}>{label}</p>
-      <p style={{ color: '#fff', fontFamily: 'Inter, system-ui', fontWeight: 300, fontSize: 13 }}>
+      <p style={{ color: '#D4A843', fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontWeight: 400, fontSize: 13 }}>
         {typeof payload[0].value === 'number' ? payload[0].value.toLocaleString('fr-FR') : payload[0].value}
         {payload[0].name !== 'value' ? '' : ' DH'}
       </p>
@@ -50,7 +50,7 @@ export const DashboardInlineCharts = memo(function DashboardInlineCharts() {
             <BarChart data={arChartData} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
               <XAxis dataKey="name" tick={{ fill: 'rgba(148,163,184,0.4)', fontSize: 9, fontFamily: 'Inter, system-ui' }} axisLine={false} tickLine={false} />
               <YAxis hide />
-              <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(255,215,0,0.04)' }} />
+              <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(212,168,67,0.04)' }} />
               <Bar dataKey="value" radius={[3, 3, 0, 0]} animationDuration={1000}>
                 {arChartData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
               </Bar>
@@ -67,7 +67,7 @@ export const DashboardInlineCharts = memo(function DashboardInlineCharts() {
             <BarChart data={stockChartData} layout="vertical" margin={{ top: 5, right: 5, left: 10, bottom: 0 }}>
               <XAxis type="number" hide />
               <YAxis type="category" dataKey="name" tick={{ fill: 'rgba(148,163,184,0.4)', fontSize: 10, fontFamily: 'Inter, system-ui' }} axisLine={false} tickLine={false} width={60} />
-              <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(255,215,0,0.04)' }} />
+              <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(212,168,67,0.04)' }} />
               <Bar dataKey="value" radius={[0, 3, 3, 0]} animationDuration={1000} barSize={14}>
                 {stockChartData.map((_, i) => <Cell key={i} fill="rgba(253,185,19,0.7)" />)}
               </Bar>
