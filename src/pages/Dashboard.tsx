@@ -411,6 +411,8 @@ export default function Dashboard() {
         className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-full min-w-0 px-3 sm:px-4 md:px-6 lg:px-8 pt-3 sm:pt-4 md:pt-6 lg:pt-2 pb-3 sm:pb-4 md:pb-6 lg:pb-8 box-border"
         style={{
           background: 'linear-gradient(145deg, #11182E, #162036)',
+          opacity: fadeOpacity,
+          transition: 'opacity 300ms ease',
         }}
       >
 
