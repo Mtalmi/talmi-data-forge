@@ -2147,6 +2147,62 @@ export default function Dashboard() {
           );
         })()}
 
+        {/* ── NORMES & CERTIFICATIONS PAR MARCHÉ ── */}
+        {(() => {
+          const MN = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
+          const rows = [
+            { flag: '🇲🇦', market: 'Maroc', norme: 'NM 10.1.008', status: '✓ Conforme', statusColor: '#22C55E', action: null },
+            { flag: '🇲🇦', market: 'Maroc', norme: 'NM 10.1.271', status: '⚠ 26j', statusColor: '#EF4444', action: 'URGENT' },
+            { flag: '🇪🇺', market: 'Europe', norme: 'EN 206-1', status: 'À obtenir', statusColor: '#F59E0B', action: 'Audit requis' },
+            { flag: '🇪🇺', market: 'Europe', norme: 'CE Marking', status: 'À obtenir', statusColor: '#F59E0B', action: 'En préparation' },
+            { flag: '🇺🇸', market: 'USA', norme: 'ASTM C94', status: 'À obtenir', statusColor: '#F59E0B', action: 'Documentation' },
+            { flag: '🇺🇸', market: 'USA', norme: 'ACI 318', status: 'À obtenir', statusColor: '#F59E0B', action: 'Formation' },
+          ];
+          return (
+            <div className="mt-8">
+              <div className="flex items-center gap-3 mb-4">
+                <span style={{ fontFamily: MN, fontSize: 12, fontWeight: 600, letterSpacing: '2px', color: '#D4A843' }}>✦ NORMES & CERTIFICATIONS PAR MARCHÉ</span>
+                <div className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(212,168,67,0.4), transparent)' }} />
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,168,67,0.08)', borderRadius: 8, overflow: 'hidden' }}>
+                {/* Table header */}
+                <div className="grid grid-cols-4" style={{ padding: '10px 20px', borderBottom: '1px solid rgba(212,168,67,0.08)', background: 'rgba(0,0,0,0.15)' }}>
+                  {['MARCHÉ', 'NORME', 'STATUT', 'ACTION'].map(h => (
+                    <span key={h} style={{ fontFamily: MN, fontSize: 10, fontWeight: 600, color: '#9CA3AF', letterSpacing: '1px' }}>{h}</span>
+                  ))}
+                </div>
+                {/* Rows */}
+                {rows.map((r, i) => (
+                  <div key={i} className="grid grid-cols-4 items-center" style={{
+                    padding: '10px 20px',
+                    borderBottom: i < rows.length - 1 ? '1px solid rgba(212,168,67,0.04)' : 'none',
+                    background: i % 2 === 1 ? 'rgba(212,168,67,0.02)' : 'transparent',
+                  }}>
+                    <span style={{ fontFamily: MN, fontSize: 12, color: '#FFFFFF' }}>{r.flag} {r.market}</span>
+                    <span style={{ fontFamily: MN, fontSize: 12, color: '#FFFFFF', fontWeight: 600 }}>{r.norme}</span>
+                    <span style={{ fontFamily: MN, fontSize: 11, color: r.statusColor, fontWeight: 600 }}>{r.status}</span>
+                    <span>
+                      {r.action && (
+                        <button style={{
+                          fontFamily: MN, fontSize: 10, fontWeight: 600,
+                          color: r.action === 'URGENT' ? '#EF4444' : '#D4A843',
+                          background: r.action === 'URGENT' ? 'rgba(239,68,68,0.1)' : 'transparent',
+                          border: `1px solid ${r.action === 'URGENT' ? 'rgba(239,68,68,0.3)' : 'rgba(212,168,67,0.3)'}`,
+                          borderRadius: 4, padding: '3px 10px', cursor: 'pointer',
+                          ...(r.action === 'URGENT' ? { animation: 'pulse-alert 2s ease-in-out infinite' } : {}),
+                        }}>
+                          {r.action}
+                        </button>
+                      )}
+                      {!r.action && <span style={{ fontFamily: MN, fontSize: 11, color: '#6B7280' }}>—</span>}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* ── ÉCOSYSTÈME D'INTÉGRATIONS ── */}
         {(() => {
           const MN = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
