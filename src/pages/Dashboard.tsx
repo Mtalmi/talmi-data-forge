@@ -1482,7 +1482,7 @@ export default function Dashboard() {
                 <div className="flex justify-between items-center mb-1">
                   <div>
                     <div className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                      Production (m³/h) vs Target
+                      Production ({uf.volUnit}/h) vs Target
                     </div>
                     {/* Target legend */}
                       <div className="flex items-center mt-1">
