@@ -663,7 +663,7 @@ export default function TrainingAcademy() {
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                   <XAxis dataKey="month" tick={{ fill: T.text2, fontSize: 12 }} axisLine={{ stroke: T.border }} />
                   <YAxis tick={{ fill: T.text2, fontSize: 12 }} axisLine={{ stroke: T.border }} />
-                  <Tooltip contentStyle={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, color: T.text1 }} />
+                  <Tooltip contentStyle={{ background: '#1A1F35', border: '1px solid #D4A843', borderRadius: 8, color: '#FFFFFF' }} />
                   <Area type="monotone" dataKey="xp" stroke={T.gold} fill="url(#xpGrad)" strokeWidth={2} />
                 </AreaChart>
               </ResponsiveContainer>

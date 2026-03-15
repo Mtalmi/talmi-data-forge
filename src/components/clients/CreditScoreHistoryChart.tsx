@@ -128,9 +128,9 @@ export default function CreditScoreHistoryChart({ clientTrend, compact = false }
         <div className="h-48">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-              <XAxis dataKey="date" tick={{ fontSize: 11 }} className="text-muted-foreground" />
-              <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} className="text-muted-foreground" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#9CA3AF' }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+              <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: '#9CA3AF' }} tickFormatter={v => `${v}/100`} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
               <Tooltip 
                 content={({ active, payload }) => {
                   if (active && payload && payload.length) {

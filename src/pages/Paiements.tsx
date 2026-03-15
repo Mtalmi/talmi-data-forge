@@ -394,14 +394,15 @@ export default function Paiements() {
               <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={agingChartData}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis dataKey="name" className="text-xs" />
-                    <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} className="text-xs" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <XAxis dataKey="name" tick={{ fill: '#9CA3AF', fontSize: 11 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                    <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k DH`} tick={{ fill: '#9CA3AF', fontSize: 10 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
                     <Tooltip 
                       formatter={(value: number) => formatCurrency(value)}
                       labelFormatter={(label) => `${t.pages.paiements.agingBreakdown}: ${label}`}
+                      contentStyle={{ backgroundColor: '#1A1F35', border: '1px solid #D4A843', borderRadius: 8, color: '#FFFFFF' }}
                     />
-                    <Bar dataKey="montant" radius={[4, 4, 0, 0]}>
+                    <Bar dataKey="montant" name="Montant" radius={[4, 4, 0, 0]}>
                       {agingChartData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.fill} />
                       ))}
@@ -435,7 +436,7 @@ export default function Paiements() {
                         <Cell key={`cell-${index}`} fill={entry.fill} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                    <Tooltip formatter={(value: number) => formatCurrency(value)} contentStyle={{ backgroundColor: '#1A1F35', border: '1px solid #D4A843', borderRadius: 8, color: '#FFFFFF' }} />
                     <Legend />
                   </PieChart>
                 </ResponsiveContainer>

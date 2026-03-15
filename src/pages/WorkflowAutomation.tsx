@@ -127,10 +127,10 @@ const templates = [
 const GoldTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg px-4 py-2 shadow-xl" style={{ background: '#161D26', border: '1px solid #FFD700', borderRadius: 8 }}>
-      <p className="text-xs mb-1" style={{ color: '#B0B8C1' }}>{label}</p>
+    <div className="rounded-lg px-4 py-2 shadow-xl" style={{ background: '#1A1F35', border: '1px solid #D4A843', borderRadius: 8 }}>
+      <p className="text-xs mb-1" style={{ color: '#9CA3AF' }}>{label}</p>
       {payload.map((p: any, i: number) => (
-        <p key={i} className="font-mono font-semibold" style={{ color: '#FFD700', fontSize: 14 }}>{p.value.toLocaleString('fr-FR')}</p>
+        <p key={i} className="font-mono font-semibold" style={{ color: '#D4A843', fontSize: 14 }}>{p.value.toLocaleString('fr-FR')}</p>
       ))}
     </div>
   );
@@ -642,20 +642,20 @@ export default function WorkflowAutomation() {
 
             {/* Chart */}
             <div className="rounded-xl p-5 mb-6" style={{ background: '#161D26', border: '1px solid #2A3545', boxShadow: '0 4px 24px rgba(0,0,0,0.5)' }}>
-              <h3 className="text-sm font-bold mb-4" style={{ fontFamily: "'Poppins', sans-serif" }}>Execution Timeline — Last 30 Days</h3>
+              <h3 className="text-sm font-bold mb-4" style={{ fontFamily: "'Poppins', sans-serif" }}>Chronologie d'Exécution — 30 Derniers Jours</h3>
               <ResponsiveContainer width="100%" height={240}>
                 <AreaChart data={executionData}>
                   <defs>
                     <linearGradient id="exGold" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#FFD700" stopOpacity={0.2} />
-                      <stop offset="100%" stopColor="#FFD700" stopOpacity={0} />
+                      <stop offset="0%" stopColor="#D4A843" stopOpacity={0.2} />
+                      <stop offset="100%" stopColor="#D4A843" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#2A3545" />
-                  <XAxis dataKey="day" tick={{ fill: '#B0B8C1', fontSize: 10 }} axisLine={{ stroke: '#2A3545' }} />
-                  <YAxis tick={{ fill: '#B0B8C1', fontSize: 10 }} axisLine={{ stroke: '#2A3545' }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                  <XAxis dataKey="day" tick={{ fill: '#9CA3AF', fontSize: 10 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                  <YAxis tick={{ fill: '#9CA3AF', fontSize: 10 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
                   <Tooltip content={<GoldTooltip />} />
-                  <Area type="monotone" dataKey="executions" stroke="#FFD700" strokeWidth={2} fill="url(#exGold)" />
+                  <Area type="monotone" dataKey="executions" stroke="#D4A843" strokeWidth={2} fill="url(#exGold)" name="Exécutions" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>

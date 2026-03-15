@@ -79,10 +79,10 @@ export default function AnalyticsDashboard() {
       {/* Header */}
       <div className="space-y-2">
         <h2 className="text-3xl font-bold" style={{ fontFamily: "'Poppins', sans-serif" }}>
-          Real-Time Analytics Dashboard
+          Tableau de Bord Analytique
         </h2>
         <p className="text-muted-foreground">
-          Live system performance, agent metrics, and business intelligence
+          Performance système, métriques agents et intelligence commerciale en temps réel
         </p>
       </div>
 
@@ -128,16 +128,16 @@ export default function AnalyticsDashboard() {
           <>
             <Card className="bg-card border-border md:col-span-2">
               <CardHeader>
-                <CardTitle>System Uptime Trend (24h)</CardTitle>
+                <CardTitle>Tendance Disponibilité Système (24h)</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={uptimeData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="time" stroke="#9CA3AF" />
-                    <YAxis stroke="#9CA3AF" domain={[99.9, 100]} />
+                    <XAxis dataKey="time" tick={{ fill: '#9CA3AF', fontSize: 11 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                    <YAxis tick={{ fill: '#9CA3AF', fontSize: 11 }} domain={[99.9, 100]} tickFormatter={v => `${v}%`} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", color: "#FFFFFF" }}
+                      contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", borderRadius: 8, color: "#FFFFFF" }}
                       formatter={(value) => `${value}%`}
                     />
                     <Line
@@ -155,16 +155,16 @@ export default function AnalyticsDashboard() {
             {/* Agent Performance */}
             <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle>Agent Uptime Performance</CardTitle>
+                <CardTitle>Performance Disponibilité par Agent</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={agentPerformanceData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="agent" angle={-45} textAnchor="end" height={100} stroke="#9CA3AF" />
-                    <YAxis stroke="#9CA3AF" domain={[99, 100]} />
+                    <XAxis dataKey="agent" angle={-45} textAnchor="end" height={100} tick={{ fill: '#9CA3AF', fontSize: 10 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                    <YAxis tick={{ fill: '#9CA3AF', fontSize: 11 }} domain={[99, 100]} tickFormatter={v => `${v}%`} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", color: "#FFFFFF" }}
+                      contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", borderRadius: 8, color: "#FFFFFF" }}
                       formatter={(value) => `${value}%`}
                     />
                     <Bar dataKey="uptime" fill="#D4A843" />
@@ -176,16 +176,16 @@ export default function AnalyticsDashboard() {
             {/* Efficiency Metrics */}
             <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle>Agent Efficiency Score</CardTitle>
+                <CardTitle>Score d'Efficacité par Agent</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={agentPerformanceData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="agent" angle={-45} textAnchor="end" height={100} stroke="#9CA3AF" />
-                    <YAxis stroke="#9CA3AF" domain={[85, 100]} />
+                    <XAxis dataKey="agent" angle={-45} textAnchor="end" height={100} tick={{ fill: '#9CA3AF', fontSize: 10 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                    <YAxis tick={{ fill: '#9CA3AF', fontSize: 11 }} domain={[85, 100]} tickFormatter={v => `${v}%`} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", color: "#FFFFFF" }}
+                      contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", borderRadius: 8, color: "#FFFFFF" }}
                       formatter={(value) => `${value}%`}
                     />
                     <Bar dataKey="efficiency" fill="#E8C96A" />
@@ -229,18 +229,18 @@ export default function AnalyticsDashboard() {
         {/* Customers Tab */}
         {activeTab === "customers" && (
           <Card className="bg-card border-border md:col-span-2">
-            <CardHeader>
-              <CardTitle>Customer Growth & Revenue</CardTitle>
-            </CardHeader>
-            <CardContent>
+              <CardHeader>
+                <CardTitle>Croissance Clients & Chiffre d'Affaires</CardTitle>
+              </CardHeader>
+              <CardContent>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={customerMetricsData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                  <XAxis dataKey="month" stroke="#9CA3AF" />
-                  <YAxis yAxisId="left" stroke="#9CA3AF" />
-                  <YAxis yAxisId="right" orientation="right" stroke="#9CA3AF" />
+                  <XAxis dataKey="month" tick={{ fill: '#9CA3AF', fontSize: 11 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                  <YAxis yAxisId="left" tick={{ fill: '#9CA3AF', fontSize: 11 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                  <YAxis yAxisId="right" orientation="right" tick={{ fill: '#9CA3AF', fontSize: 11 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", color: "#FFFFFF" }}
+                    contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", borderRadius: 8, color: "#FFFFFF" }}
                   />
                   <Legend />
                   <Line
@@ -249,7 +249,7 @@ export default function AnalyticsDashboard() {
                     dataKey="customers"
                     stroke="#D4A843"
                     strokeWidth={2}
-                    name="Active Customers"
+                    name="Clients Actifs"
                   />
                   <Line
                     yAxisId="right"
@@ -257,7 +257,7 @@ export default function AnalyticsDashboard() {
                     dataKey="revenue"
                     stroke="#E8C96A"
                     strokeWidth={2}
-                    name="Revenue ($M)"
+                    name="CA (M$)"
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -268,9 +268,9 @@ export default function AnalyticsDashboard() {
         {/* Distribution Tab */}
         {activeTab === "distribution" && (
           <Card className="bg-card border-border md:col-span-2">
-            <CardHeader>
-              <CardTitle>Agent Distribution by Phase</CardTitle>
-            </CardHeader>
+              <CardHeader>
+                <CardTitle>Distribution des Agents par Phase</CardTitle>
+              </CardHeader>
             <CardContent className="flex items-center justify-center">
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
@@ -289,7 +289,7 @@ export default function AnalyticsDashboard() {
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", color: "#FFFFFF" }}
+                    contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", borderRadius: 8, color: "#FFFFFF" }}
                   />
                 </PieChart>
               </ResponsiveContainer>
