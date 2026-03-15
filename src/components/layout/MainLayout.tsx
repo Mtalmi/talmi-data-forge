@@ -128,7 +128,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
             </div>
           )}
           <div className="mobile-content safe-area-bottom overflow-x-hidden w-full min-w-0" style={{ padding: '0 32px', margin: 0 }}>
-            <div className="tbos-content-wrapper w-full mx-auto" style={{ maxWidth: 1800 }}>
+            <div className="tbos-content-wrapper w-full" style={{ maxWidth: 'min(1800px, 100%)' }}>
               <PageTransition>
                 {children}
               </PageTransition>

@@ -194,7 +194,7 @@ export default function AuditExterne() {
 
   return (
     <MainLayout>
-      <div className="space-y-6 max-w-6xl mx-auto">
+      <div className="space-y-6 w-full">
         <div className="glass-premium p-6 shadow-lg">
           <div className="relative z-10 flex items-center justify-between">
             <div className="flex items-center gap-4">

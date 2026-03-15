@@ -329,7 +329,7 @@ export default function OperationsAgent() {
       {/* Gold shimmer top bar */}
       <div className="h-0.5 w-full" style={{ background: "linear-gradient(90deg, transparent, #FFD700, transparent)" }} />
 
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="w-full px-4 py-6">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground">

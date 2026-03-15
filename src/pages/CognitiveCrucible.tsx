@@ -416,7 +416,7 @@ Résous ce problème en rendant CHAQUE ÉTAPE de ton raisonnement visible. Pas d
 export default function CognitiveCrucible() {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-background p-4 md:p-8">
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="w-full space-y-6">
         <div className="text-center space-y-2">
           <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ type: 'spring' }}>
             <FlaskConical className="mx-auto h-12 w-12 text-primary" />

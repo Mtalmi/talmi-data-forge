@@ -350,7 +350,7 @@ export default function TrainingAcademy() {
         </div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto p-6">
+      <div className="relative z-10 w-full p-6">
         {/* ============ MY LEARNING ============ */}
         {activeTab === 'learning' && (
           <div className="space-y-6">

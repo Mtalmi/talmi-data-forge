@@ -314,7 +314,7 @@ export default function CommunityForum() {
         </div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto p-6 flex gap-6">
+      <div className="relative z-10 w-full p-6 flex gap-6">
         {/* LEFT: Posts */}
         <div className="flex-1 min-w-0">
           {/* Tabs */}
