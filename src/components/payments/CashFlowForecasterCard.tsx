@@ -142,7 +142,7 @@ export function CashFlowForecasterCard() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 24 }}>
         <div style={{ textAlign: 'center', padding: 16, borderRadius: 12, background: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.2)' }}>
           <TrendingUp size={16} color={T.success} style={{ margin: '0 auto 6px' }} />
-          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 24, fontWeight: 800, color: T.success }}>{Math.round(inflows / 1000)}K</p>
+          <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 24, fontWeight: 200, color: T.success }}>{Math.round(inflows / 1000)}K</p>
           <p style={{ color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', marginTop: 4 }}>Entrées prévues</p>
         </div>
         <div style={{ textAlign: 'center', padding: 16, borderRadius: 12, background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)' }}>
