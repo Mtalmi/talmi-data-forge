@@ -2046,16 +2046,14 @@ function IntelligenceIATab() {
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────
 export default function WorldClassLaboratory() {
-  const { useTabSync } = await_useTabSync();
-  const [hoverNew, setHoverNew] = useState(false);
-  const [showTestModal, setShowTestModal] = useState(false);
-  const { kpis: labKpis } = useLaboratoryLiveData();
-
-  const [activeTab, setActiveTab] = useTabSyncHook('essais', {
+  const [activeTab, setActiveTab] = useTabSync('essais', {
     'intelligence-ia': 'ia',
     'ia': 'ia',
     'essais-du-jour': 'essais',
   });
+  const [hoverNew, setHoverNew] = useState(false);
+  const [showTestModal, setShowTestModal] = useState(false);
+  const { kpis: labKpis } = useLaboratoryLiveData();
 
   const TABS = [
     { id: 'essais', label: 'ESSAIS DU JOUR' },
