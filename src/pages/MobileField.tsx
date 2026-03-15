@@ -73,13 +73,13 @@ const ACTIVITIES = [
 /* ─── Status badge component ─── */
 function StatusBadge({ status }: { status: string }) {
   const colors: Record<string, string> = {
-    mixing: 'bg-[#FFD700]/20 text-[#FFD700]',
-    completed: 'bg-[#10B981]/20 text-[#10B981]',
-    pending: 'bg-[#B0B8C1]/20 text-[#B0B8C1]',
-    failed: 'bg-[#EF4444]/20 text-[#EF4444]',
-    pass: 'bg-[#10B981]/20 text-[#10B981]',
-    fail: 'bg-[#EF4444]/20 text-[#EF4444]',
-    in_progress: 'bg-[#FFD700]/20 text-[#FFD700]',
+    mixing: 'bg-[rgba(212,168,67,0.15)] text-[#D4A843]',
+    completed: 'bg-[rgba(34,197,94,0.15)] text-[#22C55E]',
+    pending: 'bg-[rgba(156,163,175,0.15)] text-[#9CA3AF]',
+    failed: 'bg-[rgba(239,68,68,0.15)] text-[#EF4444]',
+    pass: 'bg-[rgba(34,197,94,0.15)] text-[#22C55E]',
+    fail: 'bg-[rgba(239,68,68,0.15)] text-[#EF4444]',
+    in_progress: 'bg-[rgba(245,158,11,0.15)] text-[#F59E0B]',
   };
   return (
     <span className={cn('px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide', colors[status] || colors.pending)}>

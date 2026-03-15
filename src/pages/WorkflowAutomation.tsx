@@ -672,7 +672,7 @@ export default function WorkflowAutomation() {
                   {['all', 'success', 'failed', 'running'].map(f => (
                     <button key={f} onClick={() => setExecStatusFilter(f)}
                       className="px-2.5 py-1.5 rounded text-[10px] font-semibold uppercase tracking-wider transition-all"
-                      style={{ background: execStatusFilter === f ? '#FFD700' : '#1C2533', color: execStatusFilter === f ? '#0F1419' : '#B0B8C1' }}>
+                      style={{ background: execStatusFilter === f ? '#D4A843' : '#1C2533', color: execStatusFilter === f ? '#0F1419' : '#B0B8C1' }}>
                       {f}
                     </button>
                   ))}
