@@ -84,12 +84,12 @@ const equipmentData: Record<string, { name: string; overall: number; units: { id
     ],
   },
   "Tangier": {
-    name: "Tangier", overall: 91,
+    name: "Tanger", overall: 91,
     units: [
-      { id: "MX-011", type: "Concrete Mixer", health: 90, status: "Operational", nextService: "48 days" },
-      { id: "MX-012", type: "Concrete Mixer", health: 93, status: "Operational", nextService: "55 days" },
-      { id: "PMP-004", type: "Water Pump", health: 89, status: "Operational", nextService: "40 days" },
-      { id: "CNV-004", type: "Conveyor Belt", health: 92, status: "Operational", nextService: "50 days" },
+      { id: "MX-011", type: "Malaxeur Béton", health: 90, status: "Opérationnel", nextService: "48 jours" },
+      { id: "MX-012", type: "Malaxeur Béton", health: 93, status: "Opérationnel", nextService: "55 jours" },
+      { id: "PMP-004", type: "Pompe à eau", health: 89, status: "Opérationnel", nextService: "40 jours" },
+      { id: "CNV-004", type: "Convoyeur", health: 92, status: "Opérationnel", nextService: "50 jours" },
     ],
   },
 };
