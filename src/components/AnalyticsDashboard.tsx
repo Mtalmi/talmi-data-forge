@@ -79,10 +79,10 @@ export default function AnalyticsDashboard() {
       {/* Header */}
       <div className="space-y-2">
         <h2 className="text-3xl font-bold" style={{ fontFamily: "'Poppins', sans-serif" }}>
-          Real-Time Analytics Dashboard
+          Tableau de Bord Analytique
         </h2>
         <p className="text-muted-foreground">
-          Live system performance, agent metrics, and business intelligence
+          Performance système, métriques agents et intelligence commerciale en temps réel
         </p>
       </div>
 
