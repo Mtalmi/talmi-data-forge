@@ -103,7 +103,7 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
         insertData.resistance_conforme = isConforme;
       }
 
-      const { error } = await supabase.from('tests_laboratoire').insert(insertData);
+      const { error } = await supabase.from('tests_laboratoire').insert(insertData as any);
       if (error) throw error;
 
       // Log activity
