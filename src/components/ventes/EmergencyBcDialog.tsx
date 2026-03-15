@@ -509,7 +509,7 @@ export function EmergencyBcDialog({
             <div className="p-4 rounded-lg bg-primary/10 border border-primary/30">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Total HT</span>
-                <span className="text-2xl font-bold text-primary font-mono">
+                <span className="text-2xl font-extralight text-primary font-mono">
                   {(parseFloat(volume) * parseFloat(prix)).toLocaleString()} DH
                 </span>
               </div>

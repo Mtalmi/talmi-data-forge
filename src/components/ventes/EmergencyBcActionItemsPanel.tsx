@@ -341,18 +341,18 @@ export function EmergencyBcActionItemsPanel({
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="text-center p-2 rounded-lg bg-muted/50">
-              <p className="text-2xl font-bold text-primary">{progressPercent}%</p>
+              <p className="text-2xl font-extralight text-primary">{progressPercent}%</p>
               <p className="text-xs text-muted-foreground">Complété</p>
             </div>
             {overdueCount > 0 && (
               <div className="text-center p-2 rounded-lg bg-red-500/10 border border-red-500/20">
-                <p className="text-2xl font-bold text-red-400">{overdueCount}</p>
+                <p className="text-2xl font-extralight text-red-400">{overdueCount}</p>
                 <p className="text-xs text-red-400">En retard</p>
               </div>
             )}
             {escalatedCount > 0 && (
               <div className="text-center p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                <p className="text-2xl font-bold text-amber-400">{escalatedCount}</p>
+                <p className="text-2xl font-extralight text-amber-400">{escalatedCount}</p>
                 <p className="text-xs text-amber-400">Escaladé</p>
               </div>
             )}

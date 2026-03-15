@@ -139,7 +139,7 @@ export function ProductionLiveMetrics({
             <span className="text-xs text-muted-foreground">Production Jour</span>
           </div>
           <div className="flex items-baseline gap-1 mb-2">
-            <span className="text-2xl font-bold text-primary">{volumeMetrics.produced.toFixed(0)}</span>
+            <span className="text-2xl font-extralight text-primary">{volumeMetrics.produced.toFixed(0)}</span>
             <span className="text-sm text-muted-foreground">/ {dailyTarget} m³</span>
           </div>
           <Progress value={volumeMetrics.percentComplete} className="h-2" />
@@ -156,7 +156,7 @@ export function ProductionLiveMetrics({
             <span className="text-xs text-muted-foreground">File d'Attente</span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-blue-500">{volumeMetrics.planned.toFixed(0)}</span>
+            <span className="text-2xl font-extralight text-blue-500">{volumeMetrics.planned.toFixed(0)}</span>
             <span className="text-sm text-muted-foreground">m³ à produire</span>
           </div>
           <div className="text-xs text-muted-foreground mt-1">
@@ -172,7 +172,7 @@ export function ProductionLiveMetrics({
           </div>
           <div className="flex items-baseline gap-2">
             <span className={cn(
-              "text-2xl font-bold",
+              "text-2xl font-extralight",
               unassignedTrucks > 0 ? "text-warning" : "text-success"
             )}>
               {bons.filter(b => b.camion_assigne).length}
@@ -199,7 +199,7 @@ export function ProductionLiveMetrics({
           </div>
           <div className="flex items-baseline gap-2">
             <span className={cn(
-              "text-2xl font-bold",
+              "text-2xl font-extralight",
               lateOrders.length > 0 ? "text-destructive" : "text-muted-foreground"
             )}>
               {lateOrders.length}

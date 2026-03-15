@@ -383,7 +383,7 @@ function IdeaGenerator() {
               <Target className="h-4 w-4 text-primary" />
               <p className="text-xs font-semibold">Score Portfolio Innovation</p>
             </div>
-            <div className="text-2xl font-bold text-primary">{Math.round(ideas.reduce((a, i) => a + i.score, 0) / ideas.length)}<span className="text-sm text-muted-foreground">/100</span></div>
+            <div className="text-2xl font-extralight text-primary">{Math.round(ideas.reduce((a, i) => a + i.score, 0) / ideas.length)}<span className="text-sm text-muted-foreground">/100</span></div>
             <p className="text-[10px] text-muted-foreground mt-1">{ideas.filter(i => i.status === 'validated').length} idées validées • {ideas.filter(i => i.status === 'refining').length} en cours</p>
           </CardContent>
         </Card>

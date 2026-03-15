@@ -97,7 +97,7 @@ export function PendingBcWidget({ onNavigateToVentes, compact = false }: Pending
             </div>
             <div>
               <p className="text-sm font-medium">BC en Attente Validation</p>
-              <p className="text-2xl font-bold">
+              <p className="text-2xl font-extralight">
                 {pendingCount}
                 {emergencyCount > 0 && (
                   <span className="text-sm text-red-600 ml-2">

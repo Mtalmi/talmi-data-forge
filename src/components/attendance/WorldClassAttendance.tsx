@@ -205,7 +205,7 @@ function AttendanceGauge({ value }: { value: number }) {
           fill="none" stroke={color} strokeWidth={12} strokeLinecap="round"
           style={{ filter: `drop-shadow(0 0 8px ${color}80)`, transition: 'all 0.05s linear' }}
         />
-        <text x={cx} y={cy + 8} textAnchor="middle" style={{ fontFamily: MONO, fontSize: 24, fontWeight: 800, fill: color }}>{value}%</text>
+        <text x={cx} y={cy + 8} textAnchor="middle" style={{ fontFamily: MONO, fontSize: 24, fontWeight: 100, fill: color }}>{value}%</text>
         <text x={cx} y={cy + 26} textAnchor="middle" style={{ fontFamily: SANS, fontSize: 9, fill: T.textDim }}>Taux Présence</text>
       </svg>
     </div>
@@ -319,7 +319,7 @@ function MonthlySummary() {
               <c.Icon size={18} color={c.color} />
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
-              <span style={{ fontFamily: MONO, fontSize: 28, fontWeight: 800, color: c.color }}>{c.count}</span>
+              <span style={{ fontFamily: MONO, fontSize: 28, fontWeight: 200, color: c.color }}>{c.count}</span>
               <span style={{ fontFamily: MONO, fontSize: 13, color: T.textDim }}>{c.suffix}</span>
             </div>
             <div style={{ fontFamily: SANS, fontSize: 12, color: T.textDim, marginTop: 4 }}>{c.label}</div>
@@ -416,7 +416,7 @@ export default function WorldClassAttendance() {
                   <Users size={12} color={T.green} />
                   <span style={{ fontFamily: SANS, fontSize: 10, color: T.textDim }}>Présents</span>
                 </div>
-                <div style={{ fontFamily: MONO, fontSize: 24, fontWeight: 800, color: T.green }}>14</div>
+                <div style={{ fontFamily: MONO, fontSize: 24, fontWeight: 200, color: T.green }}>14</div>
               </div>
               {/* Absents box */}
               <div style={{
@@ -428,7 +428,7 @@ export default function WorldClassAttendance() {
                   <AlertTriangle size={12} color={T.red} />
                   <span style={{ fontFamily: SANS, fontSize: 10, color: T.textDim }}>Absents</span>
                 </div>
-                <div style={{ fontFamily: MONO, fontSize: 24, fontWeight: 800, color: T.red }}>2</div>
+                <div style={{ fontFamily: MONO, fontSize: 24, fontWeight: 200, color: T.red }}>2</div>
               </div>
             </div>
           </div>
@@ -527,7 +527,7 @@ export default function WorldClassAttendance() {
                 {/* Départ */}
                 <div style={{ fontFamily: MONO, fontSize: 12, color: T.textDim }}>{emp.depart}</div>
                 {/* Heures */}
-                <div style={{ fontFamily: MONO, fontSize: 13, fontWeight: 800, color: hoursColor }}>
+                <div style={{ fontFamily: MONO, fontSize: 13, fontWeight: 400, color: hoursColor }}>
                   {emp.heures === 0 ? '0h' : `${emp.heures}h`}
                 </div>
                 {/* Pause */}
@@ -679,7 +679,7 @@ export default function WorldClassAttendance() {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
               <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 15, color: T.textPri }}>Heures par Département</div>
-              <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 800, color: T.gold }}>118.6 h</span>
+              <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 200, color: T.gold }}>118.6 h</span>
             </div>
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={DEPT_HOURS} layout="vertical" barSize={16} margin={{ left: 10, right: 50 }}>
@@ -756,7 +756,7 @@ export default function WorldClassAttendance() {
                   <div style={{ fontFamily: SANS, fontSize: 11, color: T.textDim }}>{ot.poste}</div>
                 </div>
                 <div style={{ textAlign: 'center', minWidth: 64 }}>
-                  <div style={{ fontFamily: MONO, fontSize: 16, fontWeight: 800, color: T.gold }}>{ot.heures}h</div>
+                  <div style={{ fontFamily: MONO, fontSize: 16, fontWeight: 200, color: T.gold }}>{ot.heures}h</div>
                   <div style={{ fontFamily: SANS, fontSize: 10, color: T.textDim }}>Heures supp.</div>
                 </div>
                 <div style={{ textAlign: 'center', minWidth: 72 }}>

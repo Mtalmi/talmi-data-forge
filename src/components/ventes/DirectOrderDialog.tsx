@@ -257,7 +257,7 @@ export function DirectOrderDialog({
             <div className="p-4 rounded-lg bg-primary/10 border border-primary/30">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{c.totalHT}</span>
-                <span className="text-2xl font-bold text-primary font-mono">
+                <span className="text-2xl font-extralight text-primary font-mono">
                   {(parseFloat(orderVolume) * parseFloat(orderPrix)).toLocaleString()} DH
                 </span>
               </div>

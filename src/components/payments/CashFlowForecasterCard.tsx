@@ -76,15 +76,15 @@ export function CashFlowForecasterCard() {
           <div key={f.period} style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: 12, padding: 16, textAlign: 'center' }}>
             <p style={{ color: T.gold, fontWeight: 700, fontSize: 12, marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{f.period}</p>
             <div style={{ marginBottom: 8 }}>
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 16, fontWeight: 700, color: T.success }}>↑ {(f.inflows / 1000).toFixed(0)}K DH</p>
+              <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 16, fontWeight: 200, color: T.success }}>↑ {(f.inflows / 1000).toFixed(0)}K DH</p>
               <p style={{ color: T.textDim, fontSize: 10 }}>Entrées prévues</p>
             </div>
             <div style={{ marginBottom: 8 }}>
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 16, fontWeight: 700, color: T.danger }}>↓ {(f.outflows / 1000).toFixed(0)}K DH</p>
+              <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 16, fontWeight: 200, color: T.danger }}>↓ {(f.outflows / 1000).toFixed(0)}K DH</p>
               <p style={{ color: T.textDim, fontSize: 10 }}>Sorties prévues</p>
             </div>
             <div style={{ marginBottom: 8 }}>
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 20, fontWeight: 800, color: f.balance >= 0 ? T.success : T.danger }}>+{(f.balance / 1000).toFixed(0)}K DH</p>
+              <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 20, fontWeight: 200, color: f.balance >= 0 ? T.success : T.danger }}>+{(f.balance / 1000).toFixed(0)}K DH</p>
               <p style={{ color: T.textDim, fontSize: 10 }}>Solde estimé</p>
             </div>
             <span style={{ padding: '2px 8px', borderRadius: 100, fontSize: 10, fontWeight: 700, background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)', color: T.success }}>
@@ -142,17 +142,17 @@ export function CashFlowForecasterCard() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 24 }}>
         <div style={{ textAlign: 'center', padding: 16, borderRadius: 12, background: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.2)' }}>
           <TrendingUp size={16} color={T.success} style={{ margin: '0 auto 6px' }} />
-          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 24, fontWeight: 800, color: T.success }}>{Math.round(inflows / 1000)}K</p>
+          <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 24, fontWeight: 200, color: T.success }}>{Math.round(inflows / 1000)}K</p>
           <p style={{ color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', marginTop: 4 }}>Entrées prévues</p>
         </div>
         <div style={{ textAlign: 'center', padding: 16, borderRadius: 12, background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)' }}>
           <TrendingDown size={16} color={T.danger} style={{ margin: '0 auto 6px' }} />
-          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 24, fontWeight: 800, color: T.danger }}>{Math.round(outflows / 1000)}K</p>
+          <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 24, fontWeight: 200, color: T.danger }}>{Math.round(outflows / 1000)}K</p>
           <p style={{ color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', marginTop: 4 }}>Sorties prévues</p>
         </div>
         <div style={{ textAlign: 'center', padding: 16, borderRadius: 12, background: balance >= 0 ? 'rgba(255,215,0,0.06)' : 'rgba(239,68,68,0.06)', border: `1px solid ${balance >= 0 ? 'rgba(255,215,0,0.2)' : 'rgba(239,68,68,0.2)'}` }}>
           <Brain size={16} color={balance >= 0 ? T.gold : T.danger} style={{ margin: '0 auto 6px' }} />
-          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 24, fontWeight: 800, color: balance >= 0 ? T.gold : T.danger }}>{Math.round(balance / 1000)}K</p>
+          <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 24, fontWeight: 200, color: balance >= 0 ? T.gold : T.danger }}>{Math.round(balance / 1000)}K</p>
           <p style={{ color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', marginTop: 4 }}>Solde net</p>
         </div>
       </div>

@@ -30,7 +30,7 @@ export function ProductionKPICards({
             <Factory className="h-4 w-4 text-primary" />
             <span className="text-xs text-muted-foreground">En Production</span>
           </div>
-          <p className="text-2xl font-bold text-primary mt-1">{totalBons}</p>
+          <p className="text-2xl font-extralight text-primary mt-1">{totalBons}</p>
           <p className="text-xs text-muted-foreground">bons</p>
         </CardContent>
       </Card>
@@ -42,7 +42,7 @@ export function ProductionKPICards({
             <Package className="h-4 w-4 text-blue-500" />
             <span className="text-xs text-muted-foreground">Volume</span>
           </div>
-          <p className="text-2xl font-bold text-blue-500 mt-1">{totalVolume.toFixed(0)}</p>
+          <p className="text-2xl font-extralight text-blue-500 mt-1">{totalVolume.toFixed(0)}</p>
           <p className="text-xs text-muted-foreground">m³</p>
         </CardContent>
       </Card>
@@ -54,7 +54,7 @@ export function ProductionKPICards({
             <TrendingUp className="h-4 w-4 text-emerald-500" />
             <span className="text-xs text-muted-foreground">CUR Moyen</span>
           </div>
-          <p className="text-2xl font-bold text-emerald-500 mt-1">
+          <p className="text-2xl font-extralight text-emerald-500 mt-1">
             {avgCUR > 0 ? avgCUR.toFixed(0) : '—'}
           </p>
           <p className="text-xs text-muted-foreground">DH/m³</p>
@@ -68,7 +68,7 @@ export function ProductionKPICards({
             <CheckCircle className="h-4 w-4 text-purple-500" />
             <span className="text-xs text-muted-foreground">Validés</span>
           </div>
-          <p className="text-2xl font-bold text-purple-500 mt-1">{validatedCount}</p>
+          <p className="text-2xl font-extralight text-purple-500 mt-1">{validatedCount}</p>
           <p className="text-xs text-muted-foreground">/ {totalBons}</p>
         </CardContent>
       </Card>
@@ -80,7 +80,7 @@ export function ProductionKPICards({
             <Wifi className="h-4 w-4 text-success" />
             <span className="text-xs text-muted-foreground">Sync Machine</span>
           </div>
-          <p className="text-2xl font-bold text-success mt-1">{machineSyncCount}</p>
+          <p className="text-2xl font-extralight text-success mt-1">{machineSyncCount}</p>
           <p className="text-xs text-muted-foreground">
             {totalBons > 0 ? Math.round((machineSyncCount / totalBons) * 100) : 0}%
           </p>
@@ -103,7 +103,7 @@ export function ProductionKPICards({
             <span className="text-xs text-muted-foreground">Alertes</span>
           </div>
           <p className={cn(
-            "text-2xl font-bold mt-1",
+            "text-2xl font-extralight mt-1",
             deviationCount > 0 || criticalStocks.length > 0 ? "text-destructive" : "text-muted-foreground"
           )}>
             {deviationCount + criticalStocks.length}
