@@ -256,7 +256,7 @@ export function AgentRecommendation({ children, severity = 'gold', title }: Agen
       {title && (
         <div style={{
           fontFamily: MONO,
-          fontSize: 10,
+          fontSize: 12,
           letterSpacing: '1.5px',
           color,
           textTransform: 'uppercase',
