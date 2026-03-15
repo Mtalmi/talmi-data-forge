@@ -228,7 +228,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       aria-label="Navigation principale"
       data-tour="sidebar"
       className={cn(
-        'fixed top-0 left-0 bottom-0 z-50 flex flex-col transition-transform duration-300 ease-out',
+        'fixed top-0 left-0 bottom-0 z-50 flex flex-col transition-transform duration-300 ease-out no-print',
         'lg:translate-x-0',
         open ? 'translate-x-0' : '-translate-x-full'
       )}

@@ -469,6 +469,8 @@ export default function Dashboard() {
 
   return (
     <MainLayout>
+      <div data-print-page="dashboard" data-print-date={new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}>
+      <div className="print-page-header hidden" style={{ display: 'none' }} />
       {showLancerToast && (
         <div
           className="fixed top-4 right-4 z-50 bg-[#0f1729] border border-[#D4A843]/30 rounded-lg px-5 py-3 shadow-2xl border-l-2 border-l-[#D4A843] flex items-center"

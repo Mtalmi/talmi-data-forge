@@ -2063,7 +2063,8 @@ export default function WorldClassLaboratory() {
   ];
 
   return (
-    <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace", color: T.textPri, paddingBottom: 60 }}>
+    <div data-print-page="laboratoire" data-print-date={new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })} style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace", color: T.textPri, paddingBottom: 60 }}>
+      <div className="print-page-header hidden" style={{ display: 'none' }} />
       <style>{`
         @keyframes tbos-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
         @keyframes lab-tab-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
