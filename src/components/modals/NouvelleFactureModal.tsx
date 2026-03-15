@@ -4,11 +4,14 @@ import {
   TBOSDisplayField, TBOSPrimaryButton, TBOSGhostButton,
   TBOSFormRow, TBOSFormStack, showFormSuccess,
 } from '@/components/ui/TBOSModal';
+import { supabase } from '@/integrations/supabase/client';
+import { generateNumero } from '@/lib/generateNumero';
+import { toast } from 'sonner';
 
 const BLS = [
-  { value: 'bl1', label: 'BL-2603-005 — TGCC · 8m³ · 26/03', client: 'TGCC', montant: 6800 },
-  { value: 'bl2', label: 'BL-2603-006 — Constructions Modernes · 10m³ · 26/03', client: 'Constructions Modernes SA', montant: 8500 },
-  { value: 'bl3', label: 'BL-2603-007 — BTP Maroc · 6m³ · 25/03', client: 'BTP Maroc SARL', montant: 5100 },
+  { value: 'bl1', label: 'BL-2603-005 — TGCC · 8m³ · 26/03', client: 'TGCC', clientId: 'TGCC', montant: 6800 },
+  { value: 'bl2', label: 'BL-2603-006 — Constructions Modernes · 10m³ · 26/03', client: 'Constructions Modernes SA', clientId: 'CMOD', montant: 8500 },
+  { value: 'bl3', label: 'BL-2603-007 — BTP Maroc · 6m³ · 25/03', client: 'BTP Maroc SARL', clientId: 'BTPM', montant: 5100 },
 ];
 
 const TVA_OPTIONS = [
@@ -44,7 +47,6 @@ export function NouvelleFactureModal({ open, onClose, onCreated }: Props) {
     const found = BLS.find(b => b.value === val);
     if (found) {
       setMontantHT(String(found.montant));
-      // Auto-set echeance +30 days
       const d = new Date();
       d.setDate(d.getDate() + 30);
       setEcheance(d.toISOString().slice(0, 10));
@@ -68,11 +70,52 @@ export function NouvelleFactureModal({ open, onClose, onCreated }: Props) {
   const handleSubmit = async () => {
     if (!validate()) return;
     setLoading(true);
-    await new Promise(r => setTimeout(r, 800));
-    const facId = `FAC-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 900) + 100)}`;
-    onCreated?.({ id: facId, bl: selectedBL?.label, client: selectedBL?.client, montantHT: parseFloat(montantHT), tva: parseFloat(tva), montantTTC, dateEmission, echeance, mode });
-    showFormSuccess(`✓ Facture ${facId} émise — ${selectedBL?.client}`);
-    resetAndClose();
+    try {
+      const facId = await generateNumero('FAC', 'factures');
+      const ht = parseFloat(montantHT);
+      const tvaRate = parseFloat(tva);
+      const ttc = ht * (1 + tvaRate / 100);
+
+      // Insert into factures table
+      const { error: insertError } = await supabase
+        .from('factures')
+        .insert({
+          facture_id: facId,
+          bl_id: selectedBL?.label?.split(' — ')[0] || 'BL-UNKNOWN',
+          client_id: selectedBL?.clientId || 'UNKNOWN',
+          client_nom: selectedBL?.client || null,
+          formule_id: 'F-B25',
+          volume_m3: 8,
+          prix_vente_m3: ht / 8,
+          total_ht: ht,
+          tva_pct: tvaRate,
+          total_ttc: ttc,
+          montant_ht: ht,
+          date_facture: dateEmission,
+          date_echeance: echeance || null,
+          mode_paiement: mode || null,
+          notes: notes || null,
+          statut: 'courante',
+        });
+
+      if (insertError) throw insertError;
+
+      // Log activity
+      await supabase.from('activity_log').insert({
+        type: 'action',
+        message: `Facture ${facId} émise — ${selectedBL?.client} · ${ttc.toLocaleString('fr-FR')} DH TTC`,
+        source_page: 'creances',
+        severite: 'success',
+      });
+
+      onCreated?.({ id: facId, bl: selectedBL?.label, client: selectedBL?.client, montantHT: ht, tva: tvaRate, montantTTC: ttc, dateEmission, echeance, mode });
+      showFormSuccess(`✓ Facture ${facId} émise — ${selectedBL?.client}`);
+      resetAndClose();
+    } catch (error: any) {
+      console.error('Error creating invoice:', error);
+      toast.error(`Erreur: ${error?.message || 'Impossible de créer la facture'}`);
+      setLoading(false);
+    }
   };
 
   const resetAndClose = () => {

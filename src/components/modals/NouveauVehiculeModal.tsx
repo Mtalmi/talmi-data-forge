@@ -4,6 +4,8 @@ import {
   TBOSDisplayField, TBOSPrimaryButton, TBOSGhostButton,
   TBOSFormRow, TBOSFormStack, showFormSuccess,
 } from '@/components/ui/TBOSModal';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const TYPES = [
   { value: 'toupie_8', label: 'Toupie 8m³', capacite: '8 m³' },
@@ -45,10 +47,41 @@ export function NouveauVehiculeModal({ open, onClose, onCreated }: Props) {
   const handleSubmit = async () => {
     if (!validate()) return;
     setLoading(true);
-    await new Promise(r => setTimeout(r, 800));
-    onCreated?.({ id, type: selectedType?.label, immat, chauffeur, etat });
-    showFormSuccess(`✓ Véhicule ${id} ajouté avec succès`);
-    resetAndClose();
+    try {
+      const capacite = selectedType?.value.includes('8') ? 8 : selectedType?.value.includes('10') ? 10 : 12;
+      const driverLabel = DRIVERS.find(d => d.value === chauffeur)?.label || null;
+
+      // Insert into flotte table
+      const { error: insertError } = await supabase
+        .from('flotte')
+        .insert({
+          id_camion: id,
+          type_camion: selectedType?.label || type,
+          immatriculation: immat,
+          chauffeur_assigne: driverLabel,
+          capacite_m3: capacite,
+          statut: etat === 'actif' ? 'Disponible' : etat === 'maintenance' ? 'En Maintenance' : 'Hors Service',
+          sante_score: 80,
+        });
+
+      if (insertError) throw insertError;
+
+      // Log activity
+      await supabase.from('activity_log').insert({
+        type: 'action',
+        message: `Véhicule ${id} ajouté — ${selectedType?.label}, ${immat}`,
+        source_page: 'logistique',
+        severite: 'success',
+      });
+
+      onCreated?.({ id, type: selectedType?.label, immat, chauffeur: driverLabel, etat });
+      showFormSuccess(`✓ Véhicule ${id} ajouté avec succès`);
+      resetAndClose();
+    } catch (error: any) {
+      console.error('Error creating vehicle:', error);
+      toast.error(`Erreur: ${error?.message || 'Impossible d\'ajouter le véhicule'}`);
+      setLoading(false);
+    }
   };
 
   const resetAndClose = () => {

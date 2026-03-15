@@ -3,6 +3,8 @@ import {
   TBOSModal, TBOSField, TBOSInput, TBOSSelect, TBOSTextarea,
   TBOSPrimaryButton, TBOSGhostButton, TBOSFormRow, TBOSFormStack, showFormSuccess,
 } from '@/components/ui/TBOSModal';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const MATERIAUX = [
   { value: 'ciment', label: 'Ciment', unit: 'kg' },
@@ -46,11 +48,66 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
   const handleSubmit = async () => {
     if (!validate()) return;
     setLoading(true);
-    await new Promise(r => setTimeout(r, 800));
-    const mvt = { type, materiau: selectedMat?.label, quantite: parseFloat(quantite), fournisseur, reference, date, responsable, notes };
-    onCreated?.(mvt);
-    showFormSuccess(`✓ Mouvement ${type === 'entree' ? 'entrée' : 'sortie'} enregistré — ${selectedMat?.label} ${quantite} ${selectedMat?.unit}`);
-    resetAndClose();
+    try {
+      const matLabel = selectedMat?.label || materiau;
+      const qty = parseFloat(quantite);
+
+      // Get current stock level
+      const { data: stockRow } = await supabase
+        .from('stocks')
+        .select('id, quantite_actuelle')
+        .eq('materiau', matLabel)
+        .maybeSingle();
+
+      const currentQty = stockRow?.quantite_actuelle || 0;
+      const newQty = type === 'entree' ? currentQty + qty : Math.max(0, currentQty - qty);
+
+      // Insert mouvement
+      const { error: mvtError } = await supabase
+        .from('mouvements_stock')
+        .insert({
+          materiau: matLabel,
+          type_mouvement: type === 'entree' ? 'reception' : 'consommation',
+          quantite: qty,
+          quantite_avant: currentQty,
+          quantite_apres: newQty,
+          fournisseur: fournisseur || null,
+          notes: notes || null,
+        });
+
+      if (mvtError) throw mvtError;
+
+      // Update stock level
+      if (stockRow?.id) {
+        const { error: updateError } = await supabase
+          .from('stocks')
+          .update({
+            quantite_actuelle: newQty,
+            updated_at: new Date().toISOString(),
+            ...(type === 'entree' ? { derniere_reception_at: new Date().toISOString() } : {}),
+          })
+          .eq('id', stockRow.id);
+
+        if (updateError) throw updateError;
+      }
+
+      // Log activity
+      await supabase.from('activity_log').insert({
+        type: 'action',
+        message: `Mouvement ${type === 'entree' ? 'entrée' : 'sortie'} enregistré — ${matLabel} ${qty} ${selectedMat?.unit}`,
+        source_page: 'stocks',
+        severite: 'info',
+      });
+
+      const mvt = { type, materiau: matLabel, quantite: qty, fournisseur, reference, date, responsable, notes };
+      onCreated?.(mvt);
+      showFormSuccess(`✓ Mouvement ${type === 'entree' ? 'entrée' : 'sortie'} enregistré — ${matLabel} ${qty} ${selectedMat?.unit}`);
+      resetAndClose();
+    } catch (error: any) {
+      console.error('Error saving stock movement:', error);
+      toast.error(`Erreur: ${error?.message || 'Impossible d\'enregistrer le mouvement'}`);
+      setLoading(false);
+    }
   };
 
   const resetAndClose = () => {
