@@ -308,7 +308,7 @@ export default function AnalyticsBI() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Fuite Matériau Estimée</p>
-                  <p className={cn('text-2xl font-bold tabular-nums', totalLeakage > 5000 ? 'text-destructive' : '')}>{totalLeakage.toLocaleString()} DH</p>
+                  <p className={cn('text-2xl font-bold tabular-nums', totalLeakage > 5000 ? 'text-destructive' : '')}>{totalLeakage.toLocaleString('fr-FR')} DH</p>
                 </div>
                 <div className="ml-auto text-right">
                   <p className="text-xs text-muted-foreground">Matériaux en alerte</p>
