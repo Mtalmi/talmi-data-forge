@@ -267,7 +267,7 @@ export function SurveillanceIATab() {
         {descLine('Croise les données de production avec les mouvements de stock pour identifier les écarts inexpliqués')}
 
         {/* Scatter plot */}
-        <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 12, padding: 24, marginBottom: 16 }}>
+        <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(212,168,67,0.15)', borderTop: '2px solid #D4A843', borderRadius: 8, padding: 24, marginBottom: 16, backdropFilter: 'blur(8px)' }}>
           {(() => {
             const w = 600, h = 300, pad = 50;
             // Expected correlation line points

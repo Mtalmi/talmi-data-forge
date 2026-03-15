@@ -209,7 +209,7 @@ export function IntelligenceBriefingCard() {
   };
 
   if (loading) return (
-    <div style={{ background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, backdropFilter: 'blur(4px)' }}>
+    <div style={{ background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', borderTop: '2px solid #D4A843', borderRadius: 8, padding: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, backdropFilter: 'blur(8px)' }}>
       <Loader2 size={16} className="animate-spin" style={{ color: '#D4A843' }} />
       <span style={{ color: '#64748B', fontSize: 12 }}>Chargement des briefings...</span>
     </div>
