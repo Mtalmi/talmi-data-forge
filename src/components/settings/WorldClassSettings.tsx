@@ -29,8 +29,8 @@ const PURPLE = '#9CA3AF';
 const TEXT1  = '#F1F5F9';
 const TEXT2  = '#94A3B8';
 const TEXT3  = '#64748B';
-const MONO   = "'JetBrains Mono', monospace";
-const SANS   = "'DM Sans', sans-serif";
+const MONO   = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace";
+const SANS   = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace";
 
 // ─── Nav items ───────────────────────────────────────────────────────────────
 const NAV_ITEMS = [

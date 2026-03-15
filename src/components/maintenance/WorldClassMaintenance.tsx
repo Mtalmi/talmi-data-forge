@@ -954,9 +954,8 @@ export default function WorldClassMaintenance() {
   }, []);
 
   return (
-    <div style={{ background: T.navy, minHeight: '100vh', fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ background: T.navy, minHeight: '100vh', fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700;800&display=swap');
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         * { box-sizing: border-box; }
         ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #0B1120; }

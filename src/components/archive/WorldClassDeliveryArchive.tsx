@@ -455,9 +455,8 @@ export default function WorldClassDeliveryArchive() {
   );
 
   return (
-    <div style={{ minHeight: '100vh', background: T.navy, fontFamily: 'DM Sans, sans-serif', color: T.textPri, paddingBottom: 60 }}>
+    <div style={{ minHeight: '100vh', background: T.navy, fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace", color: T.textPri, paddingBottom: 60 }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700;800&display=swap');
         @keyframes tbos-pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
         input::placeholder { color: #64748B; }
       `}</style>

@@ -38,8 +38,8 @@ const T = {
   textDim: '#64748B',
   border: 'rgba(255,255,255,0.06)',
 };
-const MONO = "'JetBrains Mono', monospace";
-const SANS = "'DM Sans', sans-serif";
+const MONO = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace";
+const SANS = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace";
 
 // ─── IDS Packet Stream Simulator ──────────────────────────────
 function usePacketStream(count = 20) {

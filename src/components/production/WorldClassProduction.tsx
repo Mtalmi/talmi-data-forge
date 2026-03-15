@@ -696,7 +696,6 @@ export default function WorldClassProduction() {
         <AIAgentCard type="production_briefing" title="Intelligence Production" />
       </div>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@200;400;600;700;800&display=swap');
         @keyframes tbos-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:0.85} }
         @keyframes tbos-fade-up { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
         @keyframes tbos-spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }

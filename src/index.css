@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=JetBrains+Mono:wght@200;300;400;500;600&family=Poppins:wght@600;700&display=swap");
+/* No external fonts — ui-monospace system stack only */
 
 @tailwind base;
 @tailwind components;
@@ -872,7 +872,7 @@ html {
 .metric-value,
 [class*="kpi"] [class*="value"],
 [class*="kpi"] [class*="number"] {
-  font-family: "JetBrains Mono", monospace !important;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace !important;
   font-weight: 200 !important;
   color: var(--gold) !important;
   font-variant-numeric: tabular-nums;
@@ -895,11 +895,7 @@ html {
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family:
-      "Inter",
-      -apple-system,
-      BlinkMacSystemFont,
-      sans-serif;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     letter-spacing: -0.01em;
     background: #0b0f1a;
@@ -907,7 +903,7 @@ html {
 
   .font-mono,
   [class*="font-mono"] {
-    font-family: "JetBrains Mono", "SF Mono", monospace;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   }
 
   h1,
@@ -916,7 +912,7 @@ html {
   h4,
   h5,
   h6 {
-    font-family: "Inter", system-ui, sans-serif;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
     @apply font-medium tracking-tight text-foreground;
     letter-spacing: -0.02em;
   }
@@ -924,7 +920,7 @@ html {
   code,
   pre,
   .mono {
-    font-family: "JetBrains Mono", monospace;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   }
 
   /* Ghost-White Typography */
@@ -1478,7 +1474,7 @@ html {
     color: hsl(var(--primary) / 0.7);
     background: hsl(var(--card));
     border-color: hsl(var(--border));
-    font-family: "JetBrains Mono", monospace;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   }
 
   .data-table-industrial td {
@@ -2697,7 +2693,7 @@ html {
 }
 
 [dir="rtl"] * {
-  font-family: "Cairo", "Inter", system-ui, sans-serif !important;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace !important;
 }
 
 /* ========================================
@@ -2975,7 +2971,7 @@ html {
 
 /* ── Timeline enhancements ───────────────────────────────── */
 .timeline-time {
-  font-family: "JetBrains Mono", monospace;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   font-size: 13px;
   font-weight: 600;
   min-width: 52px;
@@ -3318,7 +3314,7 @@ html {
 
 /* ── Gold metric numbers ─────────────────────────────────── */
 .metric-gold {
-  font-family: "JetBrains Mono", monospace;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   font-weight: 600;
   color: hsl(51 100% 50%);
   font-variant-numeric: tabular-nums;
@@ -3753,15 +3749,15 @@ nav,
   cursor: pointer;
 }
 .workflow-stage:hover .workflow-icon {
-  color: #ffd700;
+  color: #D4A843;
   transform: scale(1.15);
   transition: all 0.2s ease;
 }
 .workflow-count {
-  font-family: "JetBrains Mono", monospace;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   font-size: 56px;
   font-weight: 200;
-  color: #ffd700;
+  color: #D4A843;
   line-height: 1;
 }
 .workflow-label {
@@ -3790,7 +3786,7 @@ nav,
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
 }
 .pipeline-count {
-  font-family: "JetBrains Mono", monospace;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   font-size: 52px;
   font-weight: 200;
   line-height: 1;
@@ -3921,7 +3917,7 @@ hr,
   background: hsl(var(--popover)) !important;
   border: 1px solid hsl(var(--border)) !important;
   border-radius: 6px !important;
-  font-family: "JetBrains Mono", monospace;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   font-size: 12px !important;
   color: hsl(var(--primary)) !important;
 }
@@ -4240,7 +4236,7 @@ textarea.valid {
    ══════════════════════════════════════════════════════════════ */
 
 .metric-value {
-  font-family: "JetBrains Mono", monospace;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   font-variant-numeric: tabular-nums;
   font-weight: 200;
   color: hsl(var(--primary));

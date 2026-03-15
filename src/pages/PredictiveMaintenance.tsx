@@ -575,7 +575,7 @@ export default function PredictiveMaintenance() {
       )}
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600&family=Poppins:wght@700&family=Inter:wght@400;500&display=swap');
+        /* No external fonts needed - using system ui-monospace */
       `}</style>
     </div>
   );

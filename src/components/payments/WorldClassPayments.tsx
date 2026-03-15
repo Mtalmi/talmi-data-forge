@@ -585,9 +585,8 @@ export default function WorldClassPayments() {
   const maxAging = Math.max(...live.agingData.map(a => a.amount), 1);
 
   return (
-    <div style={{ fontFamily: 'DM Sans, sans-serif', background: T.navy, minHeight: '100vh', color: T.textPri }}>
+    <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace", background: T.navy, minHeight: '100vh', color: T.textPri }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700;800&display=swap');
         @keyframes tbos-pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
       `}</style>
 
