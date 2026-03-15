@@ -502,7 +502,7 @@ export default function Bons() {
     const { sortedData, sortKey: bSortKey, sortDirection: bSortDir, handleSort: bHandleSort } = useTableSort(bonsList, '_date', 'desc');
 
     return (
-      <div style={{ borderRadius: 12, overflow: 'hidden', border: `1px solid ${T.cardBorder}` }}>
+      <div style={{ borderRadius: 12, overflow: 'auto', border: `1px solid ${T.cardBorder}`, maxHeight: '70vh' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead style={{ position: 'sticky', top: 0, zIndex: 10, background: '#0F1629', boxShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
             <tr style={{ borderBottom: `1px solid ${T.cardBorder}` }}>
