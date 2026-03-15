@@ -36,11 +36,11 @@ export default function AnalyticsDashboard() {
   ];
 
   const agentDistribution = [
-    { name: "Phase 1 Core", value: 12, color: "#FFD700" },
-    { name: "Phase B Growth", value: 20, color: "#FFA500" },
-    { name: "Phase C Strategic", value: 4, color: "#FF8C00" },
-    { name: "Phase 2 Advanced", value: 12, color: "#FF6347" },
-    { name: "Marketing", value: 10, color: "#DC143C" },
+    { name: "Phase 1 Core", value: 12, color: "#D4A843" },
+    { name: "Phase B Growth", value: 20, color: "#E8C96A" },
+    { name: "Phase C Strategic", value: 4, color: "#C49A3C" },
+    { name: "Phase 2 Advanced", value: 12, color: "#F59E0B" },
+    { name: "Marketing", value: 10, color: "#22C55E" },
   ];
 
   const stats = [
@@ -133,19 +133,19 @@ export default function AnalyticsDashboard() {
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={uptimeData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                    <XAxis dataKey="time" stroke="#666" />
-                    <YAxis stroke="#666" domain={[99.9, 100]} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <XAxis dataKey="time" stroke="#9CA3AF" />
+                    <YAxis stroke="#9CA3AF" domain={[99.9, 100]} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: "#1a1a1a", border: "1px solid #333" }}
+                      contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", color: "#FFFFFF" }}
                       formatter={(value) => `${value}%`}
                     />
                     <Line
                       type="monotone"
                       dataKey="uptime"
-                      stroke="#FFD700"
+                      stroke="#D4A843"
                       strokeWidth={2}
-                      dot={{ fill: "#FFD700", r: 4 }}
+                      dot={{ fill: "#D4A843", r: 4 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -160,14 +160,14 @@ export default function AnalyticsDashboard() {
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={agentPerformanceData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                    <XAxis dataKey="agent" angle={-45} textAnchor="end" height={100} stroke="#666" />
-                    <YAxis stroke="#666" domain={[99, 100]} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <XAxis dataKey="agent" angle={-45} textAnchor="end" height={100} stroke="#9CA3AF" />
+                    <YAxis stroke="#9CA3AF" domain={[99, 100]} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: "#1a1a1a", border: "1px solid #333" }}
+                      contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", color: "#FFFFFF" }}
                       formatter={(value) => `${value}%`}
                     />
-                    <Bar dataKey="uptime" fill="#FFD700" />
+                    <Bar dataKey="uptime" fill="#D4A843" />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -181,14 +181,14 @@ export default function AnalyticsDashboard() {
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={agentPerformanceData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                    <XAxis dataKey="agent" angle={-45} textAnchor="end" height={100} stroke="#666" />
-                    <YAxis stroke="#666" domain={[85, 100]} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <XAxis dataKey="agent" angle={-45} textAnchor="end" height={100} stroke="#9CA3AF" />
+                    <YAxis stroke="#9CA3AF" domain={[85, 100]} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: "#1a1a1a", border: "1px solid #333" }}
+                      contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", color: "#FFFFFF" }}
                       formatter={(value) => `${value}%`}
                     />
-                    <Bar dataKey="efficiency" fill="#FFA500" />
+                    <Bar dataKey="efficiency" fill="#E8C96A" />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -235,19 +235,19 @@ export default function AnalyticsDashboard() {
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={customerMetricsData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                  <XAxis dataKey="month" stroke="#666" />
-                  <YAxis yAxisId="left" stroke="#666" />
-                  <YAxis yAxisId="right" orientation="right" stroke="#666" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                  <XAxis dataKey="month" stroke="#9CA3AF" />
+                  <YAxis yAxisId="left" stroke="#9CA3AF" />
+                  <YAxis yAxisId="right" orientation="right" stroke="#9CA3AF" />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#1a1a1a", border: "1px solid #333" }}
+                    contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", color: "#FFFFFF" }}
                   />
                   <Legend />
                   <Line
                     yAxisId="left"
                     type="monotone"
                     dataKey="customers"
-                    stroke="#FFD700"
+                    stroke="#D4A843"
                     strokeWidth={2}
                     name="Active Customers"
                   />
@@ -255,7 +255,7 @@ export default function AnalyticsDashboard() {
                     yAxisId="right"
                     type="monotone"
                     dataKey="revenue"
-                    stroke="#FFA500"
+                    stroke="#E8C96A"
                     strokeWidth={2}
                     name="Revenue ($M)"
                   />
@@ -289,7 +289,7 @@ export default function AnalyticsDashboard() {
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#1a1a1a", border: "1px solid #333" }}
+                    contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", color: "#FFFFFF" }}
                   />
                 </PieChart>
               </ResponsiveContainer>

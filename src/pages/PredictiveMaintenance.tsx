@@ -219,11 +219,11 @@ export default function PredictiveMaintenance() {
         {/* KPI Strip */}
         <motion.div variants={stagger} initial="hidden" animate="show" className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {[
-            { label: "Equipment Monitored", val: 38, suffix: " units", sub: "Across 4 plants", icon: "🏭", border: "#FFD700" },
-            { label: "Health Score", val: 87, suffix: "/100", sub: "▲ 3pts this month", icon: "💚", border: "#10B981" },
+            { label: "Equipment Monitored", val: 38, suffix: " units", sub: "Across 4 plants", icon: "🏭", border: "#D4A843" },
+            { label: "Health Score", val: 87, suffix: "/100", sub: "▲ 3pts this month", icon: "💚", border: "#22C55E" },
             { label: "Predicted Failures (30d)", val: 3, suffix: "", sub: "Action required", icon: "⚠️", border: "#F59E0B" },
-            { label: "Downtime Prevented", val: 284, prefix: "$", suffix: "K", sub: "This quarter", icon: "💰", border: "#FFD700" },
-            { label: "Maintenance Due", val: 7, suffix: " units", sub: "Next 14 days", icon: "🔧", border: "#3B82F6" },
+            { label: "Downtime Prevented", val: 284, prefix: "$", suffix: "K", sub: "This quarter", icon: "💰", border: "#D4A843" },
+            { label: "Maintenance Due", val: 7, suffix: " units", sub: "Next 14 days", icon: "🔧", border: "#E8C96A" },
           ].map((k, i) => (
             <motion.div key={i} variants={fadeUp} className="rounded-xl border border-[#2A3545] bg-[#161D26] p-4 hover:border-[#FFD700]/50 hover:-translate-y-0.5 transition-all duration-200" style={{ borderTop: `3px solid ${k.border}`, boxShadow: "0 4px 24px rgba(0,0,0,0.5)" }}>
               <div className="flex items-center justify-between mb-2">
@@ -374,8 +374,8 @@ export default function PredictiveMaintenance() {
               <h3 className="text-sm font-semibold mb-3">Vibration & Temperature — 30 Day Trend</h3>
               <ResponsiveContainer width="100%" height={280}>
                 <LineChart data={vibTempData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#2A3545" />
-                  <XAxis dataKey="day" tick={{ fill: "#B0B8C1", fontSize: 10 }} interval={4} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                  <XAxis dataKey="day" tick={{ fill: "#9CA3AF", fontSize: 10 }} interval={4} />
                   <YAxis yAxisId="left" tick={{ fill: "#B0B8C1", fontSize: 10 }} label={{ value: "Vibration (mm/s)", angle: -90, position: "insideLeft", fill: "#B0B8C1", fontSize: 10 }} />
                   <YAxis yAxisId="right" orientation="right" tick={{ fill: "#B0B8C1", fontSize: 10 }} label={{ value: "Temperature (°C)", angle: 90, position: "insideRight", fill: "#B0B8C1", fontSize: 10 }} />
                   <Tooltip content={<GoldTooltip />} />
@@ -513,12 +513,12 @@ export default function PredictiveMaintenance() {
               <p className="text-xs text-[#B0B8C1] mb-3">Savings vs Module Cost (Quarterly)</p>
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={roiQuarters} barGap={4}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#2A3545" />
-                  <XAxis dataKey="q" tick={{ fill: "#B0B8C1", fontSize: 11 }} />
-                  <YAxis tick={{ fill: "#B0B8C1", fontSize: 11 }} tickFormatter={v => `$${v}K`} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                  <XAxis dataKey="q" tick={{ fill: "#9CA3AF", fontSize: 11 }} />
+                  <YAxis tick={{ fill: "#9CA3AF", fontSize: 11 }} tickFormatter={v => `$${v}K`} />
                   <Tooltip content={<GoldTooltip />} />
-                  <Bar dataKey="savings" fill="#FFD700" radius={[4, 4, 0, 0]} name="Savings ($K)" />
-                  <Bar dataKey="cost" fill="#B0B8C1" radius={[4, 4, 0, 0]} name="Cost ($K)" />
+                  <Bar dataKey="savings" fill="#D4A843" radius={[4, 4, 0, 0]} name="Savings ($K)" />
+                  <Bar dataKey="cost" fill="#9CA3AF" radius={[4, 4, 0, 0]} name="Cost ($K)" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
