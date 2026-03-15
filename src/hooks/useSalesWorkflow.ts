@@ -119,7 +119,8 @@ export function useSalesWorkflow() {
             client:clients(nom_client, adresse, email),
             formule:formules_theoriques(designation)
           `)
-          .order('created_at', { ascending: false }),
+          .order('created_at', { ascending: false })
+          .limit(500),
         supabase
           .from('bons_commande')
           .select(`
