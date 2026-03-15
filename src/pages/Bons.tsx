@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
+import { useTableSort } from '@/hooks/useTableSort';
+import { SortableHeader } from '@/components/ui/SortableHeader';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
@@ -483,18 +485,38 @@ export default function Bons() {
       ? bonsList.filter(b => b.bl_id.toLowerCase().includes(searchQuery.toLowerCase()) || getClientName(b.client_id).toLowerCase().includes(searchQuery.toLowerCase()))
       : bonsList;
 
+    // Add sortable fields
+    const sortableBons = searchedBons.map(b => ({
+      ...b,
+      _date: b.date_livraison || '',
+      _volume: b.volume_m3 ?? 0,
+      _client: getClientName(b.client_id),
+    }));
+
+    return <SortableBonsTable bons={sortableBons} showExpand={showExpand} />;
+  };
+
+  // Extracted into a sub-component so hooks are valid
+  const SortableBonsTable = ({ bons: bonsList, showExpand }: { bons: (BonLivraison & { _date: string; _volume: number; _client: string })[]; showExpand: boolean }) => {
+    const { sortedData, sortKey: bSortKey, sortDirection: bSortDir, handleSort: bHandleSort } = useTableSort(bonsList, '_date', 'desc');
+
     return (
       <div style={{ borderRadius: 12, overflow: 'hidden', border: `1px solid ${T.cardBorder}` }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ borderBottom: `1px solid ${T.cardBorder}` }}>
-              {['N° BON', 'DATE', 'CLIENT', 'FORMULE', 'VOLUME', 'WORKFLOW', 'PAIEMENT', 'VAL.', 'ACTIONS'].map(h => (
-                <th key={h} style={{ padding: '10px 14px', textAlign: h === 'VOLUME' ? 'right' : 'left', fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, color: T.textSec, fontWeight: 600 }}>{h}</th>
+              <th style={{ padding: '10px 14px', textAlign: 'left', fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, color: T.textSec, fontWeight: 600 }}>N° BON</th>
+              <SortableHeader label="DATE" sortKey="_date" currentKey={bSortKey} direction={bSortDir} onSort={bHandleSort} />
+              <SortableHeader label="CLIENT" sortKey="_client" currentKey={bSortKey} direction={bSortDir} onSort={bHandleSort} />
+              <th style={{ padding: '10px 14px', textAlign: 'left', fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, color: T.textSec, fontWeight: 600 }}>FORMULE</th>
+              <SortableHeader label="VOLUME" sortKey="_volume" currentKey={bSortKey} direction={bSortDir} onSort={bHandleSort} align="right" />
+              {['WORKFLOW', 'PAIEMENT', 'VAL.', 'ACTIONS'].map(h => (
+                <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, color: T.textSec, fontWeight: 600 }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {searchedBons.length === 0 ? (
+            {sortedData.length === 0 ? (
               <tr>
                 <td colSpan={9} style={{ padding: '60px 20px', textAlign: 'center' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
@@ -504,7 +526,7 @@ export default function Bons() {
                   </div>
                 </td>
               </tr>
-            ) : searchedBons.map((b, i) => {
+            ) : sortedData.map((b, i) => {
               const ws = b.workflow_status || 'planification';
               const isPaid = b.statut_paiement === 'Payé';
               const isLate = b.statut_paiement === 'Retard' || b.statut_paiement === 'en_retard';

@@ -1,4 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useTableSort } from '@/hooks/useTableSort';
+import { SortableTableHead } from '@/components/ui/SortableHeader';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -194,7 +196,7 @@ export function FacturesTable({
     }
   }, [factures, fetchPartialPayments]);
 
-  const filteredFactures = factures.filter(f => {
+  const filteredFactures = useMemo(() => factures.filter(f => {
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
     return (
@@ -203,7 +205,14 @@ export function FacturesTable({
       f.bl_id.toLowerCase().includes(term) ||
       f.bc_id?.toLowerCase().includes(term)
     );
-  });
+  }).map(f => ({
+    ...f,
+    _date: f.date_facture || '',
+    _total_ht: f.total_ht ?? 0,
+    _statut: f.statut || '',
+  })), [factures, searchTerm]);
+
+  const { sortedData: sortedFactures, sortKey, sortDirection, handleSort } = useTableSort(filteredFactures, '_date', 'desc');
 
   const handleSelectAll = (checked: boolean) => {
     if (!onSelectionChange) return;
@@ -294,17 +303,17 @@ export function FacturesTable({
               <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{ft.invoiceNumber}</TableHead>
               <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{c.client}</TableHead>
               <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{ft.blBc}</TableHead>
-              <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{c.date}</TableHead>
+              <SortableTableHead label={c.date} sortKey="_date" currentKey={sortKey} direction={sortDirection} onSort={handleSort} align="center" />
               <TableHead className="text-right" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{c.volume} (m³)</TableHead>
-              <TableHead className="text-right" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{c.totalHT} (DH)</TableHead>
+              <SortableTableHead label={`${c.totalHT} (DH)`} sortKey="_total_ht" currentKey={sortKey} direction={sortDirection} onSort={handleSort} align="right" />
               <TableHead className="text-right" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{ft.totalTtc || 'Total TTC'} (DH)</TableHead>
               <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{ft.margin}</TableHead>
-              <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{c.status}</TableHead>
+              <SortableTableHead label={c.status} sortKey="_statut" currentKey={sortKey} direction={sortDirection} onSort={handleSort} align="center" />
               <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{ft.actions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredFactures.map((facture) => {
+            {sortedFactures.map((facture) => {
               const statusConfig = FACTURE_STATUS_CONFIG[facture.statut] || FACTURE_STATUS_CONFIG.emise;
               const isSelected = selectedIds.includes(facture.id);
               const isConsolidated = facture.is_consolidee && facture.bls_inclus && facture.bls_inclus.length > 1;

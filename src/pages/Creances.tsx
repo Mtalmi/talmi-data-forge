@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useTableSort } from '@/hooks/useTableSort';
+import { SortableTableHead } from '@/components/ui/SortableHeader';
 import { EmptyState } from '@/components/ui/states';
 import { NouvelleFactureModal } from '@/components/modals/NouvelleFactureModal';
 import { Plus } from 'lucide-react';
@@ -309,13 +311,20 @@ export default function Creances() {
 
   const canManageReceivables = isCeo || role === 'agent_administratif' || role === 'superviseur';
 
-  const filteredReceivables = receivables.filter(r => {
+  const filteredReceivables = useMemo(() => receivables.filter(r => {
     const matchesSearch = 
       r.client_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       r.invoice_number.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || r.status === statusFilter;
     return matchesSearch && matchesStatus;
-  });
+  }).map(r => ({
+    ...r,
+    _due_date: r.due_date || '',
+    _amount: r.amount_due ?? 0,
+    _delay: r.days_overdue ?? 0,
+  })), [receivables, searchTerm, statusFilter]);
+
+  const { sortedData: sortedReceivables, sortKey: crSortKey, sortDirection: crSortDir, handleSort: crHandleSort } = useTableSort(filteredReceivables, '_due_date', 'asc');
 
   const overdueByClient = getOverdueByClient();
 
@@ -1385,9 +1394,9 @@ export default function Creances() {
                     <TableRow>
                        <TableHead>{t.pages.creances.client}</TableHead>
                        <TableHead>{t.pages.creances.invoice}</TableHead>
-                       <TableHead className="text-center">{t.pages.creances.dueDate}</TableHead>
-                       <TableHead className="text-right">{t.pages.creances.amount}</TableHead>
-                       <TableHead className="text-center">{t.pages.creances.delay}</TableHead>
+                       <SortableTableHead label={t.pages.creances.dueDate} sortKey="_due_date" currentKey={crSortKey} direction={crSortDir} onSort={crHandleSort} align="center" />
+                       <SortableTableHead label={t.pages.creances.amount} sortKey="_amount" currentKey={crSortKey} direction={crSortDir} onSort={crHandleSort} align="right" />
+                       <SortableTableHead label={t.pages.creances.delay} sortKey="_delay" currentKey={crSortKey} direction={crSortDir} onSort={crHandleSort} align="center" />
                        <TableHead className="text-center">{t.pages.creances.status}</TableHead>
                        <TableHead className="text-center">Prédiction IA</TableHead>
                        <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF' }}>📎</TableHead>
@@ -1395,7 +1404,7 @@ export default function Creances() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredReceivables.length === 0 ? (
+                    {sortedReceivables.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={canManageReceivables ? 9 : 8} className="h-32 text-center">
                           <div className="flex flex-col items-center gap-2 text-muted-foreground">
@@ -1409,7 +1418,7 @@ export default function Creances() {
                           </div>
                         </TableCell>
                       </TableRow>
-                    ) : filteredReceivables.slice(0, 50).map((receivable) => {
+                    ) : sortedReceivables.slice(0, 50).map((receivable) => {
                       const statusConfig = STATUS_CONFIG[receivable.status];
                       // Dispute detection: partial payment from same client
                       const isPartialPayment = receivable.amount_paid > 0 && receivable.amount_paid < receivable.amount && receivable.status !== 'paid';
