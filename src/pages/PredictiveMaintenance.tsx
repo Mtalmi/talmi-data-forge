@@ -48,48 +48,48 @@ function GoldTooltip({ active, payload, label }: any) {
 }
 
 /* ─── data ─── */
-const plants = ["All Plants", "Casablanca North", "Rabat Central", "Marrakech", "Tangier"];
+const plants = ["Toutes les Centrales", "Casablanca Nord", "Rabat Central", "Marrakech", "Tanger"];
 
 const equipmentData: Record<string, { name: string; overall: number; units: { id: string; type: string; health: number; status: string; nextService: string }[] }> = {
-  "Casablanca North": {
-    name: "Casablanca North", overall: 82,
+  "Casablanca Nord": {
+    name: "Casablanca Nord", overall: 82,
     units: [
-      { id: "MX-001", type: "Concrete Mixer", health: 91, status: "Operational", nextService: "45 days" },
-      { id: "MX-002", type: "Concrete Mixer", health: 88, status: "Operational", nextService: "38 days" },
-      { id: "MX-003", type: "Concrete Mixer", health: 23, status: "CRITICAL", nextService: "Immediate" },
-      { id: "PMP-001", type: "Water Pump", health: 76, status: "Monitor", nextService: "12 days" },
-      { id: "CNV-001", type: "Conveyor Belt", health: 94, status: "Operational", nextService: "60 days" },
-      { id: "WGH-001", type: "Weighbridge", health: 89, status: "Operational", nextService: "55 days" },
+      { id: "MX-001", type: "Malaxeur Béton", health: 91, status: "Opérationnel", nextService: "45 jours" },
+      { id: "MX-002", type: "Malaxeur Béton", health: 88, status: "Opérationnel", nextService: "38 jours" },
+      { id: "MX-003", type: "Malaxeur Béton", health: 23, status: "CRITIQUE", nextService: "Immédiat" },
+      { id: "PMP-001", type: "Pompe à eau", health: 76, status: "Surveillance", nextService: "12 jours" },
+      { id: "CNV-001", type: "Convoyeur", health: 94, status: "Opérationnel", nextService: "60 jours" },
+      { id: "WGH-001", type: "Pont-bascule", health: 89, status: "Opérationnel", nextService: "55 jours" },
     ],
   },
   "Rabat Central": {
     name: "Rabat Central", overall: 94,
     units: [
-      { id: "MX-004", type: "Concrete Mixer", health: 95, status: "Operational", nextService: "52 days" },
-      { id: "MX-005", type: "Concrete Mixer", health: 92, status: "Operational", nextService: "40 days" },
-      { id: "PMP-002", type: "Water Pump", health: 96, status: "Operational", nextService: "58 days" },
-      { id: "CNV-003", type: "Conveyor Belt", health: 91, status: "Operational", nextService: "47 days" },
-      { id: "WGH-002", type: "Weighbridge", health: 93, status: "Operational", nextService: "50 days" },
-      { id: "SLO-001", type: "Silo System", health: 97, status: "Operational", nextService: "65 days" },
+      { id: "MX-004", type: "Malaxeur Béton", health: 95, status: "Opérationnel", nextService: "52 jours" },
+      { id: "MX-005", type: "Malaxeur Béton", health: 92, status: "Opérationnel", nextService: "40 jours" },
+      { id: "PMP-002", type: "Pompe à eau", health: 96, status: "Opérationnel", nextService: "58 jours" },
+      { id: "CNV-003", type: "Convoyeur", health: 91, status: "Opérationnel", nextService: "47 jours" },
+      { id: "WGH-002", type: "Pont-bascule", health: 93, status: "Opérationnel", nextService: "50 jours" },
+      { id: "SLO-001", type: "Système Silo", health: 97, status: "Opérationnel", nextService: "65 jours" },
     ],
   },
   "Marrakech": {
     name: "Marrakech", overall: 78,
     units: [
-      { id: "MX-007", type: "Concrete Mixer", health: 85, status: "Operational", nextService: "30 days" },
-      { id: "MX-008", type: "Concrete Mixer", health: 68, status: "Monitor", nextService: "8 days" },
-      { id: "CNV-002", type: "Conveyor Belt", health: 71, status: "Monitor", nextService: "15 days" },
-      { id: "PMP-003", type: "Water Pump", health: 88, status: "Operational", nextService: "42 days" },
-      { id: "WGH-003", type: "Weighbridge", health: 82, status: "Operational", nextService: "35 days" },
+      { id: "MX-007", type: "Malaxeur Béton", health: 85, status: "Opérationnel", nextService: "30 jours" },
+      { id: "MX-008", type: "Malaxeur Béton", health: 68, status: "Surveillance", nextService: "8 jours" },
+      { id: "CNV-002", type: "Convoyeur", health: 71, status: "Surveillance", nextService: "15 jours" },
+      { id: "PMP-003", type: "Pompe à eau", health: 88, status: "Opérationnel", nextService: "42 jours" },
+      { id: "WGH-003", type: "Pont-bascule", health: 82, status: "Opérationnel", nextService: "35 jours" },
     ],
   },
   "Tangier": {
-    name: "Tangier", overall: 91,
+    name: "Tanger", overall: 91,
     units: [
-      { id: "MX-011", type: "Concrete Mixer", health: 90, status: "Operational", nextService: "48 days" },
-      { id: "MX-012", type: "Concrete Mixer", health: 93, status: "Operational", nextService: "55 days" },
-      { id: "PMP-004", type: "Water Pump", health: 89, status: "Operational", nextService: "40 days" },
-      { id: "CNV-004", type: "Conveyor Belt", health: 92, status: "Operational", nextService: "50 days" },
+      { id: "MX-011", type: "Malaxeur Béton", health: 90, status: "Opérationnel", nextService: "48 jours" },
+      { id: "MX-012", type: "Malaxeur Béton", health: 93, status: "Opérationnel", nextService: "55 jours" },
+      { id: "PMP-004", type: "Pompe à eau", health: 89, status: "Opérationnel", nextService: "40 jours" },
+      { id: "CNV-004", type: "Convoyeur", health: 92, status: "Opérationnel", nextService: "50 jours" },
     ],
   },
 };
@@ -101,12 +101,12 @@ const predictions = [
 ];
 
 const sensors = [
-  { name: "Vibration", unit: "mm/s", value: 12.4, status: "HIGH", normal: "<6.0", color: "#EF4444", data: [3.8, 4.0, 4.2, 4.1, 4.5, 4.8, 5.0, 5.2, 5.1, 5.5, 5.8, 6.0, 6.2, 6.8, 7.2, 7.8, 8.5, 9.2, 10.0, 12.4] },
-  { name: "Temperature", unit: "°C", value: 87, status: "ELEVATED", normal: "<65", color: "#F59E0B", data: [58, 59, 60, 60, 61, 62, 63, 63, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 85, 87] },
-  { name: "Current Draw", unit: "A", value: 48.2, status: "HIGH", normal: "<42", color: "#F59E0B", data: [38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 46, 47, 47, 48, 48.2] },
-  { name: "Oil Pressure", unit: "bar", value: 2.1, status: "CRITICAL", normal: ">3.5", color: "#FF2D2D", data: [4.2, 4.1, 4.0, 4.0, 3.9, 3.8, 3.7, 3.6, 3.5, 3.4, 3.3, 3.1, 3.0, 2.9, 2.8, 2.6, 2.5, 2.3, 2.2, 2.1] },
-  { name: "Noise Level", unit: "dB", value: 78, status: "ELEVATED", normal: "<65", color: "#F59E0B", data: [60, 61, 61, 62, 62, 63, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 75, 76, 78] },
-  { name: "Rotation Speed", unit: "RPM", value: 1847, status: "NORMAL", normal: "1800-1900", color: "#10B981", data: [1850, 1848, 1852, 1847, 1849, 1851, 1848, 1850, 1847, 1849, 1851, 1848, 1850, 1847, 1849, 1851, 1848, 1850, 1847, 1847] },
+  { name: "Vibration", unit: "mm/s", value: 12.4, status: "ÉLEVÉ", normal: "<6.0", color: "#EF4444", data: [3.8, 4.0, 4.2, 4.1, 4.5, 4.8, 5.0, 5.2, 5.1, 5.5, 5.8, 6.0, 6.2, 6.8, 7.2, 7.8, 8.5, 9.2, 10.0, 12.4] },
+  { name: "Température", unit: "°C", value: 87, status: "ÉLEVÉ", normal: "<65", color: "#F59E0B", data: [58, 59, 60, 60, 61, 62, 63, 63, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 85, 87] },
+  { name: "Intensité", unit: "A", value: 48.2, status: "ÉLEVÉ", normal: "<42", color: "#F59E0B", data: [38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 46, 47, 47, 48, 48.2] },
+  { name: "Pression Huile", unit: "bar", value: 2.1, status: "CRITIQUE", normal: ">3.5", color: "#FF2D2D", data: [4.2, 4.1, 4.0, 4.0, 3.9, 3.8, 3.7, 3.6, 3.5, 3.4, 3.3, 3.1, 3.0, 2.9, 2.8, 2.6, 2.5, 2.3, 2.2, 2.1] },
+  { name: "Niveau Bruit", unit: "dB", value: 78, status: "ÉLEVÉ", normal: "<65", color: "#F59E0B", data: [60, 61, 61, 62, 62, 63, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 75, 76, 78] },
+  { name: "Vitesse Rotation", unit: "RPM", value: 1847, status: "NORMAL", normal: "1800-1900", color: "#10B981", data: [1850, 1848, 1852, 1847, 1849, 1851, 1848, 1850, 1847, 1849, 1851, 1848, 1850, 1847, 1849, 1851, 1848, 1850, 1847, 1847] },
 ];
 
 const vibTempData = Array.from({ length: 30 }, (_, i) => ({
@@ -116,9 +116,9 @@ const vibTempData = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 const scheduleData = [
-  { unit: "MX-003", plant: "Casablanca N.", type: "Emergency Repair", date: "ASAP 🔴", assigned: "Unassigned", parts: "⏳ Pending", status: "CRITICAL" },
-  { unit: "PMP-001", plant: "Casablanca N.", type: "Preventive", date: "Mar 8, 2025", assigned: "Ahmed K.", parts: "✅ Ordered", status: "Scheduled" },
-  { unit: "MX-007", plant: "Marrakech", type: "Routine Service", date: "Mar 12, 2025", assigned: "Hassan M.", parts: "✅ In Stock", status: "Scheduled" },
+  { unit: "MX-003", plant: "Casablanca N.", type: "Réparation Urgente", date: "ASAP 🔴", assigned: "Non assigné", parts: "⏳ En attente", status: "CRITIQUE" },
+  { unit: "PMP-001", plant: "Casablanca N.", type: "Préventif", date: "8 mars 2025", assigned: "Ahmed K.", parts: "✅ Commandé", status: "Planifié" },
+  { unit: "MX-007", plant: "Marrakech", type: "Entretien Routinier", date: "12 mars 2025", assigned: "Hassan M.", parts: "✅ En stock", status: "Planifié" },
   { unit: "CNV-002", plant: "Marrakech", type: "Belt Inspection", date: "Mar 18, 2025", assigned: "TBD", parts: "—", status: "AI Recommended" },
   { unit: "WGH-002", plant: "Rabat", type: "Calibration", date: "Mar 20, 2025", assigned: "Said A.", parts: "—", status: "Scheduled" },
   { unit: "MX-011", plant: "Tangier", type: "Routine Service", date: "Mar 25, 2025", assigned: "TBD", parts: "—", status: "Due" },
@@ -208,9 +208,9 @@ export default function PredictiveMaintenance() {
         {/* Critical alert banner */}
         {!alertDismissed && (
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border border-[#EF4444]/30 bg-[#EF4444]/10 px-5 py-4 flex items-center justify-between" style={{ animation: "pulse 2s ease-in-out infinite" }}>
-            <p className="text-sm"><span className="font-semibold text-[#EF4444]">🚨 CRITICAL:</span> <span className="text-[#B0B8C1]">Mixer Unit MX-003 (Casablanca North) — Bearing failure predicted in 3 days. Immediate inspection required.</span></p>
+            <p className="text-sm"><span className="font-semibold text-[#EF4444]">🚨 CRITIQUE :</span> <span className="text-[#B0B8C1]">Malaxeur MX-003 (Casablanca Nord) — Défaillance roulement prédite dans 3 jours. Inspection immédiate requise.</span></p>
             <div className="flex items-center gap-2">
-              <button onClick={() => setSelectedEquipment("MX-003")} className="px-3 py-1 text-xs rounded-lg bg-[#EF4444] text-white">View Details →</button>
+              <button onClick={() => setSelectedEquipment("MX-003")} className="px-3 py-1 text-xs rounded-lg bg-[#EF4444] text-white">Voir Détails →</button>
               <button onClick={() => setAlertDismissed(true)} className="text-[#B0B8C1] hover:text-white text-lg">×</button>
             </div>
           </motion.div>
@@ -542,33 +542,33 @@ export default function PredictiveMaintenance() {
       {scheduleModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center" onClick={() => setScheduleModal(null)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="rounded-xl border border-[#2A3545] bg-[#161D26] p-6 w-[420px] space-y-4" onClick={e => e.stopPropagation()} style={{ boxShadow: "0 8px 40px rgba(0,0,0,0.6)" }}>
-            <h3 className="font-bold text-sm" style={{ fontFamily: "Poppins, sans-serif" }}>Schedule Repair — {scheduleModal}</h3>
+            <h3 className="font-bold text-sm" style={{ fontFamily: "Poppins, sans-serif" }}>Planifier Réparation — {scheduleModal}</h3>
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-[#B0B8C1] block mb-1">Urgency</label>
+                <label className="text-xs text-[#B0B8C1] block mb-1">Urgence</label>
                 <select className="w-full bg-[#1C2533] border border-[#2A3545] rounded-lg px-3 py-2 text-xs text-white focus:border-[#FFD700] outline-none">
-                  <option>🔴 Critical — Immediate</option>
-                  <option>🟠 High — Within 48h</option>
-                  <option>🟡 Medium — This Week</option>
+                  <option>🔴 Critique — Immédiat</option>
+                  <option>🟠 Élevé — Sous 48h</option>
+                  <option>🟡 Moyen — Cette semaine</option>
                 </select>
               </div>
               <div>
-                <label className="text-xs text-[#B0B8C1] block mb-1">Technician</label>
+                <label className="text-xs text-[#B0B8C1] block mb-1">Technicien</label>
                 <select className="w-full bg-[#1C2533] border border-[#2A3545] rounded-lg px-3 py-2 text-xs text-white focus:border-[#FFD700] outline-none">
                   <option>Ahmed K.</option>
                   <option>Hassan M.</option>
                   <option>Said A.</option>
-                  <option>External Contractor</option>
+                  <option>Prestataire Externe</option>
                 </select>
               </div>
               <div>
-                <label className="text-xs text-[#B0B8C1] block mb-1">Scheduled Date</label>
+                <label className="text-xs text-[#B0B8C1] block mb-1">Date Planifiée</label>
                 <input type="date" className="w-full bg-[#1C2533] border border-[#2A3545] rounded-lg px-3 py-2 text-xs text-white focus:border-[#FFD700] outline-none" />
               </div>
             </div>
             <div className="flex gap-2 pt-2">
-              <button onClick={() => { setScheduleModal(null); }} className="flex-1 py-2 rounded-lg text-xs font-semibold text-black" style={{ background: "linear-gradient(135deg, #FFD700, #B8960C)" }}>Confirm & Create Work Order</button>
-              <button onClick={() => setScheduleModal(null)} className="px-4 py-2 rounded-lg text-xs text-[#B0B8C1] border border-[#2A3545] hover:text-white transition-colors">Cancel</button>
+              <button onClick={() => { setScheduleModal(null); }} className="flex-1 py-2 rounded-lg text-xs font-semibold text-black" style={{ background: "linear-gradient(135deg, #FFD700, #B8960C)" }}>Confirmer & Créer Ordre de Travail</button>
+              <button onClick={() => setScheduleModal(null)} className="px-4 py-2 rounded-lg text-xs text-[#B0B8C1] border border-[#2A3545] hover:text-white transition-colors">Annuler</button>
             </div>
           </motion.div>
         </div>

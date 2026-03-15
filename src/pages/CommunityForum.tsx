@@ -296,20 +296,20 @@ export default function CommunityForum() {
       <div className="relative z-10 px-6 py-3 flex items-center gap-4" style={{ background: T.card, borderBottom: `1px solid ${T.border}` }}>
         <div className="flex items-center gap-2 shrink-0">
           <Users size={22} color={T.gold} />
-          <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: T.gold, fontFamily: 'Poppins' }}>COMMUNITY</span>
+          <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: T.gold, fontFamily: 'Poppins' }}>COMMUNAUTÉ</span>
         </div>
         <div className="flex-1 max-w-lg mx-auto relative">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" color={T.text2} />
-          <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search 2,847 discussions..."
+          <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Rechercher dans 2 847 discussions..."
             className="w-full pl-9 pr-4 py-2 rounded-xl text-sm outline-none"
             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text1 }}
             onFocus={e => e.target.style.borderColor = T.gold} onBlur={e => e.target.style.borderColor = T.border} />
         </div>
         <div className="flex items-center gap-3 shrink-0">
-          <span className="text-sm" style={{ fontFamily: 'JetBrains Mono', color: T.gold }}>⭐ 1,240 rep</span>
+          <span className="text-sm" style={{ fontFamily: 'JetBrains Mono', color: T.gold }}>⭐ 1 240 rép</span>
           <button onClick={() => setShowNewPost(true)} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium"
             style={{ background: `linear-gradient(135deg, ${T.gold}, ${T.goldDim})`, color: '#000' }}>
-            <Edit3 size={14} /> New Post
+            <Edit3 size={14} /> Nouveau Post
           </button>
         </div>
       </div>
@@ -319,7 +319,7 @@ export default function CommunityForum() {
         <div className="flex-1 min-w-0">
           {/* Tabs */}
           <div className="flex gap-1 mb-5">
-            {([['latest', 'Latest'], ['top', 'Top This Week'], ['unanswered', 'Unanswered'], ['mine', 'My Posts']] as const).map(([id, label]) => (
+            {([['latest', 'Récents'], ['top', 'Top Semaine'], ['unanswered', 'Sans Réponse'], ['mine', 'Mes Posts']] as const).map(([id, label]) => (
               <button key={id} onClick={() => setActiveTab(id)} className="px-4 py-2 text-sm font-medium transition-all"
                 style={{ color: activeTab === id ? T.gold : T.text2, borderBottom: activeTab === id ? `2px solid ${T.gold}` : '2px solid transparent' }}>
                 {label}
@@ -502,17 +502,17 @@ export default function CommunityForum() {
                 {npTags.length < 5 && (
                   <input value={npTagInput} onChange={e => setNpTagInput(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter' && npTagInput.trim()) { e.preventDefault(); setNpTags([...npTags, npTagInput.trim()]); setNpTagInput(''); } }}
-                    placeholder="Type + Enter to add tag" className="w-full px-3 py-2 rounded-xl text-xs outline-none"
+                    placeholder="Tapez + Entrée pour ajouter un tag" className="w-full px-3 py-2 rounded-xl text-xs outline-none"
                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text1 }} />
                 )}
               </div>
 
               {/* Actions */}
               <div className="flex gap-3">
-                <button onClick={() => setShowNewPost(false)} className="px-5 py-3 rounded-xl text-sm" style={{ color: T.text2, border: `1px solid ${T.border}` }}>Save Draft</button>
+                <button onClick={() => setShowNewPost(false)} className="px-5 py-3 rounded-xl text-sm" style={{ color: T.text2, border: `1px solid ${T.border}` }}>Enregistrer Brouillon</button>
                 <button onClick={() => { if (npValid) setShowNewPost(false); }} className="flex-1 py-3 rounded-xl font-medium text-sm"
                   style={{ background: npValid ? `linear-gradient(135deg, ${T.gold}, ${T.goldDim})` : T.elevated, color: npValid ? '#000' : T.text2, opacity: npValid ? 1 : 0.5 }}>
-                  Post Discussion
+                  Publier Discussion
                 </button>
               </div>
             </motion.div>

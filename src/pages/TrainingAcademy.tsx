@@ -452,7 +452,7 @@ export default function TrainingAcademy() {
           <div className="space-y-6">
             {/* Filters */}
             <div className="flex items-center gap-3">
-              <input placeholder="Search courses..." className="flex-1 px-4 py-2.5 rounded-xl text-sm outline-none"
+              <input placeholder="Rechercher formations..." className="flex-1 px-4 py-2.5 rounded-xl text-sm outline-none"
                 style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text1 }}
                 onFocus={e => e.target.style.borderColor = T.gold} onBlur={e => e.target.style.borderColor = T.border} />
               <div className="flex gap-1.5">

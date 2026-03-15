@@ -285,7 +285,7 @@ export default function WorkflowAutomation() {
             <div className="flex flex-wrap items-center gap-3 mb-6">
               <div className="relative flex-1 min-w-[200px] max-w-md">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#B0B8C1' }} />
-                <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search workflows..."
+                <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher workflows..."
                   className="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm outline-none transition-all duration-200"
                   style={{ background: '#1C2533', border: '1px solid #2A3545', color: '#fff' }}
                   onFocus={e => e.target.style.borderColor = '#FFD700'} onBlur={e => e.target.style.borderColor = '#2A3545'} />
@@ -369,18 +369,18 @@ export default function WorkflowAutomation() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div>
-                  <p className="text-xs mb-1" style={{ color: '#B0B8C1' }}>Hours saved this week</p>
+                  <p className="text-xs mb-1" style={{ color: '#B0B8C1' }}>Heures économisées cette semaine</p>
                   <p className="text-3xl font-mono font-semibold" style={{ color: '#FFD700', fontFamily: "'JetBrains Mono', monospace" }}><AnimNum target={47.3} decimals={1} /> hrs</p>
                 </div>
                 <div>
-                  <p className="text-xs mb-1" style={{ color: '#B0B8C1' }}>At $35/hr avg labor cost</p>
-                  <p className="text-3xl font-mono font-semibold" style={{ color: '#FFD700', fontFamily: "'JetBrains Mono', monospace" }}>$<AnimNum target={1655} /></p>
-                  <p className="text-xs" style={{ color: '#B0B8C1' }}>saved this week</p>
+                  <p className="text-xs mb-1" style={{ color: '#B0B8C1' }}>Au coût moyen de 350 DH/h</p>
+                  <p className="text-3xl font-mono font-semibold" style={{ color: '#FFD700', fontFamily: "'JetBrains Mono', monospace" }}><AnimNum target={16550} /> DH</p>
+                  <p className="text-xs" style={{ color: '#B0B8C1' }}>économisés cette semaine</p>
                 </div>
                 <div>
-                  <p className="text-xs mb-1" style={{ color: '#B0B8C1' }}>Projected annual savings</p>
-                  <p className="text-3xl font-mono font-semibold" style={{ color: '#FFD700', fontFamily: "'JetBrains Mono', monospace" }}>$<AnimNum target={86060} /></p>
-                  <p className="text-xs" style={{ color: '#B0B8C1' }}>saved this year</p>
+                  <p className="text-xs mb-1" style={{ color: '#B0B8C1' }}>Économies annuelles projetées</p>
+                  <p className="text-3xl font-mono font-semibold" style={{ color: '#FFD700', fontFamily: "'JetBrains Mono', monospace" }}><AnimNum target={860600} /> DH</p>
+                  <p className="text-xs" style={{ color: '#B0B8C1' }}>économisés cette année</p>
                 </div>
               </div>
               <button onClick={() => { navigator.clipboard?.writeText('TBOS Automation: 47.3hrs saved this week'); setToast('Link copied! 📋'); }}
@@ -609,9 +609,9 @@ export default function WorkflowAutomation() {
                   </div>
                   <div className="mt-6 flex gap-2">
                     <button className="flex-1 py-2 rounded-lg text-sm font-bold transition-all duration-200"
-                      style={{ background: 'linear-gradient(135deg, #FFD700, #B8960C)', color: '#0F1419' }}>Apply Changes</button>
+                      style={{ background: 'linear-gradient(135deg, #FFD700, #B8960C)', color: '#0F1419' }}>Appliquer</button>
                     <button className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
-                      style={{ border: '1px solid #EF4444', color: '#EF4444' }}>Delete</button>
+                      style={{ border: '1px solid #EF4444', color: '#EF4444' }}>Supprimer</button>
                   </div>
                 </motion.div>
               )}

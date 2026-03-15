@@ -299,14 +299,14 @@ export default function MobileField() {
             </div>
             <div className="flex gap-3">
               <button className="flex-1 h-14 rounded-xl text-sm font-bold text-white active:scale-95" style={{ background: '#1C2533', border: '1px solid #2A3545' }}>
-                View Details
+                Voir Détails
               </button>
               <button
-                onClick={() => { haptic(100); toast.success('✅ Batch #B-2847 Completed'); }}
+                onClick={() => { haptic(100); toast.success('✅ Batch #B-2847 Terminé'); }}
                 className="flex-1 h-14 rounded-xl text-sm font-bold text-black active:scale-95"
                 style={{ background: 'linear-gradient(135deg, #FFD700, #B8960C)' }}
               >
-                Complete
+                Terminer
               </button>
             </div>
           </motion.div>
@@ -788,52 +788,52 @@ export default function MobileField() {
           </div>
           <Stepper label="Volume (m³)" value={batchVolume} onChange={setBatchVolume} min={0.5} max={20} step={0.5} />
           <div>
-            <label className="text-sm text-[#B0B8C1] block mb-1">Plant</label>
+            <label className="text-sm text-[#B0B8C1] block mb-1">Centrale</label>
             <div className="h-14 rounded-xl flex items-center px-4 text-sm text-[#B0B8C1]" style={{ background: '#1C2533', border: '1px solid #2A3545' }}>
-              Casablanca North (auto)
+              Casablanca Nord (auto)
             </div>
           </div>
           <div>
-            <label className="text-sm text-[#B0B8C1] block mb-1">Customer</label>
+            <label className="text-sm text-[#B0B8C1] block mb-1">Client</label>
             <input className="w-full h-14 rounded-xl px-4 text-sm text-white outline-none placeholder:text-[#B0B8C1]/50 focus:border-[#FFD700] transition-colors"
-              style={{ background: '#1C2533', border: '1px solid #2A3545' }} placeholder="Search customer..." />
+              style={{ background: '#1C2533', border: '1px solid #2A3545' }} placeholder="Rechercher client..." />
           </div>
           <div>
-            <label className="text-sm text-[#B0B8C1] block mb-1">Notes (optional)</label>
+            <label className="text-sm text-[#B0B8C1] block mb-1">Notes (optionnel)</label>
             <textarea className="w-full h-20 rounded-xl p-3 text-sm text-white outline-none resize-none placeholder:text-[#B0B8C1]/50 focus:border-[#FFD700] transition-colors"
-              style={{ background: '#1C2533', border: '1px solid #2A3545' }} placeholder="Add notes..." />
+              style={{ background: '#1C2533', border: '1px solid #2A3545' }} placeholder="Ajouter des notes..." />
           </div>
-          {!isOnline && <p className="text-xs text-[#F59E0B] text-center">📡 Will sync when connected</p>}
+          {!isOnline && <p className="text-xs text-[#F59E0B] text-center">📡 Sera synchronisé à la reconnexion</p>}
           <button onClick={handleStartBatch} className="w-full h-16 rounded-xl text-base font-bold text-black active:scale-95 transition-transform"
             style={{ background: 'linear-gradient(135deg, #FFD700, #B8960C)' }}>
-            Start Batch
+            Démarrer Batch
           </button>
         </div>
       </BottomSheet>
 
-      <BottomSheet open={newTestOpen} onClose={() => setNewTestOpen(false)} title="New Quality Test">
+      <BottomSheet open={newTestOpen} onClose={() => setNewTestOpen(false)} title="Nouveau Test Qualité">
         <div className="space-y-5">
           <div>
-            <label className="text-sm text-[#B0B8C1] block mb-1">Batch ID</label>
+            <label className="text-sm text-[#B0B8C1] block mb-1">ID Batch</label>
             <div className="flex gap-2">
               <input className="flex-1 h-14 rounded-xl px-4 text-sm text-white outline-none placeholder:text-[#B0B8C1]/50 focus:border-[#FFD700] transition-colors"
-                style={{ background: '#1C2533', border: '1px solid #2A3545' }} placeholder="Enter or scan batch ID" defaultValue="B-2847" />
+                style={{ background: '#1C2533', border: '1px solid #2A3545' }} placeholder="Saisir ou scanner l'ID batch" defaultValue="B-2847" />
               <button className="w-14 h-14 rounded-xl flex items-center justify-center" style={{ background: '#1C2533', border: '1px solid #2A3545' }}>
                 <Camera className="w-5 h-5 text-[#FFD700]" />
               </button>
             </div>
           </div>
-          <Stepper label="Slump (mm)" value={testSlump} onChange={setTestSlump} min={50} max={250} step={5} reference="Target: 140–160mm" />
-          <Stepper label="Temperature (°C)" value={testTemp} onChange={setTestTemp} min={10} max={50} step={1} reference="Max: 35°C" />
-          <Stepper label="Air Content (%)" value={testAir} onChange={setTestAir} min={0} max={12} step={0.5} reference="Target: 4–7%" />
+          <Stepper label="Affaissement (mm)" value={testSlump} onChange={setTestSlump} min={50} max={250} step={5} reference="Cible : 140–160mm" />
+          <Stepper label="Température (°C)" value={testTemp} onChange={setTestTemp} min={10} max={50} step={1} reference="Max : 35°C" />
+          <Stepper label="Teneur en Air (%)" value={testAir} onChange={setTestAir} min={0} max={12} step={0.5} reference="Cible : 4–7%" />
 
           <div>
-            <label className="text-sm text-[#B0B8C1] block mb-2">Visual Inspection</label>
+            <label className="text-sm text-[#B0B8C1] block mb-2">Inspection Visuelle</label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
               {([
-                { v: 'pass' as const, label: '✅ PASS', active: 'bg-[#10B981] text-white' },
+                { v: 'pass' as const, label: '✅ CONFORME', active: 'bg-[#10B981] text-white' },
                 { v: 'marginal' as const, label: '⚠️ MARGINAL', active: 'bg-[#F59E0B] text-black' },
-                { v: 'fail' as const, label: '❌ FAIL', active: 'bg-[#EF4444] text-white' },
+                { v: 'fail' as const, label: '❌ NON CONFORME', active: 'bg-[#EF4444] text-white' },
               ]).map(opt => (
                 <button
                   key={opt.v}
@@ -852,13 +852,13 @@ export default function MobileField() {
 
           <button className="w-full h-16 rounded-xl flex items-center justify-center gap-2 text-sm font-bold text-[#B0B8C1] active:scale-95"
             style={{ background: '#1C2533', border: '2px dashed #2A3545' }}>
-            <Camera className="w-5 h-5" /> Add Photo
+            <Camera className="w-5 h-5" /> Ajouter Photo
           </button>
 
-          {!isOnline && <p className="text-xs text-[#F59E0B] text-center">📡 Test saved — will sync when connected</p>}
+          {!isOnline && <p className="text-xs text-[#F59E0B] text-center">📡 Test sauvegardé — sera synchronisé à la reconnexion</p>}
           <button onClick={handleSubmitTest} className="w-full h-16 rounded-xl text-base font-bold text-black active:scale-95 transition-transform"
             style={{ background: 'linear-gradient(135deg, #FFD700, #B8960C)' }}>
-            Submit Test
+            Soumettre Test
           </button>
         </div>
       </BottomSheet>
