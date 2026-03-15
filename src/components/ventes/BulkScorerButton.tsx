@@ -27,12 +27,8 @@ export function BulkScorerButton({ devisList, onDone }: BulkScorerButtonProps) {
 
     for (const devis of unscored) {
       try {
-        // Scoring devis via webhook
-        await fetch('https://talmi.app.n8n.cloud/webhook/deal-scorer', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ devis_id: devis.devis_id }),
-        });
+        const { error } = await callWebhook(WEBHOOKS.DEAL_SCORER, { devis_id: devis.devis_id });
+        if (!error) successCount++;
         successCount++;
       } catch (err) {
         console.error('[BulkScorer] Error for', devis.devis_id, err);
