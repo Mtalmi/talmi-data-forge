@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, lazy, Suspense, useCallback, useMemo } from 'react';
+import { getMoroccoGreeting, getMoroccoFormattedDate } from '@/utils/timezone';
 import { useLiveSimulation } from '@/hooks/useLiveSimulation';
 import { triggerPrint } from '@/lib/printUtils';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
