@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getMoroccoToday, getMoroccoYesterday } from '@/utils/timezone';
 import { useAuth } from '@/hooks/useAuth';
 import { SimulationType, SimulationDifficulty } from './types';
 import { calculateXP } from './GamificationDashboard';
