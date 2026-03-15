@@ -767,10 +767,10 @@ html {
   pointer-events: none;
 }
 
-/* ─── Flux Usine Scan Line ─── */
+/* ─── Flux Usine Scan Line (GPU-accelerated) ─── */
 @keyframes fluxScanSweep {
-  0% { left: -30%; }
-  100% { left: 100%; }
+  0% { transform: translateX(-130%); }
+  100% { transform: translateX(200%); }
 }
 
 /* ─── Flux Usine Panel Hover ─── */
