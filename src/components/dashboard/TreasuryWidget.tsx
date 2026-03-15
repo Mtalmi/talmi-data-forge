@@ -404,7 +404,7 @@ export function TreasuryWidget() {
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">{t.widgets.treasury.amountTTC}:</span>
                     <span className="font-mono font-bold">
-                      {selectedExpense.montant_ttc.toLocaleString()} MAD
+                      {selectedExpense.montant_ttc.toLocaleString('fr-FR')} MAD
                     </span>
                   </div>
                   <div className="flex justify-between">

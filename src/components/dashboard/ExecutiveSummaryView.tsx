@@ -109,7 +109,7 @@ export function ExecutiveSummaryView({ periodStats, dashboardStats, onClose }: E
     },
     {
       label: 'Marge Brute',
-      value: `${periodStats.margeBrutePct.toFixed(1)}%`,
+      value: `${periodStats.margeBrutePct.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`,
       numericValue: periodStats.margeBrutePct,
       decimals: 1,
       trend: periodStats.margeTrend,

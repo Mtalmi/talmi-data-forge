@@ -1557,7 +1557,7 @@ function IntelligenceIATab() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
-          <IAKPICard label="PROFIT FLOTTE JOUR" value="30,760 DH" color={T.gold} />
+          <IAKPICard label="PROFIT FLOTTE JOUR" value="30 760 DH" color={T.gold} />
           <IAKPICard label="MEILLEUR RATIO" value="T-12 · 154 DH/km" color={T.success} borderColor={T.success} />
           <IAKPICard label="PIRE RATIO" value="T-09 · ARRÊT" color={T.danger} borderColor={T.danger} />
         </div>

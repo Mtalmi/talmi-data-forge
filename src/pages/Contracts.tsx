@@ -656,7 +656,7 @@ export default function Contracts() {
                           </div>
                         </TableCell>
                         <TableCell className="font-mono">
-                          {contract.monthly_amount.toLocaleString()} MAD
+                          {contract.monthly_amount.toLocaleString('fr-FR')} MAD
                         </TableCell>
                         <TableCell className="text-sm">
                           <div className="flex items-center gap-1">

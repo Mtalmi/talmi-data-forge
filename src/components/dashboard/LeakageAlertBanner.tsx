@@ -142,7 +142,7 @@ export default function LeakageAlertBanner() {
                       "text-xs font-medium",
                       leakage.marge_brute_pct < 15 ? "text-destructive" : "text-warning"
                     )}>
-                      Marge: {leakage.marge_brute_pct.toFixed(1)}%
+                      Marge: {leakage.marge_brute_pct.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%
                     </p>
                   )}
                 </div>
