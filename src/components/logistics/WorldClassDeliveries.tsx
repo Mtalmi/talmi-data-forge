@@ -2509,12 +2509,7 @@ export default function WorldClassDeliveries() {
                 <p style={{ fontFamily: MONO, fontSize: 12, color: T.textDim, marginTop: 16, lineHeight: 1.6 }}>
                   Demain: 5 livraisons planifiées · 891 DH revenu prévu · T-09 retour maintenance 08:00 · Pic mardi 18/03 (12 livr.)
                 </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 16 }}>
-                  <button style={{ padding: '9px 20px', background: T.gold, border: 'none', borderRadius: 8, color: '#0F1629', fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: MONO }}>
-                    Valider Passation
-                  </button>
-                  <IABadge />
-                </div>
+                <PassationButton shiftInfo="Prochain shift: demain 06:00 — Youssef B., Mehdi T., + T-09 si maintenance terminée" />
                 <p style={{ fontFamily: MONO, fontSize: 12, color: T.textDim, marginTop: 12 }}>
                   Prochain shift: demain 06:00 — Youssef B., Mehdi T., + T-09 si maintenance terminée
                 </p>

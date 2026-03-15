@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { ReferenceLine } from 'recharts';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { PassationButton } from '@/components/ui/PassationButton';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
