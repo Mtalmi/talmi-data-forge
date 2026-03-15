@@ -102,7 +102,7 @@ export function useDashboardData() {
           .gte('date_prelevement', today),
         // Trésorerie — paid this month
         supabase.from('factures')
-          .select('montant_ttc')
+          .select('total_ttc')
           .eq('statut', 'payee')
           .gte('date_paiement', monthStart),
         // BC validated today (pipeline stages)
