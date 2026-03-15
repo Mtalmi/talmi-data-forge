@@ -51,9 +51,9 @@ export function useDashboardData() {
   const fetchAll = useCallback(async () => {
     const currentFetchId = ++fetchIdRef.current;
     try {
-      const today = new Date().toISOString().split('T')[0];
-      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-      const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+      const today = getMoroccoToday();
+      const yesterday = getMoroccoYesterday();
+      const monthStart = getMoroccoMonthStart();
 
       // Run all queries in parallel
       const [
