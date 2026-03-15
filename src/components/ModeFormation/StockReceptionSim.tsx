@@ -380,7 +380,7 @@ export function StockReceptionSim({ onComplete, onClose }: StockReceptionSimProp
                         {finalData?.rejection 
                           ? `Rejeté - ${finalData.rejection.recommendedAction === 'return_to_supplier' ? 'Retour fournisseur' : 
                               finalData.rejection.recommendedAction === 'partial_use' ? 'Utilisation partielle' : 'Inspection supplémentaire'}`
-                          : `Quantité: ${finalData?.quantity} ${DEMO_ORDER.unit} | Total: ${((finalData?.quantity || 0) * DEMO_ORDER.unitPrice).toLocaleString()} DH`}
+                          : `Quantité: ${finalData?.quantity} ${DEMO_ORDER.unit} | Total: ${((finalData?.quantity || 0) * DEMO_ORDER.unitPrice).toLocaleString('fr-FR')} DH`}
                       </p>
                     </div>
                   </div>

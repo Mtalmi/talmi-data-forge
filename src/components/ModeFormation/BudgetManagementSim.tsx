@@ -150,7 +150,7 @@ export function BudgetManagementSim({ onComplete, onClose }: BudgetManagementSim
                           {cat.name}
                         </span>
                         <span className="text-sm">
-                          {cat.spent.toLocaleString()} / {cat.budget.toLocaleString()} DH
+                          {cat.spent.toLocaleString('fr-FR')} / {cat.budget.toLocaleString('fr-FR')} DH
                         </span>
                       </div>
                       <Progress 

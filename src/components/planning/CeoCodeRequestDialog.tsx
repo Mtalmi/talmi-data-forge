@@ -198,7 +198,7 @@ export function CeoCodeRequestDialog({
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Dépassement:</span>
               <Badge variant="destructive" className="text-xs">
-                +{(solde - limite).toLocaleString()} DH
+                +{(solde - limite).toLocaleString('fr-FR')} DH
               </Badge>
             </div>
           </div>

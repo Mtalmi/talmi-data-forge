@@ -390,7 +390,7 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
               <div className="p-4 rounded-lg bg-muted">
                 <p className="font-semibold">{selectedBc.bc_id} - {selectedBc.client?.nom_client}</p>
                 <p className="text-sm text-muted-foreground">
-                  {selectedBc.volume_m3} m³ × {selectedBc.prix_vente_m3.toLocaleString()} DH = {selectedBc.total_ht.toLocaleString()} DH
+                  {selectedBc.volume_m3} m³ × {selectedBc.prix_vente_m3.toLocaleString('fr-FR')} DH = {selectedBc.total_ht.toLocaleString('fr-FR')} DH
                 </p>
               </div>
 

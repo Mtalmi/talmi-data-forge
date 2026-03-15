@@ -94,7 +94,7 @@ export function TaxComplianceWidget() {
               <div key={ob.id} className="flex items-center justify-between text-sm p-2 rounded bg-destructive/5">
                 <span className="truncate">{ob.name}</span>
                 <span className="font-medium text-destructive">
-                  {Number(ob.amount).toLocaleString()} DH
+                  {Number(ob.amount).toLocaleString('fr-FR')} DH
                 </span>
               </div>
             ))}
