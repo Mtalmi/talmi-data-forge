@@ -1845,7 +1845,7 @@ export default function Dashboard() {
                 <div className="mt-auto grid grid-cols-2 gap-2">
                   {[
                     { label: 'Disponibilité', value: '97%' },
-                    { label: 'Cadence', value: '47 m³/h' },
+                    { label: 'Cadence', value: uf.fmtVolumeRate(47) },
                     { label: 'Batches', value: '23' },
                     { label: 'Attente', value: '12 min' },
                   ].map((m) => (
