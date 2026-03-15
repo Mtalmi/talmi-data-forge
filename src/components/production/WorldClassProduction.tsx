@@ -31,10 +31,10 @@ import { QualitePredictorCard } from './QualitePredictorCard';
 // DESIGN TOKENS
 // ─────────────────────────────────────────────────────
 const T = {
-  gold:       '#FFD700',
-  goldDim:    'rgba(255, 215, 0, 0.15)',
-  goldGlow:   'rgba(255, 215, 0, 0.25)',
-  goldBorder: 'rgba(255, 215, 0, 0.3)',
+  gold:       '#D4A843',
+  goldDim:    'rgba(212, 168, 67, 0.15)',
+  goldGlow:   'rgba(212, 168, 67, 0.25)',
+  goldBorder: 'rgba(212, 168, 67, 0.3)',
   navy:       '#0B1120',
   cardBg:     'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
   cardBorder: '#1E2D4A',

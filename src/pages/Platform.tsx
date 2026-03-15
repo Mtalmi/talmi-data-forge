@@ -24,13 +24,13 @@ import { motion, AnimatePresence, Reorder } from 'framer-motion';
 // ─── Design Tokens ────────────────────────────────────────────
 const T = {
   bg: '#0B1120', card: 'rgba(17,27,46,0.85)', cardBorder: 'rgba(255,215,0,0.10)',
-  gold: '#FFD700', goldDim: 'rgba(255,215,0,0.12)',
+  gold: '#D4A843', goldDim: 'rgba(212,168,67,0.12)',
   green: '#22C55E', greenDim: 'rgba(34,197,94,0.12)',
   red: '#EF4444', redDim: 'rgba(239,68,68,0.12)',
-  cyan: '#06B6D4', cyanDim: 'rgba(6,182,212,0.12)',
-  purple: '#A855F7', purpleDim: 'rgba(168,85,247,0.12)',
+  cyan: '#6B7280', cyanDim: 'rgba(107,114,128,0.12)',
+  purple: '#9CA3AF', purpleDim: 'rgba(156,163,175,0.12)',
   amber: '#F59E0B', amberDim: 'rgba(245,158,11,0.12)',
-  blue: '#3B82F6', blueDim: 'rgba(59,130,246,0.12)',
+  blue: '#D4A843', blueDim: 'rgba(212,168,67,0.12)',
   textPri: '#F1F5F9', textSec: '#94A3B8', textDim: '#64748B',
   border: 'rgba(255,255,255,0.06)',
 };

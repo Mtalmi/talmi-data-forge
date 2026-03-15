@@ -21,9 +21,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 const T = {
   bg: '#0B1120',
   card: 'rgba(17,27,46,0.85)',
-  cardBorder: 'rgba(255,215,0,0.10)',
-  gold: '#FFD700',
-  goldDim: 'rgba(255,215,0,0.12)',
+  cardBorder: 'rgba(212,168,67,0.10)',
+  gold: '#D4A843',
+  goldDim: 'rgba(212,168,67,0.12)',
   green: '#22C55E',
   greenDim: 'rgba(34,197,94,0.12)',
   red: '#EF4444',

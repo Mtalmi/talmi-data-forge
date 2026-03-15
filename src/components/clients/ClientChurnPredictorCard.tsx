@@ -3,8 +3,8 @@ import { Users, Sparkles } from 'lucide-react';
 import { WhatsAppButton, WhatsAppBadge } from '@/components/ui/WhatsAppElements';
 
 const T = {
-  gold: '#FFD700', goldDim: 'rgba(255,215,0,0.15)',
-  danger: '#EF4444', warning: '#F59E0B', success: '#10B981', info: '#3B82F6',
+  gold: '#D4A843', goldDim: 'rgba(212,168,67,0.15)',
+  danger: '#EF4444', warning: '#F59E0B', success: '#22C55E', info: '#D4A843',
   textPri: '#F1F5F9', textSec: '#94A3B8', textDim: '#64748B',
   cardBorder: '#1E2D4A',
   cardBg: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',

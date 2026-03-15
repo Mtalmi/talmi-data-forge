@@ -10,11 +10,11 @@ import {
 // TOKENS
 // ============================================================================
 const T = {
-  base: '#0F1419', card: '#161D26', elevated: '#1C2533',
-  gold: '#FFD700', goldDim: '#B8960C',
-  text1: '#FFFFFF', text2: '#B0B8C1',
-  success: '#10B981', warning: '#F59E0B', danger: '#EF4444',
-  border: '#2A3545', upvote: '#10B981',
+  base: '#0F1629', card: '#141929', elevated: '#1A1F35',
+  gold: '#D4A843', goldDim: '#C49A3C',
+  text1: '#FFFFFF', text2: '#9CA3AF',
+  success: '#22C55E', warning: '#F59E0B', danger: '#EF4444',
+  border: '#2A3048', upvote: '#22C55E',
 };
 
 const stagger = (i: number) => ({ initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, transition: { delay: i * 0.08, duration: 0.3 } });
