@@ -78,6 +78,19 @@ export function ActivityProvider({ children }: { children: ReactNode }) {
 
   const markAllRead = useCallback(() => setUnreadCount(0), []);
 
+  // Keep ref up to date for external event listener
+  logRef.current = log;
+
+  // Listen for external logActivityEvent() calls
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const { type, message, source, severity } = (e as CustomEvent).detail;
+      logRef.current(type, message, source, severity);
+    };
+    window.addEventListener('tbos-activity', handler);
+    return () => window.removeEventListener('tbos-activity', handler);
+  }, []);
+
   return (
     <ActivityContext.Provider value={{ entries, unreadCount, log, markAllRead }}>
       {children}
