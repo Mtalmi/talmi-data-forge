@@ -96,9 +96,7 @@ export function HawaiiGreeting() {
   };
 
   const getStatusMessage = () => {
-    if (efficiency.status === 'optimal') return t.greeting.allUnderControl;
-    if (efficiency.status === 'good') return t.greeting.stablePerformance;
-    return t.greeting.attentionRequired;
+    return getScoreStatusMessage(efficiency.percentage);
   };
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Master';

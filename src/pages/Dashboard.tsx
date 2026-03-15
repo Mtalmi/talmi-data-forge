@@ -1095,6 +1095,20 @@ export default function Dashboard() {
               <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, color: '#9CA3AF', lineHeight: 1.7, margin: 0 }}>
                 Production nominale prévue à <strong style={{ color: '#D4A843' }}>{uf.fmtVolume(demoData.production.volume, 0)}</strong>. Stock {demoData.shutdownRisk.material} à <strong style={{ color: '#D4A843' }}>{demoData.shutdownRisk.currentStock}</strong>. <strong style={{ color: '#D4A843' }}>{demoData.production.batches} batches</strong>. Pipeline commercial : <strong style={{ color: '#D4A843' }}>{uf.fmtCurrencyK(demoData.pipeline.value)}</strong>, {demoData.pipeline.devis} devis en attente. Point critique : {demoData.riskClient.name} — <strong style={{ color: '#EF4444' }}>{uf.fmtCurrencyK(demoData.riskClient.amount)} impayés</strong>, probabilité défaut <strong style={{ color: '#EF4444' }}>{demoData.riskClient.defaultProb}%</strong>, livraisons suspendues.
               </p>
+              {/* Time-contextual suggestion */}
+              <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 12, color: '#D4A843', lineHeight: 1.6, margin: '10px 0 0', padding: '8px 12px', background: 'rgba(212,168,67,0.04)', borderRadius: 6, borderLeft: '2px solid rgba(212,168,67,0.3)' }}>
+                💡 {getTimeContextualTip()}
+              </p>
+              {/* Seasonal tip */}
+              {(() => {
+                const seasonal = getSeasonalTip(activePlant === 'eu' ? 'eu' : activePlant === 'us' ? 'us' : 'mena', demoData.weather.temp);
+                if (!seasonal) return null;
+                return (
+                  <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 12, color: '#F59E0B', lineHeight: 1.6, margin: '6px 0 0', padding: '8px 12px', background: 'rgba(245,158,11,0.04)', borderRadius: 6, borderLeft: '2px solid rgba(245,158,11,0.3)' }}>
+                    {seasonal}
+                  </p>
+                );
+              })()}
               {/* Action buttons */}
               <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
                 <button onClick={() => setActiveTab('intelligence')} style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: '#D4A843', color: '#0F1629', border: 'none', cursor: 'pointer', letterSpacing: '0.05em' }}>
