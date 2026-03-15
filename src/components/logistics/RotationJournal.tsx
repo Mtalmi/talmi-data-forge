@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, forwardRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { format, differenceInMinutes } from 'date-fns';
+import { getMoroccoToday } from '@/utils/timezone';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
 import { 
