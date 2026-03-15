@@ -903,7 +903,14 @@ export default function Dashboard() {
                     {showCursor && <span className="inline-block w-[2px] h-[20px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
                   </h1>
                   <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 13, color: '#9CA3AF', marginTop: 4 }}>
-                    Briefing matinal prêt. <span style={{ color: '#F59E0B' }}>{demoData.shutdownRisk.active ? '3 alertes' : '0 alertes'}</span> nécessitent votre attention.
+                    {demoData.score > 90
+                      ? <>Excellente journée — votre centrale tourne comme une horloge suisse. 🎯</>
+                      : demoData.score >= 80
+                        ? <>Briefing matinal prêt. <span style={{ color: '#F59E0B' }}>{demoData.shutdownRisk.active ? '3 alertes' : '0 alertes'}</span> nécessitent votre attention.</>
+                        : demoData.score >= 70
+                          ? <>Journée mitigée — quelques points d'attention nécessitent votre regard.</>
+                          : <>Journée difficile — plusieurs actions critiques en attente. Commençons par les priorités.</>
+                    }
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5 mt-1" style={{ fontSize: 11 }}>
                     <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full" style={{ background: 'rgba(34, 197, 94, 0.08)', boxShadow: '0 0 8px rgba(34, 197, 94, 0.2)' }}>

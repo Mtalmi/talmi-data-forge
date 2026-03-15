@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useCountUp } from '@/hooks/useCountUp';
+import { getStreakMessage, getStreakBrokenMessage } from '@/utils/tbos-microcopy';
 
 const MONO = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
 
@@ -86,14 +87,14 @@ export function DailyScoreGauge({
         }}>
           {deltaVsYesterday >= 0 ? '↗' : '↘'} {deltaVsYesterday >= 0 ? '+' : ''}{deltaVsYesterday} vs hier
         </span>
-        {/* Streak */}
+        {/* Streak with milestone messages */}
         {!streakBroken ? (
-          <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843' }}>
-            🔥 {streak} jours consécutifs &gt; 80/100
+          <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', lineHeight: 1.4 }}>
+            {getStreakMessage(streak)}
           </span>
         ) : (
           <span style={{ fontFamily: MONO, fontSize: 10, color: '#EF4444', lineHeight: 1.4 }}>
-            Série interrompue hier{streakBrokenCause ? ` (${streakBrokenCause})` : ''}
+            {getStreakBrokenMessage(score, streakBrokenCause)}
           </span>
         )}
         {/* Weekly record */}
