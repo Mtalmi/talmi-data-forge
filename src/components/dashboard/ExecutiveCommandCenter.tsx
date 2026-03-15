@@ -114,11 +114,11 @@ const ExecutiveGauge = forwardRef<HTMLDivElement, GaugeProps>(
         {/* Center content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className={cn(
-            'text-lg font-bold tabular-nums',
+            'text-lg tabular-nums',
             color === 'success' && 'text-success',
             color === 'warning' && 'text-warning',
             color === 'destructive' && 'text-destructive'
-          )}>
+          )} style={{ fontWeight: 200 }}>
             {value.toFixed(1)}%
           </span>
         </div>
