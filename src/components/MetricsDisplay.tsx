@@ -83,7 +83,7 @@ export default function MetricsDisplay() {
                 <div className="flex items-start justify-between mb-4">
                   <div>{metric.icon}</div>
                 </div>
-                <div className="text-3xl font-bold text-accent mb-1">
+                <div className="text-3xl font-extralight text-accent mb-1">
                   {metric.value}
                 </div>
                 <div className="font-semibold text-sm mb-1">{metric.label}</div>
