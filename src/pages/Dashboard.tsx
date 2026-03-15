@@ -1345,9 +1345,9 @@ export default function Dashboard() {
                       lineHeight: 1, letterSpacing: '-0.02em',
                       textShadow: '0 0 20px rgba(34,197,94,0.15)',
                     }}>
-                      24,200
+                      {uf.rawCurrency(24200).toLocaleString('fr-FR')}
                     </span>
-                    <span style={{ fontFamily: MONO, fontWeight: 300, fontSize: 18, color: '#9CA3AF' }}>DH</span>
+                    <span style={{ fontFamily: MONO, fontWeight: 300, fontSize: 18, color: '#9CA3AF' }}>{uf.currSym}</span>
                   </div>
                   <span style={{ fontFamily: MONO, fontSize: 11, color: '#22C55E', fontWeight: 600 }}>↗ +8% vs hier</span>
 
