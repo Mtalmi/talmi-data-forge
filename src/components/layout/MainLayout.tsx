@@ -110,8 +110,8 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
 
         {/* Main Content Area */}
         <main className={`flex-1 min-w-0 overflow-x-hidden ${previewRole ? 'pt-1' : ''}`}>
-          <div className="p-0 m-0 mobile-content safe-area-bottom overflow-x-hidden w-full min-w-0">
-            <div className="tbos-content-wrapper mx-auto" style={{ maxWidth: 1600 }}>
+          <div className="mobile-content safe-area-bottom overflow-x-hidden w-full min-w-0" style={{ padding: '0 32px', margin: 0 }}>
+            <div className="tbos-content-wrapper w-full mx-auto" style={{ maxWidth: 1800 }}>
               <PageTransition>
                 {children}
               </PageTransition>
