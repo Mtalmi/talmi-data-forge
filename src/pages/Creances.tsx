@@ -2175,7 +2175,7 @@ export default function Creances() {
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className="flex-1 space-y-4">
                     {(() => {
-                      const BAR_COLORS = ['#D4A843', '#f59e0b', '#ef4444', '#991B1B', '#7F1D1D'];
+                      const BAR_COLORS = ['#22C55E', '#F59E0B', '#EA580C', '#EF4444', '#991B1B'];
                       return stats.agingBuckets.map((bucket, index) => {
                         const barColor = BAR_COLORS[index] || BAR_COLORS[4];
                         const isDeepRed = index >= 4;
