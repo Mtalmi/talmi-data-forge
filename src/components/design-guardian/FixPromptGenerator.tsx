@@ -42,8 +42,7 @@ export default function FixPromptGenerator() {
         </select>
         <button
           onClick={generate}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-black"
-          style={{ background: 'linear-gradient(135deg, #FFD700, #B8860B)' }}
+          className="tbos-btn tbos-btn-primary"
         >
           <Wrench className="w-4 h-4" /> Générer Prompts Lovable
         </button>
