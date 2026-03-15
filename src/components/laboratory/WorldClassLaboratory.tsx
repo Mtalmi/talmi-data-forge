@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useUnitFormat } from '@/hooks/useUnitFormat';
 import { NouveauTestModal } from '@/components/modals/NouveauTestModal';
-import { useLocation } from 'react-router-dom';
+import { useTabSync } from '@/hooks/useTabSync';
 import { supabase } from '@/integrations/supabase/client';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
