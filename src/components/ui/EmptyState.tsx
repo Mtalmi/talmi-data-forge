@@ -46,7 +46,7 @@ export function EmptyState({
       >
         <Icon
           className={cn(variant === 'default' ? 'h-7 w-7' : 'h-5 w-5')}
-          style={{ color: '#FFD700' }}
+          style={{ color: '#D4A843' }}
         />
       </div>
 
