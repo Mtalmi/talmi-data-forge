@@ -383,7 +383,7 @@ export default function WorkflowAutomation() {
                   <p className="text-xs" style={{ color: '#B0B8C1' }}>économisés cette année</p>
                 </div>
               </div>
-              <button onClick={() => { navigator.clipboard?.writeText('TBOS Automation: 47.3hrs saved this week'); setToast('Link copied! 📋'); }}
+              <button onClick={() => { navigator.clipboard?.writeText('TBOS Automation: 47.3hrs saved this week'); setToast('Lien copié ! 📋'); }}
                 className="mt-4 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
                 style={{ background: 'linear-gradient(135deg, #FFD700, #B8960C)', color: '#0F1419' }}>
                 <Share2 size={14} /> Share This Report
