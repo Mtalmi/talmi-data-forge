@@ -4,6 +4,7 @@ import { triggerPrint } from '@/lib/printUtils';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
 import { AnimatePresence } from 'framer-motion';
+import { NouveauDevisModal } from '@/components/modals/NouveauDevisModal';
 
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
