@@ -361,7 +361,7 @@ export function DevisDetailDialog({
               Shows when devis is validated/accepted
           ===================================================== */}
           {isLocked && (
-            <Alert className="bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-600">
+            <Alert className="bg-white/[0.04] border-white/[0.08]">
               <ShieldCheck className="h-4 w-4 text-slate-700 dark:text-slate-300" />
               <AlertDescription className="text-slate-700 dark:text-slate-300">
                 <strong>Document Scellé</strong> — Ce devis a été validé et ne peut plus être modifié. 
