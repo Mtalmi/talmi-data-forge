@@ -56,10 +56,11 @@ export function NouveauVehiculeModal({ open, onClose, onCreated }: Props) {
         .from('flotte')
         .insert({
           id_camion: id,
-          type_camion: selectedType?.label || type,
+          type: selectedType?.label || type,
           immatriculation: immat,
-          chauffeur_assigne: driverLabel,
+          chauffeur: driverLabel,
           capacite_m3: capacite,
+          proprietaire: 'Atlas Concrete',
           statut: etat === 'actif' ? 'Disponible' : etat === 'maintenance' ? 'En Maintenance' : 'Hors Service',
           sante_score: 80,
         });
