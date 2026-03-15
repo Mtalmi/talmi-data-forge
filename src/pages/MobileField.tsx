@@ -788,25 +788,25 @@ export default function MobileField() {
           </div>
           <Stepper label="Volume (m³)" value={batchVolume} onChange={setBatchVolume} min={0.5} max={20} step={0.5} />
           <div>
-            <label className="text-sm text-[#B0B8C1] block mb-1">Plant</label>
+            <label className="text-sm text-[#B0B8C1] block mb-1">Centrale</label>
             <div className="h-14 rounded-xl flex items-center px-4 text-sm text-[#B0B8C1]" style={{ background: '#1C2533', border: '1px solid #2A3545' }}>
-              Casablanca North (auto)
+              Casablanca Nord (auto)
             </div>
           </div>
           <div>
-            <label className="text-sm text-[#B0B8C1] block mb-1">Customer</label>
+            <label className="text-sm text-[#B0B8C1] block mb-1">Client</label>
             <input className="w-full h-14 rounded-xl px-4 text-sm text-white outline-none placeholder:text-[#B0B8C1]/50 focus:border-[#FFD700] transition-colors"
-              style={{ background: '#1C2533', border: '1px solid #2A3545' }} placeholder="Search customer..." />
+              style={{ background: '#1C2533', border: '1px solid #2A3545' }} placeholder="Rechercher client..." />
           </div>
           <div>
-            <label className="text-sm text-[#B0B8C1] block mb-1">Notes (optional)</label>
+            <label className="text-sm text-[#B0B8C1] block mb-1">Notes (optionnel)</label>
             <textarea className="w-full h-20 rounded-xl p-3 text-sm text-white outline-none resize-none placeholder:text-[#B0B8C1]/50 focus:border-[#FFD700] transition-colors"
-              style={{ background: '#1C2533', border: '1px solid #2A3545' }} placeholder="Add notes..." />
+              style={{ background: '#1C2533', border: '1px solid #2A3545' }} placeholder="Ajouter des notes..." />
           </div>
-          {!isOnline && <p className="text-xs text-[#F59E0B] text-center">📡 Will sync when connected</p>}
+          {!isOnline && <p className="text-xs text-[#F59E0B] text-center">📡 Sera synchronisé à la reconnexion</p>}
           <button onClick={handleStartBatch} className="w-full h-16 rounded-xl text-base font-bold text-black active:scale-95 transition-transform"
             style={{ background: 'linear-gradient(135deg, #FFD700, #B8960C)' }}>
-            Start Batch
+            Démarrer Batch
           </button>
         </div>
       </BottomSheet>
