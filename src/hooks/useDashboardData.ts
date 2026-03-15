@@ -73,7 +73,7 @@ export function useDashboardData() {
           .select('materiau, quantite_actuelle, capacite_max, unite, seuil_alerte, consommation_moy_jour, autonomie_jours'),
         // Pipeline — active devis
         supabase.from('devis')
-          .select('montant_total, statut')
+          .select('total_ht, statut')
           .in('statut', ['brouillon', 'envoye']),
         // Total devis for conversion
         supabase.from('devis')
