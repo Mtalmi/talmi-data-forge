@@ -8,7 +8,7 @@ interface TiltCardProps {
   onClick?: () => void;
 }
 
-export function TiltCard({ children, className, style }: TiltCardProps) {
+export function TiltCard({ children, className, style, onClick }: TiltCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0, active: false });
 
