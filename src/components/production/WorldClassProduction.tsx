@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { useCountUp } from '@/hooks/useCountUp';
 import { MetricTooltip } from '@/components/ui/MetricTooltip';
 import { supabase } from '@/integrations/supabase/client';
+import { throttle } from '@/utils/debounce';
 import { format, startOfDay, endOfDay, startOfWeek, endOfWeek } from 'date-fns';
 import { getMoroccoToday } from '@/utils/timezone';
 import BatchesTab from './BatchesTab';
