@@ -30,8 +30,8 @@ export default function GlobalHealthHero() {
       <div className={`${T.card} p-8 flex items-center gap-8`}>
         {/* Circular score */}
         <div className="relative flex-shrink-0">
-          <svg width="140" height="140" viewBox="0 0 120 120">
-            <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="8" />
+          <svg width="140" height="140" viewBox="0 0 120 120" role="img" aria-label={`Score global: ${animatedScore} sur 10`}>
+            <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="8" />
             <circle
               cx="60" cy="60" r="54" fill="none"
               stroke={strokeColor}
