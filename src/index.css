@@ -5462,12 +5462,12 @@ hr,
   }
 }
 
-/* ═══ ABSOLUTE FINAL OVERRIDE — 4px card radius ═══ */
+/* ═══ ABSOLUTE FINAL OVERRIDE — 8px card radius ═══ */
 div.ops-surface-card,
 .ops-surface-card[class],
 div.bg-card.ops-surface-card {
-  border-radius: 4px !important;
-  overflow: visible !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
 }
 
 /* ═══ OPERATIONS TOP-ROW CARDS — NUCLEAR 4px RADIUS ═══ */
