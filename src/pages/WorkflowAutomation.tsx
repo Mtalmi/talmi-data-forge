@@ -294,7 +294,7 @@ export default function WorkflowAutomation() {
                 {['all', 'active', 'paused', 'draft'].map(f => (
                   <button key={f} onClick={() => setStatusFilter(f)}
                     className="px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all duration-200"
-                    style={{ background: statusFilter === f ? '#FFD700' : '#1C2533', color: statusFilter === f ? '#0F1419' : '#B0B8C1' }}>
+                    style={{ background: statusFilter === f ? '#D4A843' : '#1C2533', color: statusFilter === f ? '#0F1419' : '#B0B8C1' }}>
                     {f}
                   </button>
                 ))}
