@@ -125,7 +125,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       label: nav.sectionIntelligence || 'INTELLIGENCE',
       items: [
         { title: 'Résumé IA', url: '/__dashboard_intel', icon: Sparkles },
-        { title: 'Alertes Actives', url: '/__dashboard_intel_alerts', icon: Bell, badge: 5, badgeStyle: 'red' },
+        { title: 'Alertes Actives', url: '/__dashboard_intel_alerts', icon: Bell },
         { title: 'Agents IA', url: '/__dashboard_intel_agents', icon: Brain },
         { title: 'Rapports', url: '/__dashboard_rapports', icon: FileBarChart },
         { title: 'Historique', url: '/__dashboard_intel_history', icon: Clock },
