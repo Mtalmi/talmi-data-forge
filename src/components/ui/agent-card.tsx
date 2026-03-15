@@ -184,7 +184,7 @@ export function AgentKPITriplet({ kpis }: { kpis: [AgentKPI, AgentKPI, AgentKPI]
         }}>
           <div style={{
             fontFamily: MONO,
-            fontSize: 10,
+            fontSize: 12,
             letterSpacing: '1.5px',
             color: '#9CA3AF',
             textTransform: 'uppercase',
