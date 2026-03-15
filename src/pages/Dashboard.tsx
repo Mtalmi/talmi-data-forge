@@ -1173,7 +1173,7 @@ export default function Dashboard() {
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,28 20,24 40,20 60,26 80,18 100,14 120,10',
               secondaryLabel: 'Obj. mensuel',
-              secondaryValue: `${uf.fmtVolume(671, 0)} / ${uf.fmtVolume(3200, 0)}`,
+              secondaryValue: `${uf.fmtVolume(demoData.production.volume, 0)} / ${uf.fmtVolume(3200, 0)}`,
               target: uf.rawVolume(280),
               targetLabel: 'OBJ',
             },
