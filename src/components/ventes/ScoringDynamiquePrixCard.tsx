@@ -33,7 +33,7 @@ export function ScoringDynamiquePrixCard({ index }: { index?: number }) {
           <thead>
             <tr>
               {['Devis', 'Formule', 'Marge Initiale', 'Marge Actuelle', 'Écart', 'Action'].map(h => (
-                <th key={h} style={{ textAlign: 'left', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', padding: '0 12px 10px 0', fontFamily: mono }}>{h}</th>
+                <th key={h} style={{ textAlign: 'left', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', padding: '0 12px 10px 0', fontFamily: mono }}>{h}</th>
               ))}
             </tr>
           </thead>
