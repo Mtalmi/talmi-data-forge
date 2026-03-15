@@ -2421,7 +2421,7 @@ export default function Dashboard() {
                   <div style={{ fontFamily: MN, fontSize: 10, fontWeight: 600, letterSpacing: '1.5px', color: row.title === 'CONNECTÉ' ? '#22C55E' : row.title === 'DISPONIBLE' ? '#F59E0B' : '#6B7280', marginBottom: 8, textTransform: 'uppercase' as const }}>
                     {row.title}
                   </div>
-                  <div className="grid grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {row.items.map(item => (
                       <div key={item.name} style={{
                         border: '1px solid rgba(212,168,67,0.08)', borderRadius: 8, padding: 12,

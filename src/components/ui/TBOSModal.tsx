@@ -126,7 +126,7 @@ export function TBOSModal({ open, onClose, title, children, footer, width = 600 
         </div>
 
         {/* Body */}
-        <div style={{ padding: 24, overflowY: 'auto', flex: 1 }}>
+        <div className="modal-body-scroll" style={{ padding: '16px 16px', overflowY: 'auto', flex: 1 }}>
           {children}
         </div>
 
