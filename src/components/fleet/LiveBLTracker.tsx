@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { format, differenceInMinutes } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { getMoroccoToday } from '@/utils/timezone';
 
 interface ActiveMission {
   bl_id: string;

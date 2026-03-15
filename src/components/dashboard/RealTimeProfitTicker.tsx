@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nContext';
 import { TrendingUp, TrendingDown, Minus, RefreshCw, DollarSign, Fuel, Truck } from 'lucide-react';
 import { format } from 'date-fns';
+import { getMoroccoToday } from '@/utils/timezone';
 
 interface ProfitData {
   totalRevenue: number;

@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { format, addHours, parseISO, isWithinInterval, differenceInMinutes, startOfMonth, endOfMonth } from 'date-fns';
+import { getMoroccoToday } from '@/utils/timezone';
 
 import { 
   Clock, 

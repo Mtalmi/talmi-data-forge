@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getMoroccoToday } from '@/utils/timezone';
 import { useNavigate } from 'react-router-dom';
 import {
   CheckCircle2,

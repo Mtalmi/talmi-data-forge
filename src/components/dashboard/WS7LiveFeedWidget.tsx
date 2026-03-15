@@ -6,6 +6,7 @@ import { Factory, CheckCircle, Clock, AlertTriangle, Link2 } from 'lucide-react'
 import { useI18n } from '@/i18n/I18nContext';
 import { format } from 'date-fns';
 import { getDateLocale } from '@/i18n/dateLocale';
+import { getMoroccoToday } from '@/utils/timezone';
 
 interface WS7Batch {
   id: string;

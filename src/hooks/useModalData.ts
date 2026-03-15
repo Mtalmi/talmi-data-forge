@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getMoroccoToday } from '@/utils/timezone';
 
 interface DropdownOption { value: string; label: string; [key: string]: any; }
 
