@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { WEBHOOKS, callWebhook } from '@/config/webhooks';
 import { CopyableText } from '@/components/ui/CopyableText';
 import { useTableSort } from '@/hooks/useTableSort';
 import { SortableTableHead } from '@/components/ui/SortableHeader';
@@ -161,12 +162,11 @@ export function DevisTable({
     setScoringId(devisDbId);
     try {
       // Call webhook for AI scoring
-      const res = await fetch('https://talmi.app.n8n.cloud/webhook/deal-scorer', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ devis_id: devisId }),
-      });
-      const webhookResult = await res.json();
+      const { error: webhookError } = await callWebhook(WEBHOOKS.DEAL_SCORER, { devis_id: devisId });
+      if (webhookError) {
+        toast.error(webhookError);
+        return null;
+      }
       // Refetch score from DB
 
       // Refetch from Supabase
