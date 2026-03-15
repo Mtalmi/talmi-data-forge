@@ -923,7 +923,7 @@ function ClientDetailDrawer({ client, onClose }: { client: ClientDisplay | null;
                 <OrderRow key={i} {...o} />
               ))}
             </div>
-            <p style={{ fontFamily: MONO, fontSize: 12, color: '#D4A843', marginTop: 10, cursor: 'pointer' }}>Voir tout →</p>
+            <p onClick={() => navigate('/bons')} style={{ fontFamily: MONO, fontSize: 12, color: '#D4A843', marginTop: 10, cursor: 'pointer' }}>Voir tout →</p>
           </div>
 
           {/* COMPORTEMENT PAIEMENT */}
