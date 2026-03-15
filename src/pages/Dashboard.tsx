@@ -903,7 +903,7 @@ export default function Dashboard() {
                 </div>
                 {/* DAILY SCORE GAUGE */}
                 <div className="hidden md:block">
-                  <DailyScoreGauge score={87} deltaVsYesterday={3} streak={12} weeklyRecord={{ score: 94, day: 'jeudi' }} />
+                  <DailyScoreGauge score={demoData.score} deltaVsYesterday={3} streak={demoData.streak} weeklyRecord={{ score: demoData.recordScore, day: 'jeudi' }} />
                 </div>
               </div>
 
