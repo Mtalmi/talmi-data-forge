@@ -566,6 +566,13 @@ export default function WorldClassUsers() {
         actions={
           <>
             <button
+              onClick={() => {
+                const headers = 'Nom;Email;Rôle;Statut';
+                const blob = new Blob([`\uFEFF${headers}\nMax Talmi;max@tbos.ma;CEO;Actif`], { type: 'text/csv;charset=utf-8;' });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+                a.download = `TBOS_Utilisateurs_${new Date().toISOString().slice(0,10)}.csv`;
+                a.click(); URL.revokeObjectURL(a.href);
+              }}
               onMouseEnter={() => setHovExp(true)} onMouseLeave={() => setHovExp(false)}
               style={{ background: hovExp ? 'rgba(212,168,67,0.12)' : 'transparent', color: '#D4A843', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, padding: '7px 16px', fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.15s' }}
             ><Download size={13} /> Exporter</button>
