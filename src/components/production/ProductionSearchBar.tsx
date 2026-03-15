@@ -59,6 +59,7 @@ export function ProductionSearchBar({
   };
 
   const clearFilters = () => {
+    setLocalSearch('');
     onSearchChange('');
     onDateRangeChange({ from: null, to: null });
   };
