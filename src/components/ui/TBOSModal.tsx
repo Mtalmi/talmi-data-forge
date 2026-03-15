@@ -212,6 +212,7 @@ export function TBOSSelect({ hasError, options, placeholder, style, ...props }: 
   return (
     <select
       {...props}
+      autoComplete="off"
       aria-invalid={hasError || undefined}
       style={{
         ...inputBaseStyle,
