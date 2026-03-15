@@ -1032,7 +1032,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                 </div>
                 <div>
                   <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '40px', color: '#D4A843', textShadow: '0 0 12px rgba(212,168,67,0.2)', letterSpacing: '-0.02em' }}>{prodTotal}</span>
-                  <span className="text-sm font-light text-white/40 ml-1">m³</span>
+                  <span className="text-sm font-light text-white/40 ml-1">{uf.volUnit}</span>
                 </div>
               </div>
               <div className="overflow-hidden w-full" style={{ height: 180, filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.25))', position: 'relative' }}>
