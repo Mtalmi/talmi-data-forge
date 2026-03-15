@@ -58,7 +58,7 @@ export function DailyScoreGauge({
           <defs>
             <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="#D4A843" />
-              <stop offset="100%" stopColor="#FDB913" />
+              <stop offset="100%" stopColor="#E8C96A" />
             </linearGradient>
           </defs>
         </svg>

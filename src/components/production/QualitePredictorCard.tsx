@@ -74,12 +74,12 @@ export function QualitePredictorCard() {
   const globalConformite = totalBatches > 0 ? Math.round((totalValide / totalBatches) * 100) : 0;
 
   const conformiteColor = (pct: number) =>
-    pct >= 95 ? '#34d399' : pct >= 80 ? '#fbbf24' : '#f87171';
+    pct >= 95 ? '#22C55E' : pct >= 80 ? '#F59E0B' : '#EF4444';
 
   const risqueDisplay = (r: FormuleRow['risque']) => {
-    if (r === 'Faible') return { icon: '✅', color: '#34d399' };
-    if (r === 'Modéré') return { icon: '⚠️', color: '#fbbf24' };
-    return { icon: '🔴', color: '#f87171' };
+    if (r === 'Faible') return { icon: '✅', color: '#22C55E' };
+    if (r === 'Modéré') return { icon: '⚠️', color: '#F59E0B' };
+    return { icon: '🔴', color: '#EF4444' };
   };
 
   const actionText = (r: FormuleRow['risque']) => {

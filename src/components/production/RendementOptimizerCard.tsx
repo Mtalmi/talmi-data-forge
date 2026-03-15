@@ -91,9 +91,9 @@ function useProdRendement() {
 
 function Badge({ label, color }: { label: string; color: string }) {
   const colors: Record<string, { bg: string; text: string }> = {
-    green: { bg: 'rgba(16,185,129,0.15)', text: '#34d399' },
-    amber: { bg: 'rgba(245,158,11,0.15)', text: '#fbbf24' },
-    red: { bg: 'rgba(239,68,68,0.15)', text: '#f87171' },
+    green: { bg: 'rgba(34,197,94,0.15)', text: '#22C55E' },
+    amber: { bg: 'rgba(245,158,11,0.15)', text: '#F59E0B' },
+    red: { bg: 'rgba(239,68,68,0.15)', text: '#EF4444' },
   };
   const c = colors[color] || colors.amber;
   return (

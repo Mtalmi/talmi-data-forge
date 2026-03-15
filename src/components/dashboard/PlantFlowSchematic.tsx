@@ -6,9 +6,9 @@
 import { useNavigate } from 'react-router-dom';
 
 const T = {
-  dotOk: '#34D399',
-  dotWarn: '#FBBF24',
-  gold: '#D4AF37',
+  dotOk: '#22C55E',
+  dotWarn: '#F59E0B',
+  gold: '#D4A843',
 };
 
 function FlowArrow() {
