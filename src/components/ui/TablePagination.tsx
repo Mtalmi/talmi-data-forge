@@ -27,18 +27,16 @@ export function TablePagination({
   if (totalItems <= pageSize) return null;
 
   const btnBase =
-    'inline-flex items-center justify-center h-8 min-w-[2rem] px-2 rounded-md text-xs font-medium transition-colors select-none';
-  const btnEnabled = 'hover:bg-muted cursor-pointer text-muted-foreground';
-  const btnDisabled = 'opacity-30 cursor-not-allowed text-muted-foreground';
+    'inline-flex items-center justify-center h-8 min-w-[	2rem] px-2 rounded-md text-xs font-medium transition-colors select-none';
+  const btnEnabled = 'hover:bg-m    cursor
 
   return (
-    <div className={cn('flex flex-col sm:flex-row items-center justify-between gap-2 py-3 px-1', className)}>
+    <div className={cn('flex flex 	col sm:flex-row items-center justify-between gap-2 py-3 px-1', className)}>
       <span className="text-xs text-muted-foreground" style={{ fontFamily: 'ui-monospace, monospace' }}>
         Affichage de {start}–{end} sur {totalItems.toLocaleString('fr-FR')} résultats
       </span>
 
       <div className="flex items-center gap-1">
-        {/* First */}
         <button
           className={cn(btnBase, currentPage > 1 ? btnEnabled : btnDisabled)}
           onClick={() => currentPage > 1 && onPageChange(1)}
@@ -48,7 +46,6 @@ export function TablePagination({
           <ChevronsLeft size={14} />
         </button>
 
-        {/* Prev */}
         <button
           className={cn(btnBase, currentPage > 1 ? btnEnabled : btnDisabled)}
           onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
@@ -59,7 +56,6 @@ export function TablePagination({
           <span className="hidden sm:inline ml-1">Précédent</span>
         </button>
 
-        {/* Page info */}
         <span
           className="inline-flex items-center gap-1 px-3 h-8 rounded-md text-xs font-bold"
           style={{ 
@@ -71,7 +67,6 @@ export function TablePagination({
           {currentPage} / {totalPages}
         </span>
 
-        {/* Next */}
         <button
           className={cn(btnBase, currentPage < totalPages ? btnEnabled : btnDisabled)}
           onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
@@ -82,7 +77,6 @@ export function TablePagination({
           <ChevronRight size={14} />
         </button>
 
-        {/* Last */}
         <button
           className={cn(btnBase, currentPage < totalPages ? btnEnabled : btnDisabled)}
           onClick={() => currentPage < totalPages && onPageChange(totalPages)}
@@ -94,10 +88,4 @@ export function TablePagination({
       </div>
     </div>
   );
-}
-
-/** Hook to manage pagination state. Resets page on dependency change. */
-export function usePagination(pageSize: number = 25, deps: unknown[] = []) {
-  const [page, setPage] = import('react').then ? 1 : 1; // placeholder
-  return { page: 1, setPage: (_p: number) => {} };
 }
