@@ -2336,7 +2336,7 @@ export default function Dashboard() {
               Prochaine sync: <span style={{ color: '#D4A843', fontFamily: 'monospace', fontWeight: '500' }}>{syncCountdown}s</span>
             </span>
           </span>
-          <span>✦ Propulsé par Claude Opus · Atlas Concrete Morocco</span>
+          <span>✦ Propulsé par Claude Opus · {plantData.pillLabel}</span>
         </div>
       </div>
 
