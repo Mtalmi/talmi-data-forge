@@ -76,11 +76,11 @@ const equipmentData: Record<string, { name: string; overall: number; units: { id
   "Marrakech": {
     name: "Marrakech", overall: 78,
     units: [
-      { id: "MX-007", type: "Concrete Mixer", health: 85, status: "Operational", nextService: "30 days" },
-      { id: "MX-008", type: "Concrete Mixer", health: 68, status: "Monitor", nextService: "8 days" },
-      { id: "CNV-002", type: "Conveyor Belt", health: 71, status: "Monitor", nextService: "15 days" },
-      { id: "PMP-003", type: "Water Pump", health: 88, status: "Operational", nextService: "42 days" },
-      { id: "WGH-003", type: "Weighbridge", health: 82, status: "Operational", nextService: "35 days" },
+      { id: "MX-007", type: "Malaxeur Béton", health: 85, status: "Opérationnel", nextService: "30 jours" },
+      { id: "MX-008", type: "Malaxeur Béton", health: 68, status: "Surveillance", nextService: "8 jours" },
+      { id: "CNV-002", type: "Convoyeur", health: 71, status: "Surveillance", nextService: "15 jours" },
+      { id: "PMP-003", type: "Pompe à eau", health: 88, status: "Opérationnel", nextService: "42 jours" },
+      { id: "WGH-003", type: "Pont-bascule", health: 82, status: "Opérationnel", nextService: "35 jours" },
     ],
   },
   "Tangier": {
