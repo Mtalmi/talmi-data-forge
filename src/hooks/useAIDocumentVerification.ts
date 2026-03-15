@@ -212,7 +212,7 @@ export function useAIDocumentVerification() {
       };
       await supabase.from('audit_superviseur').insert(auditData);
 
-      console.log('[Forensic] AI Data Mismatch logged to audit');
+      // Mismatch logged to audit
     } catch (err) {
       console.error('[Forensic] Failed to log mismatch:', err);
     }

@@ -664,7 +664,7 @@ export default function Ventes() {
                         <BcTableResponsive
                           bcList={filteredBc} loading={loading}
                           onRowClick={handleOpenBcDetail}
-                          onCreateBL={(bc) => console.log('Create BL for:', bc)}
+                          onCreateBL={() => {}}
                           onGenerateInvoice={(bc) => generateConsolidatedInvoice(bc.bc_id)}
                           selectedIds={selectedBcIds} onSelectionChange={setSelectedBcIds}
                         />

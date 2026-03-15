@@ -26,7 +26,7 @@ export function BulkScorerButton({ devisList, onDone }: BulkScorerButtonProps) {
 
     for (const devis of unscored) {
       try {
-        console.log('[BulkScorer] Scoring:', devis.devis_id);
+        // Scoring devis via webhook
         await fetch('https://talmi.app.n8n.cloud/webhook/deal-scorer', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

@@ -552,7 +552,7 @@ export default function SecurityDashboard() {
       if (response.error) {
         console.error('Email alert failed:', response.error);
       } else {
-        console.log('Rollback email alert sent successfully');
+        // Email sent successfully
       }
     } catch (error) {
       console.error('Error sending rollback email:', error);

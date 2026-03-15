@@ -174,13 +174,10 @@ export function IntelligenceBriefingCard() {
         .limit(10);
 
       if (error) console.error('AI Briefings query error:', error);
-      if (data) console.log('AI Briefings data:', data);
 
       const morning = data?.find((b: any) => b.briefing_type === 'morning') ?? null;
       const evening = data?.find((b: any) => b.briefing_type === 'evening') ?? null;
 
-      console.log('[IntelligenceBriefing] morning found:', morning);
-      console.log('[IntelligenceBriefing] evening found:', evening);
 
       setMorningBriefing(morning);
       setEveningBriefing(evening);

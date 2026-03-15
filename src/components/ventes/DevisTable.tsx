@@ -172,7 +172,7 @@ export function DevisTable({
         .select('score_ia, niveau_score, ai_recommandation, probabilite_conversion, scored_at')
         .eq('devis_id', devisId)
         .single();
-      console.log('[ScoreIA] Supabase refetch:', { data, error });
+      // Score refetched
 
       if (data && data.score_ia != null) {
         setLocalScores(prev => ({ ...prev, [devisDbId]: data }));
