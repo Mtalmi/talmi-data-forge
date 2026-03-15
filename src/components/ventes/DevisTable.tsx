@@ -387,13 +387,14 @@ export function DevisTable({
         <colgroup>
           <col style={{ width: 40 }} />
           <col style={{ width: 140 }} />
-          <col style={{ width: 200 }} />
+          <col style={{ width: 180 }} />
           <col style={{ width: 80 }} />
           <col style={{ width: 70 }} />
           <col style={{ width: 120 }} />
           <col style={{ width: 110 }} />
           <col style={{ width: 100 }} />
           <col style={{ width: 90 }} />
+          <col style={{ width: 85 }} />
           <col style={{ width: 50 }} />
           <col style={{ width: 200 }} />
         </colgroup>
