@@ -251,7 +251,7 @@ Contexte: formules B25/B30/B20, prix ~800-1200 DH/m³, 5 clients actifs, flotte 
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+      <div className="w-full px-4 py-6 space-y-6">
         {/* Custom Context Input */}
         <Card className="border-white/[0.06] bg-white/[0.02]">
           <CardContent className="p-4">

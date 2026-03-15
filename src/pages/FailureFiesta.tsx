@@ -267,7 +267,7 @@ ${customInput ? `\nContrainte: ${customInput}` : ""}`
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+      <div className="w-full px-4 py-6 space-y-6">
         <Card className="border-white/[0.06] bg-white/[0.02]">
           <CardContent className="p-4">
             <div className="flex gap-3">
