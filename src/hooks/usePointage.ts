@@ -97,7 +97,7 @@ export function usePointage() {
   // Clock in function
   const clockIn = useCallback(async (employeId: string, source: 'mobile' | 'bureau' = 'mobile'): Promise<boolean> => {
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getMoroccoToday();
       
       // Check if already clocked in today
       const { data: existing } = await supabase
