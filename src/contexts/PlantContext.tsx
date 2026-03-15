@@ -151,7 +151,7 @@ export function PlantProvider({ children }: { children: ReactNode }) {
       setActivePlantState(id);
       // Log plant switch
       window.dispatchEvent(new CustomEvent('tbos-activity', {
-        detail: { type: 'system', message: `Centrale changée: ${PLANTS[id].name}`, source: 'SYSTÈME', severity: 'info' }
+        detail: { type: 'system', message: `Centrale changée: ${PLANTS[id].pillLabel}`, source: 'SYSTÈME', severity: 'info' }
       }));
       // Fade in
       setTimeout(() => setFadeOpacity(1), 50);
