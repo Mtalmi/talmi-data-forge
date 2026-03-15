@@ -151,6 +151,7 @@ export default function Dashboard() {
   const [expandedKpi, setExpandedKpi] = useState<string | null>(null);
   const [cameraTime, setCameraTime] = useState('');
   const [demoMarket] = useState<'ma' | 'eu' | 'us'>(activePlant);
+  const [showDevisModal, setShowDevisModal] = useState(false);
 
   // ─── Read location state for tab activation ───
   useEffect(() => {
