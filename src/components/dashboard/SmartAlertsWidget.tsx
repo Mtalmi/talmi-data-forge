@@ -86,8 +86,8 @@ export function SmartAlertsWidget({ alerts, dashboardStats }: SmartAlertsWidgetP
       <div className="flex items-center gap-3 p-4 rounded-xl border border-success/20 bg-success/5">
         <Shield className="h-5 w-5 text-success" />
         <div>
-          <p className="text-sm font-semibold text-success">Aucune alerte</p>
-          <p className="text-xs text-muted-foreground">Tous les indicateurs sont nominaux</p>
+          <p className="text-sm font-semibold text-success">✓ Aucune alerte active</p>
+          <p className="text-xs text-muted-foreground">Votre centrale fonctionne parfaitement. Continuez comme ça.</p>
         </div>
       </div>
     );

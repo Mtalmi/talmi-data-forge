@@ -375,7 +375,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
             )
           ) : (
             <p style={{ fontSize: 12, color: value > 0 ? '#EF4444' : '#22C55E', marginTop: 6, fontWeight: 500 }}>
-              {value > 0 ? `⚠ ${value} critique${value > 1 ? 's' : ''}` : '✓ Aucune alerte'}
+              {value > 0 ? `⚠ ${value} critique${value > 1 ? 's' : ''}` : '✓ Aucune alerte — stocks nominaux'}
             </p>
           )}
         </div>
