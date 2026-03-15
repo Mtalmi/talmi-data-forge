@@ -2327,6 +2327,9 @@ export default function Dashboard() {
         {/* ── ROI CALCULATOR ── */}
         <ROICalculator />
 
+        {/* ── COMPETITIVE POSITIONING ── */}
+        <CompetitivePositioning />
+
         {/* ESG Widget */}
         <div style={{
           borderTop: '2px solid #22C55E',
