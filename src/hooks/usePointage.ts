@@ -105,7 +105,7 @@ export function usePointage() {
         .select('id, heure_entree')
         .eq('employe_id', employeId)
         .eq('date_pointage', today)
-        .single();
+        .maybeSingle();
 
       if (existing?.heure_entree) {
         toast.error('Déjà pointé aujourd\'hui');
