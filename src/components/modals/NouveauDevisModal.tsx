@@ -1,17 +1,20 @@
 import { useState, useMemo } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import {
   TBOSModal, TBOSField, TBOSInput, TBOSSelect, TBOSTextarea,
   TBOSDisplayField, TBOSPrimaryButton, TBOSGhostButton,
   TBOSFormRow, TBOSFormStack, showFormSuccess,
 } from '@/components/ui/TBOSModal';
+import { formatNumber } from '@/utils/formatters';
 
 const CLIENTS = [
-  { value: 'tgcc', label: 'TGCC' },
-  { value: 'cm', label: 'Constructions Modernes SA' },
-  { value: 'btp', label: 'BTP Maroc SARL' },
-  { value: 'saudi', label: 'Saudi Readymix' },
-  { value: 'cbs', label: 'Ciments & Béton du Sud' },
-  { value: 'sigma', label: 'Sigma Bâtiment' },
+  { value: 'CLI-TGCC05', label: 'TGCC' },
+  { value: 'CLI-CM01', label: 'Constructions Modernes SA' },
+  { value: 'CLI-BTP02', label: 'BTP Maroc SARL' },
+  { value: 'CLI-SRC04', label: 'Saudi Readymix' },
+  { value: 'CLI-CBS03', label: 'Ciments & Béton du Sud' },
+  { value: 'CLI-SBT06', label: 'Sigma Bâtiment' },
 ];
 
 const FORMULES = [
@@ -20,6 +23,8 @@ const FORMULES = [
   { value: 'F-B30', label: 'F-B30 (30 MPa)', price: 980 },
   { value: 'F-B35', label: 'F-B35 (35 MPa)', price: 1100 },
 ];
+
+const SIGMA_CLIENT_ID = 'CLI-SBT06';
 
 interface Props { open: boolean; onClose: () => void; onCreated?: (devis: any) => void; }
 
@@ -42,40 +47,76 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
     return v > 0 && p > 0 ? v * p : 0;
   }, [volume, effectivePrice]);
 
+  const isSigmaSelected = client === SIGMA_CLIENT_ID;
+
   const handleFormuleChange = (val: string) => {
     setFormule(val);
     const f = FORMULES.find(x => x.value === val);
     if (f) setPrixUnit(String(f.price));
   };
 
+  const sanitize = (s: string) => s.replace(/<[^>]*>/g, '').trim();
+
   const validate = () => {
     const e: Record<string, string> = {};
     if (!client) e.client = 'Champ requis';
-    if (!chantier.trim()) e.chantier = 'Champ requis';
+    if (!sanitize(chantier)) e.chantier = 'Champ requis';
     if (!formule) e.formule = 'Champ requis';
-    if (!volume || parseFloat(volume) <= 0) e.volume = 'Valeur doit être positive';
+    const vol = parseFloat(volume);
+    if (!volume || isNaN(vol)) e.volume = 'Champ requis';
+    else if (vol <= 0) e.volume = 'Valeur doit être supérieure à 0';
+    else if (vol > 10000) e.volume = 'Volume max 10 000 m³';
+    const prix = parseFloat(effectivePrice);
+    if (!effectivePrice || isNaN(prix) || prix <= 0) e.prix = 'Prix unitaire requis';
     if (!dateLivraison) e.dateLivraison = 'Champ requis';
     setErrors(e);
-    if (Object.keys(e).length > 0) {
-      const first = document.querySelector(`[data-field="${Object.keys(e)[0]}"]`) as HTMLElement;
-      first?.focus();
-    }
     return Object.keys(e).length === 0;
   };
 
   const handleSubmit = async () => {
+    if (loading) return; // double-submit guard
     if (!validate()) return;
     setLoading(true);
-    await new Promise(r => setTimeout(r, 800));
-    const id = `DEV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 900) + 100)}`;
-    const devis = {
-      id, client: CLIENTS.find(c => c.value === client)?.label, chantier, formule, volume: parseFloat(volume),
-      prix_unitaire: parseFloat(effectivePrice), total, date_livraison: dateLivraison, notes, statut: 'Brouillon',
-      created_at: new Date().toISOString(),
-    };
-    onCreated?.(devis);
-    showFormSuccess(`✓ Devis ${id} créé avec succès`);
-    resetAndClose();
+    try {
+      const devisId = `DEV-${new Date().getFullYear().toString().slice(-2)}${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 900) + 100)}`;
+      const clientLabel = CLIENTS.find(c => c.value === client)?.label || client;
+      const vol = parseFloat(volume);
+      const prix = parseFloat(effectivePrice);
+
+      const { error } = await supabase.from('devis').insert({
+        devis_id: devisId,
+        client_id: client,
+        formule_id: formule,
+        volume_m3: vol,
+        prix_unitaire: prix,
+        total_ht: vol * prix,
+        statut: 'brouillon',
+        notes: sanitize(notes) || null,
+      });
+
+      if (error) throw error;
+
+      // Log activity
+      await supabase.from('activity_log').insert({
+        type: 'action',
+        message: `Devis ${devisId} créé — ${clientLabel} · ${formule} · ${formatNumber(vol, { decimals: 1 })} m³ · ${formatNumber(vol * prix)} DH`,
+        source_page: 'ventes',
+        severite: 'info',
+      }).then(() => {});
+
+      const devis = {
+        id: devisId, client: clientLabel, chantier: sanitize(chantier), formule, volume: vol,
+        prix_unitaire: prix, total: vol * prix, date_livraison: dateLivraison, notes: sanitize(notes), statut: 'Brouillon',
+        created_at: new Date().toISOString(),
+      };
+      onCreated?.(devis);
+      showFormSuccess(`✓ Devis ${devisId} créé avec succès`);
+      resetAndClose();
+    } catch (error: any) {
+      console.error('Error creating devis:', error);
+      toast.error(`Erreur: ${error?.message || 'Impossible de créer le devis'}`);
+      setLoading(false);
+    }
   };
 
   const resetAndClose = () => {
@@ -88,12 +129,24 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
     <TBOSModal open={open} onClose={resetAndClose} title="Nouveau Devis" footer={
       <>
         <TBOSGhostButton onClick={resetAndClose}>Annuler</TBOSGhostButton>
-        <TBOSPrimaryButton onClick={handleSubmit} loading={loading} disabled={!client || !chantier || !formule || !volume || !dateLivraison}>
+        <TBOSPrimaryButton onClick={handleSubmit} loading={loading} disabled={loading || !client || !chantier || !formule || !volume || !dateLivraison}>
           Créer Devis
         </TBOSPrimaryButton>
       </>
     }>
       <TBOSFormStack>
+        {/* Sigma warning */}
+        {isSigmaSelected && (
+          <div style={{
+            fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
+            fontSize: 11, padding: '10px 14px', borderRadius: 6,
+            background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
+            color: '#EF4444',
+          }}>
+            ⚠ ATTENTION — Sigma Bâtiment : 189K DH impayés · Score 23/100 · Livraisons suspendues
+          </div>
+        )}
+
         <TBOSFormRow>
           <TBOSField label="Client" required error={errors.client}>
             <TBOSSelect data-field="client" value={client} onChange={e => setClient(e.target.value)}
@@ -101,7 +154,7 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
           </TBOSField>
           <TBOSField label="Chantier" required error={errors.chantier}>
             <TBOSInput data-field="chantier" value={chantier} onChange={e => setChantier(e.target.value)}
-              hasError={!!errors.chantier} placeholder="Nom du chantier ou adresse" />
+              hasError={!!errors.chantier} placeholder="Nom du chantier ou adresse" maxLength={200} />
           </TBOSField>
         </TBOSFormRow>
 
@@ -111,11 +164,12 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
               hasError={!!errors.formule} options={FORMULES.map(f => ({ value: f.value, label: f.label }))} placeholder="Sélectionner" />
           </TBOSField>
           <TBOSField label="Volume (m³)" required error={errors.volume}>
-            <TBOSInput data-field="volume" type="number" step="0.5" min="0.1" value={volume}
+            <TBOSInput data-field="volume" type="number" step="0.5" min="0.1" max="10000" value={volume}
               onChange={e => setVolume(e.target.value)} hasError={!!errors.volume} placeholder="0" style={{ textAlign: 'right' }} />
           </TBOSField>
-          <TBOSField label="Prix unitaire (DH/m³)">
-            <TBOSInput type="number" value={effectivePrice} onChange={e => setPrixUnit(e.target.value)} style={{ textAlign: 'right' }} />
+          <TBOSField label="Prix unitaire (DH/m³)" error={errors.prix}>
+            <TBOSInput type="number" min="1" value={effectivePrice} onChange={e => setPrixUnit(e.target.value)}
+              hasError={!!errors.prix} style={{ textAlign: 'right' }} />
           </TBOSField>
         </TBOSFormRow>
 
@@ -123,12 +177,12 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
           <TBOSDisplayField label="Total HT" value={total > 0 ? `${total.toLocaleString('fr-FR')} DH` : '—'} />
           <TBOSField label="Date livraison souhaitée" required error={errors.dateLivraison}>
             <TBOSInput data-field="dateLivraison" type="date" value={dateLivraison} onChange={e => setDateLivraison(e.target.value)}
-              hasError={!!errors.dateLivraison} />
+              hasError={!!errors.dateLivraison} min={new Date().toISOString().split('T')[0]} />
           </TBOSField>
         </TBOSFormRow>
 
         <TBOSField label="Notes">
-          <TBOSTextarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes internes..." />
+          <TBOSTextarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes internes..." maxLength={1000} />
         </TBOSField>
       </TBOSFormStack>
     </TBOSModal>
