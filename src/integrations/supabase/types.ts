@@ -6587,7 +6587,7 @@ export type Database = {
           adjuvant_reel_l: number | null
           adjuvant_theo_l: number | null
           batch_number: number
-          bl_id: string
+          bl_id: string | null
           ciment_reel_kg: number
           ciment_theo_kg: number
           client_id: string | null
@@ -6609,7 +6609,7 @@ export type Database = {
           malaxeur: string | null
           notes: string | null
           operateur: string | null
-          photo_pupitre_url: string
+          photo_pupitre_url: string | null
           quality_status: string
           ratio_ec: number | null
           sable_reel_kg: number | null
@@ -6630,7 +6630,7 @@ export type Database = {
           adjuvant_reel_l?: number | null
           adjuvant_theo_l?: number | null
           batch_number?: number
-          bl_id: string
+          bl_id?: string | null
           ciment_reel_kg: number
           ciment_theo_kg: number
           client_id?: string | null
@@ -6652,7 +6652,7 @@ export type Database = {
           malaxeur?: string | null
           notes?: string | null
           operateur?: string | null
-          photo_pupitre_url: string
+          photo_pupitre_url?: string | null
           quality_status?: string
           ratio_ec?: number | null
           sable_reel_kg?: number | null
@@ -6673,7 +6673,7 @@ export type Database = {
           adjuvant_reel_l?: number | null
           adjuvant_theo_l?: number | null
           batch_number?: number
-          bl_id?: string
+          bl_id?: string | null
           ciment_reel_kg?: number
           ciment_theo_kg?: number
           client_id?: string | null
@@ -6695,7 +6695,7 @@ export type Database = {
           malaxeur?: string | null
           notes?: string | null
           operateur?: string | null
-          photo_pupitre_url?: string
+          photo_pupitre_url?: string | null
           quality_status?: string
           ratio_ec?: number | null
           sable_reel_kg?: number | null
@@ -6713,20 +6713,6 @@ export type Database = {
           ws7_batch_id?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "production_batches_bl_id_fkey"
-            columns: ["bl_id"]
-            isOneToOne: false
-            referencedRelation: "bons_livraison_reels"
-            referencedColumns: ["bl_id"]
-          },
-          {
-            foreignKeyName: "production_batches_bl_id_fkey"
-            columns: ["bl_id"]
-            isOneToOne: false
-            referencedRelation: "client_delivery_tracking_view"
-            referencedColumns: ["bl_id"]
-          },
           {
             foreignKeyName: "production_batches_ws7_batch_id_fkey"
             columns: ["ws7_batch_id"]

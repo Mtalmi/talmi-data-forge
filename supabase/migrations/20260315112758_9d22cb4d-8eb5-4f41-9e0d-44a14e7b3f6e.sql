@@ -1,0 +1,2 @@
+ALTER TABLE production_batches DISABLE TRIGGER alert_on_critical_batch_trigger;
+ALTER TABLE production_batches DISABLE TRIGGER calculate_batch_variances_trigger;
