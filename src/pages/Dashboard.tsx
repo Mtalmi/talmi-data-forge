@@ -280,12 +280,11 @@ export default function Dashboard() {
     }
   }, [activeTab]);
 
-  // Animated KPI values — locked for CEO demo determinism
-  // Raw MENA values for count-up
-  const rawProdVolume = useCountUp(671, 1800, 200);
-  const rawCa = useCountUp(75.6, 1800, 400, 1);
-  const marge = useCountUp(49.9, 1800, 600, 1);
-  const rawTresorerie = useCountUp(551, 1800, 800);
+  // Animated KPI values — driven by plant data
+  const rawProdVolume = useCountUp(demoData.production.volume, 1800, 200);
+  const rawCa = useCountUp(demoData.revenue.today / 1000, 1800, 400, 1);
+  const marge = useCountUp(demoData.production.marge, 1800, 600, 1);
+  const rawTresorerie = useCountUp(demoData.tresorerie.value / 1000, 1800, 800);
 
   // Converted values for display
   const prodVolume = uf.rawVolume(rawProdVolume);
