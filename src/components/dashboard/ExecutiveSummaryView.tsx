@@ -202,7 +202,7 @@ export function ExecutiveSummaryView({ periodStats, dashboardStats, onClose }: E
 
       {/* Metrics Grid - designed to fit one screen */}
       <div className="flex-1 p-4 sm:p-8 flex items-center justify-center">
-        <div className="w-full max-w-6xl grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+        <div className="w-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
           {metrics.map((metric, i) => (
             <MetricTile key={metric.label} {...metric} delay={i} />
           ))}
