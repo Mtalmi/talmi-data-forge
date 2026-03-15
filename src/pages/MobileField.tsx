@@ -823,9 +823,9 @@ export default function MobileField() {
               </button>
             </div>
           </div>
-          <Stepper label="Slump (mm)" value={testSlump} onChange={setTestSlump} min={50} max={250} step={5} reference="Target: 140–160mm" />
-          <Stepper label="Temperature (°C)" value={testTemp} onChange={setTestTemp} min={10} max={50} step={1} reference="Max: 35°C" />
-          <Stepper label="Air Content (%)" value={testAir} onChange={setTestAir} min={0} max={12} step={0.5} reference="Target: 4–7%" />
+          <Stepper label="Affaissement (mm)" value={testSlump} onChange={setTestSlump} min={50} max={250} step={5} reference="Cible : 140–160mm" />
+          <Stepper label="Température (°C)" value={testTemp} onChange={setTestTemp} min={10} max={50} step={1} reference="Max : 35°C" />
+          <Stepper label="Teneur en Air (%)" value={testAir} onChange={setTestAir} min={0} max={12} step={0.5} reference="Cible : 4–7%" />
 
           <div>
             <label className="text-sm text-[#B0B8C1] block mb-2">Visual Inspection</label>
