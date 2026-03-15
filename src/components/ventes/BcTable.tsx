@@ -335,6 +335,7 @@ export function BcTable({
             onMouseEnter={e => { e.currentTarget.style.background = 'rgba(245,158,11,0.1)'; e.currentTarget.style.color = '#E8C96A'; }}
             onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#D4A843'; }}
             onClick={e => e.stopPropagation()}
+            aria-label="Actions du bon de commande"
           >
             <MoreHorizontal className="h-4 w-4" />
           </button>
