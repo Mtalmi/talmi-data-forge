@@ -1219,7 +1219,7 @@ const en = {
       toleranceAlerts: 'Tolerance Alerts (Leak)',
       cancel: 'Cancel',
       creating: 'Creating...',
-      createSlip: 'Create Slip',
+      createSlip: 'Create Order',
       volumeError: 'Volume must be between 0 and 12 m³',
       // Table headers
       date: 'Date',
