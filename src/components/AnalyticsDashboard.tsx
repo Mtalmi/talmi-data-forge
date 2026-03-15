@@ -128,16 +128,16 @@ export default function AnalyticsDashboard() {
           <>
             <Card className="bg-card border-border md:col-span-2">
               <CardHeader>
-                <CardTitle>System Uptime Trend (24h)</CardTitle>
+                <CardTitle>Tendance Disponibilité Système (24h)</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={uptimeData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="time" stroke="#9CA3AF" />
-                    <YAxis stroke="#9CA3AF" domain={[99.9, 100]} />
+                    <XAxis dataKey="time" tick={{ fill: '#9CA3AF', fontSize: 11 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                    <YAxis tick={{ fill: '#9CA3AF', fontSize: 11 }} domain={[99.9, 100]} tickFormatter={v => `${v}%`} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", color: "#FFFFFF" }}
+                      contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", borderRadius: 8, color: "#FFFFFF" }}
                       formatter={(value) => `${value}%`}
                     />
                     <Line
