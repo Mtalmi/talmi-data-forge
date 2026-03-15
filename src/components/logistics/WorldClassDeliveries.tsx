@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { useUnitFormat } from '@/hooks/useUnitFormat';
 import { NouveauVehiculeModal } from '@/components/modals/NouveauVehiculeModal';
 import { ReleveCarburantModal } from '@/components/modals/ReleveCarburantModal';
 import { OptimiserRoutesModal } from '@/components/modals/OptimiserRoutesModal';
