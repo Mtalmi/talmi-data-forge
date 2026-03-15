@@ -709,6 +709,7 @@ export default function Fournisseurs() {
           onSubmit={createAchat}
         />
       </div>
+      </div>
     </MainLayout>
   );
 }

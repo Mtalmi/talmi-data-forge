@@ -808,6 +808,7 @@ export default function Ventes() {
             if (isEmergency) navigate(`/planning?date=${format(new Date(), 'yyyy-MM-dd')}&focus=pending`);
           }}
         />
+        </div>
       </MainLayout>
     </TooltipProvider>
   );

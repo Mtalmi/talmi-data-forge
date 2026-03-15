@@ -2510,6 +2510,7 @@ export default function Dashboard() {
       </AnimatePresence>
       {/* Nouveau Devis Modal */}
       <NouveauDevisModal open={showDevisModal} onClose={() => setShowDevisModal(false)} onCreated={() => setShowDevisModal(false)} />
+      </div>
     </MainLayout>
   );
 }
