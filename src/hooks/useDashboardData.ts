@@ -188,9 +188,9 @@ export function useDashboardData() {
       const depletions = stockLevels
         .filter(s => s.max > 0)
         .map(s => {
-          const pct = (s.current / s.max) * 100;
-          const dailyRate = s.max > 0 ? Math.round(((s.max - s.current) / s.max) * 100 / 7 * 10) / 10 : 0;
-          return { name: s.name, dailyRate, daysLeft: Math.floor(s.autonomie) || Math.ceil(pct / (dailyRate || 1)) };
+          const pct = safeDivide(s.current, s.max) * 100;
+          const dailyRate = s.max > 0 ? Math.round(safeDivide(s.max - s.current, s.max) * 100 / 7 * 10) / 10 : 0;
+          return { name: s.name, dailyRate, daysLeft: Math.floor(s.autonomie) || Math.ceil(safeDivide(pct, dailyRate || 1)) };
         })
         .sort((a, b) => a.daysLeft - b.daysLeft);
 
