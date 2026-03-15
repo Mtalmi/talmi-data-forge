@@ -733,6 +733,9 @@ function HeroScoreCounter({ target }: { target: number }) {
 export default function WorldClassStocks({ silosContent, onNewMovement }: { silosContent?: React.ReactNode; onNewMovement?: () => void }) {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('silos');
+  const [showMouvementModal, setShowMouvementModal] = useState(false);
+  const [showControleModal, setShowControleModal] = useState(false);
+  const [showAjustementModal, setShowAjustementModal] = useState(false);
   const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, REORDER_RECS, loading } = useStocksLiveData();
 
   // Read location state for tab activation
