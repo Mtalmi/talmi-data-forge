@@ -980,16 +980,14 @@ function ClientDetailDrawer({ client, onClose }: { client: ClientDisplay | null;
           <div style={{ borderTop: '1px solid rgba(212,168,67,0.15)', paddingTop: 16 }}>
             <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', marginBottom: 10 }}>CONTACT</p>
             {client.email !== '—' && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+              <CopyableText text={client.email} style={{ color: '#9CA3AF', marginBottom: 2 }} iconSize={11}>
                 <a href={`mailto:${client.email}`} style={{ color: '#D4A843', fontSize: 13, textDecoration: 'none' }}>{client.email}</a>
-                <CopyableText text={client.email} style={{ color: '#9CA3AF' }} iconSize={11}>{null}</CopyableText>
-              </div>
+              </CopyableText>
             )}
             {client.telephone !== '—' && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
+              <CopyableText text={client.telephone} style={{ color: '#9CA3AF', marginTop: 2 }} iconSize={11}>
                 <a href={`tel:${client.telephone}`} style={{ fontFamily: MONO, color: '#9CA3AF', fontSize: 13, textDecoration: 'none' }}>{client.telephone}</a>
-                <CopyableText text={client.telephone} style={{ color: '#9CA3AF' }} iconSize={11}>{null}</CopyableText>
-              </div>
+              </CopyableText>
             )}
             {client.ville !== '—' && <p style={{ color: '#9CA3AF', fontSize: 12, marginTop: 4 }}>{client.ville}</p>}
             {client.email === '—' && client.telephone === '—' && (
