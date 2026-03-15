@@ -16,7 +16,7 @@ function OverviewApproveBtn({ mat, qty }: { mat: string; qty: string }) {
       onMouseDown={e => { if (state === 'idle') (e.currentTarget as HTMLElement).style.transform = 'scale(0.97)'; }}
       onMouseUp={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)'; }}
       style={{
-        fontFamily: MONO, fontSize: 11, fontWeight: 600, borderRadius: 6, padding: '6px 14px', transition: 'all 200ms', border: 'none',
+        fontFamily: MONO, fontSize: 12, fontWeight: 600, borderRadius: 6, padding: '6px 14px', transition: 'all 200ms', border: 'none',
         background: state === 'done' ? 'rgba(34,197,94,0.15)' : '#D4A843',
         color: state === 'done' ? '#22C55E' : '#0F1629',
         cursor: state === 'idle' ? 'pointer' : 'default',
