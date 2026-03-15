@@ -139,7 +139,7 @@ export function LazyTable<T extends Record<string, any>>({
   return (
     <div className="overflow-x-auto">
       <table className="data-table-industrial w-full">
-        <thead>
+        <thead className="sticky top-0 z-10 bg-[#0F1629] shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
           <tr>
             {columns.filter(col => !col.hideOnMobile || !isMobile).map((col) => (
               <th 
