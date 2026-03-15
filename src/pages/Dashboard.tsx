@@ -1203,6 +1203,8 @@ export default function Dashboard() {
                 </span>
               </div>
             </div>
+              );
+            })()}
           </div>
 
           {/* (3) 4 KPI Cards Row */}
