@@ -163,7 +163,7 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
             <AnimatedKDH value={totalPotential} color="#F59E0B" />
             <p style={{ fontSize: 11, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9CA3AF', marginTop: 4 }}>{rf.potential}</p>
           </div>
-          <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderTop: '2px solid #D4A843', borderRadius: 12, padding: 20 }}>
+          <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderTop: '2px solid #D4A843', borderRadius: 8, padding: 20 }}>
             <AnimatedKDH value={totalForecast} color="#D4A843" />
             <p style={{ fontSize: 11, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9CA3AF', marginTop: 4 }}>{rf.forecast}</p>
           </div>

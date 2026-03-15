@@ -147,7 +147,7 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
         )}
       </div>
 
-      <div style={{ position: 'relative', padding: '24px 16px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', borderTop: '2px solid #D4A843', borderRadius: 16, overflow: 'hidden' }}>
+      <div style={{ position: 'relative', padding: '24px 16px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', borderTop: '2px solid #D4A843', borderRadius: 8, overflow: 'hidden', backdropFilter: 'blur(8px)' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.03)', borderRadius: '16px 16px 0 0', overflow: 'hidden' }}>
           <div style={{ width: `${progressPct}%`, height: '100%', background: 'linear-gradient(90deg, #D4A843, #C49A35, #A07820, #10B981)', borderRadius: 2, opacity: 0.6, transition: 'width 800ms ease' }} />
         </div>
