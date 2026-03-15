@@ -432,7 +432,6 @@ export default function WorldClassPurchasePrices() {
   return (
     <div style={{ fontFamily: SANS, minHeight: '100vh', background: T.bg, color: T.textPri }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700;800&display=swap');
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
         @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
       `}</style>

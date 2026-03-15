@@ -937,12 +937,11 @@ export function WorldClassVentes() {
 
   return (
     <div className="overflow-x-hidden max-w-full" style={{ color: T.textPri }}>
-      {/* Font imports */}
+      {/* Styles */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;300;400;600;700&display=swap');
         .wc-tab-btn { background:transparent; border:1px solid transparent; border-radius:8px; padding:7px 16px; cursor:pointer; font-weight:600; font-size:12px; transition:all 200ms; color:rgba(148,163,184,0.5); }
         .wc-tab-btn:hover { color:rgba(226,232,240,0.7); border-color:rgba(255,255,255,0.06); }
-        .wc-tab-btn.active { color:#FDB913; border-color:rgba(253,185,19,0.3); background:rgba(253,185,19,0.06); }
+        .wc-tab-btn.active { color:#D4A843; border-color:rgba(212,168,67,0.3); background:rgba(212,168,67,0.06); }
       `}</style>
 
       {/* ── STICKY HEADER ── */}

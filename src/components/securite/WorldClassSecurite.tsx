@@ -356,7 +356,6 @@ export default function WorldClassSecurite() {
   return (
     <div style={{ fontFamily: SANS, minHeight: '100vh', background: T.bg, color: T.textPri }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700;800&display=swap');
         @keyframes tbPulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
         @keyframes tbFadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
         @keyframes tbGlow { 0%,100%{box-shadow:0 0 20px rgba(255,215,0,0.2)} 50%{box-shadow:0 0 50px rgba(255,215,0,0.5)} }
