@@ -660,8 +660,8 @@ function EssaisDuJourTab({ labKpis }: { labKpis: { testsToday: number; conformes
               </div>
             }
           />
-          <div style={{ display: 'grid', gridTemplateColumns: '0.6fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.9fr', padding: '0 14px 10px', gap: 8, borderBottom: `1px solid ${T.cardBorder}` }}>
-            {['Test ID', 'Batch', 'Type', 'Résultat', 'Norme', 'Écart', 'Statut'].map((h, i) => (
+          <div style={{ display: 'grid', gridTemplateColumns: '0.6fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.9fr 0.5fr', padding: '0 14px 10px', gap: 8, borderBottom: `1px solid ${T.cardBorder}` }}>
+            {['Test ID', 'Batch', 'Type', 'Résultat', 'Norme', 'Écart', 'Statut', '📷'].map((h, i) => (
               <p key={i} style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', margin: 0 }}>{h}</p>
             ))}
           </div>
