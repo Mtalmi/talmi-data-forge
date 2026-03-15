@@ -1562,7 +1562,7 @@ function AnalytiqueTab() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <Brain size={16} color={T.gold} />
-              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>✦ Insight IA — Analyse Qualité</span>
+              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 12, textTransform: 'uppercase' as const, letterSpacing: '0.15em' }}>✦ Insight IA — Analyse Qualité</span>
             </div>
             <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', padding: '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4 }}>
               Généré par IA · Claude Opus
