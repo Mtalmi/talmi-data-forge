@@ -1259,12 +1259,12 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   const maxVal = Math.max(...arAgingData.map(a => a.value), 1);
                   const pct = (d.value / maxVal) * 100;
                   const barStyle = i === 0
-                    ? { background: 'linear-gradient(to right, rgba(74,222,128,0.8), rgba(74,222,128,0.6))' }
+                    ? { background: 'linear-gradient(to right, #D4A843, #FDB913)' }
                     : i === 1
-                    ? { background: 'linear-gradient(90deg, #C4933B, #FDB913)', opacity: 0.55 }
+                    ? { background: 'linear-gradient(90deg, #D97706, #F59E0B)' }
                     : i === 2
-                    ? { background: 'linear-gradient(90deg, #b45309, #f59e0b)', opacity: 0.8 }
-                    : { background: 'linear-gradient(90deg, #dc2626, #ef4444)', opacity: 0.8 };
+                    ? { background: 'linear-gradient(90deg, #DC2626, #EF4444)' }
+                    : { background: 'linear-gradient(90deg, #991B1B, #B91C1C)' };
                   return (
                     <div key={i}>
                       <div className="flex justify-between mb-1">
