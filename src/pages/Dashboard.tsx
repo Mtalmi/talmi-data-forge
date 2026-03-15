@@ -1874,7 +1874,7 @@ export default function Dashboard() {
                             <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: '38px', color: 'white', lineHeight: 1.1 }}>{+(uf.rawVolume(kpiProduit)).toFixed(0)} <span className="text-sm text-muted-foreground/40">{uf.volUnit}</span></div>
                             <div className="text-[10px] text-muted-foreground/40 mb-1.5">sur {uf.fmtVolume(800)} objectif</div>
                             <div className="h-[4px] rounded-full bg-white/[0.06] w-full">
-                              <div className="h-full rounded-full" style={{ width: '84%', background: 'linear-gradient(90deg, #D4A843, #E8C96A)', boxShadow: '0 0 8px rgba(212, 168, 67, 0.25)', animation: 'progressGrow 1.2s ease forwards' }} />
+                              <div className="h-full rounded-full" style={{ width: '84%', background: 'linear-gradient(90deg, #D4A843, #E8C96A)', boxShadow: '0 0 8px rgba(212, 168, 67, 0.25)', transformOrigin: 'left', animation: 'progressGrow 1.2s ease forwards' }} />
                             </div>
                             <div style={{ maxHeight: expandedKpi === 'produit' ? '120px' : '0', overflow: 'hidden', transition: 'max-height 300ms ease' }}>
                               <div style={{ fontSize: '12px', color: '#9CA3AF', padding: '8px 12px', borderTop: '1px solid rgba(212,168,67,0.1)' }}>
