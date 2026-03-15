@@ -1157,15 +1157,15 @@ export default function Dashboard() {
             {
               label: 'REVENUE',
               value: ca,
-              unit: 'K DH',
-              watermark: 'DH',
+              unit: uf.currKUnit,
+              watermark: uf.currSym,
               sub: `${periodStats.nbFactures || 11} factures`,
               trend: '↗ +8.2%',
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,26 20,22 40,28 60,20 80,16 100,12 120,8',
               secondaryLabel: 'Objectif',
-              secondaryValue: '250K DH · 30%',
+              secondaryValue: `${uf.fmtCurrencyK(250000)} · 30%`,
             },
             {
               label: 'MARGE',
