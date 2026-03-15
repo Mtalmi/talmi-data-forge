@@ -96,10 +96,10 @@ export function BillingDashboardWidget() {
 
       // Aging buckets
       const buckets = [
-        { label: '0-30j', min: 0, max: 30, montant: 0, color: 'hsl(var(--success))' },
-        { label: '31-60j', min: 31, max: 60, montant: 0, color: 'hsl(var(--warning))' },
-        { label: '61-90j', min: 61, max: 90, montant: 0, color: 'hsl(var(--accent))' },
-        { label: '90j+', min: 91, max: 9999, montant: 0, color: 'hsl(var(--destructive))' },
+        { label: '0-30j', min: 0, max: 30, montant: 0, count: 0, color: '#22C55E' },
+        { label: '31-60j', min: 31, max: 60, montant: 0, count: 0, color: '#F59E0B' },
+        { label: '61-90j', min: 61, max: 90, montant: 0, count: 0, color: '#EA580C' },
+        { label: '90j+', min: 91, max: 9999, montant: 0, count: 0, color: '#EF4444' },
       ];
 
       impayes.forEach(f => {
