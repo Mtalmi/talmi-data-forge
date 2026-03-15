@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useFormDirty } from '@/hooks/useFormDirty';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
@@ -8,8 +9,12 @@ import {
 import { sanitizeClientName, sanitizeInput } from '@/lib/security';
 
 const SEGMENTS = [
+  { value: 'Construction', label: 'Construction' },
+  { value: 'Promoteur', label: 'Promoteur' },
+  { value: 'Particulier', label: 'Particulier' },
+  { value: 'Industrie', label: 'Industrie' },
   { value: 'Premium', label: 'Premium' },
-  { value: 'Standard', label: 'Standard' },
+  { value: 'Mid-Market', label: 'Mid-Market' },
   { value: 'Nouveau', label: 'Nouveau' },
 ];
 
@@ -20,29 +25,48 @@ const PAYMENT_TERMS = [
   { value: '0', label: 'Anticipé' },
 ];
 
+const EMPTY_FORM = { nom: '', segment: '', contact: '', email: '', telephone: '', adresse: '', chantier: '', paiement: '30', notes: '' };
+
 interface Props { open: boolean; onClose: () => void; onCreated?: () => void; }
 
 export function NouveauClientModal({ open, onClose, onCreated }: Props) {
-  const [form, setForm] = useState({ nom: '', segment: '', contact: '', email: '', telephone: '', adresse: '', chantier: '', paiement: '30', notes: '' });
+  const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [warnings, setWarnings] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const isDirty = !!(form.nom || form.segment || form.contact || form.email || form.telephone || form.adresse || form.notes);
+  useFormDirty(isDirty);
 
   const set = (k: string, v: string) => setForm(p => ({ ...p, [k]: v }));
 
   const emailValid = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
-  const phoneValid = (p: string) => /^[+\d\s()-]{6,20}$/.test(p);
+  const phoneValid = (p: string) => /^[+\d\s()\-]{6,20}$/.test(p);
+
+  // Duplicate check on name blur
+  const checkDuplicate = useCallback(async (name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed || trimmed.length < 2) { setWarnings([]); return; }
+    const { data } = await supabase
+      .from('clients')
+      .select('client_id, nom_client')
+      .ilike('nom_client', trimmed)
+      .limit(1);
+    if (data && data.length > 0) {
+      setWarnings(['Un client avec ce nom existe déjà']);
+    } else {
+      setWarnings(w => w.filter(x => x !== 'Un client avec ce nom existe déjà'));
+    }
+  }, []);
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!sanitizeClientName(form.nom)) e.nom = 'Champ requis';
-    else if (form.nom.length > 100) e.nom = 'Max 100 caractères';
-    if (!form.segment) e.segment = 'Champ requis';
-    if (!sanitizeInput(form.contact)) e.contact = 'Champ requis';
-    if (!form.email.trim()) e.email = 'Champ requis';
-    else if (!emailValid(form.email)) e.email = 'Format email invalide';
-    else if (form.email.length > 255) e.email = 'Max 255 caractères';
-    if (!form.telephone.trim()) e.telephone = 'Champ requis';
-    else if (!phoneValid(form.telephone)) e.telephone = 'Format téléphone invalide';
+    if (!sanitizeClientName(form.nom)) e.nom = 'Champ obligatoire';
+    if (!form.segment) e.segment = 'Champ obligatoire';
+    // Email: optional, but validate format if provided
+    if (form.email.trim() && !emailValid(form.email)) e.email = "Format d'email invalide";
+    // Telephone: optional, but validate format if provided
+    if (form.telephone.trim() && !phoneValid(form.telephone)) e.telephone = 'Format de téléphone invalide';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -57,8 +81,8 @@ export function NouveauClientModal({ open, onClose, onCreated }: Props) {
         client_id: clientId,
         nom_client: sanitizeClientName(form.nom),
         segment: form.segment,
-        email: form.email.trim().toLowerCase(),
-        telephone: form.telephone.trim(),
+        email: form.email.trim().toLowerCase() || null,
+        telephone: form.telephone.trim() || null,
         ville: sanitizeInput(form.adresse) || null,
         score_sante: 50,
         statut: 'actif',
@@ -72,32 +96,53 @@ export function NouveauClientModal({ open, onClose, onCreated }: Props) {
         setLoading(false);
         return;
       }
-      showFormSuccess(`✓ Client "${sanitizeClientName(form.nom)}" créé avec succès — ${clientId}`);
+      showFormSuccess(`✓ Client créé avec succès`);
       onCreated?.();
       resetAndClose();
     } catch (err: any) {
       console.error('Error creating client:', err);
-      toast.error(`Erreur: ${err?.message || 'Impossible de créer le client'}`);
+      toast.error('Erreur lors de la création du client');
       setLoading(false);
     }
   };
 
+  const handleClose = useCallback(() => {
+    if (isDirty) {
+      const confirmed = window.confirm('Modifications non sauvegardées. Voulez-vous quitter ?');
+      if (!confirmed) return;
+    }
+    resetAndClose();
+  }, [isDirty]);
+
   const resetAndClose = () => {
-    setForm({ nom: '', segment: '', contact: '', email: '', telephone: '', adresse: '', chantier: '', paiement: '30', notes: '' });
-    setErrors({}); setLoading(false); onClose();
+    setForm(EMPTY_FORM);
+    setErrors({}); setWarnings([]); setLoading(false); onClose();
   };
 
   return (
-    <TBOSModal open={open} onClose={resetAndClose} title="Nouveau Client" footer={
+    <TBOSModal open={open} onClose={handleClose} title="Nouveau Client" footer={
       <>
-        <TBOSGhostButton onClick={resetAndClose}>Annuler</TBOSGhostButton>
-        <TBOSPrimaryButton onClick={handleSubmit} loading={loading} disabled={loading}>Créer Client</TBOSPrimaryButton>
+        <TBOSGhostButton onClick={handleClose}>Annuler</TBOSGhostButton>
+        <TBOSPrimaryButton onClick={handleSubmit} loading={loading} disabled={loading}>Créer le client</TBOSPrimaryButton>
       </>
     }>
       <TBOSFormStack>
+        {warnings.length > 0 && (
+          <div role="status" style={{
+            fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
+            fontSize: 11, padding: '10px 14px', borderRadius: 6,
+            background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.2)',
+            color: '#EAB308',
+          }}>
+            {warnings.map((w, i) => <div key={i}>⚠ {w}</div>)}
+          </div>
+        )}
+
         <TBOSFormRow>
           <TBOSField label="Nom entreprise" required error={errors.nom}>
-            <TBOSInput value={form.nom} onChange={e => set('nom', e.target.value)} hasError={!!errors.nom} placeholder="Nom de l'entreprise" maxLength={100} />
+            <TBOSInput value={form.nom} onChange={e => set('nom', e.target.value)}
+              onBlur={e => checkDuplicate(e.target.value)}
+              hasError={!!errors.nom} placeholder="Nom de l'entreprise" maxLength={100} />
           </TBOSField>
           <TBOSField label="Segment" required error={errors.segment}>
             <TBOSSelect value={form.segment} onChange={e => set('segment', e.target.value)} hasError={!!errors.segment}
@@ -105,15 +150,15 @@ export function NouveauClientModal({ open, onClose, onCreated }: Props) {
           </TBOSField>
         </TBOSFormRow>
 
-        <TBOSField label="Contact principal" required error={errors.contact}>
-          <TBOSInput value={form.contact} onChange={e => set('contact', e.target.value)} hasError={!!errors.contact} placeholder="Nom du contact" maxLength={100} />
+        <TBOSField label="Contact principal">
+          <TBOSInput value={form.contact} onChange={e => set('contact', e.target.value)} placeholder="Nom du contact" maxLength={100} />
         </TBOSField>
 
         <TBOSFormRow>
-          <TBOSField label="Email" required error={errors.email}>
+          <TBOSField label="Email" error={errors.email}>
             <TBOSInput type="email" value={form.email} onChange={e => set('email', e.target.value)} hasError={!!errors.email} placeholder="contact@entreprise.ma" maxLength={255} />
           </TBOSField>
-          <TBOSField label="Téléphone" required error={errors.telephone}>
+          <TBOSField label="Téléphone" error={errors.telephone}>
             <TBOSInput value={form.telephone} onChange={e => set('telephone', e.target.value)} hasError={!!errors.telephone} placeholder="+212 6XX XX XX XX" maxLength={20} />
           </TBOSField>
         </TBOSFormRow>
