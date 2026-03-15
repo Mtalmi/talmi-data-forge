@@ -210,10 +210,10 @@ export default function AnalyticsBI() {
               <CardContent>
                 <ResponsiveContainer width="100%" height={250}>
                   <BarChart data={monthComparison} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis type="number" tickFormatter={v => v >= 1000000 ? `${(v/1000000).toFixed(1)}M` : v >= 1000 ? `${(v/1000).toFixed(0)}K` : `${v}`} tick={{ fontSize: 10 }} />
-                    <YAxis type="category" dataKey="metric" width={140} tick={{ fontSize: 10 }} />
-                    <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', fontSize: '12px' }} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                    <XAxis type="number" tickFormatter={v => v >= 1000000 ? `${(v/1000000).toFixed(1)}M` : v >= 1000 ? `${(v/1000).toFixed(0)}K` : `${v}`} tick={{ fontSize: 10, fill: '#9CA3AF' }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                    <YAxis type="category" dataKey="metric" width={140} tick={{ fontSize: 10, fill: '#9CA3AF' }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1A1F35', border: '1px solid #D4A843', borderRadius: 8, fontSize: '12px', color: '#FFFFFF' }} />
                     <Bar dataKey="previousValue" name="Période précédente" fill="hsl(var(--muted-foreground))" opacity={0.3} radius={[0, 4, 4, 0]} />
                     <Bar dataKey="currentValue" name="Période actuelle" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
                   </BarChart>
