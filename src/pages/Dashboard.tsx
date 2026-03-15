@@ -1441,6 +1441,11 @@ export default function Dashboard() {
             <IntelligenceBriefingCard />
           </div>
 
+          {/* (4b) Activity Feed — LIVE */}
+          <div className="relative z-[1] mb-5" style={{ animation: 'ccSectionIn 300ms ease-out 500ms both' }}>
+            <ActivityFeed />
+          </div>
+
           {/* (5) Flux Usine ribbon */}
           <Suspense fallback={<div className="h-32 rounded-lg bg-white/[0.02] animate-pulse mt-2" style={{ animation: 'ccSectionIn 300ms ease-out 550ms both' }} />}>
             <PlantFlowSchematic />
