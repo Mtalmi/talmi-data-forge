@@ -149,17 +149,19 @@ const AR_TOOLTIP = ({ active, payload, label }: any) => {
   if (active && payload?.length) {
     return (
       <div style={{
-        background: 'rgba(15,23,42,0.95)',
-        border: '1px solid rgba(212,168,67,0.3)',
+        background: '#1A1F35',
+        border: '1px solid #D4A843',
         borderRadius: 8,
         padding: '8px 12px',
         boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
-        backdropFilter: 'blur(12px)',
       }}>
-        <p style={{ color: '#94A3B8', fontSize: 11, marginBottom: 2 }}>{label}</p>
-        <p style={{ color: '#FFD700', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 14 }}>
+        <p style={{ color: '#9CA3AF', fontSize: 11, marginBottom: 2 }}>{label}</p>
+        <p style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontWeight: 700, fontSize: 14 }}>
           {payload[0].value.toLocaleString('fr-FR')} DH
         </p>
+        {payload[0]?.payload?.count != null && (
+          <p style={{ color: '#9CA3AF', fontSize: 10 }}>{payload[0].payload.count} facture{payload[0].payload.count > 1 ? 's' : ''}</p>
+        )}
       </div>
     );
   }
@@ -171,6 +173,7 @@ export function ARAgingWidget() {
   const [data, setData] = useState({
     current: 0, days30: 0, days60: 0, days90: 0, total: 0,
   });
+  const [counts, setCounts] = useState({ c0: 0, c30: 0, c60: 0, c90: 0 });
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -184,14 +187,16 @@ export function ARAgingWidget() {
       if (factures) {
         const now = new Date();
         let current = 0, days30 = 0, days60 = 0, days90 = 0;
+        let c0 = 0, c30 = 0, c60 = 0, c90 = 0;
         factures.forEach(f => {
           const daysDiff = Math.floor((now.getTime() - new Date(f.date_facture).getTime()) / 86400000);
-          if (daysDiff <= 30) current += f.total_ttc;
-          else if (daysDiff <= 60) days30 += f.total_ttc;
-          else if (daysDiff <= 90) days60 += f.total_ttc;
-          else days90 += f.total_ttc;
+          if (daysDiff <= 30) { current += f.total_ttc; c0++; }
+          else if (daysDiff <= 60) { days30 += f.total_ttc; c30++; }
+          else if (daysDiff <= 90) { days60 += f.total_ttc; c60++; }
+          else { days90 += f.total_ttc; c90++; }
         });
         setData({ current, days30, days60, days90, total: current + days30 + days60 + days90 });
+        setCounts({ c0, c30, c60, c90 });
       }
       setLoading(false);
     };
@@ -199,10 +204,10 @@ export function ARAgingWidget() {
   }, []);
 
   const chartData = [
-    { label: '0-30j', value: data.current, fill: '#10B981' },
-    { label: '31-60j', value: data.days30, fill: '#F59E0B' },
-    { label: '61-90j', value: data.days60, fill: '#F97316' },
-    { label: '>90j', value: data.days90, fill: '#EF4444' },
+    { label: '0-30j', value: data.current, fill: '#22C55E', count: counts.c0 },
+    { label: '31-60j', value: data.days30, fill: '#F59E0B', count: counts.c30 },
+    { label: '61-90j', value: data.days60, fill: '#EA580C', count: counts.c60 },
+    { label: '>90j', value: data.days90, fill: '#EF4444', count: counts.c90 },
   ];
 
   return (
@@ -220,7 +225,7 @@ export function ARAgingWidget() {
         <div className="skeleton-god h-24 w-full rounded" />
       ) : (
         <>
-          <p className="text-xl font-bold mb-2" style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(51 100% 50%)' }}>
+          <p className="text-xl font-bold mb-2" style={{ fontFamily: 'ui-monospace, monospace', color: '#D4A843' }}>
             {data.total.toLocaleString('fr-FR')} <span className="text-sm font-normal text-muted-foreground">DH</span>
           </p>
           <div className="h-[120px]">

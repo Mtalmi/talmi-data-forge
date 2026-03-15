@@ -22,7 +22,7 @@ interface BillingStats {
   nbPayees: number;
   nbRetard: number;
   topImpayes: { client: string; montant: number }[];
-  agingData: { label: string; montant: number; color: string }[];
+  agingData: { label: string; montant: number; count: number; color: string }[];
 }
 
 export function BillingDashboardWidget() {
@@ -96,10 +96,10 @@ export function BillingDashboardWidget() {
 
       // Aging buckets
       const buckets = [
-        { label: '0-30j', min: 0, max: 30, montant: 0, color: 'hsl(var(--success))' },
-        { label: '31-60j', min: 31, max: 60, montant: 0, color: 'hsl(var(--warning))' },
-        { label: '61-90j', min: 61, max: 90, montant: 0, color: 'hsl(var(--accent))' },
-        { label: '90j+', min: 91, max: 9999, montant: 0, color: 'hsl(var(--destructive))' },
+        { label: '0-30j', min: 0, max: 30, montant: 0, count: 0, color: '#22C55E' },
+        { label: '31-60j', min: 31, max: 60, montant: 0, count: 0, color: '#F59E0B' },
+        { label: '61-90j', min: 61, max: 90, montant: 0, count: 0, color: '#EA580C' },
+        { label: '90j+', min: 91, max: 9999, montant: 0, count: 0, color: '#EF4444' },
       ];
 
       impayes.forEach(f => {
@@ -108,7 +108,7 @@ export function BillingDashboardWidget() {
         const remaining = f.total_ttc - paid;
         if (remaining > 0) {
           const bucket = buckets.find(b => days >= b.min && days <= b.max);
-          if (bucket) bucket.montant += remaining;
+          if (bucket) { bucket.montant += remaining; bucket.count += 1; }
         }
       });
 
@@ -122,7 +122,7 @@ export function BillingDashboardWidget() {
         nbPayees: payees.length,
         nbRetard: retard.length,
         topImpayes,
-        agingData: buckets.map(b => ({ label: b.label, montant: b.montant, color: b.color })),
+        agingData: buckets.map(b => ({ label: b.label, montant: b.montant, count: b.count, color: b.color })),
       });
     } catch (error) {
       console.error('Error fetching billing stats:', error);
@@ -217,9 +217,12 @@ export function BillingDashboardWidget() {
           <div className="h-[120px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={stats.agingData}>
-                <XAxis dataKey="label" className="text-[10px]" tick={{ fontSize: 10 }} />
-                <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} className="text-[10px]" tick={{ fontSize: 10 }} />
-                <Tooltip formatter={(v: number) => `${v.toLocaleString()} DH`} contentStyle={{ background: 'rgba(15,23,42,0.95)', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 8, backdropFilter: 'blur(12px)', color: '#fff' }} />
+                <XAxis dataKey="label" tick={{ fill: '#9CA3AF', fontSize: 10 }} axisLine={false} tickLine={false} />
+                <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k DH`} tick={{ fill: '#9CA3AF', fontSize: 10 }} axisLine={false} tickLine={false} />
+                <Tooltip
+                  contentStyle={{ background: '#1A1F35', border: '1px solid #D4A843', borderRadius: 8, color: '#fff' }}
+                  formatter={(v: number, name: string, entry: any) => [`${v.toLocaleString('fr-FR')} DH · ${entry?.payload?.count ?? 0} fact.`, '']}
+                />
                 <Bar dataKey="montant" radius={[4, 4, 0, 0]}>
                   {stats.agingData.map((entry, i) => (
                     <Cell key={i} fill={entry.color} />
