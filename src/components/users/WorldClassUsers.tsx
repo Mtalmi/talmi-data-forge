@@ -550,9 +550,8 @@ export default function WorldClassUsers() {
   return (
     <div style={{ fontFamily: SANS, minHeight: '100vh', background: BG, color: TEXT1 }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700;800&display=swap');
         @keyframes wcu-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.88)} }
-        @keyframes wcu-glow-g { 0%,100%{box-shadow:0 0 20px rgba(16,185,129,0.10)} 50%{box-shadow:0 0 48px rgba(16,185,129,0.30)} }
+        @keyframes wcu-glow-g { 0%,100%{box-shadow:0 0 20px rgba(34,197,94,0.10)} 50%{box-shadow:0 0 48px rgba(34,197,94,0.30)} }
         * { box-sizing: border-box; }
       `}</style>
 
