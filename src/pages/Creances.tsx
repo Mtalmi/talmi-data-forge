@@ -862,7 +862,7 @@ export default function Creances() {
               <p style={{
                 fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
                 fontSize: 48, fontWeight: 200, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em',
-              }}>{formatCurrency(840500).replace(' DH', '')}</p>
+              }}>{formatCurrency(stats.totalOutstanding).replace(' DH', '')}</p>
               <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 14, color: '#9CA3AF' }}> DH</span>
               <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 8 }}>Encours Total</p>
             </CardContent>
@@ -879,7 +879,7 @@ export default function Creances() {
               <p style={{
                 fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
                 fontSize: 48, fontWeight: 200, color: '#ef4444', lineHeight: 1, letterSpacing: '-0.02em',
-              }}>{formatCurrency(85500).replace(' DH', '')}</p>
+              }}>{formatCurrency(stats.totalOverdue).replace(' DH', '')}</p>
               <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 14, color: '#9CA3AF' }}> DH</span>
               <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 8 }}>En Retard</p>
             </CardContent>
