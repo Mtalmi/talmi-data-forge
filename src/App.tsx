@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import { RootErrorBoundary } from "@/components/error/RootErrorBoundary";
 import { Navigate } from "react-router-dom";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { OfflineIndicator } from "@/components/layout/OfflineIndicator";
@@ -152,6 +153,7 @@ function PageTitleManager() {
 }
 
 const App = () => (
+  <RootErrorBoundary>
   <I18nProvider>
   <UnitProvider>
   <PlantProvider>
@@ -313,6 +315,7 @@ const App = () => (
   </PlantProvider>
   </UnitProvider>
   </I18nProvider>
+  </RootErrorBoundary>
 );
 
 export default App;
