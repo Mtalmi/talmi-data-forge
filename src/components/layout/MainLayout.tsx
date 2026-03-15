@@ -44,6 +44,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
   const { previewRole, setPreviewRole } = usePreviewRole();
   const { isDemo, plant } = usePlant();
   usePushNotifications();
+  useGlobalShortcuts();
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
