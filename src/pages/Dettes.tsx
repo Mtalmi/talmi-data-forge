@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { NouvelleFactureModal } from '@/components/modals/NouvelleFactureModal';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
 import MainLayout from '@/components/layout/MainLayout';
@@ -73,6 +74,7 @@ const AGING_COLORS = ['hsl(var(--success))', 'hsl(142, 76%, 36%)', 'hsl(var(--wa
 
 export default function Dettes() {
   const { t, lang } = useI18n();
+  const [showFactureModal, setShowFactureModal] = useState(false);
   const dateLocale = getDateLocale(lang);
   const d = t.pages.dettes;
   const { isCeo, role } = useAuth();
@@ -262,7 +264,7 @@ export default function Dettes() {
               Exporter Excel
             </Button>
 
-            <Button size="sm" onClick={() => toast.info('Formulaire nouvelle facture...')} style={{ background: 'linear-gradient(135deg, #D4A843, #b8922e)', color: '#000', fontWeight: 600, border: 'none' }}>
+            <Button size="sm" onClick={() => setShowFactureModal(true)} style={{ background: 'linear-gradient(135deg, #D4A843, #b8922e)', color: '#000', fontWeight: 600, border: 'none' }}>
               <Plus className="h-4 w-4 mr-1" />
               Nouvelle Facture
             </Button>
@@ -2322,6 +2324,7 @@ export default function Dettes() {
         `}</style>
       </div>
       </div>
+      <NouvelleFactureModal open={showFactureModal} onClose={() => setShowFactureModal(false)} />
     </MainLayout>
   );
 }

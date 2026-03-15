@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { NouveauMouvementModal } from '@/components/modals/NouveauMouvementModal';
+import { ControleQualiteModal, AjustementManuelModal } from '@/components/modals/StockControlModals';
 import { useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
@@ -731,6 +733,9 @@ function HeroScoreCounter({ target }: { target: number }) {
 export default function WorldClassStocks({ silosContent, onNewMovement }: { silosContent?: React.ReactNode; onNewMovement?: () => void }) {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('silos');
+  const [showMouvementModal, setShowMouvementModal] = useState(false);
+  const [showControleModal, setShowControleModal] = useState(false);
+  const [showAjustementModal, setShowAjustementModal] = useState(false);
   const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, REORDER_RECS, loading } = useStocksLiveData();
 
   // Read location state for tab activation
@@ -823,7 +828,7 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
           fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
           transition: 'filter 150ms',
         }}
-          onClick={() => onNewMovement ? onNewMovement() : toast.info('Utilisez les boutons d\'action dans l\'en-tête pour créer un mouvement.')}
+          onClick={() => setShowMouvementModal(true)}
           onMouseEnter={e => (e.currentTarget.style.filter = 'brightness(1.15)')}
           onMouseLeave={e => (e.currentTarget.style.filter = 'brightness(1)')}
         >
@@ -862,6 +867,10 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
         )}
 
       </div>
+
+      <NouveauMouvementModal open={showMouvementModal} onClose={() => setShowMouvementModal(false)} />
+      <ControleQualiteModal open={showControleModal} onClose={() => setShowControleModal(false)} />
+      <AjustementManuelModal open={showAjustementModal} onClose={() => setShowAjustementModal(false)} />
     </div>
   );
 }

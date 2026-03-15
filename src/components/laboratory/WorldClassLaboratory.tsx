@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { NouveauTestModal } from '@/components/modals/NouveauTestModal';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import {
@@ -2020,6 +2021,7 @@ export default function WorldClassLaboratory() {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('essais');
   const [hoverNew, setHoverNew] = useState(false);
+  const [showTestModal, setShowTestModal] = useState(false);
   const { kpis: labKpis } = useLaboratoryLiveData();
 
   // Read location state for tab activation
@@ -2065,6 +2067,7 @@ export default function WorldClassLaboratory() {
         onTabChange={setActiveTab}
         actions={
           <button
+            onClick={() => setShowTestModal(true)}
             onMouseEnter={() => setHoverNew(true)} onMouseLeave={() => setHoverNew(false)}
             style={{
               display: 'flex', alignItems: 'center', gap: 7, padding: '7px 16px',
@@ -2078,8 +2081,6 @@ export default function WorldClassLaboratory() {
         }
       />
 
-      {/* Duplicate tab bar removed — using PageHeader tabs only */}
-
       {/* TAB CONTENT */}
       <div style={{ padding: '32px 32px 0', animation: 'lab-tab-fade 0.35s ease-out' }} key={activeTab}>
         {activeTab === 'essais' && <EssaisDuJourTab labKpis={labKpis} />}
@@ -2087,6 +2088,8 @@ export default function WorldClassLaboratory() {
         {activeTab === 'analytique' && <AnalytiqueTab />}
         {activeTab === 'ia' && <IntelligenceIATab />}
       </div>
+
+      <NouveauTestModal open={showTestModal} onClose={() => setShowTestModal(false)} />
     </div>
   );
 }

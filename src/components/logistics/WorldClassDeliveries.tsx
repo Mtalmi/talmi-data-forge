@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { NouveauVehiculeModal } from '@/components/modals/NouveauVehiculeModal';
+import { ReleveCarburantModal } from '@/components/modals/ReleveCarburantModal';
+import { OptimiserRoutesModal } from '@/components/modals/OptimiserRoutesModal';
 import { FlaggedClientName, CrossRef } from '@/lib/cross-page-data';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip,
@@ -2070,6 +2073,9 @@ function IntelligenceIATab() {
 // ═════════════════════════════════════════════════════
 export default function WorldClassDeliveries() {
   const [activeTab, setActiveTab] = useState('flotte');
+  const [showVehiculeModal, setShowVehiculeModal] = useState(false);
+  const [showCarburantModal, setShowCarburantModal] = useState(false);
+  const [showRoutesModal, setShowRoutesModal] = useState(false);
   const { todayBons, weekBons, allBons, fleet, loading } = useDeliveriesLiveData();
 
   const activePipeline = todayBons.length > 0 ? todayBons : SEEDED_DELIVERIES;
@@ -2145,13 +2151,13 @@ export default function WorldClassDeliveries() {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px', background: T.gold, border: 'none', borderRadius: 9, color: '#0F1629', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+          <button onClick={() => setShowRoutesModal(true)} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px', background: T.gold, border: 'none', borderRadius: 9, color: '#0F1629', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
             <Route size={13} /> Optimiser Routes
           </button>
-          <button style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px', background: 'transparent', border: `1px solid ${T.gold}`, borderRadius: 9, color: T.gold, fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+          <button onClick={() => setShowVehiculeModal(true)} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px', background: 'transparent', border: `1px solid ${T.gold}`, borderRadius: 9, color: T.gold, fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
             <Truck size={13} /> Nouveau Véhicule
           </button>
-          <button style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px', background: 'transparent', border: `1px solid ${T.gold}`, borderRadius: 9, color: T.gold, fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+          <button onClick={() => setShowCarburantModal(true)} style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px', background: 'transparent', border: `1px solid ${T.gold}`, borderRadius: 9, color: T.gold, fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
             <Fuel size={13} /> Relevé Carburant
           </button>
           <LiveClock />
@@ -2628,6 +2634,10 @@ export default function WorldClassDeliveries() {
         {activeTab === 'ia' && <IntelligenceIATab />}
 
       </div>
+
+      <NouveauVehiculeModal open={showVehiculeModal} onClose={() => setShowVehiculeModal(false)} />
+      <ReleveCarburantModal open={showCarburantModal} onClose={() => setShowCarburantModal(false)} />
+      <OptimiserRoutesModal open={showRoutesModal} onClose={() => setShowRoutesModal(false)} />
     </div>
   );
 }

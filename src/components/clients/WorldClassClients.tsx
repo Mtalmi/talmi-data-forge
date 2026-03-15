@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { NouveauClientModal } from '@/components/modals/NouveauClientModal';
 import { FlaggedClientName, CrossPageHint, CrossRef } from '@/lib/cross-page-data';
 import { ClientChurnPredictorCard } from '@/components/clients/ClientChurnPredictorCard';
 import { useN8nWorkflow } from '@/hooks/useN8nWorkflow';
@@ -1097,6 +1098,7 @@ export default function WorldClassClients() {
   const [search, setSearch] = useState('');
   const [selectedClient, setSelectedClient] = useState<ClientDisplay | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [showNewClientModal, setShowNewClientModal] = useState(false);
   const [newClient, setNewClient] = useState({ nom_client: '', segment: 'Mid-Market', email: '', telephone: '', ville: '' });
   const [creatingClient, setCreatingClient] = useState(false);
   const subTabs = [{ id: 'tous', label: 'Tous' }, { id: 'actifs', label: 'Actifs' }, { id: 'inactifs', label: 'Inactifs' }];
@@ -1264,7 +1266,7 @@ export default function WorldClassClients() {
         actions={
           <>
             <button
-              onClick={() => setIsCreateModalOpen(true)}
+              onClick={() => setShowNewClientModal(true)}
               style={{
                 background: '#D4A843',
                 color: '#0F1629',
@@ -1588,28 +1590,7 @@ export default function WorldClassClients() {
         {/* ── CLIENT DETAIL DRAWER ── */}
         <ClientDetailDrawer client={selectedClient} onClose={() => setSelectedClient(null)} />
 
-        {isCreateModalOpen && (
-          <div onClick={() => setIsCreateModalOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-            <form onClick={(e) => e.stopPropagation()} onSubmit={handleCreateClient} style={{ width: 'min(560px, 100%)', background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 20, display: 'grid', gap: 12 }}>
-              <p style={{ color: T.gold, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Nouveau Client</p>
-              <input required value={newClient.nom_client} onChange={(e) => setNewClient(prev => ({ ...prev, nom_client: e.target.value }))} placeholder="nom_client" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri, fontFamily: MONO }} />
-              <select value={newClient.segment} onChange={(e) => setNewClient(prev => ({ ...prev, segment: e.target.value }))} style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri, fontFamily: MONO }}>
-                <option value="Mid-Market">Mid-Market</option>
-                <option value="Enterprise">Enterprise</option>
-                <option value="Startup">Startup</option>
-              </select>
-              <input value={newClient.email} onChange={(e) => setNewClient(prev => ({ ...prev, email: e.target.value }))} placeholder="email" type="email" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri, fontFamily: MONO }} />
-              <input value={newClient.telephone} onChange={(e) => setNewClient(prev => ({ ...prev, telephone: e.target.value }))} placeholder="telephone" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri, fontFamily: MONO }} />
-              <input value={newClient.ville} onChange={(e) => setNewClient(prev => ({ ...prev, ville: e.target.value }))} placeholder="ville" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri, fontFamily: MONO }} />
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 4 }}>
-                <button type="button" onClick={() => setIsCreateModalOpen(false)} style={{ padding: '8px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'transparent', color: T.textSec, cursor: 'pointer', fontFamily: MONO }}>Annuler</button>
-                <button type="submit" disabled={creatingClient} style={{ padding: '8px 24px', borderRadius: 8, border: 'none', background: '#D4A843', color: '#0F1629', cursor: creatingClient ? 'not-allowed' : 'pointer', fontWeight: 600, fontFamily: MONO }}>
-                  {creatingClient ? 'Création...' : 'Créer'}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
+        <NouveauClientModal open={showNewClientModal} onClose={() => setShowNewClientModal(false)} onCreated={() => { /* refresh handled by realtime */ }} />
 
         {/* Footer */}
         <footer style={{ borderTop: '1px solid rgba(245, 158, 11, 0.08)', paddingTop: 24, paddingBottom: 24, display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 40 }}>

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { NouveauDevisModal } from '@/components/modals/NouveauDevisModal';
 import { useN8nWorkflow } from '@/hooks/useN8nWorkflow';
 import { toast as sonnerToast } from 'sonner';
 import { useI18n } from '@/i18n/I18nContext';
@@ -870,6 +871,7 @@ function NextActionRow({ action, delay }: { action: typeof nextActions[0]; delay
 ══════════════════════════════════════════════════════ */
 export function WorldClassVentes() {
   const [activeTab, setActiveTab] = useState<'pipeline' | 'performance' | 'previsions' | 'activites'>('pipeline');
+  const [showDevisModal, setShowDevisModal] = useState(false);
   const { t } = useI18n();
   const { triggerWorkflow, isSubmitting: isScoring } = useN8nWorkflow();
   const vt = t.pages.ventes;
@@ -962,6 +964,7 @@ export function WorldClassVentes() {
               fontFamily: 'DM Sans, sans-serif', fontWeight: 700,
               transition: 'all 150ms', whiteSpace: 'nowrap',
             }}
+            onClick={() => setShowDevisModal(true)}
             onMouseEnter={e => (e.currentTarget.style.background = 'rgba(253,185,19,0.08)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
             >
@@ -979,6 +982,8 @@ export function WorldClassVentes() {
         {activeTab === 'previsions' && <ForecastSection />}
         {activeTab === 'activites' && <ActivitiesSection />}
       </div>
+
+      <NouveauDevisModal open={showDevisModal} onClose={() => setShowDevisModal(false)} />
     </div>
   );
 }
