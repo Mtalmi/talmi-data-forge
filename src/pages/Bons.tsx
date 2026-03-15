@@ -597,10 +597,10 @@ export default function Bons() {
                   {showExpand && expandedRow === b.bl_id && (
                     <tr><td colSpan={9} style={{ padding: '12px 20px', background: 'rgba(212,168,67,0.02)', borderBottom: `1px solid ${T.cardBorder}` }}>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-                        <div><span style={{ fontSize: 10, color: T.textDim }}>ADRESSE CHANTIER</span><br /><span style={{ fontSize: 12, color: T.textPri }}>{(b as any).adresse_livraison || '—'}</span></div>
-                        <div><span style={{ fontSize: 10, color: T.textDim }}>CHAUFFEUR</span><br /><span style={{ fontSize: 12, color: T.textPri }}>{(b as any).chauffeur_nom || '—'}</span></div>
-                        <div><span style={{ fontSize: 10, color: T.textDim }}>TOUPIE</span><br /><span style={{ fontFamily: MONO, fontSize: 12, color: T.gold }}>{b.toupie_assignee || '—'}</span></div>
-                        <div><span style={{ fontSize: 10, color: T.textDim }}>CONFORMITÉ</span><br /><span style={{ fontSize: 12, color: b.alerte_ecart ? T.danger : T.success }}>{b.alerte_ecart ? 'Écart détecté' : '✓ Conforme'}</span></div>
+                        <div><span style={{ fontSize: 12, color: T.textDim }}>ADRESSE CHANTIER</span><br /><span style={{ fontSize: 12, color: T.textPri }}>{(b as any).adresse_livraison || '—'}</span></div>
+                        <div><span style={{ fontSize: 12, color: T.textDim }}>CHAUFFEUR</span><br /><span style={{ fontSize: 12, color: T.textPri }}>{(b as any).chauffeur_nom || '—'}</span></div>
+                        <div><span style={{ fontSize: 12, color: T.textDim }}>TOUPIE</span><br /><span style={{ fontFamily: MONO, fontSize: 12, color: T.gold }}>{b.toupie_assignee || '—'}</span></div>
+                        <div><span style={{ fontSize: 12, color: T.textDim }}>CONFORMITÉ</span><br /><span style={{ fontSize: 12, color: b.alerte_ecart ? T.danger : T.success }}>{b.alerte_ecart ? 'Écart détecté' : '✓ Conforme'}</span></div>
                       </div>
                     </td></tr>
                   )}
