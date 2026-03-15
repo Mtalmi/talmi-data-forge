@@ -149,7 +149,7 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
         <div className="flex-1" style={{ height: 1, background: 'linear-gradient(90deg, rgba(212,168,67,0.3), transparent 80%)' }} />
       </div>
 
-      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 12, borderTop: '2px solid #D4A843', padding: 24, overflow: 'hidden' }}>
+      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 8, borderTop: '2px solid #D4A843', padding: 24, overflow: 'hidden', backdropFilter: 'blur(8px)' }}>
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
           <div style={{ background: 'rgba(255,255,255,0.04)', border: totalConfirmed === 0 ? '1px dashed rgba(239,68,68,0.4)' : '1px solid rgba(255,255,255,0.08)', borderTop: `2px solid ${totalConfirmed === 0 ? '#EF4444' : '#D4A843'}`, borderRadius: 12, padding: 20 }}>
