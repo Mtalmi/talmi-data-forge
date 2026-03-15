@@ -189,11 +189,11 @@ export function CeoCodeRequestDialog({
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Solde Dû:</span>
-              <span className="font-medium text-red-500">{solde.toLocaleString()} DH</span>
+              <span className="font-medium text-red-500">{solde.toLocaleString('fr-FR')} DH</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Limite Crédit:</span>
-              <span className="font-medium">{limite.toLocaleString()} DH</span>
+              <span className="font-medium">{limite.toLocaleString('fr-FR')} DH</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Dépassement:</span>

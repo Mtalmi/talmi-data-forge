@@ -118,7 +118,7 @@ const getBcPriority = (bc: BonCommande): { isPriority: boolean; isUrgent: boolea
     }
   }
   if (bc.total_ht >= HIGH_VALUE_THRESHOLD) {
-    return { isPriority: true, isUrgent: false, reason: `Valeur élevée (${bc.total_ht.toLocaleString()} DH)` };
+    return { isPriority: true, isUrgent: false, reason: `Valeur élevée (${bc.total_ht.toLocaleString('fr-FR')} DH)` };
   }
   if (bc.volume_m3 >= HIGH_VOLUME_THRESHOLD) {
     return { isPriority: true, isUrgent: false, reason: `Volume important (${bc.volume_m3} m³)` };

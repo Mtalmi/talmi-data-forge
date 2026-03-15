@@ -194,12 +194,12 @@ export function TaxPaymentDialog({
             <div className="flex justify-between items-center">
               <span className="font-medium">{tp.totalToPay}:</span>
               <span className="text-2xl font-bold text-primary">
-                {totalWithPenalty.toLocaleString()} DH
+                {totalWithPenalty.toLocaleString('fr-FR')} DH
               </span>
             </div>
             {penalty > 0 && (
               <p className="text-xs text-muted-foreground mt-1">
-                {tp.principalLabel}: {formData.paidAmount.toLocaleString()} DH + {tp.penaltyLabel}: {penalty.toLocaleString()} DH
+                {tp.principalLabel}: {formData.paidAmount.toLocaleString('fr-FR')} DH + {tp.penaltyLabel}: {penalty.toLocaleString('fr-FR')} DH
               </p>
             )}
           </div>

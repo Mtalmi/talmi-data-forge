@@ -133,8 +133,8 @@ export function TaxComplianceCalendar({ obligations, onPayObligation }: TaxCompl
                       <td className="p-2">{format(new Date(ob.due_date), 'dd/MM', { locale: dateLocale || undefined })}</td>
                       <td className="p-2"><Badge variant="outline">{TYPE_ABBREV[ob.obligation_type]}</Badge></td>
                       <td className="p-2">{ob.name}</td>
-                      <td className="p-2 text-right font-medium">{Number(ob.amount).toLocaleString()} DH</td>
-                      <td className="p-2 text-right text-destructive">{Number(ob.penalty_amount) > 0 ? `${Number(ob.penalty_amount).toLocaleString()} DH` : '-'}</td>
+                      <td className="p-2 text-right font-medium">{Number(ob.amount).toLocaleString('fr-FR')} DH</td>
+                      <td className="p-2 text-right text-destructive">{Number(ob.penalty_amount) > 0 ? `${Number(ob.penalty_amount).toLocaleString('fr-FR')} DH` : '-'}</td>
                       <td className="p-2 text-center">
                         <Badge variant={ob.status === 'paid' ? 'default' : ob.status === 'overdue' ? 'destructive' : 'secondary'}>
                           {ob.status === 'paid' ? tc.statusPaid : ob.status === 'overdue' ? tc.statusOverdue : ob.status === 'partially_paid' ? tc.statusPartial : tc.statusToPay}
