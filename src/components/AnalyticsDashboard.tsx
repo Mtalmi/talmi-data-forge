@@ -143,9 +143,9 @@ export default function AnalyticsDashboard() {
                     <Line
                       type="monotone"
                       dataKey="uptime"
-                      stroke="#FFD700"
+                      stroke="#D4A843"
                       strokeWidth={2}
-                      dot={{ fill: "#FFD700", r: 4 }}
+                      dot={{ fill: "#D4A843", r: 4 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
