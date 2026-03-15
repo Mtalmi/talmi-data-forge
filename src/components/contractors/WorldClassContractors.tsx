@@ -1940,8 +1940,19 @@ export default function WorldClassContractors() {
             <>
               <div onClick={closeAo} onKeyDown={(e) => { if (e.key === 'Escape') closeAo(); }} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 60 }} />
               <div
-                onKeyDown={(e) => { if (e.key === 'Escape') closeAo(); }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') closeAo();
+                  if (e.key === 'Tab') {
+                    const container = e.currentTarget;
+                    const focusables = container.querySelectorAll<HTMLElement>('input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+                    if (focusables.length === 0) return;
+                    const first = focusables[0]; const last = focusables[focusables.length - 1];
+                    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+                    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+                  }
+                }}
                 tabIndex={-1}
+                ref={(el: HTMLDivElement | null) => el?.focus()}
                 style={{
                   position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
                   width: 560, maxHeight: '90vh', overflowY: 'auto',
