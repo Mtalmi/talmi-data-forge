@@ -812,6 +812,9 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
     hourlyProductionData, qualityData, loading,
   } = useWorldClassLiveData();
 
+  const [alertBarDismissed, setAlertBarDismissed] = useState(false);
+  const [alertBarState, setAlertBarState] = useState<'idle' | 'alerted'>('idle');
+
   const totalAR = useAnimatedCounter(Math.round(arAgingData.reduce((s, d) => s + d.value, 0) / 1000) || 77);
   const prodTotal = useAnimatedCounter(Math.round(stats.totalVolume) || 851, 1500);
 
