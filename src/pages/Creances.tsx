@@ -957,7 +957,7 @@ export default function Creances() {
                 const oly = cyG + (r + sw / 2 + 12) * Math.sin(objAngle);
                 return (
                   <div className="flex flex-col items-center">
-                    <svg width={svgW} height={svgH} viewBox={`0 0 ${svgW} ${svgH}`}>
+                    <svg width={svgW} height={svgH} viewBox={`0 0 ${svgW} ${svgH}`} role="img" aria-label={`Taux de recouvrement: ${rate.toFixed(1)} pourcent`}>
                       <defs>
                         <linearGradient id="crGaugeGold" x1="0" y1="0" x2="1" y2="0">
                           <stop offset="0%" stopColor="#C49A3C" />
