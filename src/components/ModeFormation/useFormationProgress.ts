@@ -105,8 +105,6 @@ export function useFormationProgress() {
       // Update local state
       setCompletedSimulations(prev => [...prev, simulationType]);
 
-      // Log to audit (simulation prefix)
-      console.log(`[SIMULATION] User ${user.id} completed: ${simulationType}`);
 
       return { success: true };
     } catch (err) {
