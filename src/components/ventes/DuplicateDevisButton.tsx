@@ -58,7 +58,7 @@ export function DuplicateDevisButton({ devis, onDuplicated, compact = false }: D
 
       if (error) throw error;
 
-      toast.success(`Devis ${newDevisId} créé (copie de ${devis.devis_id})`);
+      toast.success(`✓ Devis ${newDevisId} créé (copie de ${devis.devis_id}). Le Deal Scorer analysera ce devis dans les prochaines minutes.`);
       onDuplicated?.();
     } catch (error) {
       console.error('Error duplicating devis:', error);
