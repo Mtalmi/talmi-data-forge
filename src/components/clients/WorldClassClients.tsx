@@ -825,6 +825,7 @@ function MiniSparkline({ data }: { data: number[] }) {
 }
 
 function ClientDetailDrawer({ client, onClose }: { client: ClientDisplay | null; onClose: () => void }) {
+  const navigate = useNavigate();
   const [closing, setClosing] = useState(false);
 
   useEffect(() => {
