@@ -110,12 +110,12 @@ export function MetricTooltip({ title, children, className }: MetricTooltipProps
             top: pos.top,
             left: pos.left,
             width: 360,
-            background: '#1A2332',
-            border: '1px solid rgba(212,168,67,0.2)',
+            background: '#1A1F35',
+            border: '1px solid #D4A843',
             borderRadius: 10,
             padding: 16,
             boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 16px rgba(212,168,67,0.08)',
-            zIndex: 99999,
+            zIndex: 50,
             animation: 'mtFadeIn 150ms ease-out',
           }}
         >

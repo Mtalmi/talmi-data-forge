@@ -3,7 +3,9 @@ import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 
 import { cn } from "@/lib/utils";
 
-const TooltipProvider = TooltipPrimitive.Provider;
+const TooltipProvider = ({ delayDuration = 250, ...props }: React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Provider>) => (
+  <TooltipPrimitive.Provider delayDuration={delayDuration} {...props} />
+);
 
 const Tooltip = TooltipPrimitive.Root;
 
@@ -21,15 +23,15 @@ const TooltipContent = React.forwardRef<
       className,
     )}
     style={{
-      background: '#1A2332',
+      background: '#1A1F35',
       color: '#FFFFFF',
       fontFamily: 'ui-monospace, SFMono-Regular, monospace',
       fontSize: 12,
       padding: '6px 10px',
       borderRadius: 6,
-      border: '1px solid rgba(212, 168, 67, 0.15)',
-      boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
-      maxWidth: 280,
+      border: '1px solid #D4A843',
+      boxShadow: '0 4px 16px rgba(0,0,0,0.4), 0 0 8px rgba(212,168,67,0.1)',
+      maxWidth: 320,
       ...style,
     }}
     {...props}
