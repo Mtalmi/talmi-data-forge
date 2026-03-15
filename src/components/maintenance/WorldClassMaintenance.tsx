@@ -102,11 +102,12 @@ function useMaintenanceLiveData() {
   }, []);
   useEffect(() => {
     fetchData();
+    const throttledFetch = throttle(() => fetchData(), 2000);
     const channel = supabase.channel('wc-maintenance-live')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'fleet_service_records' }, fetchData)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'flotte' }, fetchData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'fleet_service_records' }, throttledFetch)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'flotte' }, throttledFetch)
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => { throttledFetch.cancel(); supabase.removeChannel(channel); };
   }, [fetchData]);
   return { kpis, serviceRecords };
 }

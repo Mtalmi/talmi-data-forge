@@ -322,11 +322,12 @@ function useExpensesLiveData() {
   useEffect(() => {
     fetch();
     const interval = setInterval(fetch, 30000);
+    const throttledFetch = throttle(() => fetch(), 2000);
     const ch = supabase.channel('wc-expenses-live')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'depenses' }, () => fetch())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'expenses_controlled' }, () => fetch())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'depenses' }, throttledFetch)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'expenses_controlled' }, throttledFetch)
       .subscribe();
-    return () => { clearInterval(interval); supabase.removeChannel(ch); };
+    return () => { clearInterval(interval); throttledFetch.cancel(); supabase.removeChannel(ch); };
   }, [fetch]);
 
   return data;

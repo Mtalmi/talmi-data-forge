@@ -100,11 +100,12 @@ function usePlanningLiveData() {
   }, []);
   useEffect(() => {
     fetchData();
+    const throttledFetch = throttle(() => fetchData(), 2000);
     const channel = supabase.channel('wc-planning-live')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, fetchData)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_commande' }, fetchData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, throttledFetch)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_commande' }, throttledFetch)
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => { throttledFetch.cancel(); supabase.removeChannel(channel); };
   }, [fetchData]);
   return { kpis, liveDeliveries };
 }
