@@ -33,7 +33,7 @@ export function RelanceIntelligenteCard() {
       {/* KPIs */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 20 }}>
         <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 10, padding: '16px 18px', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, fontFamily: mono }}>Devis en Retard</p>
+          <p style={{ color: '#9CA3AF', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, fontFamily: mono }}>Devis en Retard</p>
           <span style={{ fontFamily: mono, fontSize: 42, fontWeight: 100, color: '#F59E0B' }}>{retardVal}</span>
           <p style={{ fontSize: 10, color: '#9CA3AF', fontFamily: mono, marginTop: 4 }}>&gt; 30 jours sans réponse</p>
         </div>
