@@ -5,8 +5,8 @@ type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 // Wrap toast.error to persist errors (no auto-dismiss)
 const originalError = toast.error.bind(toast);
-toast.error = (message: Parameters<typeof originalError>[0], opts?: Parameters<typeof originalError>[1]) =>
-  originalError(message, { duration: Infinity, ...opts });
+toast.error = (message: Parameters<typeof originalError>[0], opts?: Record<string, unknown>) =>
+  originalError(message, { duration: Infinity, ...(opts || {}) } as any);
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
