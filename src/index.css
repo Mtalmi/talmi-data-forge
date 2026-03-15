@@ -3102,6 +3102,7 @@ body {
 .top-nav {
   background: hsl(var(--background) / 0.95);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid hsl(var(--border));
 }
 
