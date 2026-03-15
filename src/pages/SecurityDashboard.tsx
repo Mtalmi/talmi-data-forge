@@ -414,7 +414,7 @@ function MetricCard({
             {loading ? (
               <Skeleton className="h-8 w-14 mt-1" />
             ) : (
-              <p className={cn("text-2xl sm:text-3xl font-bold mt-1", c.text)}>
+              <p className={cn("text-2xl sm:text-3xl font-extralight mt-1", c.text)}>
                 {value}
               </p>
             )}

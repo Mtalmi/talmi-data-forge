@@ -296,11 +296,11 @@ export default function AuditSuperviseur() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          <Card><CardContent className="pt-4"><div className="text-2xl font-bold">{stats.total}</div><div className="text-sm text-muted-foreground">{s.totalActions}</div></CardContent></Card>
-          <Card><CardContent className="pt-4"><div className="text-2xl font-bold text-primary">{stats.today}</div><div className="text-sm text-muted-foreground">{s.today}</div></CardContent></Card>
-          <Card><CardContent className="pt-4"><div className="text-2xl font-bold text-green-600">{stats.inserts}</div><div className="text-sm text-muted-foreground">{s.creations}</div></CardContent></Card>
-          <Card><CardContent className="pt-4"><div className="text-2xl font-bold text-amber-600">{stats.updates}</div><div className="text-sm text-muted-foreground">{s.modifications}</div></CardContent></Card>
-          <Card><CardContent className="pt-4"><div className="text-2xl font-bold text-red-600">{stats.deletes}</div><div className="text-sm text-muted-foreground">{s.deletions}</div></CardContent></Card>
+          <Card><CardContent className="pt-4"><div className="text-2xl font-extralight">{stats.total}</div><div className="text-sm text-muted-foreground">{s.totalActions}</div></CardContent></Card>
+          <Card><CardContent className="pt-4"><div className="text-2xl font-extralight text-primary">{stats.today}</div><div className="text-sm text-muted-foreground">{s.today}</div></CardContent></Card>
+          <Card><CardContent className="pt-4"><div className="text-2xl font-extralight text-green-600">{stats.inserts}</div><div className="text-sm text-muted-foreground">{s.creations}</div></CardContent></Card>
+          <Card><CardContent className="pt-4"><div className="text-2xl font-extralight text-amber-600">{stats.updates}</div><div className="text-sm text-muted-foreground">{s.modifications}</div></CardContent></Card>
+          <Card><CardContent className="pt-4"><div className="text-2xl font-extralight text-red-600">{stats.deletes}</div><div className="text-sm text-muted-foreground">{s.deletions}</div></CardContent></Card>
         </div>
 
         <Card>

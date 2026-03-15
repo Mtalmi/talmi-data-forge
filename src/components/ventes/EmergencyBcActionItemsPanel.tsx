@@ -352,7 +352,7 @@ export function EmergencyBcActionItemsPanel({
             )}
             {escalatedCount > 0 && (
               <div className="text-center p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                <p className="text-2xl font-bold text-amber-400">{escalatedCount}</p>
+                <p className="text-2xl font-extralight text-amber-400">{escalatedCount}</p>
                 <p className="text-xs text-amber-400">Escaladé</p>
               </div>
             )}
