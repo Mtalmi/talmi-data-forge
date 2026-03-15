@@ -246,7 +246,7 @@ export function RotationStepperModal({
           .from('bons_livraison_reels')
           .select('validated_at')
           .eq('bl_id', blId)
-          .single();
+          .maybeSingle();
         
         if (blData?.validated_at) {
           tempsAttente = differenceInMinutes(new Date(blData.validated_at), new Date(localHeureArrivee));

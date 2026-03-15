@@ -187,6 +187,13 @@ function useStocksLiveData() {
           .order('created_at', { ascending: false }),
       ]);
 
+      if (stocksRes.error) console.error('Error fetching stocks:', stocksRes.error);
+      if (movementsRes.error) console.error('Error fetching movements:', movementsRes.error);
+      if (autonomyRes.error) console.error('Error fetching autonomy:', autonomyRes.error);
+      if (consumptionRes.error) console.error('Error fetching consumption:', consumptionRes.error);
+      if (stockAlertsRes.error) console.error('Error fetching stock alerts:', stockAlertsRes.error);
+      if (reorderRes.error) console.error('Error fetching reorder recs:', reorderRes.error);
+
       // Stock alerts from DB
       if (stockAlertsRes.data) {
         setStockAlertsDb(stockAlertsRes.data);

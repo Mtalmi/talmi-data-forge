@@ -122,13 +122,13 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
         .from('user_roles_v2')
         .select('role')
         .eq('user_id', userData.user?.id)
-        .single();
+        .maybeSingle();
 
       const { data: profile } = await supabase
         .from('profiles')
         .select('full_name')
         .eq('id', userData.user?.id)
-        .single();
+        .maybeSingle();
 
       const { error } = await supabase
         .from('bons_commande')
