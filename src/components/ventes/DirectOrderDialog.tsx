@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { UnitInput, CurrencyInput } from '@/components/ui/FormattedInputs';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import {
