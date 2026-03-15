@@ -2203,9 +2203,9 @@ export default function Dashboard() {
               </button>
             </div>
           </div>
+          )}
           </div>
-          )}
-          )}
+          )
 
         </div>{/* end hero zone wrapper */}
         {activeTab === 'operations' && (
