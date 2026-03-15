@@ -45,7 +45,7 @@ export default function GlobalHealthHero() {
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className={`text-3xl font-extralight font-mono ${scoreColor}`}>{animatedScore}</span>
-            <span className="text-[10px] text-slate-500 font-semibold">/10</span>
+            <span className="text-xs text-slate-500 font-semibold">/10</span>
           </div>
         </div>
         {/* Info */}
