@@ -144,8 +144,8 @@ export function ProductionLiveMetrics({
           </div>
           <Progress value={volumeMetrics.percentComplete} className="h-2" />
           <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
-            <span>+{volumeMetrics.inProgress.toFixed(0)} en cours</span>
-            <span>{volumeMetrics.percentComplete.toFixed(0)}%</span>
+            <span>+{isFinite(volumeMetrics.inProgress) ? volumeMetrics.inProgress.toFixed(0) : '0'} en cours</span>
+            <span>{isFinite(volumeMetrics.percentComplete) ? volumeMetrics.percentComplete.toFixed(0) : '0'}%</span>
           </div>
         </div>
 
