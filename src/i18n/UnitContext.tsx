@@ -34,6 +34,8 @@ const CONFIGS: Record<UnitSystem, UnitConfig> = {
     temperature: { unit: '°C', convert: (c) => c },
     pressure: { unit: 'MPa', factor: 1, roundTo: 1 },
     distance: { unit: 'km', factor: 1, decimals: 1 },
+    speed: { unit: 'km/h', factor: 1 },
+    slump: { unit: 'cm', factor: 1, decimals: 0 },
     concreteGrades: { 'F-B20': 'F-B20', 'F-B25': 'F-B25', 'F-B30': 'F-B30', 'F-B35': 'F-B35' },
     norms: { 'NM 10.1.008': 'NM 10.1.008', 'NM 10.1.271': 'NM 10.1.271' },
     fuelConvert: (v) => ({ value: v, unit: 'L/100km' }),
