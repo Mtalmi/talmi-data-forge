@@ -287,10 +287,20 @@ export default function Dashboard() {
   const marge = useCountUp(demoData.production.marge, 1800, 600, 1);
   const rawTresorerie = useCountUp(demoData.tresorerie.value / 1000, 1800, 800);
 
-  // Converted values for display
+  // Live simulation — fluctuates values every 60s
+  const simBase = useMemo(() => ({
+    prodVolume: demoData.production.volume,
+    revenue: demoData.revenue.today,
+    marge: demoData.production.marge,
+    conformite: demoData.production.conformite,
+  }), [demoData.production.volume, demoData.revenue.today, demoData.production.marge, demoData.production.conformite]);
+  const sim = useLiveSimulation(simBase);
+
+  // Converted values for display (use sim values when count-up is done)
   const prodVolume = uf.rawVolume(rawProdVolume);
   const ca = +(uf.rawCurrencyK(rawCa * 1000)).toFixed(1);
   const tresorerie = Math.round(uf.rawCurrencyK(rawTresorerie * 1000));
+  const flashClass = sim.flash ? 'tbos-value-flash' : '';
 
   // Build sparkline SVG path
   const maxV = Math.max(...SPARKLINE_DATA.map(d => d.v));
