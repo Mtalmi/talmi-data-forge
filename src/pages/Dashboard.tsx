@@ -1040,7 +1040,7 @@ export default function Dashboard() {
                        {`Marge brute = (Revenu − Coût matières) / Revenu. Revenu: **75,600 DH**. Coût matières: **37,800 DH**. La marge est stable vs hier (+0.1pt). Objectif: !!>45%!!. Principal levier: optimisation dosage ciment F-B25 (~~−24.8% sur-dosage~~ identifié = !!+14 DH/m³!! récupérable).`}
                      </MetricTooltip>
                    </div>
-                   <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">MARGE BRUTE</span>
+                   <span className="text-xs tracking-[0.12em] uppercase text-muted-foreground/50">MARGE BRUTE</span>
                 </div>
               </div>
 
