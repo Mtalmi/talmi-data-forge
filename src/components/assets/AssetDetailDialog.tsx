@@ -154,8 +154,8 @@ export function AssetDetailDialog({ asset, open, onOpenChange }: AssetDetailDial
                     <div className="h-full bg-primary transition-all" style={{ width: `${Math.min(depreciationProgress, 100)}%` }} />
                   </div>
                   <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>{dt.monthlyLabel}: {asset.monthly_depreciation.toLocaleString()} DH</span>
-                    <span>{dt.residualLabel}: {asset.residual_value.toLocaleString()} DH</span>
+                    <span>{dt.monthlyLabel}: {asset.monthly_depreciation.toLocaleString('fr-FR')} DH</span>
+                    <span>{dt.residualLabel}: {asset.residual_value.toLocaleString('fr-FR')} DH</span>
                   </div>
                 </div>
               </CardContent>
