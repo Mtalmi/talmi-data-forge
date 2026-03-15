@@ -4,6 +4,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useI18n } from '@/i18n/I18nContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Sun, Cloud, CloudRain, Snowflake, Factory, Shield } from 'lucide-react';
+import { getScoreStatusMessage } from '@/utils/tbos-microcopy';
+import { Sun, Cloud, CloudRain, Snowflake, Factory, Shield } from 'lucide-react';
 
 interface WeatherData {
   temp: number;
