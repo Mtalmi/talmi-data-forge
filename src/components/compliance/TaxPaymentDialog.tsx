@@ -93,17 +93,17 @@ export function TaxPaymentDialog({
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">{tp.amount}:</span>
-              <span className="font-medium">{Number(obligation.amount).toLocaleString()} DH</span>
+              <span className="font-medium">{Number(obligation.amount).toLocaleString('fr-FR')} DH</span>
             </div>
             {Number(obligation.paid_amount) > 0 && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">{tp.alreadyPaid}:</span>
-                <span className="text-green-600">{Number(obligation.paid_amount).toLocaleString()} DH</span>
+                <span className="text-green-600">{Number(obligation.paid_amount).toLocaleString('fr-FR')} DH</span>
               </div>
             )}
             <div className="flex justify-between border-t pt-2">
               <span className="font-medium">{tp.remaining}:</span>
-              <span className="font-bold">{remainingAmount.toLocaleString()} DH</span>
+              <span className="font-bold">{remainingAmount.toLocaleString('fr-FR')} DH</span>
             </div>
           </div>
 
