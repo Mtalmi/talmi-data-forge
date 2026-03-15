@@ -33,8 +33,8 @@ const T = {
   border: 'rgba(255,255,255,0.06)',
 };
 
-const MONO = "'JetBrains Mono', monospace";
-const SANS = "'DM Sans', sans-serif";
+const MONO = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace";
+const SANS = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace";
 
 // ─── Helpers ──────────────────────────────────────────────────────
 function useFadeIn(delay = 0) {
