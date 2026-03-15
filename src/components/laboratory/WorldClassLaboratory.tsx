@@ -816,19 +816,7 @@ function EssaisDuJourTab({ labKpis }: { labKpis: { testsToday: number; conformes
             ))}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 20, paddingTop: 16, borderTop: `1px solid ${T.cardBorder}`, flexWrap: 'wrap', gap: 12 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <button style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 20px', background: T.gold, border: 'none', borderRadius: 9, color: '#0F1629', fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
-                <CheckCheck size={13} /> Valider Passation
-              </button>
-              <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', padding: '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4, background: 'rgba(212,168,67,0.06)' }}>
-                Généré par IA · Claude Opus
-              </span>
-            </div>
-            <span style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF' }}>
-              Prochain shift: 14h00 — Sarah L., Karim B.
-            </span>
-          </div>
+          <PassationButton />
         </Card>
       </section>
     </div>
