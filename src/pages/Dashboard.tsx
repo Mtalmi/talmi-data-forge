@@ -1045,6 +1045,31 @@ export default function Dashboard() {
             <LeakageAlertBanner />
           </div>
 
+          {/* (2a) CROSS-PAGE ALERTS STRIP */}
+          <div className="mb-4 relative z-[1]" style={{ animation: 'ccSectionIn 300ms ease-out 120ms both' }}>
+            <div style={{
+              fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
+              fontSize: 11,
+              padding: '10px 16px',
+              background: 'rgba(255,255,255,0.02)',
+              border: '1px solid rgba(212,168,67,0.08)',
+              borderRadius: 6,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              flexWrap: 'wrap',
+            }}>
+              <span style={{ color: '#F59E0B' }}>⚠</span>
+              <span style={{ color: '#EF4444' }}>Créances: 189K DH retard (Sigma)</span>
+              <span style={{ color: 'rgba(212,168,67,0.3)' }}>·</span>
+              <span style={{ color: '#F59E0B' }}>Logistique: T-09 maintenance</span>
+              <span style={{ color: 'rgba(212,168,67,0.3)' }}>·</span>
+              <span style={{ color: '#F59E0B' }}>Stocks: Adjuvant 6,7j</span>
+              <span style={{ color: 'rgba(212,168,67,0.3)' }}>·</span>
+              <span style={{ color: '#EF4444' }}>Lab: NM expire 26j</span>
+            </div>
+          </div>
+
           {/* (2b) PRÉDICTION ARRÊT USINE */}
           <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" style={{ animation: 'ccSectionIn 300ms ease-out 150ms both' }}>
             <div style={{
