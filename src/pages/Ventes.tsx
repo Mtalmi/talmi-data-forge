@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { AIAgentCard } from "@/components/shared/AIAgentCard";
 import { PageHeader } from '@/components/layout/PageHeader';
 import { useNavigate, useLocation } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
@@ -365,6 +366,10 @@ export default function Ventes() {
         </div>
 
         <div className="space-y-6 overflow-x-hidden max-w-full w-full relative z-[1]" style={{ width: '100%', padding: '32px 24px' }}>
+
+          <div className="mb-6">
+            <AIAgentCard type="ventes_briefing" title="Intelligence Ventes" />
+          </div>
 
           {/* ══════════════════════════════════════════════════════
               PREMIUM PAGE HEADER
