@@ -21,7 +21,7 @@ export function ComplianceWidget() {
         overflow: 'hidden',
         borderRadius: 8,
         border: '1px solid rgba(245, 158, 11, 0.15)',
-        borderTop: '2px solid #D4A843',
+        borderTop: '3px solid #22C55E',
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
         padding: 20,
         transition: 'all 200ms ease-out',
