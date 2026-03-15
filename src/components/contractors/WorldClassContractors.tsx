@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { getMoroccoToday } from '@/utils/timezone';
 import { toast } from '@/hooks/use-toast';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
