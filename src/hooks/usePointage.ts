@@ -157,7 +157,7 @@ export function usePointage() {
         .select('id, heure_entree, heure_sortie')
         .eq('employe_id', employeId)
         .eq('date_pointage', today)
-        .single();
+        .maybeSingle();
 
       if (!existing) {
         toast.error('Aucun pointage d\'entrée trouvé');
