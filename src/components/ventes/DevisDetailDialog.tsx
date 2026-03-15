@@ -640,7 +640,7 @@ export function DevisDetailDialog({
                     {correctionHistory.map((entry) => (
                       <div 
                         key={entry.id} 
-                        className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border-l-4 border-destructive shadow-sm"
+                        className="bg-white/[0.03] p-4 rounded-lg border-l-4 border-destructive shadow-sm"
                       >
                         <div className="flex justify-between items-start mb-2">
                           <span className="font-bold text-sm text-foreground">
