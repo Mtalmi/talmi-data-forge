@@ -15,7 +15,7 @@ interface KPICardProps {
   target?: number;
 }
 
-export default function KPICard({
+const KPICard = React.memo(function KPICard({
   value,
   title,
   subtitle,
