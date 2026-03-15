@@ -290,6 +290,8 @@ const App = () => (
                   </Routes>
                 </Suspense>
                 <AIFloatingBubble />
+                <WelcomeModal />
+                <GuidedTour />
               </SecurityProvider>
             </PreviewRoleProvider>
           </AuthProvider>

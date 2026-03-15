@@ -201,6 +201,12 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
   };
 
   const handleNav = (url: string) => {
+    // Tour trigger
+    if (url === '/__tour') {
+      window.dispatchEvent(new Event('tbos-start-tour'));
+      if (window.innerWidth < 768) onClose();
+      return;
+    }
     // Intelligence section items → navigate to dashboard with tab state
     if (url === '/__dashboard_intel' || url === '/__dashboard_intel_alerts' || url === '/__dashboard_intel_agents' || url === '/__dashboard_intel_history') {
       navigate('/', { state: { activeTab: 'intelligence' } });
