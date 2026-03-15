@@ -161,13 +161,12 @@ function Bdg({ label, color, bg, pulse, icon: Icon, border: borderOverride }: { 
 
 function SectionHeader({ icon: Icon, label, right, sub }: { icon: React.ElementType; label: string; right?: React.ReactNode; sub?: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-      <Icon size={16} color={T.gold} />
-      <div>
-        <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>{label}</span>
-        {sub && <span style={{ color: T.textDim, fontSize: 10, marginLeft: 8 }}>{sub}</span>}
-      </div>
-      <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
+    <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 20 }}>
+      <span style={{ color: '#D4A843', fontSize: 14, marginRight: 8, flexShrink: 0 }}>✦</span>
+      <Icon size={14} style={{ color: '#D4A843', flexShrink: 0, marginRight: 8 }} />
+      <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, letterSpacing: '0.15em', color: '#D4A843', textTransform: 'uppercase' as const, whiteSpace: 'nowrap', flexShrink: 0 }}>{label}</span>
+      {sub && <span style={{ color: T.textDim, fontSize: 12, marginLeft: 8 }}>{sub}</span>}
+      <span style={{ borderBottom: '1px dashed rgba(212, 168, 67, 0.2)', flexGrow: 1, marginLeft: 12, alignSelf: 'center', height: 0 }} />
       {right}
     </div>
   );
@@ -1087,7 +1086,7 @@ function HistoriqueNormesTab() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <FlaskConical size={16} color={T.gold} />
-              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>✦ Historique des Essais</span>
+              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 12, textTransform: 'uppercase' as const, letterSpacing: '0.15em' }}>✦ Historique des Essais</span>
             </div>
             <span style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF' }}>dernière mise à jour : à l'instant</span>
           </div>
@@ -1209,7 +1208,7 @@ function HistoriqueNormesTab() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <BookOpen size={16} color={T.gold} />
-              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>✦ Référentiel Normes</span>
+              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 12, textTransform: 'uppercase' as const, letterSpacing: '0.15em' }}>✦ Référentiel Normes</span>
               <span style={{ fontFamily: MONO, fontSize: 10, color: '#D4A843', padding: '2px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4 }}>NM 10.1.008</span>
             </div>
           </div>
@@ -1563,7 +1562,7 @@ function AnalytiqueTab() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <Brain size={16} color={T.gold} />
-              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>✦ Insight IA — Analyse Qualité</span>
+              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 12, textTransform: 'uppercase' as const, letterSpacing: '0.15em' }}>✦ Insight IA — Analyse Qualité</span>
             </div>
             <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', padding: '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4 }}>
               Généré par IA · Claude Opus
@@ -1699,7 +1698,7 @@ function IntelligenceIATab() {
 
       {/* ── HEADER ── */}
       <div>
-        <p style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: T.gold, letterSpacing: '2px', textTransform: 'uppercase' as const, margin: '0 0 6px' }}>
+        <p style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: T.gold, letterSpacing: '0.15em', textTransform: 'uppercase' as const, margin: '0 0 6px' }}>
           ✦ Centre d'Intelligence Laboratoire
         </p>
         <p style={{ fontFamily: MONO, fontSize: 12, color: T.gold, margin: 0 }}>

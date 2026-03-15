@@ -18,7 +18,7 @@ function SectionHeader({ label }: { label: string }) {
       <span
         style={{
           fontFamily: MONO,
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: 700,
           letterSpacing: '0.15em',
           color: '#D4A843',

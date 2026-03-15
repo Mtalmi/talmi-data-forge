@@ -88,9 +88,10 @@ export function hoverHandlers() {
 /* ───── Section Header ───── */
 function SectionHeader({ title }: { title: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-      <span style={{ fontFamily: 'ui-monospace, monospace', letterSpacing: '2px', fontSize: 12, color: '#D4A843', fontWeight: 600, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{title}</span>
-      <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(212,168,67,0.3), transparent 80%)' }} />
+    <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 20 }}>
+      <span style={{ color: '#D4A843', fontSize: 14, marginRight: 8, flexShrink: 0 }}>✦</span>
+      <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, fontWeight: 700, letterSpacing: '0.15em', color: '#D4A843', textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0 }}>{title}</span>
+      <span style={{ borderBottom: '1px dashed rgba(212, 168, 67, 0.2)', flexGrow: 1, marginLeft: 12, alignSelf: 'center', height: 0 }} />
     </div>
   );
 }

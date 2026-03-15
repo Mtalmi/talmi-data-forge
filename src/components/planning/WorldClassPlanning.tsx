@@ -176,10 +176,11 @@ function Badge({ label, color, bg, pulse = false }: { label: string; color: stri
 // ─────────────────────────────────────────────────────
 function SectionHeader({ icon: Icon, label }: { icon: any; label: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-      <Icon size={16} color={T.gold} />
-      <span style={{ color: T.gold, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>{label}</span>
-      <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
+    <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 20 }}>
+      <span style={{ color: '#D4A843', fontSize: 14, marginRight: 8, flexShrink: 0 }}>✦</span>
+      {Icon && <Icon size={14} style={{ color: '#D4A843', flexShrink: 0, marginRight: 8 }} />}
+      <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, fontWeight: 700, letterSpacing: '0.15em', color: '#D4A843', textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0 }}>{label}</span>
+      <span style={{ borderBottom: '1px dashed rgba(212, 168, 67, 0.2)', flexGrow: 1, marginLeft: 12, alignSelf: 'center', height: 0 }} />
     </div>
   );
 }

@@ -22,11 +22,11 @@ export function ConcentrationClientCard() {
       borderRadius: 12, borderTop: '2px solid #F59E0B', padding: 24,
     }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
-        <span style={{ color: '#D4A843', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '2px', fontFamily: mono }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 20 }}>
+        <span style={{ color: '#D4A843', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: mono, whiteSpace: 'nowrap', flexShrink: 0 }}>
           ✦ Agent IA: Détecteur de Concentration Client
         </span>
-        <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(212,168,67,0.3), transparent 80%)' }} />
+        <span style={{ borderBottom: '1px dashed rgba(212, 168, 67, 0.2)', flexGrow: 1, marginLeft: 12, alignSelf: 'center', height: 0 }} />
         <span style={{ fontSize: 9, fontWeight: 600, color: '#D4A843', background: 'rgba(212,168,67,0.06)', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 100, padding: '3px 10px', fontFamily: mono }}>
           ✨ Généré par IA · Claude Opus
         </span>

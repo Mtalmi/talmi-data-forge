@@ -141,9 +141,10 @@ const WORKFLOW_STEPS_META = [
 /* ─── Section Header ─── */
 function SectionHeader({ children }: { children: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16, marginTop: 24 }}>
-      <span style={{ fontFamily: MONO, letterSpacing: 2, fontSize: 13, color: T.gold, whiteSpace: 'nowrap' }}>{children}</span>
-      <div style={{ flex: 1, borderTop: '1px dashed rgba(212,168,67,0.25)' }} />
+    <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 20, marginTop: 24 }}>
+      <span style={{ color: '#D4A843', fontSize: 14, marginRight: 8, flexShrink: 0 }}>✦</span>
+      <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, letterSpacing: '0.15em', color: T.gold, textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0 }}>{children}</span>
+      <span style={{ borderBottom: '1px dashed rgba(212, 168, 67, 0.2)', flexGrow: 1, marginLeft: 12, alignSelf: 'center', height: 0 }} />
     </div>
   );
 }

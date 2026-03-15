@@ -411,10 +411,11 @@ function Bdg({ label, color, bg, pulse = false, icon }: { label: string; color: 
 
 function SectionHeader({ icon: Icon, label, right }: { icon: any; label: string; right?: React.ReactNode }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-      <Icon size={16} color={T.gold} />
-      <span style={{ color: T.gold, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>{label}</span>
-      <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
+    <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 20 }}>
+      <span style={{ color: '#D4A843', fontSize: 14, marginRight: 8, flexShrink: 0 }}>✦</span>
+      <Icon size={14} style={{ color: '#D4A843', flexShrink: 0, marginRight: 8 }} />
+      <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, fontWeight: 700, letterSpacing: '0.15em', color: '#D4A843', textTransform: 'uppercase' as const, whiteSpace: 'nowrap', flexShrink: 0 }}>{label}</span>
+      <span style={{ borderBottom: '1px dashed rgba(212, 168, 67, 0.2)', flexGrow: 1, marginLeft: 12, alignSelf: 'center', height: 0 }} />
       {right}
     </div>
   );
