@@ -76,7 +76,7 @@ export function BonDetailDrawer({ blId, open, onClose }: BonDetailDrawerProps) {
           .from('clients')
           .select('nom_client, adresse')
           .eq('client_id', data.client_id)
-          .single();
+          .maybeSingle();
         if (client) {
           setClientName(client.nom_client || data.client_id);
           setClientAddress(client.adresse || '—');
