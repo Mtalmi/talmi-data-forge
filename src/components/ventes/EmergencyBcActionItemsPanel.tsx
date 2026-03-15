@@ -346,7 +346,7 @@ export function EmergencyBcActionItemsPanel({
             </div>
             {overdueCount > 0 && (
               <div className="text-center p-2 rounded-lg bg-red-500/10 border border-red-500/20">
-                <p className="text-2xl font-bold text-red-400">{overdueCount}</p>
+                <p className="text-2xl font-extralight text-red-400">{overdueCount}</p>
                 <p className="text-xs text-red-400">En retard</p>
               </div>
             )}
