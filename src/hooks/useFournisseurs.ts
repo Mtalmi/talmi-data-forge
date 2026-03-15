@@ -276,7 +276,7 @@ export function useFournisseurs() {
         .from('factures_fournisseur')
         .select('montant_paye, montant_ttc')
         .eq('id', factureId)
-        .single();
+        .maybeSingle();
 
       if (facture) {
         const nouveauMontantPaye = (facture.montant_paye || 0) + montant;

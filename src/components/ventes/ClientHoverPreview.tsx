@@ -70,10 +70,14 @@ export function ClientHoverPreview({ clientId, clientName, children }: ClientHov
       }
 
       // Fetch client stats from bons_commande
-      const { data: ordersData } = await supabase
+      const { data: ordersData, error: ordersError } = await supabase
         .from('bons_commande')
         .select('volume_m3, total_ht, created_at')
-        .eq('client_id', clientId);
+        .eq('client_id', clientId)
+        .order('created_at', { ascending: false })
+        .limit(500);
+
+      if (ordersError) console.error('Error fetching client orders:', ordersError);
 
       if (ordersData) {
         setStats({

@@ -287,7 +287,7 @@ export function useFlotte() {
         .eq('id_camion', idCamion)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       let kmParcourus: number | null = null;
       let consommation: number | null = null;

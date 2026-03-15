@@ -205,7 +205,7 @@ export function usePointage() {
         .select('id')
         .eq('employe_id', employeId)
         .eq('date_rapport', today)
-        .single();
+        .maybeSingle();
 
       if (existing) {
         toast.error('Rapport déjà soumis aujourd\'hui');

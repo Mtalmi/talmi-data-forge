@@ -174,7 +174,7 @@ export function useExpensesControlled(filters: ExpenseFilters = {}) {
         .from('profiles')
         .select('full_name')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       const { error } = await supabase
         .from('expenses_controlled')
