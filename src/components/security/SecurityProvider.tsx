@@ -56,5 +56,12 @@ export function SecurityProvider({ children }: SecurityProviderProps) {
     }
   }, [isLoggedIn]);
 
+  // Refresh data when tab becomes visible again (after sleep/switch)
+  useVisibilityRefresh(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🛡️ Titanium Shield: Tab visible — refreshing session');
+    }
+  });
+
   return <>{children}</>;
 }
