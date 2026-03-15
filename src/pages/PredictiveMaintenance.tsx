@@ -51,15 +51,15 @@ function GoldTooltip({ active, payload, label }: any) {
 const plants = ["Toutes les Centrales", "Casablanca Nord", "Rabat Central", "Marrakech", "Tanger"];
 
 const equipmentData: Record<string, { name: string; overall: number; units: { id: string; type: string; health: number; status: string; nextService: string }[] }> = {
-  "Casablanca North": {
-    name: "Casablanca North", overall: 82,
+  "Casablanca Nord": {
+    name: "Casablanca Nord", overall: 82,
     units: [
-      { id: "MX-001", type: "Concrete Mixer", health: 91, status: "Operational", nextService: "45 days" },
-      { id: "MX-002", type: "Concrete Mixer", health: 88, status: "Operational", nextService: "38 days" },
-      { id: "MX-003", type: "Concrete Mixer", health: 23, status: "CRITICAL", nextService: "Immediate" },
-      { id: "PMP-001", type: "Water Pump", health: 76, status: "Monitor", nextService: "12 days" },
-      { id: "CNV-001", type: "Conveyor Belt", health: 94, status: "Operational", nextService: "60 days" },
-      { id: "WGH-001", type: "Weighbridge", health: 89, status: "Operational", nextService: "55 days" },
+      { id: "MX-001", type: "Malaxeur Béton", health: 91, status: "Opérationnel", nextService: "45 jours" },
+      { id: "MX-002", type: "Malaxeur Béton", health: 88, status: "Opérationnel", nextService: "38 jours" },
+      { id: "MX-003", type: "Malaxeur Béton", health: 23, status: "CRITIQUE", nextService: "Immédiat" },
+      { id: "PMP-001", type: "Pompe à eau", health: 76, status: "Surveillance", nextService: "12 jours" },
+      { id: "CNV-001", type: "Convoyeur", health: 94, status: "Opérationnel", nextService: "60 jours" },
+      { id: "WGH-001", type: "Pont-bascule", health: 89, status: "Opérationnel", nextService: "55 jours" },
     ],
   },
   "Rabat Central": {
