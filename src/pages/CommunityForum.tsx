@@ -296,20 +296,20 @@ export default function CommunityForum() {
       <div className="relative z-10 px-6 py-3 flex items-center gap-4" style={{ background: T.card, borderBottom: `1px solid ${T.border}` }}>
         <div className="flex items-center gap-2 shrink-0">
           <Users size={22} color={T.gold} />
-          <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: T.gold, fontFamily: 'Poppins' }}>COMMUNITY</span>
+          <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: T.gold, fontFamily: 'Poppins' }}>COMMUNAUTÉ</span>
         </div>
         <div className="flex-1 max-w-lg mx-auto relative">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" color={T.text2} />
-          <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search 2,847 discussions..."
+          <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Rechercher dans 2 847 discussions..."
             className="w-full pl-9 pr-4 py-2 rounded-xl text-sm outline-none"
             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text1 }}
             onFocus={e => e.target.style.borderColor = T.gold} onBlur={e => e.target.style.borderColor = T.border} />
         </div>
         <div className="flex items-center gap-3 shrink-0">
-          <span className="text-sm" style={{ fontFamily: 'JetBrains Mono', color: T.gold }}>⭐ 1,240 rep</span>
+          <span className="text-sm" style={{ fontFamily: 'JetBrains Mono', color: T.gold }}>⭐ 1 240 rép</span>
           <button onClick={() => setShowNewPost(true)} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium"
             style={{ background: `linear-gradient(135deg, ${T.gold}, ${T.goldDim})`, color: '#000' }}>
-            <Edit3 size={14} /> New Post
+            <Edit3 size={14} /> Nouveau Post
           </button>
         </div>
       </div>
