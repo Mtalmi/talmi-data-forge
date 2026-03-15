@@ -66,7 +66,7 @@ function useProdRendement() {
           if (!isNaN(h)) activeHoursSet.add(h);
         }
         if (bl.production_batch_time) {
-          const h = new Date(bl.production_batch_time).getHours();
+          const h = getHourInMorocco(bl.production_batch_time);
           activeHoursSet.add(h);
         }
       });
