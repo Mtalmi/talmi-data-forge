@@ -481,25 +481,21 @@ export function EmergencyBcDialog({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Volume (m³) *</Label>
-              <Input
-                type="number"
+              <UnitInput
+                unit="m³"
                 inputMode="decimal"
-                step="0.5"
-                min="1"
                 value={volume}
-                onChange={(e) => setVolume(e.target.value)}
+                onChange={setVolume}
                 placeholder="Ex: 8"
+                min="1"
               />
             </div>
             <div className="space-y-2">
               <Label>Prix de Vente (DH/m³) *</Label>
-              <Input
-                type="number"
-                inputMode="decimal"
-                step="0.01"
-                min="0"
+              <CurrencyInput
+                unit="DH/m³"
                 value={prix}
-                onChange={(e) => setPrix(e.target.value)}
+                onChange={setPrix}
                 placeholder="Ex: 850"
               />
             </div>
