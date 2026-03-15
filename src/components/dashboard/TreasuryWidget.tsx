@@ -367,7 +367,7 @@ export function TreasuryWidget() {
                           </div>
                         </div>
                         <span className="font-mono font-semibold text-sm whitespace-nowrap">
-                          {expense.montant_ttc.toLocaleString()} MAD
+                          {expense.montant_ttc.toLocaleString('fr-FR')} MAD
                         </span>
                       </button>
                     );
