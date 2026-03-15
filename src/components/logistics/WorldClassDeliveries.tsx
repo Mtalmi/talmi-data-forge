@@ -11,6 +11,7 @@ import {
   Activity, AlertTriangle,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { PassationButton } from '@/components/ui/PassationButton';
 import WorldClassDeliveryArchive from '@/components/archive/WorldClassDeliveryArchive';
 import { FleetGPSMap } from '@/components/fleet/FleetGPSMap';
 import { useGPSTracking } from '@/hooks/useGPSTracking';
