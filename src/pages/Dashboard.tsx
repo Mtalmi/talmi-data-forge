@@ -999,7 +999,7 @@ export default function Dashboard() {
                    <div className="w-[80px] h-[3px] bg-white/10 rounded-full mt-1.5">
                      <div className="h-full rounded-full bg-gradient-to-r from-[#D4A843]/80 to-[#D4A843] tbos-bar-grow" style={{ width: '87%' }} />
                   </div>
-                  <span className="text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase mt-1.5">CAPACITÉ</span>
+                  <span className="text-xs tracking-[0.2em] text-muted-foreground/40 uppercase mt-1.5">CAPACITÉ</span>
                 </div>
 
                 {/* Divider */}
