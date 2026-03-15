@@ -303,12 +303,12 @@ export function FacturesTable({
               <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{ft.invoiceNumber}</TableHead>
               <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{c.client}</TableHead>
               <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{ft.blBc}</TableHead>
-              <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{c.date}</TableHead>
+              <SortableTableHead label={c.date} sortKey="_date" currentKey={sortKey} direction={sortDirection} onSort={handleSort} align="center" />
               <TableHead className="text-right" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{c.volume} (m³)</TableHead>
-              <TableHead className="text-right" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{c.totalHT} (DH)</TableHead>
+              <SortableTableHead label={`${c.totalHT} (DH)`} sortKey="_total_ht" currentKey={sortKey} direction={sortDirection} onSort={handleSort} align="right" />
               <TableHead className="text-right" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{ft.totalTtc || 'Total TTC'} (DH)</TableHead>
               <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{ft.margin}</TableHead>
-              <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{c.status}</TableHead>
+              <SortableTableHead label={c.status} sortKey="_statut" currentKey={sortKey} direction={sortDirection} onSort={handleSort} align="center" />
               <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{ft.actions}</TableHead>
             </TableRow>
           </TableHeader>
