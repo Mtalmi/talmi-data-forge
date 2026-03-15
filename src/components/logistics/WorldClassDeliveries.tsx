@@ -203,10 +203,11 @@ function Bdg({ label, color, bg, pulse }: { label: string; color: string; bg: st
 
 function SectionHeader({ icon: Icon, label, right }: { icon: any; label: string; right?: React.ReactNode }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-      <Icon size={16} color={T.gold} />
-      <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>{label}</span>
-      <div style={{ flex: 1, height: 0, borderTop: `1px dotted ${T.gold}40` }} />
+    <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 20 }}>
+      <span style={{ color: '#D4A843', fontSize: 14, marginRight: 8, flexShrink: 0 }}>✦</span>
+      <Icon size={14} style={{ color: '#D4A843', flexShrink: 0, marginRight: 8 }} />
+      <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, letterSpacing: '0.15em', color: '#D4A843', textTransform: 'uppercase' as const, whiteSpace: 'nowrap', flexShrink: 0 }}>{label}</span>
+      <span style={{ borderBottom: '1px dashed rgba(212, 168, 67, 0.2)', flexGrow: 1, marginLeft: 12, alignSelf: 'center', height: 0 }} />
       {right}
     </div>
   );
