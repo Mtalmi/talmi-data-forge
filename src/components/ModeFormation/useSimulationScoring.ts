@@ -89,11 +89,11 @@ export function useSimulationScoring({ simulationType, difficulty, totalSteps }:
         .eq('user_id', user.id)
         .maybeSingle();
 
-      const today = new Date().toISOString().split('T')[0];
+      const today = getMoroccoToday();
       
       if (existing) {
         const lastDate = existing.last_activity_date;
-        const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+        const yesterday = getMoroccoYesterday();
         const newStreak = lastDate === yesterday ? (existing.streak_days || 0) + 1 
           : lastDate === today ? (existing.streak_days || 0) 
           : 1;
