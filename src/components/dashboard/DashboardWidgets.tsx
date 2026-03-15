@@ -173,6 +173,7 @@ export function ARAgingWidget() {
   const [data, setData] = useState({
     current: 0, days30: 0, days60: 0, days90: 0, total: 0,
   });
+  const [counts, setCounts] = useState({ c0: 0, c30: 0, c60: 0, c90: 0 });
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
