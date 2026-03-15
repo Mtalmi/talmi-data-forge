@@ -872,7 +872,7 @@ html {
 .metric-value,
 [class*="kpi"] [class*="value"],
 [class*="kpi"] [class*="number"] {
-  font-family: "JetBrains Mono", monospace !important;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace !important;
   font-weight: 200 !important;
   color: var(--gold) !important;
   font-variant-numeric: tabular-nums;
