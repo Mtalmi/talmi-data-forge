@@ -1211,7 +1211,7 @@ export default function Dashboard() {
               value: tresorerie,
               unit: uf.currKUnit,
               watermark: uf.currSym,
-              sub: `→ ${uf.fmtCurrencyK(502000)} fin mois`,
+              sub: `→ ${uf.fmtCurrencyK(demoData.tresorerie.value * 0.9)} fin mois`,
               trend: '↗ +9.7%',
               healthyGlow: true,
               accentColor: '#FDB913',
