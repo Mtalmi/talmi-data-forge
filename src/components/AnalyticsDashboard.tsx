@@ -36,11 +36,11 @@ export default function AnalyticsDashboard() {
   ];
 
   const agentDistribution = [
-    { name: "Phase 1 Core", value: 12, color: "#FFD700" },
-    { name: "Phase B Growth", value: 20, color: "#FFA500" },
-    { name: "Phase C Strategic", value: 4, color: "#FF8C00" },
-    { name: "Phase 2 Advanced", value: 12, color: "#FF6347" },
-    { name: "Marketing", value: 10, color: "#DC143C" },
+    { name: "Phase 1 Core", value: 12, color: "#D4A843" },
+    { name: "Phase B Growth", value: 20, color: "#E8C96A" },
+    { name: "Phase C Strategic", value: 4, color: "#C49A3C" },
+    { name: "Phase 2 Advanced", value: 12, color: "#F59E0B" },
+    { name: "Marketing", value: 10, color: "#22C55E" },
   ];
 
   const stats = [
