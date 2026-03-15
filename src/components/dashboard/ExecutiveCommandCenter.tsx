@@ -217,7 +217,7 @@ export function ExecutiveCommandCenter() {
             <h2 className="text-sm sm:text-base font-bold tracking-tight truncate">
               Centre de Commande Exécutif
             </h2>
-            <p className="text-[10px] sm:text-xs text-muted-foreground">Vue Hawaii • Mise à jour en temps réel</p>
+            <p className="text-xs text-muted-foreground">Vue Hawaii • Mise à jour en temps réel</p>
           </div>
         </div>
         {/* Material Variance Status Badge */}
