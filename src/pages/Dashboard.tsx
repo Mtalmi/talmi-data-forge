@@ -1121,7 +1121,7 @@ export default function Dashboard() {
           </div>
 
           {/* (2b) PRÉDICTION ARRÊT USINE */}
-          <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" style={{ animation: 'ccSectionIn 300ms ease-out 150ms both' }}>
+          <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" data-tour="shutdown-prediction" style={{ animation: 'ccSectionIn 300ms ease-out 150ms both' }}>
             <div className="tbos-shutdown-pulse" style={{
               background: 'rgba(245, 158, 11, 0.05)',
               borderLeft: '4px solid #F59E0B',
