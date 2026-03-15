@@ -149,17 +149,19 @@ const AR_TOOLTIP = ({ active, payload, label }: any) => {
   if (active && payload?.length) {
     return (
       <div style={{
-        background: 'rgba(15,23,42,0.95)',
-        border: '1px solid rgba(212,168,67,0.3)',
+        background: '#1A1F35',
+        border: '1px solid #D4A843',
         borderRadius: 8,
         padding: '8px 12px',
         boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
-        backdropFilter: 'blur(12px)',
       }}>
-        <p style={{ color: '#94A3B8', fontSize: 11, marginBottom: 2 }}>{label}</p>
-        <p style={{ color: '#FFD700', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 14 }}>
+        <p style={{ color: '#9CA3AF', fontSize: 11, marginBottom: 2 }}>{label}</p>
+        <p style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontWeight: 700, fontSize: 14 }}>
           {payload[0].value.toLocaleString('fr-FR')} DH
         </p>
+        {payload[0]?.payload?.count != null && (
+          <p style={{ color: '#9CA3AF', fontSize: 10 }}>{payload[0].payload.count} facture{payload[0].payload.count > 1 ? 's' : ''}</p>
+        )}
       </div>
     );
   }
