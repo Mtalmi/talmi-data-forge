@@ -28,9 +28,11 @@ export function useVentesKeyboardShortcuts({
   
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     const target = event.target as HTMLElement;
+    const tag = target.tagName;
     if (
-      target.tagName === 'INPUT' ||
-      target.tagName === 'TEXTAREA' ||
+      tag === 'INPUT' ||
+      tag === 'TEXTAREA' ||
+      tag === 'SELECT' ||
       target.isContentEditable
     ) {
       if (event.key === 'Escape') {
@@ -39,18 +41,12 @@ export function useVentesKeyboardShortcuts({
       return;
     }
 
+    // Skip if any modifier key is held (avoid conflicting with browser shortcuts)
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+
     const key = event.key.toLowerCase();
     
     switch (key) {
-      case 'n':
-        if (event.shiftKey) {
-          event.preventDefault();
-          onNewOrder?.();
-        } else {
-          event.preventDefault();
-          onNewQuote?.();
-        }
-        break;
       case '/':
         event.preventDefault();
         onFocusSearch?.();
@@ -68,10 +64,8 @@ export function useVentesKeyboardShortcuts({
         onEditSelected?.();
         break;
       case 'r':
-        if (!event.metaKey && !event.ctrlKey) {
-          event.preventDefault();
-          onRefresh?.();
-        }
+        event.preventDefault();
+        onRefresh?.();
         break;
       case 'tab':
         if (event.shiftKey) {
@@ -79,13 +73,10 @@ export function useVentesKeyboardShortcuts({
           onToggleTab?.();
         }
         break;
-      case '?':
-        event.preventDefault();
-        // Toast is triggered externally via KeyboardShortcutsHint
-        document.dispatchEvent(new CustomEvent('show-keyboard-shortcuts'));
-        break;
+      // 'N' solo removed — handled by global N+X sequences
+      // '?' removed — handled by global ShortcutsHelpModal
     }
-  }, [onNewQuote, onNewOrder, onFocusSearch, onNextItem, onPrevItem, onEditSelected, onRefresh, onToggleTab]);
+  }, [onFocusSearch, onNextItem, onPrevItem, onEditSelected, onRefresh, onToggleTab]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -105,10 +96,6 @@ export function KeyboardShortcutsHint() {
         <div className="space-y-2">
           <p className="font-semibold">{ks.title}</p>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-            <span className="font-mono bg-muted px-1 rounded">N</span>
-            <span>{ks.newQuote}</span>
-            <span className="font-mono bg-muted px-1 rounded">⇧N</span>
-            <span>{ks.newOrder}</span>
             <span className="font-mono bg-muted px-1 rounded">/</span>
             <span>{ks.search}</span>
             <span className="font-mono bg-muted px-1 rounded">J</span>
