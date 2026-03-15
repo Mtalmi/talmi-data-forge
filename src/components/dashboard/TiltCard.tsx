@@ -5,6 +5,7 @@ interface TiltCardProps {
   children: ReactNode;
   className?: string;
   style?: React.CSSProperties;
+  onClick?: () => void;
 }
 
 export function TiltCard({ children, className, style }: TiltCardProps) {
