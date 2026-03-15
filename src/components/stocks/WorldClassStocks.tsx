@@ -875,6 +875,23 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
 
       </div>
 
+      {/* ── FOOTER ── */}
+      <div style={{
+        background: 'rgba(15,22,41,0.8)',
+        borderTop: '1px solid rgba(212,168,67,0.2)',
+        padding: '16px 24px',
+        textAlign: 'center',
+      }}>
+        <p style={{
+          fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
+          fontSize: 11,
+          color: '#64748B',
+          letterSpacing: '0.1em',
+        }}>
+          TBOS STOCKS INTELLIGENCE v2.0 · Propulsé par Claude Opus · Atlas Concrete Morocco
+        </p>
+      </div>
+
       <NouveauMouvementModal open={showMouvementModal} onClose={() => setShowMouvementModal(false)} />
       <ControleQualiteModal open={showControleModal} onClose={() => setShowControleModal(false)} />
       <AjustementManuelModal open={showAjustementModal} onClose={() => setShowAjustementModal(false)} />
