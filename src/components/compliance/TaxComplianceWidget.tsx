@@ -132,7 +132,7 @@ export function TaxComplianceWidget() {
           <div className="flex items-center justify-between text-sm pt-2 border-t">
             <span className="text-muted-foreground">{t.widgets.taxCompliance.estimatedPenalties}:</span>
             <span className="font-medium text-amber-500">
-              {summary.totalPenalties.toLocaleString()} DH
+              {summary.totalPenalties.toLocaleString('fr-FR')} DH
             </span>
           </div>
         )}

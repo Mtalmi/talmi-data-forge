@@ -441,7 +441,7 @@ export function FixedAssetsDashboard() {
                     <BarChart data={barData} layout="vertical">
                       <XAxis type="number" tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
                       <YAxis type="category" dataKey="name" width={100} />
-                      <Tooltip formatter={(value: number) => `${value.toLocaleString()} DH`} />
+                      <Tooltip formatter={(value: number) => `${value.toLocaleString('fr-FR')} DH`} />
                       <Legend />
                       <Bar dataKey="brut" name={fa.grossValueLabel} fill="hsl(var(--primary))" />
                       <Bar dataKey="vnc" name={fa.vncLabel} fill="hsl(var(--chart-2))" />
