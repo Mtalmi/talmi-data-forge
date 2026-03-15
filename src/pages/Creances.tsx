@@ -87,6 +87,7 @@ import { format, parseISO } from 'date-fns';
 import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { MetricTooltip } from '@/components/ui/MetricTooltip';
 
 const AGING_COLORS = ['hsl(var(--success))', 'hsl(var(--warning))', 'hsl(var(--accent))', 'hsl(var(--destructive))', 'hsl(142, 76%, 36%)'];
 
