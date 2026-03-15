@@ -140,7 +140,7 @@ export function AgentHeader({ name, severityBadge, hideBranding }: AgentHeaderPr
         {!hideBranding && (
           <span style={{
             fontFamily: MONO,
-            fontSize: 9,
+            fontSize: 12,
             fontWeight: 600,
             color: '#D4A843',
             background: 'rgba(212,168,67,0.06)',
