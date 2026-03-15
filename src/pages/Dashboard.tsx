@@ -2192,7 +2192,7 @@ export default function Dashboard() {
           <span style={{ color: '#D4A843', fontSize: 14 }}>⚡</span>
           <span className="text-xs font-medium uppercase tracking-wider whitespace-nowrap" style={{ color: '#D4A843' }}>Opérations du Jour</span>
           <div style={{ flex: 1, height: '1px', background: 'linear-gradient(to right, rgba(212,168,67,0.4), transparent)', margin: '0 16px' }} />
-          <span className="text-xs text-white/40 font-mono">12/03/2026</span>
+          <span className="text-xs text-white/40 font-mono">{new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Africa/Casablanca' })}</span>
         </div>
         <div className="mt-0">
           <Suspense fallback={<div className="h-[600px] rounded-lg bg-white/[0.02] animate-pulse" />}>
