@@ -205,7 +205,7 @@ function useProductionLiveData() {
   const [weekBons, setWeekBons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const today = format(new Date(), 'yyyy-MM-dd');
+  const today = getMoroccoToday();
   const weekStart = format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
   const weekEnd = format(endOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
 

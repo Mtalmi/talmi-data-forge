@@ -26,7 +26,7 @@ export function RouteOptimizationPanel({ open, onClose }: Props) {
   useEffect(() => {
     if (!open) return;
     setLoading(true);
-    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    const todayStr = getMoroccoToday();
     supabase
       .from('bons_livraison_reels')
       .select('bl_id, formule_id, volume_m3, heure_prevue, workflow_status, client_id, clients(nom_client)')

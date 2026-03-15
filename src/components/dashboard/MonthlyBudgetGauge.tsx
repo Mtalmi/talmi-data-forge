@@ -57,8 +57,8 @@ export function MonthlyBudgetGauge() {
       const exceeded = capData?.cap_exceeded || false;
       
       // Calculate days remaining in month
-      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-      const daysRemaining = lastDay.getDate() - now.getDate();
+      const lastDay = new Date(year, month + 1, 0);
+      const daysRemaining = lastDay.getDate() - getMoroccoDay();
 
       setStats({
         spent,

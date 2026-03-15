@@ -1634,7 +1634,7 @@ export default function WorldClassClients() {
 
         {/* Footer */}
         <footer style={{ borderTop: '1px solid rgba(245, 158, 11, 0.08)', paddingTop: 24, paddingBottom: 24, display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 40 }}>
-          <span style={{ color: '#4B5563', fontSize: 12, fontFamily: MONO }}>TBOS Clients v2.0 — Données live • {format(new Date(), 'dd/MM/yyyy')}</span>
+          <span style={{ color: '#4B5563', fontSize: 12, fontFamily: MONO }}>TBOS Clients v2.0 — Données live • {getMoroccoDateDisplay()}</span>
         </footer>
       </div>
     </div>
