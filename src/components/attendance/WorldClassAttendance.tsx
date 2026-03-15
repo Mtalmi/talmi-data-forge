@@ -679,7 +679,7 @@ export default function WorldClassAttendance() {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
               <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 15, color: T.textPri }}>Heures par Département</div>
-              <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 800, color: T.gold }}>118.6 h</span>
+              <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 200, color: T.gold }}>118.6 h</span>
             </div>
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={DEPT_HOURS} layout="vertical" barSize={16} margin={{ left: 10, right: 50 }}>
