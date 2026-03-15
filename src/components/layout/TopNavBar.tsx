@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { LanguageSwitcher } from '@/i18n/LanguageSwitcher';
 import { UnitSwitcher } from '@/i18n/UnitSwitcher';
 import { useI18n } from '@/i18n/I18nContext';
@@ -41,6 +42,7 @@ interface TopNavBarProps {
 export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) {
   const { user, role: actualRole, signOut, isCeo: actualIsCeo } = useAuth();
   const { t } = useI18n();
+  const navigate = useNavigate();
 
   const effectiveRole = previewRole || actualRole;
   const initials = user?.email?.charAt(0).toUpperCase() || 'U';
@@ -120,9 +122,10 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
           {/* Notifications */}
           <NotificationCenter />
 
-          {/* Settings gear */}
+          {/* Settings gear — navigates to /settings */}
           <button
             style={iconBtnStyle}
+            onClick={() => navigate('/settings')}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#9CA3AF'; }}
             title="Paramètres"

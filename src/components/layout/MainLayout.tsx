@@ -23,10 +23,11 @@ interface MainLayoutProps {
 }
 
 function ConversionNote() {
-  const { config } = useUnits();
+  const { config, system } = useUnits();
+  if (system === 'mena') return null;
   return (
     <div style={{ textAlign: 'center', padding: '8px 0', fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 9, color: 'rgba(156,163,175,0.3)' }}>
-      Valeurs en {config.label.toUpperCase()}
+      Valeurs converties — données sources en unités {config.label.toUpperCase()}
     </div>
   );
 }

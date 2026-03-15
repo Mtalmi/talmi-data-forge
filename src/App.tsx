@@ -128,6 +128,7 @@ const RealityRazor = lazy(() => lazyRetry(() => import("./pages/RealityRazor")))
 const ContextualChameleon = lazy(() => lazyRetry(() => import("./pages/ContextualChameleon")));
 const FailureFiesta = lazy(() => lazyRetry(() => import("./pages/FailureFiesta")));
 const BoundaryBreaker = lazy(() => lazyRetry(() => import("./pages/BoundaryBreaker")));
+const PlaceholderPage = lazy(() => lazyRetry(() => import("./pages/PlaceholderPage")));
 
 const queryClient = new QueryClient();
 
@@ -269,6 +270,16 @@ const App = () => (
                      <Route path="/contextual-chameleon" element={<ContextualChameleon />} />
                      <Route path="/failure-fiesta" element={<FailureFiesta />} />
                      <Route path="/boundary-breaker" element={<BoundaryBreaker />} />
+                     {/* Finance placeholder routes */}
+                     <Route path="/tresorerie" element={<PlaceholderPage title="Trésorerie" />} />
+                     <Route path="/pnl" element={<PlaceholderPage title="P&L — Compte de Résultat" />} />
+                     <Route path="/budget" element={<PlaceholderPage title="Budget & Prévisions" />} />
+                     {/* Resources placeholder routes */}
+                     <Route path="/personnel" element={<PlaceholderPage title="Personnel & RH" />} />
+                     <Route path="/equipements" element={<PlaceholderPage title="Équipements" />} />
+                     {/* Admin placeholder routes */}
+                     <Route path="/utilisateurs" element={<PlaceholderPage title="Gestion Utilisateurs" />} />
+                     <Route path="/integrations" element={<PlaceholderPage title="Intégrations — n8n · WhatsApp · GPS" />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>

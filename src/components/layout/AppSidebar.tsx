@@ -171,13 +171,26 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
   }, [location.pathname, filteredSections]);
 
   const [openSections, setOpenSections] = useState<Record<string, boolean>>(() => {
+    try {
+      const stored = localStorage.getItem('tbos_sidebar_sections');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Ensure active sections are open
+        for (const key of activeSectionKeys) parsed[key] = true;
+        return parsed;
+      }
+    } catch { /* ignore */ }
     const initial = { ...DEFAULT_OPEN };
     for (const key of activeSectionKeys) initial[key] = true;
     return initial;
   });
 
   const toggleSection = (key: string) => {
-    setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
+    setOpenSections(prev => {
+      const next = { ...prev, [key]: !prev[key] };
+      localStorage.setItem('tbos_sidebar_sections', JSON.stringify(next));
+      return next;
+    });
   };
 
   const isActive = (path: string) => {
