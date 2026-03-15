@@ -260,6 +260,20 @@ export function useDashboardData() {
 
   // Throttle real-time callbacks to max 1 refresh per 2 seconds
   const throttledFetch = useMemo(() => throttle(() => fetchAll(), 2000), [fetchAll]);
+  const lastToastRef = useRef(0);
+
+  // Show a subtle toast on external update (max once per 30s)
+  const handleRealtimeUpdate = useCallback(() => {
+    throttledFetch();
+    const now = Date.now();
+    if (now - lastToastRef.current > 30000) {
+      lastToastRef.current = now;
+      toast.info('Nouvelles données disponibles', {
+        duration: 3000,
+        style: { fontSize: 12, fontFamily: 'ui-monospace, monospace' },
+      });
+    }
+  }, [throttledFetch]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -268,14 +282,14 @@ export function useDashboardData() {
     const interval = setInterval(fetchAll, 60000);
 
     const channel = supabase.channel('dashboard-live-data')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, () => throttledFetch())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'production_batches' }, () => throttledFetch())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'stocks' }, () => throttledFetch())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'tests_laboratoire' }, () => throttledFetch())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'factures' }, () => throttledFetch())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'devis' }, () => throttledFetch())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'alertes' }, () => throttledFetch())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'daily_scores' }, () => throttledFetch())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, handleRealtimeUpdate)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'production_batches' }, handleRealtimeUpdate)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'stocks' }, handleRealtimeUpdate)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tests_laboratoire' }, handleRealtimeUpdate)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'factures' }, handleRealtimeUpdate)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'devis' }, handleRealtimeUpdate)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'alertes' }, handleRealtimeUpdate)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'daily_scores' }, handleRealtimeUpdate)
       .subscribe();
 
     return () => {
