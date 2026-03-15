@@ -95,7 +95,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { MetricTooltip } from '@/components/ui/MetricTooltip';
 
-const AGING_COLORS = ['hsl(var(--success))', 'hsl(var(--warning))', 'hsl(var(--accent))', 'hsl(var(--destructive))', 'hsl(142, 76%, 36%)'];
+const AGING_COLORS = ['#22C55E', '#F59E0B', '#EA580C', '#EF4444', '#991B1B'];
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   'current': { label: 'Courant', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
