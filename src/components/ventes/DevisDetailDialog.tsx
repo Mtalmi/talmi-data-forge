@@ -667,7 +667,7 @@ export function DevisDetailDialog({
                   </div>
                 </ScrollArea>
               ) : (
-                <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-900/30 border border-dashed border-gray-300 dark:border-gray-700">
+                <div className="p-4 rounded-lg bg-white/[0.02] border border-dashed border-white/[0.1]">
                   <p className="text-sm text-muted-foreground italic text-center">
                     ✓ Aucune correction enregistrée pour ce devis.
                   </p>
