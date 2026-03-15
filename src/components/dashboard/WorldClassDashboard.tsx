@@ -769,6 +769,7 @@ function useWorldClassLiveData() {
 // ═══════════════════════════════════════════════════════
 export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidgets = false, showOnlyOps = false, hideIntelWidgets = false, showOnlyIntel = false, stockOnly = false }: { hideProductionWidgets?: boolean; hideOpsWidgets?: boolean; showOnlyOps?: boolean; hideIntelWidgets?: boolean; showOnlyIntel?: boolean; stockOnly?: boolean } = {}) {
   const navigate = useNavigate();
+  const uf = useUnitFormat();
   const {
     stats, stockData, arAgingData, recentBatches: batches,
     hourlyProductionData, qualityData, loading,
