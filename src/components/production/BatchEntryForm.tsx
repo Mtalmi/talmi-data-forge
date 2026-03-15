@@ -265,10 +265,10 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
   }
 
   const theoDisplay = {
-    ciment: (formule.ciment_kg_m3 * volume).toFixed(1),
+    ciment: isFinite(formule.ciment_kg_m3 * volume) ? (formule.ciment_kg_m3 * volume).toFixed(1) : '--',
     sable: formule.sable_m3 ? (formule.sable_m3 * volume * SABLE_DENSITY).toFixed(1) : null,
     gravette: formule.gravette_m3 ? (formule.gravette_m3 * volume * GRAVETTE_DENSITY).toFixed(1) : null,
-    eau: (formule.eau_l_m3 * volume).toFixed(1),
+    eau: isFinite(formule.eau_l_m3 * volume) ? (formule.eau_l_m3 * volume).toFixed(1) : '--',
     adjuvant: formule.adjuvant_l_m3 ? (formule.adjuvant_l_m3 * volume).toFixed(1) : null,
   };
 
