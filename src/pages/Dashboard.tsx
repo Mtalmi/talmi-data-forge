@@ -1019,7 +1019,7 @@ export default function Dashboard() {
                       ) : (
                         <>
                           <span className="text-[11px] text-muted-foreground/50">Prochaine: demain 08:00</span>
-                          <span className="text-[11px] text-white/70">Ciments & Béton du Sud · 45 m³</span>
+                          <span className="text-[11px] text-white/70">{plantData.nextDeliveryClient} · 45 {plantData.production.volumeUnit}</span>
                         </>
                       )}
                     </div>
