@@ -225,7 +225,7 @@ export function ARAgingWidget() {
         <div className="skeleton-god h-24 w-full rounded" />
       ) : (
         <>
-          <p className="text-xl font-bold mb-2" style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(51 100% 50%)' }}>
+          <p className="text-xl font-bold mb-2" style={{ fontFamily: 'ui-monospace, monospace', color: '#D4A843' }}>
             {data.total.toLocaleString('fr-FR')} <span className="text-sm font-normal text-muted-foreground">DH</span>
           </p>
           <div className="h-[120px]">

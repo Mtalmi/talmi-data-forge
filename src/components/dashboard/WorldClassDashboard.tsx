@@ -1358,33 +1358,52 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   <div style={{ fontSize:'10px', color:'rgba(255,255,255,0.3)', marginTop:'2px' }}>vs 65K DH mois dernier ↗</div>
                 </div>
               </div>
-              <div className="flex flex-col gap-3">
-                {arAgingData.map((d, i) => {
-                  const maxVal = Math.max(...arAgingData.map(a => a.value), 1);
-                  const pct = (d.value / maxVal) * 100;
-                  const barStyle = i === 0
-                    ? { background: 'linear-gradient(to right, #D4A843, #FDB913)' }
-                    : i === 1
-                    ? { background: 'linear-gradient(90deg, #D97706, #F59E0B)' }
-                    : i === 2
-                    ? { background: 'linear-gradient(90deg, #DC2626, #EF4444)' }
-                    : { background: 'linear-gradient(90deg, #991B1B, #B91C1C)' };
-                  return (
-                    <div key={i} onClick={() => navigate('/creances')} style={{ cursor: 'pointer' }}>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-[10px] uppercase tracking-wider text-white/40" style={{ fontFamily: "'JetBrains Mono', monospace", ...(d.label === '>90j' ? { color: 'rgb(248,113,113)', fontWeight: '500' } : {}) }}>{d.label}</span>
-                        <span style={{ fontSize: '13px', fontWeight: '500', color: 'white', fontFamily: "'JetBrains Mono', monospace" }}>{(uf.rawCurrency(d.value) / 1000).toFixed(0)}K {uf.currSym}</span>
-                      </div>
-                      <div className="h-[5px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
-                        <div
-                          className="h-full rounded-full transition-all duration-1000"
-                          style={{ width: `${pct}%`, ...barStyle }}
-                        />
-                      </div>
+              {/* Segmented horizontal bar */}
+              {(() => {
+                const total = arAgingData.reduce((s, d) => s + d.value, 0);
+                if (total === 0) return <div className="text-center text-white/30 text-xs py-4">Aucune créance en cours</div>;
+                return (
+                  <div>
+                    <div className="flex rounded overflow-hidden h-[18px] mb-3" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                      {arAgingData.map((d, i) => {
+                        const pct = (d.value / total) * 100;
+                        if (pct === 0) return null;
+                        return (
+                          <div
+                            key={i}
+                            className="relative group/seg h-full transition-all duration-700"
+                            style={{ width: `${pct}%`, background: AR_COLORS[i], minWidth: pct > 0 ? 4 : 0 }}
+                          >
+                            {pct > 12 && (
+                              <span className="absolute inset-0 flex items-center justify-center text-[9px] font-mono text-white/90 font-medium">
+                                {(d.value / 1000).toFixed(0)}K
+                              </span>
+                            )}
+                            {/* Tooltip */}
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/seg:block z-50 pointer-events-none">
+                              <div style={{ background: '#1A1F35', border: '1px solid #D4A843', borderRadius: 6, padding: '6px 10px', whiteSpace: 'nowrap', fontSize: 11 }}>
+                                <div style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace', fontWeight: 600 }}>{d.label}</div>
+                                <div style={{ color: '#fff' }}>{d.value.toLocaleString('fr-FR')} DH</div>
+                                <div style={{ color: '#9CA3AF' }}>{(d as any).count || 0} facture{((d as any).count || 0) > 1 ? 's' : ''}</div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
-                  );
-                })}
-              </div>
+                    {/* Legend */}
+                    <div className="flex flex-wrap gap-x-4 gap-y-1">
+                      {arAgingData.map((d, i) => (
+                        <div key={i} className="flex items-center gap-1.5" onClick={() => navigate('/creances')} style={{ cursor: 'pointer' }}>
+                          <span className="w-2 h-2 rounded-sm" style={{ background: AR_COLORS[i] }} />
+                          <span className="text-[10px] text-white/40 font-mono">{d.label}</span>
+                          <span className="text-[11px] text-white/70 font-mono font-medium">{(d.value / 1000).toFixed(0)}K</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
             </div>
             )}

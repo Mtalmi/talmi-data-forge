@@ -2205,21 +2205,15 @@ export default function Creances() {
                     })()}
                   </div>
                   {(() => {
-                    const AGING_DONUT_COLORS = ['#D4A843', '#B8860B', '#A0732A', '#8B6914', '#6B5210'];
-                    const hardcodedBuckets = [
-                      { name: 'Courant (0-30j)', value: 17175 },
-                      { name: '1-30 jours', value: 8610 },
-                      { name: '31-60 jours', value: 0 },
-                      { name: '61-90 jours', value: 0 },
-                      { name: '90+ jours', value: 0 },
-                    ];
-                    const totalAmount = 840500;
-                    const donutData = hardcodedBuckets.map((b, i) => ({
-                      name: b.name,
-                      value: b.value || 1,
-                      realValue: b.value,
+                    const AGING_DONUT_COLORS = ['#22C55E', '#F59E0B', '#EA580C', '#EF4444', '#991B1B'];
+                    const donutData = stats.agingBuckets.map((b, i) => ({
+                      name: b.bucket,
+                      value: b.total_amount || 1,
+                      realValue: b.total_amount,
+                      count: b.invoice_count,
                       fill: AGING_DONUT_COLORS[i] || AGING_DONUT_COLORS[4],
                     }));
+                    const totalAmount = stats.agingBuckets.reduce((s, b) => s + b.total_amount, 0);
                     return (
                       <div className="flex flex-col items-center justify-center" style={{ minWidth: 160 }}>
                         <div style={{ position: 'relative', width: 140, height: 140 }}>
@@ -2231,14 +2225,17 @@ export default function Creances() {
                                 ))}
                               </Pie>
                               <RechartsTooltip
-                                contentStyle={{ background: 'hsl(var(--card))', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 11 }}
-                                formatter={(val: number, name: string, entry: any) => [`${(entry?.payload?.realValue ?? val).toLocaleString('fr-MA')} DH`, '']}
+                                contentStyle={{ background: '#1A1F35', border: '1px solid #D4A843', borderRadius: 8, fontSize: 11, color: '#fff' }}
+                                formatter={(val: number, name: string, entry: any) => {
+                                  const p = entry?.payload;
+                                  return [`${(p?.realValue ?? val).toLocaleString('fr-FR')} DH · ${p?.count ?? 0} fact.`, ''];
+                                }}
                               />
                             </PieChart>
                           </ResponsiveContainer>
                           <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', pointerEvents: 'none' }}>
                             <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 14, fontWeight: 200, color: '#D4A843', lineHeight: 1 }}>
-                              {totalAmount >= 1000 ? `${Math.round(totalAmount / 1000)}K` : totalAmount.toLocaleString('fr-MA')}
+                              {totalAmount >= 1000 ? `${Math.round(totalAmount / 1000)}K` : totalAmount.toLocaleString('fr-FR')}
                             </span>
                             <p style={{ fontSize: 9, color: '#9CA3AF', marginTop: 2 }}>DH</p>
                           </div>
