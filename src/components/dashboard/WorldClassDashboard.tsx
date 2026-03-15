@@ -781,23 +781,22 @@ function useWorldClassLiveData() {
 
       if (arRes.data?.length) {
         const now = Date.now();
-        const buckets = { '0-30j': 0, '31-60j': 0, '61-90j': 0, '>90j': 0 };
-        arRes.data.forEach(c => {
-          const age = Math.floor((now - new Date(c.created_at).getTime()) / 86400000);
-          const amount = c.solde_du || 0;
-          if (age <= 30) buckets['0-30j'] += amount;
-          else if (age <= 60) buckets['31-60j'] += amount;
-          else if (age <= 90) buckets['61-90j'] += amount;
-          else buckets['>90j'] += amount;
+        const buckets = [
+          { label: '0-30j', value: 0, count: 0 },
+          { label: '31-60j', value: 0, count: 0 },
+          { label: '61-90j', value: 0, count: 0 },
+          { label: '>90j', value: 0, count: 0 },
+        ];
+        arRes.data.forEach(f => {
+          const age = Math.floor((now - new Date(f.date_facture).getTime()) / 86400000);
+          const amount = f.total_ttc || 0;
+          const idx = age <= 30 ? 0 : age <= 60 ? 1 : age <= 90 ? 2 : 3;
+          buckets[idx].value += amount;
+          buckets[idx].count += 1;
         });
-        const hasData = Object.values(buckets).some(v => v > 0);
+        const hasData = buckets.some(b => b.value > 0);
         if (hasData) {
-          setArAgingData([
-            { label: '0-30j', value: Math.round(buckets['0-30j']) },
-            { label: '31-60j', value: Math.round(buckets['31-60j']) },
-            { label: '61-90j', value: Math.round(buckets['61-90j']) },
-            { label: '>90j', value: Math.round(buckets['>90j']) },
-          ]);
+          setArAgingData(buckets.map(b => ({ ...b, value: Math.round(b.value) })));
         }
       }
 
