@@ -12,7 +12,13 @@ import {
   Loader2,
   ArrowRight,
   Droplets,
+  BarChart3,
+  Package,
+  TrendingUp,
+  Calculator,
+  Sun,
 } from 'lucide-react';
+import { AIAgentCard } from '@/components/shared/AIAgentCard';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nContext';
 import { CashCreditDrawer } from './CashCreditDrawer';
