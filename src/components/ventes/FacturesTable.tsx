@@ -504,32 +504,51 @@ export function FacturesTable({
                     )}
                   </TableCell>
                   <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex items-center gap-1 justify-center">
-                      <button
-                        style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: 4, padding: '4px 10px', cursor: 'pointer', fontSize: 11, fontFamily: 'ui-monospace, monospace' }}
-                        onClick={() => {/* PDF gen handled by existing generator */}}
-                      >
-                        PDF
-                      </button>
-                      <button
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF', padding: 4, display: 'flex', transition: 'color 200ms' }}
-                        onMouseEnter={e => (e.currentTarget.style.color = '#D4A843')}
-                        onMouseLeave={e => (e.currentTarget.style.color = '#9CA3AF')}
-                        onClick={() => {
-                          setPaymentFacture(facture);
-                          setPaymentDialogOpen(true);
-                        }}
-                      >
-                        <DollarSign className="h-4 w-4" />
-                      </button>
-                      <button
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF', padding: 4, display: 'flex', transition: 'color 200ms' }}
-                        onMouseEnter={e => (e.currentTarget.style.color = '#D4A843')}
-                        onMouseLeave={e => (e.currentTarget.style.color = '#9CA3AF')}
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                      </button>
-                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-white/30 hover:text-white/60">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="min-w-[160px]">
+                        <DropdownMenuItem
+                          className="gap-2 text-[13px] cursor-pointer"
+                          onClick={() => {
+                            setSelectedFacture(facture);
+                            setDetailDialogOpen(true);
+                          }}
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                          Voir
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="gap-2 text-[13px] cursor-pointer"
+                          onClick={() => {/* PDF gen handled by existing generator */}}
+                        >
+                          <FileText className="h-3.5 w-3.5" />
+                          PDF
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="gap-2 text-[13px] cursor-pointer"
+                          onClick={() => {
+                            setPaymentFacture(facture);
+                            setPaymentDialogOpen(true);
+                          }}
+                        >
+                          <DollarSign className="h-3.5 w-3.5" />
+                          Paiement
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="gap-2 text-[13px] cursor-pointer"
+                          onClick={() => {
+                            window.open(`/factures/${facture.facture_id}`, '_blank');
+                          }}
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" />
+                          Ouvrir
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               );

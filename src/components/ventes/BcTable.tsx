@@ -357,7 +357,7 @@ export function BcTable({
             onClick={e => e.stopPropagation()}
             aria-label="Actions du bon de commande"
           >
-            <MoreHorizontal className="h-4 w-4" />
+            <MoreVertical className="h-4 w-4" />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent 
