@@ -1803,7 +1803,7 @@ export default function Dashboard() {
                     <div className="flex items-center gap-1.5 mb-1">
                       <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                       <span className="text-[10px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#403-068</span>
-                      <button style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '4px 12px', cursor: 'pointer', fontSize: '13px', marginLeft: 'auto' }}>Déchargement</button>
+                      <button onClick={() => tbosToast('Déchargement initié pour batch #403-068')} style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '4px 12px', cursor: 'pointer', fontSize: '13px', marginLeft: 'auto' }}>Déchargement</button>
                     </div>
                     <div className="text-[8px] text-slate-400 mb-1.5">F-B25 · 8 m³ · BTP Maroc</div>
                     <div className="flex items-center gap-2">
