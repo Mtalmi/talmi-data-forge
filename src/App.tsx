@@ -128,6 +128,7 @@ const RealityRazor = lazy(() => lazyRetry(() => import("./pages/RealityRazor")))
 const ContextualChameleon = lazy(() => lazyRetry(() => import("./pages/ContextualChameleon")));
 const FailureFiesta = lazy(() => lazyRetry(() => import("./pages/FailureFiesta")));
 const BoundaryBreaker = lazy(() => lazyRetry(() => import("./pages/BoundaryBreaker")));
+const PlaceholderPage = lazy(() => lazyRetry(() => import("./pages/PlaceholderPage")));
 
 const queryClient = new QueryClient();
 
