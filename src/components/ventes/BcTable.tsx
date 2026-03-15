@@ -412,7 +412,7 @@ export function BcTable({
             onClick={(e) => { e.stopPropagation(); onCopyBc(bc); }}
             className="gap-2 text-[13px] cursor-pointer rounded-md px-3 py-2 hover:bg-white/[0.06]"
           >
-            <span>📋</span>
+            <Copy className="h-3.5 w-3.5" />
             Dupliquer
           </DropdownMenuItem>
 
