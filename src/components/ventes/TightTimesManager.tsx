@@ -193,7 +193,7 @@ export function TightTimesManager({ compact = false }: TightTimesManagerProps) {
                 </Button>
               )}
             </div>
-            <p className="text-xs text-muted-foreground mt-1 truncate">
+            <p className="text-xs text-muted-foreground mt-1 truncate" title={tightTimesStatus.reason}>
               {tightTimesStatus.reason}
             </p>
           </div>

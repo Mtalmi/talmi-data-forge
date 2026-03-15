@@ -102,7 +102,7 @@ export function ResponsibilityStamp({
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-xs text-muted-foreground">{config.label}</p>
-        <p className="text-sm font-medium truncate">
+        <p className="text-sm font-medium truncate" title={userName || undefined}>
           {userName}
           {roleLabel && (
             <span className="text-muted-foreground font-normal"> ({roleLabel})</span>

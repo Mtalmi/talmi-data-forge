@@ -87,7 +87,7 @@ export function EmergencyBcEligibilityCard({ deliveryDate, onEligibilityChange }
             </div>
             {isTightTimesActive ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-muted-foreground" />}
           </div>
-          {isTightTimesActive && tightTimesStatus && <p className="text-xs text-muted-foreground mt-1 truncate">{tightTimesStatus.reason}</p>}
+          {isTightTimesActive && tightTimesStatus && <p className="text-xs text-muted-foreground mt-1 truncate" title={tightTimesStatus.reason}>{tightTimesStatus.reason}</p>}
           {!isTightTimesActive && <p className="text-xs text-muted-foreground mt-1">{eb.canBeActivated}</p>}
         </div>
 

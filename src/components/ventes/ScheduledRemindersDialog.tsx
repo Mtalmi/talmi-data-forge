@@ -159,7 +159,7 @@ export function ScheduledRemindersDialog({ devisList, onRefresh }: ScheduledRemi
                               {sr.daysLeft.replace('{days}', String(daysLeft))}
                             </Badge>
                           </div>
-                          <p className="text-sm text-muted-foreground truncate">
+                          <p className="text-sm text-muted-foreground truncate" title={devis.client?.nom_client || sr.clientNotAssigned}>
                             {devis.client?.nom_client || sr.clientNotAssigned}
                           </p>
                           <p className="text-xs text-muted-foreground mt-1">

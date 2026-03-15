@@ -962,7 +962,7 @@ export function ForensicAuditFeed() {
                       </div>
 
                       {/* Human-Readable Message */}
-                      <p className="text-xs text-foreground font-medium line-clamp-2 mb-1.5">
+                      <p className="text-xs text-foreground font-medium line-clamp-2 mb-1.5" title={alert.humanMessage}>
                         {alert.humanMessage}
                       </p>
 

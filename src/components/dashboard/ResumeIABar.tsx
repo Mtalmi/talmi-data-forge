@@ -65,6 +65,7 @@ export const ResumeIABar = () => {
           <span
             className="text-[11px] overflow-hidden whitespace-nowrap text-ellipsis"
             style={{ color: 'rgba(203,213,225,0.7)', fontStyle: 'italic' }}
+            title={typeof displayText === 'string' ? displayText : undefined}
           >
             {displayText}
           </span>

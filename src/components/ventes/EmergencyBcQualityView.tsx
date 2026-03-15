@@ -177,7 +177,7 @@ export function EmergencyBcQualityView({ onNavigateToPlanning }: EmergencyBcQual
                     </TableCell>
                     <TableCell className="text-right">{bc.volume_m3} m³</TableCell>
                     <TableCell>
-                      <p className="text-sm text-amber-700 max-w-[200px] truncate">
+                      <p className="text-sm text-amber-700 max-w-[200px] truncate" title={parseEmergencyReason(bc.notes)}>
                         {parseEmergencyReason(bc.notes)}
                       </p>
                     </TableCell>

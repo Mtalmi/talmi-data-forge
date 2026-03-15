@@ -204,7 +204,7 @@ export function CommunicationLogDrawer({ clientId, clientName }: CommunicationLo
                                 </div>
 
                                 {log.subject && (
-                                  <p className="text-sm font-medium truncate">
+                                  <p className="text-sm font-medium truncate" title={log.subject || undefined}>
                                     {log.subject}
                                   </p>
                                 )}
