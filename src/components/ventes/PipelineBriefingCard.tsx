@@ -43,13 +43,14 @@ export function PipelineBriefingCard() {
     <div style={{
       background: 'rgba(212,168,67,0.02)',
       border: '1px solid #1E2D4A',
-      borderRadius: 12,
+      borderRadius: 8,
       borderTop: '2px solid #D4A843',
-      borderLeft: '3px solid #D4A843',
       padding: 20,
       position: 'relative',
       overflow: 'hidden',
       marginBottom: 24,
+      backdropFilter: 'blur(8px)',
+      WebkitBackdropFilter: 'blur(8px)',
       animation: 'gold-shimmer-border 4s ease-in-out infinite',
     }}>
       <style>{`

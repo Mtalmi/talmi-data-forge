@@ -81,12 +81,11 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
       position: 'relative',
       overflow: 'hidden',
       background: 'rgba(255,255,255,0.05)',
-      backdropFilter: 'blur(4px)',
+      backdropFilter: 'blur(8px)',
       borderTop: `2px solid ${isMorning ? '#D4A843' : '#9CA3AF'}`,
       border: `1px solid ${isMorning ? 'rgba(212,168,67,0.15)' : 'rgba(139,159,204,0.15)'}`,
-      borderLeft: '2px solid rgba(212,168,67,0.4)',
       boxShadow: isMorning ? '0 -1px 8px rgba(212,168,67,0.08), 0 0 12px rgba(212,168,67,0.2)' : '0 0 12px rgba(139,159,204,0.2)',
-      borderRadius: 10, padding: '14px 16px',
+      borderRadius: 8, padding: '14px 16px',
       flex: 1, minWidth: 0,
       transition: 'all 200ms ease-out',
     }}
@@ -209,7 +208,7 @@ export function IntelligenceBriefingCard() {
   };
 
   if (loading) return (
-    <div style={{ background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, backdropFilter: 'blur(4px)' }}>
+    <div style={{ background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', borderTop: '2px solid #D4A843', borderRadius: 8, padding: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, backdropFilter: 'blur(8px)' }}>
       <Loader2 size={16} className="animate-spin" style={{ color: '#D4A843' }} />
       <span style={{ color: '#64748B', fontSize: 12 }}>Chargement des briefings...</span>
     </div>
@@ -219,8 +218,9 @@ export function IntelligenceBriefingCard() {
     <div style={{
       background: 'rgba(15,23,41,0.8)',
       border: '1px solid rgba(255,255,255,0.06)',
-      borderRadius: 12, overflow: 'hidden',
-      backdropFilter: 'blur(4px)',
+      borderTop: '2px solid #D4A843',
+      borderRadius: 8, overflow: 'hidden',
+      backdropFilter: 'blur(8px)',
     }}>
       {/* Header */}
       <div style={{ padding: '14px 18px 10px', display: 'flex', alignItems: 'center', gap: 10 }}>

@@ -258,12 +258,19 @@ html {
 .kpi-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(212, 168, 67, 0.08);
+  border-top: 2px solid #D4A843;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: border-color 200ms ease, box-shadow 200ms ease;
 }
 .tbos-card:hover,
 .kpi-card:hover {
   border-color: rgba(212, 168, 67, 0.15);
   box-shadow: 0 2px 12px rgba(212, 168, 67, 0.05);
+}
+/* Prevent nested gold borders */
+.tbos-card .tbos-card {
+  border-top: 1px solid rgba(212, 168, 67, 0.08);
 }
 
 /* Level 3 — Alert cards, recommendation boxes, active elements */
@@ -572,14 +579,14 @@ html {
 
 /* ─── Operations surface card — dashboard-specific ─── */
 .ops-surface-card {
-  border-radius: 4px !important;
+  border-radius: 8px !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   border-top: 2px solid #D4A843 !important;
   background: linear-gradient(to bottom right, #1a1f2e, #141824) !important;
-  box-shadow: none !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3) !important;
   overflow: hidden !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
   transition: transform 200ms ease-out, box-shadow 200ms ease-out, border-color 200ms ease-out;
 }
 .ops-surface-card::before,
@@ -3436,8 +3443,11 @@ html {
 .tbos-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(212, 168, 67, 0.08);
+  border-top: 2px solid #D4A843;
   border-radius: 8px !important;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease, background 200ms ease;
   position: relative;
   overflow: hidden;
@@ -3448,13 +3458,19 @@ html {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
+.tbos-card .tbos-card {
+  border-top: 1px solid rgba(212, 168, 67, 0.08);
+}
 
 /* ─── Hero Card (Depth Level 3) ─── */
 .tbos-card-hero {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
   border: 1px solid rgba(212, 168, 67, 0.12);
+  border-top: 2px solid #D4A843;
   border-radius: 8px !important;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -3469,7 +3485,10 @@ html {
 .tbos-card-recessed {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(212, 168, 67, 0.06);
+  border-top: 2px solid rgba(212, 168, 67, 0.4);
   border-radius: 8px !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -5443,12 +5462,12 @@ hr,
   }
 }
 
-/* ═══ ABSOLUTE FINAL OVERRIDE — 4px card radius ═══ */
+/* ═══ ABSOLUTE FINAL OVERRIDE — 8px card radius ═══ */
 div.ops-surface-card,
 .ops-surface-card[class],
 div.bg-card.ops-surface-card {
-  border-radius: 4px !important;
-  overflow: visible !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
 }
 
 /* ═══ OPERATIONS TOP-ROW CARDS — NUCLEAR 4px RADIUS ═══ */
@@ -6038,7 +6057,10 @@ table tbody tr:hover,
 .tbos-card {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(212, 168, 67, 0.08);
+  border-top: 2px solid #D4A843;
   border-radius: 8px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: border-color 200ms ease;
 }
 .tbos-card:hover {

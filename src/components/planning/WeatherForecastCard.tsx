@@ -35,7 +35,9 @@ export function WeatherForecastCard() {
     <div style={{
       background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
       border: '1px solid rgba(245, 158, 11, 0.15)',
-      borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden',
+      borderTop: '2px solid #D4A843',
+      borderRadius: 8, padding: 20, position: 'relative', overflow: 'hidden',
+      backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
     }}>
       <p style={{ color: T.textSec, fontSize: 12, fontWeight: 600, marginBottom: 14 }}>
         Prévisions Météo — Impact Chantiers

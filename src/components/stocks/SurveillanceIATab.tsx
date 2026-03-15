@@ -125,7 +125,7 @@ export function SurveillanceIATab() {
           {kpiCard('COÛT ANOMALIES / MOIS', <><AnimCounter target={38400} suffix=" MAD" /></>, 'perte directe estimée', '#EF4444', true)}
         </div>
 
-        <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 12, overflow: 'hidden' }}>
+        <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(212,168,67,0.15)', borderTop: '2px solid #D4A843', borderRadius: 8, overflow: 'hidden', backdropFilter: 'blur(8px)' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(212,168,67,0.12)' }}>
@@ -178,7 +178,7 @@ export function SurveillanceIATab() {
           {kpiCard('FRÉQUENCE', '3x/sem', 'écarts récurrents', '#F59E0B')}
         </div>
 
-        <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 12, overflow: 'hidden' }}>
+        <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(212,168,67,0.15)', borderTop: '2px solid #D4A843', borderRadius: 8, overflow: 'hidden', backdropFilter: 'blur(8px)' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(212,168,67,0.12)' }}>
@@ -267,7 +267,7 @@ export function SurveillanceIATab() {
         {descLine('Croise les données de production avec les mouvements de stock pour identifier les écarts inexpliqués')}
 
         {/* Scatter plot */}
-        <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 12, padding: 24, marginBottom: 16 }}>
+        <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(212,168,67,0.15)', borderTop: '2px solid #D4A843', borderRadius: 8, padding: 24, marginBottom: 16, backdropFilter: 'blur(8px)' }}>
           {(() => {
             const w = 600, h = 300, pad = 50;
             // Expected correlation line points

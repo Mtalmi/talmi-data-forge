@@ -39,7 +39,7 @@ export function AIAgentCard({ type, title, icon }: AIAgentCardProps) {
   };
 
   return (
-    <div className="rounded-lg border border-[#D4A843]/20 bg-[#0B1120]/80 p-4 font-mono backdrop-blur-sm">
+    <div className="rounded-lg border border-[#D4A843]/20 border-t-2 border-t-[#D4A843] bg-[#0B1120]/80 p-4 font-mono backdrop-blur-sm">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           {icon || <Brain className="h-4 w-4 text-[#D4A843]" />}

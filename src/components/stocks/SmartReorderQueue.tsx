@@ -117,7 +117,7 @@ export function SmartReorderQueue() {
         Priorité calculée par urgence × coût × délai fournisseur
       </p>
 
-      <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 12, overflow: 'hidden' }}>
+      <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(212,168,67,0.15)', borderTop: '2px solid #D4A843', borderRadius: 8, overflow: 'hidden', backdropFilter: 'blur(8px)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid rgba(212,168,67,0.12)' }}>
