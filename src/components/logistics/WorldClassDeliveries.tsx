@@ -305,11 +305,11 @@ function FleetHealthCard({ v, delay = 0, uf }: { v: typeof FLEET_HEALTH_RAW[0]; 
           <div style={{ fontSize: 10, color: T.textDim, textAlign: 'center', lineHeight: 1.6, paddingTop: 6, borderTop: `1px solid ${T.cardBorder}` }}>{v.fullDiag}</div>
         </div>
         <IABadge small />
-        <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textAlign: 'center', margin: 0 }}>Revenu/jour: {v.revenue}</p>
+        <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textAlign: 'center', margin: 0 }}>Revenu/jour: {uf.fmtCurrency(v.revenuRaw)}</p>
         {/* Driver info */}
         <div style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 8, marginTop: 4 }}>
           <p style={{ fontFamily: MONO, fontSize: 12, color: T.textPri, textAlign: 'center', margin: '0 0 2px' }}>{v.driver}</p>
-          <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textAlign: 'center', margin: 0 }}>{v.driverStats}</p>
+          <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textAlign: 'center', margin: 0 }}>{v.driverLivr} livr. · {uf.fmtDistance(v.driverKm)} · score {v.driverScore}</p>
         </div>
         {/* Maintenance prédictive */}
         {(v as any).maintenance && (
