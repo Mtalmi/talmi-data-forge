@@ -516,7 +516,7 @@ export default function Bons() {
             </tr>
           </thead>
           <tbody>
-            {searchedBons.length === 0 ? (
+            {sortedData.length === 0 ? (
               <tr>
                 <td colSpan={9} style={{ padding: '60px 20px', textAlign: 'center' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
@@ -526,7 +526,7 @@ export default function Bons() {
                   </div>
                 </td>
               </tr>
-            ) : searchedBons.map((b, i) => {
+            ) : sortedData.map((b, i) => {
               const ws = b.workflow_status || 'planification';
               const isPaid = b.statut_paiement === 'Payé';
               const isLate = b.statut_paiement === 'Retard' || b.statut_paiement === 'en_retard';
