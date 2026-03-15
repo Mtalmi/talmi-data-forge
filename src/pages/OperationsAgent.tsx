@@ -323,11 +323,11 @@ export default function OperationsAgent() {
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden max-w-full w-full" style={{
-      backgroundImage: "radial-gradient(rgba(255,215,0,0.015) 1px, transparent 1px)",
+      backgroundImage: "radial-gradient(rgba(212,168,67,0.015) 1px, transparent 1px)",
       backgroundSize: "20px 20px",
     }}>
       {/* Gold shimmer top bar */}
-      <div className="h-0.5 w-full" style={{ background: "linear-gradient(90deg, transparent, #FFD700, transparent)" }} />
+      <div className="h-0.5 w-full" style={{ background: "linear-gradient(90deg, transparent, #D4A843, transparent)" }} />
 
       <div className="w-full px-4 py-6">
         {/* Header */}
