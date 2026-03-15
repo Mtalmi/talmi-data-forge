@@ -8921,6 +8921,10 @@ export type Database = {
         Returns: number
       }
       generate_loan_number: { Args: never; Returns: string }
+      generate_numero: {
+        Args: { prefix: string; tbl_name: string }
+        Returns: string
+      }
       generate_production_notification_payload: {
         Args: { p_approval_id: string; p_bc_id: string; p_bc_uuid: string }
         Returns: Json
