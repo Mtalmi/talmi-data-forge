@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { supabase } from '@/integrations/supabase/client';
+import { throttle } from '@/utils/debounce';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS

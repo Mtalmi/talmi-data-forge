@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { throttle } from '@/utils/debounce';
 import {
   RadialBarChart, RadialBar, ResponsiveContainer,
 } from 'recharts';
