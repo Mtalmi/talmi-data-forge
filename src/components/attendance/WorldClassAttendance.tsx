@@ -341,10 +341,9 @@ export default function WorldClassAttendance() {
   return (
     <div style={{ fontFamily: SANS, minHeight: '100vh', background: T.bg, color: T.textPri }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700;800&display=swap');
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
         @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
-        .att-row:hover { background: rgba(255,215,0,0.04) !important; transform: translateX(4px); }
+        .att-row:hover { background: rgba(212,168,67,0.04) !important; transform: translateX(4px); }
         .att-row { transition: all 0.2s ease; cursor:default; }
         .ot-row:hover { background: rgba(255,215,0,0.05) !important; transform: translateX(4px); }
         .ot-row { transition: all 0.2s ease; cursor:default; }

@@ -2063,9 +2063,8 @@ export default function WorldClassLaboratory() {
   ];
 
   return (
-    <div style={{ fontFamily: 'DM Sans, sans-serif', color: T.textPri, paddingBottom: 60 }}>
+    <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace", color: T.textPri, paddingBottom: 60 }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700;800&display=swap');
         @keyframes tbos-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
         @keyframes lab-tab-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>

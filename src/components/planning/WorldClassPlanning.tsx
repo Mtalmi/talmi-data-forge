@@ -773,9 +773,8 @@ export default function WorldClassPlanning({ fleetPanelOpen = true, dispatchHead
   };
 
   return (
-    <div style={{ fontFamily: 'DM Sans, sans-serif', color: T.textPri }}>
+    <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace", color: T.textPri }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700;800&display=swap');
         @keyframes tbos-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:0.85} }
         @keyframes liveDotPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.3);opacity:0.5} }
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
