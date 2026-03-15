@@ -430,18 +430,19 @@ export function BcTable({
 
   return (
     <div className="w-full overflow-x-auto">
-      <Table className="w-full table-fixed" style={{ minWidth: '900px' }}>
+      <Table className="w-full table-fixed" style={{ minWidth: '960px' }}>
         <colgroup>
           <col style={{ width: '3%' }} />
-          <col style={{ width: '12%' }} />
-          <col style={{ width: '22%' }} />
-          <col style={{ width: '8%' }} />
           <col style={{ width: '11%' }} />
+          <col style={{ width: '20%' }} />
           <col style={{ width: '7%' }} />
-          <col style={{ width: '11%' }} />
+          <col style={{ width: '10%' }} />
+          <col style={{ width: '7%' }} />
           <col style={{ width: '10%' }} />
           <col style={{ width: '10%' }} />
-          <col style={{ width: '6%' }} />
+          <col style={{ width: '9%' }} />
+          <col style={{ width: '4%' }} />
+          <col style={{ width: '5%' }} />
         </colgroup>
         <TableHeader>
           <TableRow>
@@ -462,6 +463,7 @@ export function BcTable({
             <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.status}</TableHead>
             <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Suivi</TableHead>
             <TableHead className="text-center"></TableHead>
+            <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Suivi Client</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -605,6 +607,32 @@ export function BcTable({
                 {/* ACTIONS (kebab) */}
                 <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                   {renderKebabMenu(bc)}
+                </TableCell>
+                {/* SUIVI CLIENT (QR) */}
+                <TableCell className="text-center">
+                  {(bc.statut === 'livre' || bc.statut === 'termine' || bc.statut === 'en_production') ? (
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ color: '#D4A843', cursor: 'pointer' }}>
+                          <rect x="1" y="1" width="5" height="5" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
+                          <rect x="10" y="1" width="5" height="5" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
+                          <rect x="1" y="10" width="5" height="5" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
+                          <rect x="3" y="3" width="1.5" height="1.5" fill="currentColor" />
+                          <rect x="12" y="3" width="1.5" height="1.5" fill="currentColor" />
+                          <rect x="3" y="12" width="1.5" height="1.5" fill="currentColor" />
+                          <rect x="10.5" y="10.5" width="1.5" height="1.5" fill="currentColor" />
+                          <rect x="13" y="13" width="1.5" height="1.5" fill="currentColor" />
+                          <rect x="10.5" y="13" width="1.5" height="1.5" fill="currentColor" />
+                          <rect x="13" y="10.5" width="1.5" height="1.5" fill="currentColor" />
+                        </svg>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        QR Code de suivi — le client scanne pour voir le statut en temps réel
+                      </TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <span style={{ color: '#4B5563', fontSize: 10 }}>—</span>
+                  )}
                 </TableCell>
               </TableRow>
             );
