@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { safeDivide } from '@/utils/rounding';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
@@ -64,9 +65,10 @@ export function DailyProfitSummary() {
       const volumeTotal = deliveries?.reduce((sum, d) => sum + (d.volume_m3 || 0), 0) || 0;
       
       const margePctValues = deliveries?.filter(d => d.marge_brute_pct !== null).map(d => d.marge_brute_pct) || [];
-      const margeMoyenne = margePctValues.length > 0 
-        ? margePctValues.reduce((sum, m) => sum + (m || 0), 0) / margePctValues.length 
-        : 0;
+      const margeMoyenne = safeDivide(
+        margePctValues.reduce((sum, m) => sum + (m || 0), 0),
+        margePctValues.length
+      );
 
       setStats({
         totalFacture,

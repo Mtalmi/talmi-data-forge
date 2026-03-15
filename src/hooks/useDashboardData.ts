@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { getMoroccoToday, getMoroccoYesterday, getMoroccoMonthStart } from '@/utils/timezone';
+import { safeDivide, roundPercent } from '@/utils/rounding';
 import { throttle } from '@/utils/debounce';
 
 export interface DashboardLiveData {
@@ -153,7 +154,7 @@ export function useDashboardData() {
       const labTests = labRes.data || [];
       const totalTests = labTests.length;
       const nonConform = labTests.filter(t => t.alerte_qualite || t.resistance_conforme === false || t.affaissement_conforme === false).length;
-      const conformRate = totalTests > 0 ? ((totalTests - nonConform) / totalTests) * 100 : 100;
+      const conformRate = safeDivide((totalTests - nonConform), totalTests, 1) * 100;
 
       // Marge — match revenue to costs using same data scope
       // When few bons are delivered but many batches produced, revenue << cost → nonsensical marge
@@ -161,8 +162,8 @@ export function useDashboardData() {
       const estimatedRevenue = prodVolume * 850; // avg price/m³ across formulas
       const effectiveRevenue = revenueToday > estimatedRevenue * 0.3 ? revenueToday : estimatedRevenue;
       const effectiveCost = totalCoutMatiere > 0 ? totalCoutMatiere : effectiveRevenue * 0.50;
-      let margeValue = effectiveRevenue > 0 ? ((effectiveRevenue - effectiveCost) / effectiveRevenue) * 100 : 0;
-      // Guard: clamp unreasonable values (data incomplete)
+      let margeValue = roundPercent(safeDivide(effectiveRevenue - effectiveCost, effectiveRevenue) * 100);
+      // Guard: clamp unreasonable values (data incomplete) — NEVER show -470.6%
       if (margeValue < -100 || margeValue > 100 || !isFinite(margeValue)) margeValue = 0;
 
       // Trésorerie
@@ -171,7 +172,7 @@ export function useDashboardData() {
       // Pipeline
       const pipelineValue = (devisActive.data || []).reduce((s, d) => s + (d.total_ht || 0), 0);
       const devisCount = (devisActive.data || []).length;
-      const conversionRate = (devisTotal.count || 0) > 0 ? ((devisConverted.count || 0) / (devisTotal.count || 1)) * 100 : 0;
+      const conversionRate = safeDivide((devisConverted.count || 0), (devisTotal.count || 0)) * 100;
 
       // Stocks
       const stockLevels = (stocksRes.data || []).map(s => ({
@@ -187,9 +188,9 @@ export function useDashboardData() {
       const depletions = stockLevels
         .filter(s => s.max > 0)
         .map(s => {
-          const pct = (s.current / s.max) * 100;
-          const dailyRate = s.max > 0 ? Math.round(((s.max - s.current) / s.max) * 100 / 7 * 10) / 10 : 0;
-          return { name: s.name, dailyRate, daysLeft: Math.floor(s.autonomie) || Math.ceil(pct / (dailyRate || 1)) };
+          const pct = safeDivide(s.current, s.max) * 100;
+          const dailyRate = s.max > 0 ? Math.round(safeDivide(s.max - s.current, s.max) * 100 / 7 * 10) / 10 : 0;
+          return { name: s.name, dailyRate, daysLeft: Math.floor(s.autonomie) || Math.ceil(safeDivide(pct, dailyRate || 1)) };
         })
         .sort((a, b) => a.daysLeft - b.daysLeft);
 

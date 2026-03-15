@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfMonth, endOfMonth, subMonths, subDays, format } from 'date-fns';
+import { safeDivide } from '@/utils/rounding';
 
 
 export interface DashboardStats {
@@ -135,35 +136,36 @@ export function useDashboardStats() {
 
       // Trends — use NaN to signal "no previous data" (hide alert)
       const deliveriesTrend = lastDeliveriesCount > 0 
-        ? ((totalDeliveries - lastDeliveriesCount) / lastDeliveriesCount) * 100 
+        ? safeDivide(totalDeliveries - lastDeliveriesCount, lastDeliveriesCount) * 100 
         : NaN;
       const volumeTrend = lastVolume > 0 
-        ? ((totalVolume - lastVolume) / lastVolume) * 100 
+        ? safeDivide(totalVolume - lastVolume, lastVolume) * 100 
         : NaN;
       const clientsTrend = lastUniqueClients > 0 
-        ? ((uniqueClients - lastUniqueClients) / lastUniqueClients) * 100 
+        ? safeDivide(uniqueClients - lastUniqueClients, lastUniqueClients) * 100 
         : NaN;
 
       // CUR Moyen (7 days) - only from validated BLs (livre or facture)
       const validatedBLs = sevenDayData?.filter(d => d.cur_reel && d.cur_reel > 0) || [];
-      const curMoyen7j = validatedBLs.length > 0 
-        ? validatedBLs.reduce((sum, d) => sum + (d.cur_reel || 0), 0) / validatedBLs.length 
-        : 0;
+      const curMoyen7j = safeDivide(
+        validatedBLs.reduce((sum, d) => sum + (d.cur_reel || 0), 0),
+        validatedBLs.length
+      );
 
       // Previous 7-day CUR for trend
       const prevCurValues = prevSevenDayData?.filter(d => d.cur_reel) || [];
-      const prevCurMoyen = prevCurValues.length > 0 
-        ? prevCurValues.reduce((sum, d) => sum + (d.cur_reel || 0), 0) / prevCurValues.length 
-        : 0;
-      const curTrend = prevCurMoyen > 0 
-        ? ((curMoyen7j - prevCurMoyen) / prevCurMoyen) * 100 
-        : 0;
+      const prevCurMoyen = safeDivide(
+        prevCurValues.reduce((sum, d) => sum + (d.cur_reel || 0), 0),
+        prevCurValues.length
+      );
+      const curTrend = safeDivide(curMoyen7j - prevCurMoyen, prevCurMoyen) * 100;
 
       // E/C Ratio (all deliveries with data)
       const ecData = currentDeliveries?.filter(d => d.eau_reel_l && d.ciment_reel_kg && d.ciment_reel_kg > 0) || [];
-      const tauxECMoyen = ecData.length > 0 
-        ? ecData.reduce((sum, d) => sum + ((d.eau_reel_l || 0) / (d.ciment_reel_kg || 1)), 0) / ecData.length 
-        : 0;
+      const tauxECMoyen = safeDivide(
+        ecData.reduce((sum, d) => sum + safeDivide(d.eau_reel_l || 0, d.ciment_reel_kg || 0), 0),
+        ecData.length
+      );
 
       // Pending payments
       const pendingPaymentsTotal = clientsWithDelay?.reduce((sum, c) => sum + (c.solde_du || 0), 0) || 0;

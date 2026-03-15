@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { safeDivide, roundPercent } from '@/utils/rounding';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 
@@ -135,7 +136,7 @@ export function useBonWorkflow() {
     // Calculate margin deviation
     // Ecart = (CUR_Reel - CUT_Theorique) / CUT_Theorique * 100
     // For simplicity, we compare CUR to selling price margin expectation
-    const margeBrute = ((prixVente - curReel) / prixVente) * 100;
+    const margeBrute = roundPercent(safeDivide(prixVente - curReel, prixVente) * 100);
     const ecartMarge = curReel; // Store CUR for reference
 
     // Alert if margin is below expected (using 5% threshold based on spec)

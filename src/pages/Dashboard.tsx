@@ -1463,9 +1463,9 @@ export default function Dashboard() {
             const MONO = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
             const waterfall = [
               { label: 'Revenu', amount: uf.rawCurrency(demoData.profitNet.revenu), color: '#D4A843', pct: 100 },
-              { label: 'Matières', amount: -uf.rawCurrency(demoData.profitNet.matieres), color: '#EF4444', pct: Math.round(demoData.profitNet.matieres / demoData.profitNet.revenu * 100) },
-              { label: 'Logistique', amount: -uf.rawCurrency(demoData.profitNet.logistique), color: '#EF4444', pct: Math.round(demoData.profitNet.logistique / demoData.profitNet.revenu * 100) },
-              { label: 'Personnel', amount: -uf.rawCurrency(demoData.profitNet.personnel), color: '#EF4444', pct: Math.round(demoData.profitNet.personnel / demoData.profitNet.revenu * 100) },
+              { label: 'Matières', amount: -uf.rawCurrency(demoData.profitNet.matieres), color: '#EF4444', pct: demoData.profitNet.revenu > 0 ? Math.round(demoData.profitNet.matieres / demoData.profitNet.revenu * 100) : 0 },
+              { label: 'Logistique', amount: -uf.rawCurrency(demoData.profitNet.logistique), color: '#EF4444', pct: demoData.profitNet.revenu > 0 ? Math.round(demoData.profitNet.logistique / demoData.profitNet.revenu * 100) : 0 },
+              { label: 'Personnel', amount: -uf.rawCurrency(demoData.profitNet.personnel), color: '#EF4444', pct: demoData.profitNet.revenu > 0 ? Math.round(demoData.profitNet.personnel / demoData.profitNet.revenu * 100) : 0 },
               { label: 'Net', amount: uf.rawCurrency(demoData.profitNet.total), color: '#22C55E', pct: Math.round(demoData.profitNet.marge) },
             ];
             const plSparkline = '0,38 15,34 30,30 45,28 60,22 75,18 90,14 105,10 120,8';

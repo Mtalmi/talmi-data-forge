@@ -53,7 +53,7 @@ export function PartialPaymentDialog({
 
   const totalPaid = existingPayments.reduce((sum, p) => sum + Number(p.montant_paye), 0);
   const remaining = totalTTC - totalPaid;
-  const progressPct = totalTTC > 0 ? (totalPaid / totalTTC) * 100 : 0;
+  const progressPct = totalTTC > 0 ? (totalPaid / totalTTC) * 100 : 0; // guarded: totalTTC > 0
 
   const handleSave = async () => {
     const numAmount = parseFloat(amount);
