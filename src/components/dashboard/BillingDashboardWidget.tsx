@@ -122,7 +122,7 @@ export function BillingDashboardWidget() {
         nbPayees: payees.length,
         nbRetard: retard.length,
         topImpayes,
-        agingData: buckets.map(b => ({ label: b.label, montant: b.montant, color: b.color })),
+        agingData: buckets.map(b => ({ label: b.label, montant: b.montant, count: b.count, color: b.color })),
       });
     } catch (error) {
       console.error('Error fetching billing stats:', error);
