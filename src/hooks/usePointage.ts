@@ -62,7 +62,7 @@ export function usePointage() {
 
   const fetchPointages = useCallback(async (date?: string) => {
     try {
-      const targetDate = date || new Date().toISOString().split('T')[0];
+      const targetDate = date || getMoroccoToday();
       
       const { data, error } = await supabase
         .from('pointages')
