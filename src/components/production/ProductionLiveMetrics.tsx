@@ -139,7 +139,7 @@ export function ProductionLiveMetrics({
             <span className="text-xs text-muted-foreground">Production Jour</span>
           </div>
           <div className="flex items-baseline gap-1 mb-2">
-            <span className="text-2xl font-bold text-primary">{volumeMetrics.produced.toFixed(0)}</span>
+            <span className="text-2xl font-extralight text-primary">{volumeMetrics.produced.toFixed(0)}</span>
             <span className="text-sm text-muted-foreground">/ {dailyTarget} m³</span>
           </div>
           <Progress value={volumeMetrics.percentComplete} className="h-2" />
