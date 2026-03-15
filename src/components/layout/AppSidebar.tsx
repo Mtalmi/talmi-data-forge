@@ -437,6 +437,11 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
 
       {/* ── SYSTEM HEALTH BAR ── */}
       <SystemHealthBar />
+
+      {/* ── BRAND WATERMARK ── */}
+      <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 8, color: 'rgba(156,163,175,0.2)', textAlign: 'center', padding: 8 }}>
+        TBOS v2.0 · Atlas Concrete Morocco
+      </div>
     </aside>
   );
 }
