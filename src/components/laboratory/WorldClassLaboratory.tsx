@@ -2052,7 +2052,7 @@ export default function WorldClassLaboratory() {
   });
   const [hoverNew, setHoverNew] = useState(false);
   const [showTestModal, setShowTestModal] = useState(false);
-  const { kpis: labKpis } = useLaboratoryLiveData();
+  const { kpis: labKpis, labTests } = useLaboratoryLiveData();
 
   const TABS = [
     { id: 'essais', label: 'ESSAIS DU JOUR' },
