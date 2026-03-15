@@ -419,7 +419,7 @@ export function FixedAssetsDashboard() {
                         ))}
                       </Pie>
                       <Tooltip 
-                        formatter={(value: number) => `${value.toLocaleString()} DH`}
+                        formatter={(value: number) => `${value.toLocaleString('fr-FR')} DH`}
                       />
                     </PieChart>
                   </ResponsiveContainer>
