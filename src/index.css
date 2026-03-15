@@ -671,9 +671,10 @@ html {
   to { transform: translateY(100%); }
 }
 
-/* ─── KPI progress bar width animation ─── */
+/* ─── KPI progress bar width animation (GPU-accelerated) ─── */
 @keyframes progressGrow {
-  from { width: 0%; }
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }
 @media (min-width: 769px) {
   .modal-body-scroll {
