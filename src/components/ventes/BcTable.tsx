@@ -430,18 +430,19 @@ export function BcTable({
 
   return (
     <div className="w-full overflow-x-auto">
-      <Table className="w-full table-fixed" style={{ minWidth: '960px' }}>
+      <Table className="w-full table-fixed" style={{ minWidth: '1000px' }}>
         <colgroup>
           <col style={{ width: '3%' }} />
-          <col style={{ width: '11%' }} />
-          <col style={{ width: '20%' }} />
+          <col style={{ width: '10%' }} />
+          <col style={{ width: '19%' }} />
           <col style={{ width: '7%' }} />
-          <col style={{ width: '10%' }} />
-          <col style={{ width: '7%' }} />
-          <col style={{ width: '10%' }} />
-          <col style={{ width: '10%' }} />
+          <col style={{ width: '9%' }} />
+          <col style={{ width: '6%' }} />
+          <col style={{ width: '9%' }} />
+          <col style={{ width: '9%' }} />
           <col style={{ width: '9%' }} />
           <col style={{ width: '4%' }} />
+          <col style={{ width: '5%' }} />
           <col style={{ width: '5%' }} />
         </colgroup>
         <TableHeader>
@@ -462,6 +463,7 @@ export function BcTable({
             <TableHead className="text-right" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.totalHt}</TableHead>
             <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>{bt.status}</TableHead>
             <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Suivi</TableHead>
+            <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>📎</TableHead>
             <TableHead className="text-center"></TableHead>
             <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Suivi Client</TableHead>
           </TableRow>
@@ -604,6 +606,25 @@ export function BcTable({
                   {renderSuivi(bc)}
                 </TableCell>
                 
+                {/* DOCUMENTS (📎) */}
+                <TableCell className="text-center">
+                  {(() => {
+                    const hasBlSigne = bc.statut === 'livre' || bc.statut === 'termine';
+                    const docCount = hasBlSigne ? 3 : bc.statut === 'en_production' ? 1 : 0;
+                    return (
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: docCount > 0 ? '#D4A843' : '#EF4444', cursor: 'pointer' }}>
+                            📎 {docCount}
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {docCount >= 3 ? 'BL signé, photo chargement, certificat conformité' : docCount > 0 ? 'Documents partiels' : 'Aucun document'}
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  })()}
+                </TableCell>
                 {/* ACTIONS (kebab) */}
                 <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                   {renderKebabMenu(bc)}

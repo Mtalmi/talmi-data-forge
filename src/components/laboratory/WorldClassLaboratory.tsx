@@ -172,14 +172,14 @@ const TEST_TYPE_COLOR: Record<string, string> = {
 };
 
 const RESULTS = [
-  { id: 'LAB-142', batch: 'BN-0142', type: 'Slump',          result: '18 cm',    norme: '15-20 cm', ecart: 'OK',              ecartType: 'ok',    status: 'Conforme'    },
-  { id: 'LAB-141', batch: 'BN-0141', type: 'Résistance 7j',  result: '28.5 MPa', norme: '>25 MPa',  ecart: '+14%',            ecartType: 'plus',  status: 'Conforme'    },
-  { id: 'LAB-140', batch: 'BN-0140', type: 'Slump',          result: '22 cm',    norme: '15-20 cm', ecart: '+10% hors norme', ecartType: 'bad',   status: 'Non-conforme'},
-  { id: 'LAB-139', batch: 'BN-0139', type: 'Température',    result: '28°C',     norme: '<32°C',    ecart: 'OK',              ecartType: 'ok',    status: 'Conforme'    },
-  { id: 'LAB-138', batch: 'BN-0138', type: 'Résistance 7j',  result: '32.1 MPa', norme: '>30 MPa',  ecart: '+7%',             ecartType: 'plus',  status: 'Conforme'    },
-  { id: 'LAB-137', batch: 'BN-0137', type: 'Air occlus',     result: '4.2%',     norme: '3-6%',     ecart: 'OK',              ecartType: 'ok',    status: 'Conforme'    },
-  { id: 'LAB-136', batch: 'BN-0136', type: 'Slump',          result: '17 cm',    norme: '15-20 cm', ecart: 'OK',              ecartType: 'ok',    status: 'Conforme'    },
-  { id: 'LAB-135', batch: 'BN-0135', type: 'Résistance 28j', result: '—',        norme: '>25 MPa',  ecart: '—',               ecartType: 'none',  status: 'En attente'  },
+  { id: 'LAB-142', batch: 'BN-0142', type: 'Slump',          result: '18 cm',    norme: '15-20 cm', ecart: 'OK',              ecartType: 'ok',    status: 'Conforme',     photos: 2 },
+  { id: 'LAB-141', batch: 'BN-0141', type: 'Résistance 7j',  result: '28.5 MPa', norme: '>25 MPa',  ecart: '+14%',            ecartType: 'plus',  status: 'Conforme',     photos: 3 },
+  { id: 'LAB-140', batch: 'BN-0140', type: 'Slump',          result: '22 cm',    norme: '15-20 cm', ecart: '+10% hors norme', ecartType: 'bad',   status: 'Non-conforme', photos: 1 },
+  { id: 'LAB-139', batch: 'BN-0139', type: 'Température',    result: '28°C',     norme: '<32°C',    ecart: 'OK',              ecartType: 'ok',    status: 'Conforme',     photos: 0 },
+  { id: 'LAB-138', batch: 'BN-0138', type: 'Résistance 7j',  result: '32.1 MPa', norme: '>30 MPa',  ecart: '+7%',             ecartType: 'plus',  status: 'Conforme',     photos: 2 },
+  { id: 'LAB-137', batch: 'BN-0137', type: 'Air occlus',     result: '4.2%',     norme: '3-6%',     ecart: 'OK',              ecartType: 'ok',    status: 'Conforme',     photos: 0 },
+  { id: 'LAB-136', batch: 'BN-0136', type: 'Slump',          result: '17 cm',    norme: '15-20 cm', ecart: 'OK',              ecartType: 'ok',    status: 'Conforme',     photos: 2 },
+  { id: 'LAB-135', batch: 'BN-0135', type: 'Résistance 28j', result: '—',        norme: '>25 MPa',  ecart: '—',               ecartType: 'none',  status: 'En attente',   photos: 0 },
 ];
 
 const TYPE_DIST = [
@@ -356,7 +356,7 @@ function TestRow({ r, delay = 0, index = 0 }: { r: typeof RESULTS[0]; delay?: nu
     <div
       onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
       style={{
-        display: 'grid', gridTemplateColumns: '0.6fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.9fr',
+        display: 'grid', gridTemplateColumns: '0.6fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.9fr 0.5fr',
         alignItems: 'center', gap: 8,
         borderLeft: `4px solid ${sColor}`,
         borderRadius: 10, padding: '12px 14px',
@@ -377,6 +377,11 @@ function TestRow({ r, delay = 0, index = 0 }: { r: typeof RESULTS[0]; delay?: nu
       <p style={{ fontSize: 12, color: T.textDim, margin: 0 }}>{r.norme}</p>
       <div>{ecartEl}</div>
       <div>{statusBadge}</div>
+      <div title="Photos éprouvettes et résultats — preuve qualité horodatée" style={{ cursor: r.photos > 0 ? 'pointer' : 'default' }}>
+        <span style={{ fontFamily: MONO, fontSize: 11, color: r.photos > 0 ? '#D4A843' : '#9CA3AF' }}>
+          📷 {r.photos > 0 ? r.photos : '—'}
+        </span>
+      </div>
     </div>
   );
 }
@@ -660,8 +665,8 @@ function EssaisDuJourTab({ labKpis }: { labKpis: { testsToday: number; conformes
               </div>
             }
           />
-          <div style={{ display: 'grid', gridTemplateColumns: '0.6fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.9fr', padding: '0 14px 10px', gap: 8, borderBottom: `1px solid ${T.cardBorder}` }}>
-            {['Test ID', 'Batch', 'Type', 'Résultat', 'Norme', 'Écart', 'Statut'].map((h, i) => (
+          <div style={{ display: 'grid', gridTemplateColumns: '0.6fr 0.7fr 1.1fr 0.8fr 0.8fr 1.1fr 0.9fr 0.5fr', padding: '0 14px 10px', gap: 8, borderBottom: `1px solid ${T.cardBorder}` }}>
+            {['Test ID', 'Batch', 'Type', 'Résultat', 'Norme', 'Écart', 'Statut', '📷'].map((h, i) => (
               <p key={i} style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as const, letterSpacing: '1.5px', margin: 0 }}>{h}</p>
             ))}
           </div>

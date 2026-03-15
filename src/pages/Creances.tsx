@@ -1370,13 +1370,14 @@ export default function Creances() {
                        <TableHead className="text-center">{t.pages.creances.delay}</TableHead>
                        <TableHead className="text-center">{t.pages.creances.status}</TableHead>
                        <TableHead className="text-center">Prédiction IA</TableHead>
+                       <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF' }}>📎</TableHead>
                        {canManageReceivables && <TableHead className="text-center">{t.pages.creances.actions}</TableHead>}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredReceivables.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={canManageReceivables ? 8 : 7} className="h-32 text-center">
+                        <TableCell colSpan={canManageReceivables ? 9 : 8} className="h-32 text-center">
                           <div className="flex flex-col items-center gap-2 text-muted-foreground">
                             <FileText className="h-8 w-8" />
                              <p className="font-medium">{t.pages.creances.noReceivables}</p>
@@ -1540,6 +1541,41 @@ export default function Creances() {
                                   </Badge>
                                 );
                               }
+                            })()}
+                          </TableCell>
+                          {/* 📎 Documents column */}
+                          <TableCell className="text-center">
+                            {(() => {
+                              const isPaid = receivable.status === 'paid';
+                              const hasBlSigne = isPaid || receivable.days_overdue <= 0;
+                              if (isPaid || hasBlSigne) {
+                                return (
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: '#22C55E' }}>📎 Facture + BL signé</span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Documentation complète pour recouvrement</TooltipContent>
+                                  </Tooltip>
+                                );
+                              }
+                              if (receivable.days_overdue > 0 && receivable.days_overdue <= 30) {
+                                return (
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: '#F59E0B' }}>📎 Facture seule</span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Preuve de livraison manquante — affaiblit le recouvrement</TooltipContent>
+                                  </Tooltip>
+                                );
+                              }
+                              return (
+                                <Tooltip>
+                                  <TooltipTrigger>
+                                    <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: '#EF4444' }}>📎 Aucun</span>
+                                  </TooltipTrigger>
+                                  <TooltipContent>Aucune documentation — recouvrement compromis</TooltipContent>
+                                </Tooltip>
+                              );
                             })()}
                           </TableCell>
                           {canManageReceivables && (
