@@ -1629,7 +1629,7 @@ export default function Dashboard() {
                       }}
                     >
                       <div className="font-semibold" style={{ color: '#D4A843', fontFamily: 'ui-monospace, monospace' }}>{hoveredPoint.h}</div>
-                      <div className="text-white text-[12px]">{hoveredPoint.v} m³/h</div>
+                      <div className="text-white text-[12px]">{+(uf.rawVolume(hoveredPoint.v)).toFixed(0)} {uf.volUnit}/h</div>
                       <div className="text-[10px]" style={{ color: hoveredPoint.diffPct >= 0 ? 'rgba(52,211,153,0.9)' : 'rgba(248,113,113,0.9)' }}>
                         {hoveredPoint.diffPct >= 0 ? '▲' : '▼'} {hoveredPoint.diffPct >= 0 ? '+' : ''}{hoveredPoint.diffPct}% vs target
                       </div>
