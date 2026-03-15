@@ -2693,7 +2693,7 @@ html {
 }
 
 [dir="rtl"] * {
-  font-family: "Cairo", "Inter", system-ui, sans-serif !important;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace !important;
 }
 
 /* ========================================
