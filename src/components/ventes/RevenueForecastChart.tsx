@@ -95,7 +95,7 @@ function GoldCrosshair(props: any) {
   );
 }
 
-export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChartProps) {
+export const RevenueForecastChart = React.memo(function RevenueForecastChart({ bcList, devisList }: RevenueForecastChartProps) {
   const { t, lang } = useI18n();
   const rf = t.revenueForecast;
   const dateLocale = getDateLocale(lang);
