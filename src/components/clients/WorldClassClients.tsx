@@ -573,7 +573,7 @@ function GrowthPotentialAgent() {
   const v2 = useAnimatedCounter(1.8, 1200, 1);
   const v3 = useAnimatedCounter(2, 1200);
   return (
-    <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A', borderTop: '2px solid #22C55E', borderRadius: 12, overflow: 'hidden', position: 'relative' }}>
+    <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A', borderTop: '2px solid #D4A843', borderRadius: 8, overflow: 'hidden', position: 'relative', backdropFilter: 'blur(8px)' }}>
       <div style={{ position: 'absolute', inset: 0, borderRadius: 12, pointerEvents: 'none', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.15), transparent)', backgroundSize: '200% 100%', animation: 'churn-shimmer 4s ease-in-out infinite' }} />
       {/* Header */}
       <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 10, position: 'relative', zIndex: 1 }}>
