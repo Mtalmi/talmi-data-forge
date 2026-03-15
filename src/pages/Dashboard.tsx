@@ -886,6 +886,9 @@ export default function Dashboard() {
                     {greeting} {typedName || '\u00A0'}{typedName.length === firstName.length ? '.' : ''}
                     {showCursor && <span className="inline-block w-[2px] h-[20px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
                   </h1>
+                  <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 13, color: '#9CA3AF', marginTop: 4 }}>
+                    Briefing matinal prêt. <span style={{ color: '#F59E0B' }}>3 alertes</span> nécessitent votre attention.
+                  </div>
                   <div className="flex flex-wrap items-center gap-1.5 mt-1" style={{ fontSize: 11 }}>
                     <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full" style={{ background: 'rgba(34, 197, 94, 0.08)', boxShadow: '0 0 8px rgba(34, 197, 94, 0.2)' }}>
                       <span className="relative flex h-1.5 w-1.5">
@@ -1040,6 +1043,31 @@ export default function Dashboard() {
             animation: 'ccSectionIn 300ms ease-out 100ms both',
           }}>
             <LeakageAlertBanner />
+          </div>
+
+          {/* (2a) CROSS-PAGE ALERTS STRIP */}
+          <div className="mb-4 relative z-[1]" style={{ animation: 'ccSectionIn 300ms ease-out 120ms both' }}>
+            <div style={{
+              fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
+              fontSize: 11,
+              padding: '10px 16px',
+              background: 'rgba(255,255,255,0.02)',
+              border: '1px solid rgba(212,168,67,0.08)',
+              borderRadius: 6,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              flexWrap: 'wrap',
+            }}>
+              <span style={{ color: '#F59E0B' }}>⚠</span>
+              <span style={{ color: '#EF4444' }}>Créances: 189K DH retard (Sigma)</span>
+              <span style={{ color: 'rgba(212,168,67,0.3)' }}>·</span>
+              <span style={{ color: '#F59E0B' }}>Logistique: T-09 maintenance</span>
+              <span style={{ color: 'rgba(212,168,67,0.3)' }}>·</span>
+              <span style={{ color: '#F59E0B' }}>Stocks: Adjuvant 6,7j</span>
+              <span style={{ color: 'rgba(212,168,67,0.3)' }}>·</span>
+              <span style={{ color: '#EF4444' }}>Lab: NM expire 26j</span>
+            </div>
           </div>
 
           {/* (2b) PRÉDICTION ARRÊT USINE */}
