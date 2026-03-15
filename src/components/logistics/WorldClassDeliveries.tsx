@@ -1884,6 +1884,38 @@ function IntelligenceIATab() {
           <>Score sécurité flotte excellent à <strong style={{ color: T.success }}>87/100</strong>. Actions recommandées : (1) Planifier pause Youssef Benali 12:30-13:00 avant livraison Saham Im. (2) Formation conduite défensive programmée mai 2026 — confirmer inscription 4 chauffeurs. (3) Le score sécurité de 87/100 qualifie Atlas Concrete pour une réduction prime assurance de <strong style={{ color: T.gold }}>−8%</strong> au prochain renouvellement (économie estimée : <strong style={{ color: T.gold }}>3,360 DH/an</strong>).</>
         } />
       </Card>
+
+      {/* ─── PORTAIL CLIENT — ENGAGEMENT ─── */}
+      <Card style={{ borderTop: `2px solid ${T.gold}` }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: T.gold, letterSpacing: '2px' }}>✦ PORTAIL CLIENT — ENGAGEMENT</span>
+          </div>
+          <IABadge />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
+          <div style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '20px 16px', textAlign: 'center' }}>
+            <p style={{ fontFamily: MONO, fontSize: 28, fontWeight: 200, color: T.gold, margin: '0 0 4px' }}>23</p>
+            <p style={{ fontFamily: MONO, fontSize: 10, fontWeight: 600, color: T.textDim, letterSpacing: '1.5px', textTransform: 'uppercase' as const, margin: 0 }}>LIENS PARTAGÉS CE MOIS</p>
+            <p style={{ fontFamily: MONO, fontSize: 10, color: T.textDim, margin: '4px 0 0' }}>sur 35 livraisons</p>
+          </div>
+          <div style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '20px 16px', textAlign: 'center' }}>
+            <p style={{ fontFamily: MONO, fontSize: 28, fontWeight: 200, color: '#22C55E', margin: '0 0 4px' }}>67%</p>
+            <p style={{ fontFamily: MONO, fontSize: 10, fontWeight: 600, color: T.textDim, letterSpacing: '1.5px', textTransform: 'uppercase' as const, margin: 0 }}>TAUX CONSULTATION CLIENT</p>
+            <p style={{ fontFamily: MONO, fontSize: 10, color: T.textDim, margin: '4px 0 0' }}>clients vérifient leur livraison</p>
+          </div>
+          <div style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '20px 16px', textAlign: 'center' }}>
+            <p style={{ fontFamily: MONO, fontSize: 28, fontWeight: 200, color: T.gold, margin: '0 0 4px' }}>4.2/5</p>
+            <p style={{ fontFamily: MONO, fontSize: 10, fontWeight: 600, color: T.textDim, letterSpacing: '1.5px', textTransform: 'uppercase' as const, margin: 0 }}>SATISFACTION ESTIMÉE</p>
+            <p style={{ fontFamily: MONO, fontSize: 10, color: T.textDim, margin: '4px 0 0' }}>basée sur temps d'attente + ponctualité</p>
+          </div>
+        </div>
+
+        <RecommendationBox text={
+          <>Le portail client réduit les appels entrants de <strong style={{ color: '#22C55E' }}>−45%</strong> et augmente la satisfaction de <strong style={{ color: '#22C55E' }}>+22%</strong>. Clients les plus engagés : <strong style={{ color: T.gold }}>TGCC</strong> (100% consultation), <strong style={{ color: T.gold }}>Groupe A</strong> (85%). <strong style={{ color: T.danger }}>Sigma Bâtiment</strong> : 0% consultation — corrélé avec les problèmes de paiement.</>
+        } />
+      </Card>
     </div>
   );
 }

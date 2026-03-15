@@ -608,6 +608,32 @@ export function BcTable({
                 <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                   {renderKebabMenu(bc)}
                 </TableCell>
+                {/* SUIVI CLIENT (QR) */}
+                <TableCell className="text-center">
+                  {(bc.statut === 'livre' || bc.statut === 'termine' || bc.statut === 'en_production') ? (
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ color: '#D4A843', cursor: 'pointer' }}>
+                          <rect x="1" y="1" width="5" height="5" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
+                          <rect x="10" y="1" width="5" height="5" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
+                          <rect x="1" y="10" width="5" height="5" rx="0.5" stroke="currentColor" strokeWidth="1.2" />
+                          <rect x="3" y="3" width="1.5" height="1.5" fill="currentColor" />
+                          <rect x="12" y="3" width="1.5" height="1.5" fill="currentColor" />
+                          <rect x="3" y="12" width="1.5" height="1.5" fill="currentColor" />
+                          <rect x="10.5" y="10.5" width="1.5" height="1.5" fill="currentColor" />
+                          <rect x="13" y="13" width="1.5" height="1.5" fill="currentColor" />
+                          <rect x="10.5" y="13" width="1.5" height="1.5" fill="currentColor" />
+                          <rect x="13" y="10.5" width="1.5" height="1.5" fill="currentColor" />
+                        </svg>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        QR Code de suivi — le client scanne pour voir le statut en temps réel
+                      </TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <span style={{ color: '#4B5563', fontSize: 10 }}>—</span>
+                  )}
+                </TableCell>
               </TableRow>
             );
           })}
