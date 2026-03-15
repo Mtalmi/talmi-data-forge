@@ -111,7 +111,7 @@ import {
 } from 'recharts';
 import { supabase } from '@/integrations/supabase/client';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
-import { format, subDays } from 'date-fns';
+import { format, subDays, startOfMonth } from 'date-fns';
 import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
 import LiveBatchProgress from '@/components/dashboard/LiveBatchProgress';
 import { ComplianceWidget } from '@/components/dashboard/ComplianceWidget';
@@ -599,65 +599,120 @@ function AIAnalystBrief() {
 }
 
 // ═══════════════════════════════════════════════════════
-// PIPELINE FUNNEL — Horizontal Stepped Funnel
+// PIPELINE FUNNEL — Horizontal Chevron Funnel (Live Data)
 // ═══════════════════════════════════════════════════════
 function PipelineFunnel() {
   const navigate = useNavigate();
-  const stageRoutes = ['/ventes', '/bons', '/production', '/creances'];
-  const stages = [
-    { label: 'Devis', value: 6 },
-    { label: 'BC Validés', value: 3 },
-    { label: 'Production', value: 0 },
-    { label: 'Facturé', value: 1 },
+  const [stages, setStages] = useState([
+    { label: 'Devis', value: 0, route: '/ventes' },
+    { label: 'BC Validés', value: 0, route: '/bons' },
+    { label: 'Production', value: 0, route: '/production' },
+    { label: 'Facturé', value: 0, route: '/creances' },
+  ]);
+
+  useEffect(() => {
+    async function fetchPipeline() {
+      try {
+        const today = new Date();
+        const monthStart = format(startOfMonth(today), 'yyyy-MM-dd');
+        const [devisRes, bcRes, blRes, factRes] = await Promise.all([
+          supabase.from('devis').select('devis_id', { count: 'exact', head: true })
+            .in('statut', ['brouillon', 'envoyé', 'en_attente']),
+          supabase.from('bons_commande').select('id', { count: 'exact', head: true })
+            .in('statut', ['validé', 'confirmé', 'en_cours']),
+          supabase.from('bons_livraison_reels').select('bl_id', { count: 'exact', head: true })
+            .gte('date_livraison', monthStart)
+            .is('facture_generee', false),
+          supabase.from('factures').select('id', { count: 'exact', head: true })
+            .gte('date_facture', monthStart),
+        ]);
+        setStages([
+          { label: 'Devis', value: devisRes.count ?? 0, route: '/ventes' },
+          { label: 'BC Validés', value: bcRes.count ?? 0, route: '/bons' },
+          { label: 'Production', value: blRes.count ?? 0, route: '/production' },
+          { label: 'Facturé', value: factRes.count ?? 0, route: '/creances' },
+        ]);
+      } catch (err) {
+        console.error('PipelineFunnel fetch error:', err);
+      }
+    }
+    fetchPipeline();
+  }, []);
+
+  // Gold gradient progression across stages
+  const stageColors = [
+    { bg: 'rgba(212,168,67,0.12)', border: 'rgba(212,168,67,0.25)', text: '#D4A843' },
+    { bg: 'rgba(228,201,106,0.10)', border: 'rgba(228,201,106,0.22)', text: '#E8C96A' },
+    { bg: 'rgba(245,158,11,0.10)', border: 'rgba(245,158,11,0.20)', text: '#F59E0B' },
+    { bg: 'rgba(34,197,94,0.10)', border: 'rgba(34,197,94,0.20)', text: '#22C55E' },
   ];
 
+  const totalStart = Math.max(stages[0].value, 1);
+  const conversionPct = Math.round((stages[3].value / totalStart) * 100);
+
   return (
-    <div className="relative hover:-translate-y-[1px] hover:border-[#D4A843]/20 cursor-pointer transition-all duration-200 ease-out group" style={{ position:'relative', overflow:'hidden', minHeight: 420, borderRadius: 4, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+    <div className="relative hover:-translate-y-[1px] hover:border-[#D4A843]/20 transition-all duration-200 ease-out group" style={{ position:'relative', overflow:'hidden', minHeight: 420, borderRadius: 4, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
       <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent, rgba(212,168,67,0.7),transparent)', zIndex:99 }} />
       <div className="ops-enter ops-surface-card flex flex-col p-6" style={{ minHeight: 420 }}>
-      <div className="flex justify-between items-center mb-4">
-        <span className="text-[14px] font-medium text-white/90">Pipeline</span>
-      </div>
+        <div className="flex justify-between items-center mb-4">
+          <span className="text-[14px] font-medium text-white/90">Pipeline Commercial</span>
+        </div>
 
-      <div className="relative flex items-center flex-1 justify-center gap-2">
-        <div style={{ position:'absolute', top:'50%', left:'5%', right:'5%', height:'1px', background:'linear-gradient(to right, rgba(212,168,67,0.15), rgba(212,168,67,0.08), transparent)', zIndex:0 }} />
-        {stages.map((s, i) => {
-          const stageStyles = [
-            { bg: 'rgba(212,168,67,0.1)', border: 'rgba(212,168,67,0.2)', color: '#D4A843', wash: 'rgba(212,168,67,0.04)' },
-            { bg: 'rgba(59,130,246,0.1)', border: 'rgba(59,130,246,0.2)', color: 'rgb(96,165,250)', wash: 'rgba(59,130,246,0.04)' },
-            { bg: 'rgba(148,163,184,0.05)', border: 'rgba(255,255,255,0.04)', color: 'rgba(148,163,184,0.4)', wash: undefined },
-            { bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.2)', color: 'rgb(52,211,153)', wash: 'rgba(34,197,94,0.04)' },
-          ];
-          const st = stageStyles[i];
-          const isEmpty = s.value === 0;
-          return (
-            <div key={i} className="contents">
-              <div
-                className="flex-1 flex flex-col items-center justify-center gap-1 rounded-lg py-4 px-2 hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 cursor-pointer relative z-[1]"
-                onClick={() => navigate(stageRoutes[i])}
-                style={{
-                  background: isEmpty ? 'rgba(255,255,255,0.03)' : st.bg,
-                  border: isEmpty ? '1px solid rgba(255,255,255,0.1)' : `1px solid ${st.border}`,
-                  opacity: 1,
-                  transition: 'all 200ms ease-out',
-                  ...(st.wash && !isEmpty ? { backgroundColor: st.wash } : {}),
-                }}
-              >
-                <span className="text-center block" style={isEmpty ? { fontFamily:'ui-monospace,monospace', fontSize:'32px', fontWeight:'200', color:'#4A5568', display:'block', textAlign:'center', lineHeight: 1 } : { fontFamily: 'ui-monospace,monospace', fontSize: '32px', color: i === 3 ? '#22C55E' : st.color, fontWeight: '200', lineHeight: 1 }}>
-                  {isEmpty ? '—' : s.value}
-                </span>
-                <span className="text-[10px] uppercase tracking-wider text-white/40 mt-1 block text-center">{s.label}</span>
+        {/* Chevron funnel */}
+        <div className="relative flex items-stretch flex-1 gap-0 overflow-x-auto" style={{ minHeight: 90 }}>
+          {stages.map((s, i) => {
+            const sc = stageColors[i];
+            const isEmpty = s.value === 0;
+            // Narrowing effect: first stage widest
+            const widthPct = 100 - i * 4;
+            return (
+              <div key={i} className="flex items-stretch" style={{ flex: `0 0 ${widthPct / stages.length}%`, minWidth: 0 }}>
+                {/* Chevron shape via clip-path */}
+                <div
+                  onClick={() => navigate(s.route)}
+                  className="flex flex-col items-center justify-center w-full cursor-pointer transition-all duration-200 hover:brightness-125"
+                  style={{
+                    background: isEmpty ? 'rgba(255,255,255,0.03)' : sc.bg,
+                    borderTop: `1px solid ${isEmpty ? 'rgba(255,255,255,0.06)' : sc.border}`,
+                    borderBottom: `1px solid ${isEmpty ? 'rgba(255,255,255,0.06)' : sc.border}`,
+                    borderLeft: i === 0 ? `1px solid ${sc.border}` : 'none',
+                    borderRight: i === stages.length - 1 ? `1px solid ${sc.border}` : 'none',
+                    clipPath: i < stages.length - 1
+                      ? 'polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 14px 50%)'
+                      : 'polygon(0 0, 100% 0, 100% 100%, 0 100%, 14px 50%)',
+                    paddingLeft: i === 0 ? 8 : 18,
+                    paddingRight: i < stages.length - 1 ? 18 : 8,
+                    paddingTop: 16,
+                    paddingBottom: 16,
+                    minHeight: 80,
+                  }}
+                >
+                  <span style={{
+                    fontFamily: 'ui-monospace, monospace',
+                    fontSize: '28px',
+                    fontWeight: 200,
+                    color: isEmpty ? '#4A5568' : sc.text,
+                    lineHeight: 1,
+                    display: 'block',
+                    textAlign: 'center',
+                  }}>
+                    {isEmpty ? '0' : s.value.toLocaleString('fr-FR')}
+                  </span>
+                  <span className="text-[10px] uppercase tracking-wider text-white/40 mt-2 block text-center whitespace-nowrap">{s.label}</span>
+                </div>
               </div>
-              {i < stages.length - 1 && (
-                <span style={{ color:'#D4A843', fontSize:'16px', margin:'0 4px', position:'relative', zIndex:1, opacity: 0.4 }}>›</span>
-              )}
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+
+        <div style={{ textAlign:'center', color:'rgba(255,255,255,0.15)', fontSize:'11px', letterSpacing:'0.05em', margin:'12px 0' }}>FLUX COMMERCIAL DU MOIS</div>
+        <div className="mt-3 text-center">
+          <span className="text-xs text-white/40 uppercase tracking-wider">Conversion </span>
+          <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: '18px', color: '#D4A843', fontWeight: 500 }}>{conversionPct}%</span>
+          <div style={{ fontSize: '11px', color: '#9CA3AF', marginTop: '2px' }}>Objectif: 35%</div>
+          <div className="text-[10px] text-white/30 uppercase tracking-wider text-center mt-1">Ce mois</div>
+        </div>
       </div>
-      <div style={{ textAlign:'center', color:'rgba(255,255,255,0.15)', fontSize:'11px', letterSpacing:'0.05em', margin:'12px 0' }}>FLUX COMMERCIAL DU JOUR</div>
-      <div className="mt-3 text-center"><span className="text-xs text-white/40 uppercase tracking-wider">Conversion </span><span style={{ fontFamily: 'ui-monospace, monospace', fontSize: '18px', color: '#D4A843', fontWeight: 500 }}>{Math.round((stages[3].value / Math.max(stages[0].value, 1)) * 100)}%</span><div style={{ fontSize: '11px', color: '#9CA3AF', marginTop: '2px' }}>Objectif: 35%</div><div className="text-[10px] text-white/30 uppercase tracking-wider text-center mt-1">Ce mois</div></div>
-    </div>
     </div>
   );
 }
