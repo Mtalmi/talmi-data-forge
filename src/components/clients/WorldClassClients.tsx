@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { NouveauClientModal } from '@/components/modals/NouveauClientModal';
 import { FlaggedClientName, CrossPageHint, CrossRef } from '@/lib/cross-page-data';
 import { ClientChurnPredictorCard } from '@/components/clients/ClientChurnPredictorCard';
 import { useN8nWorkflow } from '@/hooks/useN8nWorkflow';

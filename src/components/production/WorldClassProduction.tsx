@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { NouvellePlanificationModal } from '@/components/modals/NouvellePlanificationModal';
 import { useNavigate } from 'react-router-dom';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, ReferenceLine,
