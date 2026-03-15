@@ -44,13 +44,8 @@ export function ScheduledReportsSection() {
               </span>
               <button
                 onClick={handleToast}
-                style={{
-                  fontFamily: MONO, fontSize: 10, color: '#64748B',
-                  background: 'transparent', border: 'none', cursor: 'pointer',
-                  padding: '2px 6px',
-                }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#64748B'; }}
+                className="tbos-btn tbos-btn-ghost"
+                style={{ padding: '2px 6px', minHeight: 'auto', fontSize: 10 }}
               >
                 {i === 0 ? 'Programmer' : 'Modifier'}
               </button>
