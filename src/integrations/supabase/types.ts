@@ -6587,7 +6587,7 @@ export type Database = {
           adjuvant_reel_l: number | null
           adjuvant_theo_l: number | null
           batch_number: number
-          bl_id: string
+          bl_id: string | null
           ciment_reel_kg: number
           ciment_theo_kg: number
           client_id: string | null
@@ -6630,7 +6630,7 @@ export type Database = {
           adjuvant_reel_l?: number | null
           adjuvant_theo_l?: number | null
           batch_number?: number
-          bl_id: string
+          bl_id?: string | null
           ciment_reel_kg: number
           ciment_theo_kg: number
           client_id?: string | null
@@ -6673,7 +6673,7 @@ export type Database = {
           adjuvant_reel_l?: number | null
           adjuvant_theo_l?: number | null
           batch_number?: number
-          bl_id?: string
+          bl_id?: string | null
           ciment_reel_kg?: number
           ciment_theo_kg?: number
           client_id?: string | null
@@ -6713,20 +6713,6 @@ export type Database = {
           ws7_batch_id?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "production_batches_bl_id_fkey"
-            columns: ["bl_id"]
-            isOneToOne: false
-            referencedRelation: "bons_livraison_reels"
-            referencedColumns: ["bl_id"]
-          },
-          {
-            foreignKeyName: "production_batches_bl_id_fkey"
-            columns: ["bl_id"]
-            isOneToOne: false
-            referencedRelation: "client_delivery_tracking_view"
-            referencedColumns: ["bl_id"]
-          },
           {
             foreignKeyName: "production_batches_ws7_batch_id_fkey"
             columns: ["ws7_batch_id"]
