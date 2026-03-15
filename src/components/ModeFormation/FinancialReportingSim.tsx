@@ -175,7 +175,7 @@ export function FinancialReportingSim({ onComplete, onClose }: FinancialReportin
                   <div className="p-3 bg-emerald-50 dark:bg-emerald-900/50 rounded-lg border border-emerald-200">
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Position nette</span>
-                      <span className="text-lg font-bold text-emerald-600">+306,300 DH</span>
+                      <span className="text-lg font-bold text-emerald-600">+306 300 DH</span>
                     </div>
                   </div>
                 </div>

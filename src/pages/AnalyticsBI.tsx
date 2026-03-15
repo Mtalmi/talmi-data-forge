@@ -409,7 +409,7 @@ export default function AnalyticsBI() {
                             {f.variance_pct > 0 ? '+' : ''}{f.variance_pct}%
                           </TableCell>
                           <TableCell className={cn('text-right text-sm font-semibold tabular-nums', f.leakage_dh > 0 ? 'text-destructive' : 'text-emerald-500')}>
-                            {f.leakage_dh > 0 ? '+' : ''}{f.leakage_dh.toLocaleString()} DH
+                            {f.leakage_dh > 0 ? '+' : ''}{f.leakage_dh.toLocaleString('fr-FR')} DH
                           </TableCell>
                         </TableRow>
                       ))}

@@ -124,7 +124,7 @@ function AnimNum({ val, color = T.textPri }: { val: number; color?: string }) {
     };
     requestAnimationFrame(step);
   }, [val]);
-  return <span style={{ fontFamily: MONO, color, fontWeight: 800 }}>{display.toLocaleString()}</span>;
+  return <span style={{ fontFamily: MONO, color, fontWeight: 800 }}>{display.toLocaleString('fr-FR')}</span>;
 }
 
 // ─── Access Zone Card ─────────────────────────────────────────

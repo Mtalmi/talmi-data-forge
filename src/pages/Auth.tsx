@@ -85,7 +85,7 @@ const AnimatedStat = forwardRef<HTMLDivElement, { value: number; label: string; 
   return (
     <div ref={ref} className="text-center">
       <div className="text-2xl sm:text-3xl font-black tracking-tight text-foreground" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-        {count.toLocaleString()}{suffix}
+        {count.toLocaleString('fr-FR')}{suffix}
       </div>
       <div className="text-xs text-muted-foreground mt-1 tracking-wide uppercase">{label}</div>
     </div>
