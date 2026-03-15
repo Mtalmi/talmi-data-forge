@@ -52,6 +52,7 @@ import {
 } from '@/components/ui/tooltip';
 import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, Printer, List, LayoutGrid, FileCheck, Search, AlertTriangle, X, Sparkles, ChevronDown, Phone, Mail, ArrowUpRight, ChevronRight, Download, Filter, TrendingUp, BarChart3, Users, Zap, Shield, Target } from 'lucide-react';
 import { toast } from 'sonner';
+import { RawTableSkeletonRows, RawTableEmptyState, RawTableFilteredEmpty } from '@/components/ui/TableStates';
 import { format, isToday, differenceInDays, getDaysInMonth, getDate, startOfMonth, subMonths, endOfMonth } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { ResponsiveContainer, AreaChart, Area, ReferenceLine, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Bar, BarChart, ComposedChart, Line, PieChart, Pie, Cell, FunnelChart, Funnel, LabelList } from 'recharts';
@@ -517,16 +518,19 @@ export default function Bons() {
             </tr>
           </thead>
           <tbody>
-            {sortedData.length === 0 ? (
-              <tr>
-                <td colSpan={9} style={{ padding: '60px 20px', textAlign: 'center' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                    <Package size={40} style={{ color: 'rgba(255,255,255,0.08)' }} />
-                    <span style={{ fontFamily: MONO, fontSize: 13, color: 'rgba(255,255,255,0.25)' }}>Aucun bon de livraison</span>
-                    <span style={{ fontFamily: MONO, fontSize: 11, color: 'rgba(255,255,255,0.15)' }}>Les bons apparaîtront ici une fois créés</span>
-                  </div>
-                </td>
-              </tr>
+            {loading ? (
+              <RawTableSkeletonRows columns={9} />
+            ) : sortedData.length === 0 ? (
+              bonsList.length === 0 ? (
+                <RawTableEmptyState
+                  columns={9}
+                  icon={Package}
+                  title="Aucun bon de livraison"
+                  description="Les bons apparaîtront ici une fois créés"
+                />
+              ) : (
+                <RawTableFilteredEmpty columns={9} onClearFilters={() => {}} />
+              )
             ) : sortedData.map((b, i) => {
               const ws = b.workflow_status || 'planification';
               const isPaid = b.statut_paiement === 'Payé';
@@ -749,7 +753,7 @@ export default function Bons() {
           ))}
         </div>
 
-        {loading ? (
+        {loading && bons.length === 0 ? (
           <div className="p-8 text-center"><Loader2 className="h-8 w-8 mx-auto animate-spin text-muted-foreground" /></div>
         ) : (
           <>

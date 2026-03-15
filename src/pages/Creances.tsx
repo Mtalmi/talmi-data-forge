@@ -3,6 +3,7 @@ import { useTableSort } from '@/hooks/useTableSort';
 import { SortableTableHead } from '@/components/ui/SortableHeader';
 import { TablePagination } from '@/components/ui/TablePagination';
 import { EmptyState } from '@/components/ui/states';
+import { TableSkeletonRows, TableEmptyState, TableFilteredEmpty } from '@/components/ui/TableStates';
 import { NouvelleFactureModal } from '@/components/modals/NouvelleFactureModal';
 import { Plus } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nContext';
@@ -1410,20 +1411,19 @@ export default function Creances() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {sortedReceivables.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={canManageReceivables ? 9 : 8} className="h-32 text-center">
-                          <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                            <FileText className="h-8 w-8" />
-                             <p className="font-medium">{t.pages.creances.noReceivables}</p>
-                             <p className="text-sm">
-                               {!hasData 
-                                 ? t.pages.creances.noReceivablesNew
-                                 : t.pages.creances.noReceivablesFilter}
-                            </p>
-                          </div>
-                        </TableCell>
-                      </TableRow>
+                    {loading ? (
+                      <TableSkeletonRows columns={canManageReceivables ? 9 : 8} />
+                    ) : sortedReceivables.length === 0 ? (
+                      !hasData ? (
+                        <TableEmptyState
+                          columns={canManageReceivables ? 9 : 8}
+                          icon={FileText}
+                          title={t.pages.creances.noReceivables}
+                          description={t.pages.creances.noReceivablesNew}
+                        />
+                      ) : (
+                        <TableFilteredEmpty columns={canManageReceivables ? 9 : 8} />
+                      )
                     ) : paginatedReceivables.map((receivable) => {
                       const statusConfig = STATUS_CONFIG[receivable.status];
                       // Dispute detection: partial payment from same client

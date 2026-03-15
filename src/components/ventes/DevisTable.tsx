@@ -4,6 +4,7 @@ import { useTableSort } from '@/hooks/useTableSort';
 import { SortableTableHead } from '@/components/ui/SortableHeader';
 import { TablePagination } from '@/components/ui/TablePagination';
 import { Skeleton } from '@/components/ui/skeleton';
+import { TableSkeletonRows, TableEmptyState } from '@/components/ui/TableStates';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -304,20 +305,64 @@ export function DevisTable({
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+        <Table style={{ minWidth: 1200 }}>
+          <colgroup>
+            <col style={{ width: 40 }} />
+            <col style={{ width: 140 }} />
+            <col style={{ width: 180 }} />
+            <col style={{ width: 80 }} />
+            <col style={{ width: 70 }} />
+            <col style={{ width: 120 }} />
+            <col style={{ width: 110 }} />
+            <col style={{ width: 100 }} />
+            <col style={{ width: 90 }} />
+            <col style={{ width: 85 }} />
+            <col style={{ width: 50 }} />
+            <col style={{ width: 200 }} />
+          </colgroup>
+          <TableHeader>
+            <TableRow>
+              <TableHead style={{ padding: '10px 8px' }}>☐</TableHead>
+              <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>N° Devis</TableHead>
+              <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>Client</TableHead>
+              <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>Formule</TableHead>
+              <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>Vol</TableHead>
+              <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>Total HT</TableHead>
+              <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>Statut</TableHead>
+              <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>Score</TableHead>
+              <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>Conv.</TableHead>
+              <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>Date</TableHead>
+              <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>Prté</TableHead>
+              <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableSkeletonRows columns={12} />
+          </TableBody>
+        </Table>
       </div>
     );
   }
 
   if (devisList.length === 0) {
     return (
-      <div className="text-center py-12">
-        <FileText className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
-        <p className="text-muted-foreground">{dt.noQuotes}</p>
-        <p className="text-sm text-muted-foreground mt-1">
-          {dt.useCalculator}
-        </p>
+      <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+        <Table style={{ minWidth: 1200 }}>
+          <TableHeader>
+            <TableRow>
+              <TableHead colSpan={12} />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableEmptyState
+              columns={12}
+              icon={FileText}
+              title={dt.noQuotes}
+              description={dt.useCalculator}
+            />
+          </TableBody>
+        </Table>
       </div>
     );
   }

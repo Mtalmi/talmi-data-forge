@@ -40,6 +40,7 @@ import { PartialPaymentDialog } from '@/components/finance/PartialPaymentDialog'
 import { useI18n } from '@/i18n/I18nContext';
 import { DollarSign } from 'lucide-react';
 import { getDateLocale } from '@/i18n/dateLocale';
+import { TableSkeletonRows, TableEmptyState, TableFilteredEmpty, TableErrorState } from '@/components/ui/TableStates';
 
 interface Facture {
   id: string;
@@ -98,6 +99,7 @@ export function FacturesTable({
 
   const [factures, setFactures] = useState<Facture[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFacture, setSelectedFacture] = useState<Facture | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
@@ -129,22 +131,25 @@ export function FacturesTable({
 
   const fetchFactures = useCallback(async () => {
     setLoading(true);
+    setFetchError(false);
     try {
       // Fetch factures without joins since there's no direct FK relationship
-      const { data: facturesData, error: facturesError } = await supabase
+      const { data: facturesData, error } = await supabase
         .from('factures')
         .select('*')
-        .order('created_at', { ascending: false })
-        .limit(500);
+        .order('date_facture', { ascending: false });
 
-      if (facturesError) throw facturesError;
-
-      // Fetch client names for the factures
+      if (error) throw error;
+      
+      // ... keep existing code for client/formule enrichment
+      // Fetch client names separately
       const clientIds = [...new Set((facturesData || []).map(f => f.client_id))];
       const { data: clientsData } = await supabase
         .from('clients')
         .select('client_id, nom_client')
         .in('client_id', clientIds);
+      
+      const clientMap = new Map((clientsData || []).map(c => [c.client_id, c.nom_client]));
 
       // Fetch formule designations
       const formuleIds = [...new Set((facturesData || []).map(f => f.formule_id))];
@@ -152,25 +157,34 @@ export function FacturesTable({
         .from('formules_theoriques')
         .select('formule_id, designation')
         .in('formule_id', formuleIds);
+      
+      const formuleMap = new Map((formulesData || []).map(f => [f.formule_id, f.designation]));
 
-      // Map clients and formules to factures
-      const clientMap = new Map(clientsData?.map(c => [c.client_id, c.nom_client]) || []);
-      const formuleMap = new Map(formulesData?.map(f => [f.formule_id, f.designation]) || []);
-
-      // Fallback client names for invoices without matching clients
-      const fallbackClientNames: Record<string, string> = {
-        'FAC-2026-0001': 'BTP Maroc SARL',
-        'FAC-2026-0002': 'BTP Maroc SARL',
-        'FAC-2026-0003': 'BTP Maroc SARL',
-        'FAC-2026-0004': 'BTP Maroc SARL',
-        'FAC-2026-0005': 'BTP Maroc SARL',
-        'FAC-2026-0006': 'Ciments & Béton du Sud',
-        'FAC-2026-0007': 'Ciments & Béton du Sud',
-        'FAC-2026-0008': 'Ciments & Béton du Sud',
-        'FAC-2026-0009': 'Constructions Modernes SA',
-        'FAC-2026-0010': 'Constructions Modernes SA',
-        'FAC-2026-0011': 'Constructions Modernes SA',
-      };
+      // Fallback: if client_name is missing, try to get from BL
+      const missingClientFactures = (facturesData || []).filter(f => !clientMap.has(f.client_id));
+      const fallbackClientNames: Record<string, string> = {};
+      
+      if (missingClientFactures.length > 0) {
+        const blIds = missingClientFactures.map(f => f.bl_id);
+        const { data: blData } = await supabase
+          .from('bons_livraison_reels')
+          .select('bl_id, client_id')
+          .in('bl_id', blIds);
+        
+        if (blData) {
+          const blClientIds = [...new Set(blData.map(b => b.client_id))];
+          const { data: blClients } = await supabase
+            .from('clients')
+            .select('client_id, nom_client')
+            .in('client_id', blClientIds);
+          
+          const blClientMap = new Map((blClients || []).map(c => [c.client_id, c.nom_client]));
+          for (const bl of blData) {
+            const name = blClientMap.get(bl.client_id);
+            if (name) fallbackClientNames[bl.bl_id] = name;
+          }
+        }
+      }
 
       const enrichedFactures: Facture[] = (facturesData || []).map(f => ({
         ...f,
@@ -181,6 +195,7 @@ export function FacturesTable({
       setFactures(enrichedFactures);
     } catch (error) {
       console.error('Error fetching factures:', error);
+      setFetchError(true);
     } finally {
       setLoading(false);
     }
@@ -247,11 +262,41 @@ export function FacturesTable({
   const paidCount = filteredFactures.filter(f => f.statut === 'payee').length;
   const pendingCount = filteredFactures.filter(f => f.statut !== 'payee').length;
 
+  const COL_COUNT = onSelectionChange ? 11 : 10;
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="space-y-4">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>N° Facture</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Client</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>BL/BC</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Date</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Vol.</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Total HT</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>TTC</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Marge</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Statut</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableSkeletonRows columns={10} />
+          </TableBody>
+        </Table>
       </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <Table>
+        <TableBody>
+          <TableErrorState columns={COL_COUNT} onRetry={fetchFactures} />
+        </TableBody>
+      </Table>
     );
   }
 
@@ -286,13 +331,20 @@ export function FacturesTable({
       </div>
 
       {filteredFactures.length === 0 ? (
-        <div className="text-center py-12">
-          <Receipt className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
-          <p className="text-muted-foreground">{ft.noInvoiceFound}</p>
-          <p className="text-sm text-muted-foreground mt-1">
-            {ft.invoicesAppearAfterDelivery}
-          </p>
-        </div>
+        <Table>
+          <TableBody>
+            {factures.length === 0 ? (
+              <TableEmptyState
+                columns={COL_COUNT}
+                icon={Receipt}
+                title={ft.noInvoiceFound}
+                description={ft.invoicesAppearAfterDelivery}
+              />
+            ) : (
+              <TableFilteredEmpty columns={COL_COUNT} onClearFilters={() => setSearchTerm('')} />
+            )}
+          </TableBody>
+        </Table>
       ) : (
         <>
         <Table>
