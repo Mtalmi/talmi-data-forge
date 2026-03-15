@@ -290,7 +290,6 @@ export function usePaymentTracking() {
           errors.push(`${payment.client_nom}: ${error.message}`);
         } else {
           sent++;
-          sent++;
         }
       } catch (err) {
         failed++;
