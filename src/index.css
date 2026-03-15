@@ -912,7 +912,7 @@ html {
   h4,
   h5,
   h6 {
-    font-family: "Inter", system-ui, sans-serif;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
     @apply font-medium tracking-tight text-foreground;
     letter-spacing: -0.02em;
   }
