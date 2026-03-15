@@ -407,39 +407,39 @@ export function SmartInvoiceDialog({
             </h4>
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Béton ({delivery.volume_m3}m³ × {prix.toFixed(2)})</span>
-                <span className="font-mono">{baseHT.toFixed(2)} DH</span>
+                <span className="text-muted-foreground">Béton ({delivery.volume_m3}m³ × {isFinite(prix) ? prix.toFixed(2) : '--'})</span>
+                <span className="font-mono">{isFinite(baseHT) ? baseHT.toFixed(2) : '--'} DH</span>
               </div>
               {livraisonFees > 0 && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Livraison</span>
-                  <span className="font-mono">{livraisonFees.toFixed(2)} DH</span>
+                  <span className="font-mono">{isFinite(livraisonFees) ? livraisonFees.toFixed(2) : '--'} DH</span>
                 </div>
               )}
               {waitingFees > 0 && (
                 <div className="flex justify-between text-warning">
                   <span>Frais d'attente</span>
-                  <span className="font-mono">{waitingFees.toFixed(2)} DH</span>
+                  <span className="font-mono">{isFinite(waitingFees) ? waitingFees.toFixed(2) : '--'} DH</span>
                 </div>
               )}
               {supplements.map((supp, idx) => supp.amount > 0 && (
                 <div key={idx} className="flex justify-between">
                   <span className="text-muted-foreground">{supp.label || 'Supplément'}</span>
-                  <span className="font-mono">{supp.amount.toFixed(2)} DH</span>
+                  <span className="font-mono">{isFinite(supp.amount) ? supp.amount.toFixed(2) : '--'} DH</span>
                 </div>
               ))}
               <Separator className="my-2" />
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Total HT</span>
-                <span className="font-mono font-medium">{totalHT.toFixed(2)} DH</span>
+                <span className="font-mono font-medium">{isFinite(totalHT) ? totalHT.toFixed(2) : '--'} DH</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">TVA ({tva}%)</span>
-                <span className="font-mono">{(totalHT * tva / 100).toFixed(2)} DH</span>
+                <span className="font-mono">{isFinite(totalHT) ? (totalHT * tva / 100).toFixed(2) : '--'} DH</span>
               </div>
               <div className="flex justify-between text-lg font-bold pt-2 border-t">
                 <span>Total TTC</span>
-                <span className="font-mono text-primary">{totalTTC.toFixed(2)} DH</span>
+                <span className="font-mono text-primary">{isFinite(totalTTC) ? totalTTC.toFixed(2) : '--'} DH</span>
               </div>
             </div>
           </div>
@@ -456,7 +456,7 @@ export function SmartInvoiceDialog({
                 {margePct < 20 && <AlertTriangle className="h-4 w-4" />}
                 Marge Brute
               </span>
-              <span className="font-mono font-bold">{margePct.toFixed(1)}%</span>
+              <span className="font-mono font-bold">{isFinite(margePct) ? margePct.toFixed(1) : '--'}%</span>
             </div>
           )}
 

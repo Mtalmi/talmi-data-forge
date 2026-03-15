@@ -160,7 +160,7 @@ export function LiveProductionFeed({ bons, onBatchAdded, className }: LiveProduc
         'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-mono',
         isCritical ? 'bg-destructive/20 text-destructive' : 'bg-warning/20 text-warning'
       )}>
-        {label}: +{value.toFixed(1)}%
+        {label}: +{isFinite(value) ? value.toFixed(1) : '--'}%
       </span>
     );
   };
@@ -296,12 +296,12 @@ export function LiveProductionFeed({ bons, onBatchAdded, className }: LiveProduc
                         <div className={cn(
                           batch.variance_ciment_pct && batch.variance_ciment_pct > 2 ? 'text-destructive' : 'text-muted-foreground'
                         )}>
-                          {lp.cementShort}: {batch.ciment_reel_kg.toFixed(0)}kg
+                          {lp.cementShort}: {isFinite(batch.ciment_reel_kg) ? batch.ciment_reel_kg.toFixed(0) : '--'}kg
                         </div>
                         <div className={cn(
                           batch.variance_eau_pct && batch.variance_eau_pct > 2 ? 'text-destructive' : 'text-muted-foreground'
                         )}>
-                          {lp.waterShort}: {batch.eau_reel_l.toFixed(0)}L
+                          {lp.waterShort}: {isFinite(batch.eau_reel_l) ? batch.eau_reel_l.toFixed(0) : '--'}L
                         </div>
                       </div>
                     </div>
