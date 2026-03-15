@@ -606,6 +606,25 @@ export function BcTable({
                   {renderSuivi(bc)}
                 </TableCell>
                 
+                {/* DOCUMENTS (📎) */}
+                <TableCell className="text-center">
+                  {(() => {
+                    const hasBlSigne = bc.statut === 'livre' || bc.statut === 'termine';
+                    const docCount = hasBlSigne ? 3 : bc.statut === 'en_production' ? 1 : 0;
+                    return (
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: docCount > 0 ? '#D4A843' : '#EF4444', cursor: 'pointer' }}>
+                            📎 {docCount}
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {docCount >= 3 ? 'BL signé, photo chargement, certificat conformité' : docCount > 0 ? 'Documents partiels' : 'Aucun document'}
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  })()}
+                </TableCell>
                 {/* ACTIONS (kebab) */}
                 <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                   {renderKebabMenu(bc)}
