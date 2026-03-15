@@ -494,7 +494,17 @@ export default function Bons() {
             </tr>
           </thead>
           <tbody>
-            {searchedBons.map((b, i) => {
+            {searchedBons.length === 0 ? (
+              <tr>
+                <td colSpan={9} style={{ padding: '60px 20px', textAlign: 'center' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                    <Package size={40} style={{ color: 'rgba(255,255,255,0.08)' }} />
+                    <span style={{ fontFamily: MONO, fontSize: 13, color: 'rgba(255,255,255,0.25)' }}>Aucun bon de livraison</span>
+                    <span style={{ fontFamily: MONO, fontSize: 11, color: 'rgba(255,255,255,0.15)' }}>Les bons apparaîtront ici une fois créés</span>
+                  </div>
+                </td>
+              </tr>
+            ) : searchedBons.map((b, i) => {
               const ws = b.workflow_status || 'planification';
               const isPaid = b.statut_paiement === 'Payé';
               const isLate = b.statut_paiement === 'Retard' || b.statut_paiement === 'en_retard';
