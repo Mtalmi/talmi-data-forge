@@ -828,12 +828,12 @@ export default function MobileField() {
           <Stepper label="Teneur en Air (%)" value={testAir} onChange={setTestAir} min={0} max={12} step={0.5} reference="Cible : 4–7%" />
 
           <div>
-            <label className="text-sm text-[#B0B8C1] block mb-2">Visual Inspection</label>
+            <label className="text-sm text-[#B0B8C1] block mb-2">Inspection Visuelle</label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
               {([
-                { v: 'pass' as const, label: '✅ PASS', active: 'bg-[#10B981] text-white' },
+                { v: 'pass' as const, label: '✅ CONFORME', active: 'bg-[#10B981] text-white' },
                 { v: 'marginal' as const, label: '⚠️ MARGINAL', active: 'bg-[#F59E0B] text-black' },
-                { v: 'fail' as const, label: '❌ FAIL', active: 'bg-[#EF4444] text-white' },
+                { v: 'fail' as const, label: '❌ NON CONFORME', active: 'bg-[#EF4444] text-white' },
               ]).map(opt => (
                 <button
                   key={opt.v}
