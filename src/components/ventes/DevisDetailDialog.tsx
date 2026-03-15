@@ -651,7 +651,7 @@ export function DevisDetailDialog({
                           </span>
                         </div>
                         {entry.changes?.reason && (
-                          <p className="text-sm text-gray-700 dark:text-gray-300 italic mb-2">
+                          <p className="text-sm text-slate-300 italic mb-2">
                             "{entry.changes.reason}"
                           </p>
                         )}
