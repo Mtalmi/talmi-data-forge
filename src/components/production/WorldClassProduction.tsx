@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCountUp } from '@/hooks/useCountUp';
+import { MetricTooltip } from '@/components/ui/MetricTooltip';
 import { supabase } from '@/integrations/supabase/client';
 import { format, startOfDay, endOfDay, startOfWeek, endOfWeek } from 'date-fns';
 import BatchesTab from './BatchesTab';
