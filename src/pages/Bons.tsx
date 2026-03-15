@@ -677,7 +677,7 @@ export default function Bons() {
                       </div>
                       <div className="flex justify-end gap-3 pt-4">
                         <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>{t.pages.bons.cancel}</Button>
-                        <Button type="submit" disabled={submitting}>{submitting ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Création...</> : t.pages.bons.createSlip}</Button>
+                        <Button type="submit" disabled={submitting}>{submitting ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />{t.pages.bons.creating}</> : t.pages.bons.createSlip}</Button>
                       </div>
                     </form>
                   </DialogContent>
