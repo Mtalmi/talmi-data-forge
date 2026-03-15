@@ -13,6 +13,7 @@ import {
   ArrowRight, Repeat, ToggleLeft, ToggleRight,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { PageLoadingSkeleton } from '@/components/ui/PageLoadingSkeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { throttle } from '@/utils/debounce';
 
