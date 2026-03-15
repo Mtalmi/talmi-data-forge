@@ -2480,6 +2480,8 @@ export default function Dashboard() {
           </Suspense>
         )}
       </AnimatePresence>
+      {/* Nouveau Devis Modal */}
+      <NouveauDevisModal open={showDevisModal} onClose={() => setShowDevisModal(false)} onCreated={() => setShowDevisModal(false)} />
     </MainLayout>
   );
 }
