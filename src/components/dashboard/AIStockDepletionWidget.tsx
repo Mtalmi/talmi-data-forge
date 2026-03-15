@@ -78,7 +78,7 @@ export function AIStockDepletionWidget() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-[10px]">
                   <div>
                     <p className="text-muted-foreground">Stock actuel</p>
-                    <p className="font-medium text-foreground">{pred.current_qty.toLocaleString()}</p>
+                    <p className="font-medium text-foreground">{pred.current_qty.toLocaleString('fr-FR')}</p>
                   </div>
                   <div>
                     <p className="text-muted-foreground">Conso/jour</p>

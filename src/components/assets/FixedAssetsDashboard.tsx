@@ -141,7 +141,7 @@ export function FixedAssetsDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{totals.grossValue.toLocaleString()} DH</p>
+            <p className="text-2xl font-bold">{totals.grossValue.toLocaleString('fr-FR')} DH</p>
             <p className="text-xs text-muted-foreground">{fa.assetsCount.replace('{count}', String(totals.assetCount))}</p>
           </CardContent>
         </Card>
@@ -154,8 +154,8 @@ export function FixedAssetsDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-orange-500">-{totals.accumulatedDepreciation.toLocaleString()} DH</p>
-            <p className="text-xs text-muted-foreground">{fa.monthly}: {totals.monthlyDepreciation.toLocaleString()} DH</p>
+            <p className="text-2xl font-bold text-orange-500">-{totals.accumulatedDepreciation.toLocaleString('fr-FR')} DH</p>
+            <p className="text-xs text-muted-foreground">{fa.monthly}: {totals.monthlyDepreciation.toLocaleString('fr-FR')} DH</p>
           </CardContent>
         </Card>
 
@@ -167,9 +167,9 @@ export function FixedAssetsDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-green-500">{totals.netBookValue.toLocaleString()} DH</p>
+            <p className="text-2xl font-bold text-green-500">{totals.netBookValue.toLocaleString('fr-FR')} DH</p>
             <p className="text-xs text-muted-foreground">
-              {((totals.netBookValue / totals.grossValue) * 100 || 0).toFixed(1)}% {fa.ofGrossValue}
+              {totals.grossValue > 0 ? ((totals.netBookValue / totals.grossValue) * 100).toLocaleString('fr-FR', { maximumFractionDigits: 1 }) : '0'}% {fa.ofGrossValue}
             </p>
           </CardContent>
         </Card>
@@ -279,10 +279,10 @@ export function FixedAssetsDashboard() {
                           </TableCell>
                           <TableCell>{categoryLabels[asset.category]}</TableCell>
                           <TableCell className="text-right font-mono">
-                            {asset.purchase_price.toLocaleString()} DH
+                            {asset.purchase_price.toLocaleString('fr-FR')} DH
                           </TableCell>
                           <TableCell className="text-right font-mono text-green-500">
-                            {asset.net_book_value.toLocaleString()} DH
+                            {asset.net_book_value.toLocaleString('fr-FR')} DH
                           </TableCell>
                           <TableCell>{asset.location}</TableCell>
                           <TableCell>
@@ -360,13 +360,13 @@ export function FixedAssetsDashboard() {
                           </TableCell>
                           <TableCell className="text-right">{s.asset_count}</TableCell>
                           <TableCell className="text-right font-mono">
-                            {s.gross_value.toLocaleString()} DH
+                            {s.gross_value.toLocaleString('fr-FR')} DH
                           </TableCell>
                           <TableCell className="text-right font-mono text-orange-500">
-                            -{s.accumulated_depreciation.toLocaleString()} DH
+                            -{s.accumulated_depreciation.toLocaleString('fr-FR')} DH
                           </TableCell>
                           <TableCell className="text-right font-mono text-green-500">
-                            {s.net_value.toLocaleString()} DH
+                            {s.net_value.toLocaleString('fr-FR')} DH
                           </TableCell>
                         </TableRow>
                       );
@@ -375,13 +375,13 @@ export function FixedAssetsDashboard() {
                       <TableCell>{fa.total}</TableCell>
                       <TableCell className="text-right">{totals.assetCount}</TableCell>
                       <TableCell className="text-right font-mono">
-                        {totals.grossValue.toLocaleString()} DH
+                        {totals.grossValue.toLocaleString('fr-FR')} DH
                       </TableCell>
                       <TableCell className="text-right font-mono text-orange-500">
-                        -{totals.accumulatedDepreciation.toLocaleString()} DH
+                        -{totals.accumulatedDepreciation.toLocaleString('fr-FR')} DH
                       </TableCell>
                       <TableCell className="text-right font-mono text-green-500">
-                        {totals.netBookValue.toLocaleString()} DH
+                        {totals.netBookValue.toLocaleString('fr-FR')} DH
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -419,7 +419,7 @@ export function FixedAssetsDashboard() {
                         ))}
                       </Pie>
                       <Tooltip 
-                        formatter={(value: number) => `${value.toLocaleString()} DH`}
+                        formatter={(value: number) => `${value.toLocaleString('fr-FR')} DH`}
                       />
                     </PieChart>
                   </ResponsiveContainer>
@@ -441,7 +441,7 @@ export function FixedAssetsDashboard() {
                     <BarChart data={barData} layout="vertical">
                       <XAxis type="number" tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
                       <YAxis type="category" dataKey="name" width={100} />
-                      <Tooltip formatter={(value: number) => `${value.toLocaleString()} DH`} />
+                      <Tooltip formatter={(value: number) => `${value.toLocaleString('fr-FR')} DH`} />
                       <Legend />
                       <Bar dataKey="brut" name={fa.grossValueLabel} fill="hsl(var(--primary))" />
                       <Bar dataKey="vnc" name={fa.vncLabel} fill="hsl(var(--chart-2))" />

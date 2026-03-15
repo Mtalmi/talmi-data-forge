@@ -116,7 +116,7 @@ export function AssetDetailDialog({ asset, open, onOpenChange }: AssetDetailDial
                   <CardTitle className="text-sm font-medium text-muted-foreground">{dt.grossValue}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold">{asset.purchase_price.toLocaleString()} DH</p>
+                  <p className="text-2xl font-bold">{asset.purchase_price.toLocaleString('fr-FR')} DH</p>
                 </CardContent>
               </Card>
               <Card>
@@ -124,7 +124,7 @@ export function AssetDetailDialog({ asset, open, onOpenChange }: AssetDetailDial
                   <CardTitle className="text-sm font-medium text-muted-foreground">{dt.accumulatedDepr}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-orange-500">-{asset.accumulated_depreciation.toLocaleString()} DH</p>
+                  <p className="text-2xl font-bold text-orange-500">-{asset.accumulated_depreciation.toLocaleString('fr-FR')} DH</p>
                 </CardContent>
               </Card>
               <Card>
@@ -132,7 +132,7 @@ export function AssetDetailDialog({ asset, open, onOpenChange }: AssetDetailDial
                   <CardTitle className="text-sm font-medium text-muted-foreground">{dt.nbv}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-green-500">{asset.net_book_value.toLocaleString()} DH</p>
+                  <p className="text-2xl font-bold text-green-500">{asset.net_book_value.toLocaleString('fr-FR')} DH</p>
                 </CardContent>
               </Card>
             </div>
@@ -154,8 +154,8 @@ export function AssetDetailDialog({ asset, open, onOpenChange }: AssetDetailDial
                     <div className="h-full bg-primary transition-all" style={{ width: `${Math.min(depreciationProgress, 100)}%` }} />
                   </div>
                   <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>{dt.monthlyLabel}: {asset.monthly_depreciation.toLocaleString()} DH</span>
-                    <span>{dt.residualLabel}: {asset.residual_value.toLocaleString()} DH</span>
+                    <span>{dt.monthlyLabel}: {asset.monthly_depreciation.toLocaleString('fr-FR')} DH</span>
+                    <span>{dt.residualLabel}: {asset.residual_value.toLocaleString('fr-FR')} DH</span>
                   </div>
                 </div>
               </CardContent>
@@ -261,9 +261,9 @@ export function AssetDetailDialog({ asset, open, onOpenChange }: AssetDetailDial
                             <TableRow key={entry.id} className={isCurrent ? 'bg-primary/5' : ''}>
                               <TableCell className="font-mono">{entry.period_number}</TableCell>
                               <TableCell>{format(new Date(entry.period_date), 'MMM yyyy', { locale: calendarLocale })}</TableCell>
-                              <TableCell className="text-right font-mono">{entry.depreciation_amount.toLocaleString()} DH</TableCell>
-                              <TableCell className="text-right font-mono text-orange-500">{entry.accumulated_depreciation.toLocaleString()} DH</TableCell>
-                              <TableCell className="text-right font-mono text-green-500">{entry.net_book_value.toLocaleString()} DH</TableCell>
+                              <TableCell className="text-right font-mono">{entry.depreciation_amount.toLocaleString('fr-FR')} DH</TableCell>
+                              <TableCell className="text-right font-mono text-orange-500">{entry.accumulated_depreciation.toLocaleString('fr-FR')} DH</TableCell>
+                              <TableCell className="text-right font-mono text-green-500">{entry.net_book_value.toLocaleString('fr-FR')} DH</TableCell>
                               <TableCell>
                                 {isCurrent ? (
                                   <Badge variant="default">{dt.current}</Badge>
@@ -320,7 +320,7 @@ export function AssetDetailDialog({ asset, open, onOpenChange }: AssetDetailDial
                           <TableCell>{format(new Date(m.maintenance_date), 'P', { locale: calendarLocale })}</TableCell>
                           <TableCell><Badge variant="outline">{m.maintenance_type}</Badge></TableCell>
                           <TableCell className="max-w-[200px] truncate">{m.description || '-'}</TableCell>
-                          <TableCell className="text-right font-mono">{m.cost > 0 ? `${m.cost.toLocaleString()} DH` : '-'}</TableCell>
+                          <TableCell className="text-right font-mono">{m.cost > 0 ? `${m.cost.toLocaleString('fr-FR')} DH` : '-'}</TableCell>
                           <TableCell>{m.performed_by || '-'}</TableCell>
                         </TableRow>
                       ))}

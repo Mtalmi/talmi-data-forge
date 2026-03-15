@@ -145,12 +145,12 @@ export function ConvertToBcDialog({
                   </div>
                   <div>
                     <p className="text-muted-foreground text-xs">{c.price}/m³</p>
-                    <p className="font-mono">{selectedDevis.prix_vente_m3.toLocaleString()} DH</p>
+                    <p className="font-mono">{selectedDevis.prix_vente_m3.toLocaleString('fr-FR')} DH</p>
                   </div>
                   <div>
                     <p className="text-muted-foreground text-xs">{c.totalHT}</p>
                     <p className="font-mono font-bold text-primary text-lg">
-                      {selectedDevis.total_ht.toLocaleString()} DH
+                      {selectedDevis.total_ht.toLocaleString('fr-FR')} DH
                     </p>
                   </div>
                 </div>

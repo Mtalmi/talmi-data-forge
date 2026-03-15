@@ -119,7 +119,7 @@ const ExecutiveGauge = forwardRef<HTMLDivElement, GaugeProps>(
             color === 'warning' && 'text-warning',
             color === 'destructive' && 'text-destructive'
           )} style={{ fontWeight: 200 }}>
-            {value.toFixed(1)}%
+            {value.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%
           </span>
         </div>
       </div>

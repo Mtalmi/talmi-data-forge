@@ -48,7 +48,7 @@ function GoldTooltip({ active, payload, label }: any) {
       <p style={{ color: C.text2, fontSize: 11, marginBottom: 4 }}>{label}</p>
       {payload.map((p: any, i: number) => (
         <p key={i} style={{ color: p.color || C.gold, fontFamily: "'JetBrains Mono', monospace", fontSize: 13, fontWeight: 600 }}>
-          {p.name}: {typeof p.value === 'number' ? p.value.toLocaleString() : p.value}
+          {p.name}: {typeof p.value === 'number' ? p.value.toLocaleString('fr-FR') : p.value}
         </p>
       ))}
     </div>

@@ -72,7 +72,7 @@ export function CeoCodeRequestDialog({
         type_alerte: 'credit_override_request',
         niveau: 'warning',
         titre: `Demande Code CEO - ${blId}`,
-        message: `L'Agent Admin demande un code pour débloquer ${blId} (${clientName}). Solde: ${solde.toLocaleString()} DH / Limite: ${limite.toLocaleString()} DH`,
+        message: `L'Agent Admin demande un code pour débloquer ${blId} (${clientName}). Solde: ${solde.toLocaleString('fr-FR')} DH / Limite: ${limite.toLocaleString('fr-FR')} DH`,
         destinataire_role: 'ceo',
         reference_table: 'ceo_emergency_codes',
         reference_id: data.id,
@@ -189,16 +189,16 @@ export function CeoCodeRequestDialog({
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Solde Dû:</span>
-              <span className="font-medium text-red-500">{solde.toLocaleString()} DH</span>
+              <span className="font-medium text-red-500">{solde.toLocaleString('fr-FR')} DH</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Limite Crédit:</span>
-              <span className="font-medium">{limite.toLocaleString()} DH</span>
+              <span className="font-medium">{limite.toLocaleString('fr-FR')} DH</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Dépassement:</span>
               <Badge variant="destructive" className="text-xs">
-                +{(solde - limite).toLocaleString()} DH
+                +{(solde - limite).toLocaleString('fr-FR')} DH
               </Badge>
             </div>
           </div>

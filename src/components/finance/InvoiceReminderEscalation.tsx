@@ -264,7 +264,7 @@ export function InvoiceReminderEscalation({ open, onOpenChange, onSuccess }: Inv
             {/* Summary */}
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">
-                {selectedCount} sélectionnées • {totalAmount.toLocaleString()} DH
+                {selectedCount} sélectionnées • {totalAmount.toLocaleString('fr-FR')} DH
               </span>
               <Button
                 variant="ghost"

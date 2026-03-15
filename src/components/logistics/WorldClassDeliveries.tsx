@@ -1541,9 +1541,9 @@ function IntelligenceIATab() {
 
       {/* TOP SUMMARY STRIP */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
-        <IAKPICard label="ÉCONOMIES ROUTES" value="+52,000 MAD/an" color={T.success} borderColor={T.success} />
+        <IAKPICard label="ÉCONOMIES ROUTES" value="+52 000 MAD/an" color={T.success} borderColor={T.success} />
         <IAKPICard label="ANOMALIES CARBURANT" value="1" color={T.danger} borderColor={T.danger} />
-        <IAKPICard label="PROFIT FLOTTE/JOUR" value="30,760 DH" color={T.gold} borderColor={T.gold} />
+        <IAKPICard label="PROFIT FLOTTE/JOUR" value="30 760 DH" color={T.gold} borderColor={T.gold} />
       </div>
 
       {/* ─── AGENT 1: PROFIT-PER-TRUCK ─── */}
@@ -1557,7 +1557,7 @@ function IntelligenceIATab() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
-          <IAKPICard label="PROFIT FLOTTE JOUR" value="30,760 DH" color={T.gold} />
+          <IAKPICard label="PROFIT FLOTTE JOUR" value="30 760 DH" color={T.gold} />
           <IAKPICard label="MEILLEUR RATIO" value="T-12 · 154 DH/km" color={T.success} borderColor={T.success} />
           <IAKPICard label="PIRE RATIO" value="T-09 · ARRÊT" color={T.danger} borderColor={T.danger} />
         </div>
@@ -1769,9 +1769,9 @@ function IntelligenceIATab() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
-          <IAKPICard label="RETOURS ÉVITÉS CE MOIS" value="2" color={T.success} subtitle="8,400 DH sauvés" borderColor={T.success} />
+          <IAKPICard label="RETOURS ÉVITÉS CE MOIS" value="2" color={T.success} subtitle="8 400 DH sauvés" borderColor={T.success} />
           <IAKPICard label="PROBABILITÉ MOY. RETOUR" value="12%" color={T.warning} subtitle="flotte aujourd'hui" borderColor={T.warning} />
-          <IAKPICard label="PERTES RETOURS YTD" value="4,200 DH" color={T.danger} subtitle="1 retour (Sigma 06/03)" borderColor={T.danger} />
+          <IAKPICard label="PERTES RETOURS YTD" value="4 200 DH" color={T.danger} subtitle="1 retour (Sigma 06/03)" borderColor={T.danger} />
         </div>
 
         <p style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '1.5px', color: T.textDim, marginBottom: 14, textTransform: 'uppercase' as const }}>ANALYSE PRÉ-DÉPART — LIVRAISONS DU JOUR</p>
@@ -1916,9 +1916,9 @@ function IntelligenceIATab() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
-          <IAKPICard label="REVENUS NON-RÉCLAMÉS" value="16,600 DH" color={T.danger} subtitle="ce mois" borderColor={T.danger} />
-          <IAKPICard label="RÉCUPÉRÉ YTD" value="8,400 DH" color={T.success} subtitle="grâce aux alertes IA" borderColor={T.success} />
-          <IAKPICard label="POTENTIEL ANNUEL" value="+145,000 DH" color={T.gold} subtitle="si 100% facturation" borderColor={T.gold} />
+          <IAKPICard label="REVENUS NON-RÉCLAMÉS" value="16 600 DH" color={T.danger} subtitle="ce mois" borderColor={T.danger} />
+          <IAKPICard label="RÉCUPÉRÉ YTD" value="8 400 DH" color={T.success} subtitle="grâce aux alertes IA" borderColor={T.success} />
+          <IAKPICard label="POTENTIEL ANNUEL" value="+145 000 DH" color={T.gold} subtitle="si 100% facturation" borderColor={T.gold} />
         </div>
 
         <p style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '1.5px', color: T.textDim, marginBottom: 14, textTransform: 'uppercase' as const }}>SOURCES DE REVENUS PERDUS</p>

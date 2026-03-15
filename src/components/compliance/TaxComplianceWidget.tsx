@@ -78,7 +78,7 @@ export function TaxComplianceWidget() {
           <div className="flex items-center gap-2 p-2 rounded-lg bg-destructive/10 text-destructive">
             <AlertTriangle className="h-4 w-4" />
             <span className="text-sm font-medium">
-              {t.widgets.taxCompliance.arrears}: {totalArrears.toLocaleString()} DH
+              {t.widgets.taxCompliance.arrears}: {totalArrears.toLocaleString('fr-FR')} DH
             </span>
           </div>
         )}
@@ -94,7 +94,7 @@ export function TaxComplianceWidget() {
               <div key={ob.id} className="flex items-center justify-between text-sm p-2 rounded bg-destructive/5">
                 <span className="truncate">{ob.name}</span>
                 <span className="font-medium text-destructive">
-                  {Number(ob.amount).toLocaleString()} DH
+                  {Number(ob.amount).toLocaleString('fr-FR')} DH
                 </span>
               </div>
             ))}
@@ -119,7 +119,7 @@ export function TaxComplianceWidget() {
                     </Badge>
                   </div>
                   <span className="font-medium">
-                    {Number(ob.amount).toLocaleString()} DH
+                    {Number(ob.amount).toLocaleString('fr-FR')} DH
                   </span>
                 </div>
               );
@@ -132,7 +132,7 @@ export function TaxComplianceWidget() {
           <div className="flex items-center justify-between text-sm pt-2 border-t">
             <span className="text-muted-foreground">{t.widgets.taxCompliance.estimatedPenalties}:</span>
             <span className="font-medium text-amber-500">
-              {summary.totalPenalties.toLocaleString()} DH
+              {summary.totalPenalties.toLocaleString('fr-FR')} DH
             </span>
           </div>
         )}

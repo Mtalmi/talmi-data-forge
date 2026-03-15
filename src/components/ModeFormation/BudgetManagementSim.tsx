@@ -106,7 +106,7 @@ export function BudgetManagementSim({ onComplete, onClose }: BudgetManagementSim
         <div className="p-3 bg-muted/50 rounded-lg">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium">Budget Mensuel</span>
-            <span className="text-lg font-bold">{totalSpent.toLocaleString()} / {totalBudget.toLocaleString()} DH</span>
+            <span className="text-lg font-bold">{totalSpent.toLocaleString('fr-FR')} / {totalBudget.toLocaleString('fr-FR')} DH</span>
           </div>
           <Progress 
             value={(totalSpent / totalBudget) * 100} 
@@ -114,7 +114,7 @@ export function BudgetManagementSim({ onComplete, onClose }: BudgetManagementSim
             indicatorClassName={totalSpent / totalBudget > 0.8 ? "bg-rose-500" : "bg-amber-500"}
           />
           <p className="text-xs text-muted-foreground mt-1">
-            Reste: {(totalBudget - totalSpent).toLocaleString()} DH ({Math.round(((totalBudget - totalSpent) / totalBudget) * 100)}%)
+            Reste: {(totalBudget - totalSpent).toLocaleString('fr-FR')} DH ({Math.round(((totalBudget - totalSpent) / totalBudget) * 100)}%)
           </p>
         </div>
 
@@ -150,7 +150,7 @@ export function BudgetManagementSim({ onComplete, onClose }: BudgetManagementSim
                           {cat.name}
                         </span>
                         <span className="text-sm">
-                          {cat.spent.toLocaleString()} / {cat.budget.toLocaleString()} DH
+                          {cat.spent.toLocaleString('fr-FR')} / {cat.budget.toLocaleString('fr-FR')} DH
                         </span>
                       </div>
                       <Progress 

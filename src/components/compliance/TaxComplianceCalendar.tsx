@@ -94,8 +94,8 @@ export function TaxComplianceCalendar({ obligations, onPayObligation }: TaxCompl
                     {ob.status === 'paid' ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : ob.status === 'overdue' ? <XCircle className="h-4 w-4 text-destructive" /> : <Clock className="h-4 w-4 text-amber-500" />}
                   </div>
                   <p className="font-medium text-sm">{ob.name}</p>
-                  <p className="font-bold mt-1">{Number(ob.amount).toLocaleString()} DH</p>
-                  {ob.status === 'overdue' && <p className="text-xs text-destructive mt-1">+{Number(ob.penalty_amount).toLocaleString()} DH {tc.colPenalty.toLowerCase()}</p>}
+                  <p className="font-bold mt-1">{Number(ob.amount).toLocaleString('fr-FR')} DH</p>
+                  {ob.status === 'overdue' && <p className="text-xs text-destructive mt-1">+{Number(ob.penalty_amount).toLocaleString('fr-FR')} DH {tc.colPenalty.toLowerCase()}</p>}
                   {ob.status !== 'paid' && (
                     <Button variant={ob.status === 'overdue' ? 'destructive' : 'outline'} size="sm" className="w-full mt-2" onClick={() => onPayObligation(ob.id)}>{tc.pay}</Button>
                   )}
@@ -133,8 +133,8 @@ export function TaxComplianceCalendar({ obligations, onPayObligation }: TaxCompl
                       <td className="p-2">{format(new Date(ob.due_date), 'dd/MM', { locale: dateLocale || undefined })}</td>
                       <td className="p-2"><Badge variant="outline">{TYPE_ABBREV[ob.obligation_type]}</Badge></td>
                       <td className="p-2">{ob.name}</td>
-                      <td className="p-2 text-right font-medium">{Number(ob.amount).toLocaleString()} DH</td>
-                      <td className="p-2 text-right text-destructive">{Number(ob.penalty_amount) > 0 ? `${Number(ob.penalty_amount).toLocaleString()} DH` : '-'}</td>
+                      <td className="p-2 text-right font-medium">{Number(ob.amount).toLocaleString('fr-FR')} DH</td>
+                      <td className="p-2 text-right text-destructive">{Number(ob.penalty_amount) > 0 ? `${Number(ob.penalty_amount).toLocaleString('fr-FR')} DH` : '-'}</td>
                       <td className="p-2 text-center">
                         <Badge variant={ob.status === 'paid' ? 'default' : ob.status === 'overdue' ? 'destructive' : 'secondary'}>
                           {ob.status === 'paid' ? tc.statusPaid : ob.status === 'overdue' ? tc.statusOverdue : ob.status === 'partially_paid' ? tc.statusPartial : tc.statusToPay}

@@ -102,7 +102,7 @@ export function FinancialReportingSim({ onComplete, onClose }: FinancialReportin
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 bg-white dark:bg-gray-900 rounded-lg">
                     <p className="text-xs text-muted-foreground">CA du jour</p>
-                    <p className="text-lg font-bold text-emerald-600">87,500 DH</p>
+                    <p className="text-lg font-bold text-emerald-600">87 500 DH</p>
                     <div className="flex items-center gap-1 text-xs text-emerald-600">
                       <TrendingUp className="h-3 w-3" />
                       +12% vs hier
@@ -115,11 +115,11 @@ export function FinancialReportingSim({ onComplete, onClose }: FinancialReportin
                   </div>
                   <div className="p-3 bg-white dark:bg-gray-900 rounded-lg">
                     <p className="text-xs text-muted-foreground">Encaissements</p>
-                    <p className="text-lg font-bold text-emerald-600">65,000 DH</p>
+                    <p className="text-lg font-bold text-emerald-600">65 000 DH</p>
                   </div>
                   <div className="p-3 bg-white dark:bg-gray-900 rounded-lg">
                     <p className="text-xs text-muted-foreground">Dépenses</p>
-                    <p className="text-lg font-bold text-rose-600">12,500 DH</p>
+                    <p className="text-lg font-bold text-rose-600">12 500 DH</p>
                   </div>
                 </div>
                 <Button 
@@ -157,25 +157,25 @@ export function FinancialReportingSim({ onComplete, onClose }: FinancialReportin
                   <div className="p-3 bg-white dark:bg-gray-900 rounded-lg">
                     <div className="flex justify-between items-center">
                       <span className="text-sm">Solde actuel</span>
-                      <span className="text-lg font-bold text-emerald-600">245,000 DH</span>
+                      <span className="text-lg font-bold text-emerald-600">245 000 DH</span>
                     </div>
                   </div>
                   <div className="p-3 bg-white dark:bg-gray-900 rounded-lg">
                     <div className="flex justify-between items-center">
                       <span className="text-sm">Créances clients</span>
-                      <span className="text-lg font-bold text-amber-600">128,500 DH</span>
+                      <span className="text-lg font-bold text-amber-600">128 500 DH</span>
                     </div>
                   </div>
                   <div className="p-3 bg-white dark:bg-gray-900 rounded-lg">
                     <div className="flex justify-between items-center">
                       <span className="text-sm">Dettes fournisseurs</span>
-                      <span className="text-lg font-bold text-rose-600">67,200 DH</span>
+                      <span className="text-lg font-bold text-rose-600">67 200 DH</span>
                     </div>
                   </div>
                   <div className="p-3 bg-emerald-50 dark:bg-emerald-900/50 rounded-lg border border-emerald-200">
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Position nette</span>
-                      <span className="text-lg font-bold text-emerald-600">+306,300 DH</span>
+                      <span className="text-lg font-bold text-emerald-600">+306 300 DH</span>
                     </div>
                   </div>
                 </div>

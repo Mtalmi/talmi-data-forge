@@ -273,7 +273,7 @@ export function TreasuryWidget() {
                 'font-mono font-semibold',
                 capPercentage >= 90 ? 'text-destructive' : capPercentage >= 70 ? 'text-warning' : 'text-success'
               )}>
-                {monthlyStats.level1Spent.toLocaleString()} / {monthlyStats.level1Cap.toLocaleString()}
+                {monthlyStats.level1Spent.toLocaleString('fr-FR')} / {monthlyStats.level1Cap.toLocaleString('fr-FR')}
               </span>
             </div>
             <Progress 
@@ -284,7 +284,7 @@ export function TreasuryWidget() {
               )}
             />
             <p className="text-xs text-muted-foreground text-right">
-              {(monthlyStats.level1Cap - monthlyStats.level1Spent).toLocaleString()} MAD {t.widgets.treasury.remaining}
+              {(monthlyStats.level1Cap - monthlyStats.level1Spent).toLocaleString('fr-FR')} MAD {t.widgets.treasury.remaining}
             </p>
           </div>
 
@@ -367,7 +367,7 @@ export function TreasuryWidget() {
                           </div>
                         </div>
                         <span className="font-mono font-semibold text-sm whitespace-nowrap">
-                          {expense.montant_ttc.toLocaleString()} MAD
+                          {expense.montant_ttc.toLocaleString('fr-FR')} MAD
                         </span>
                       </button>
                     );
@@ -404,7 +404,7 @@ export function TreasuryWidget() {
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">{t.widgets.treasury.amountTTC}:</span>
                     <span className="font-mono font-bold">
-                      {selectedExpense.montant_ttc.toLocaleString()} MAD
+                      {selectedExpense.montant_ttc.toLocaleString('fr-FR')} MAD
                     </span>
                   </div>
                   <div className="flex justify-between">

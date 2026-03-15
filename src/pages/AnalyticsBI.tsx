@@ -308,7 +308,7 @@ export default function AnalyticsBI() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Fuite Matériau Estimée</p>
-                  <p className={cn('text-2xl font-bold tabular-nums', totalLeakage > 5000 ? 'text-destructive' : '')}>{totalLeakage.toLocaleString()} DH</p>
+                  <p className={cn('text-2xl font-bold tabular-nums', totalLeakage > 5000 ? 'text-destructive' : '')}>{totalLeakage.toLocaleString('fr-FR')} DH</p>
                 </div>
                 <div className="ml-auto text-right">
                   <p className="text-xs text-muted-foreground">Matériaux en alerte</p>
@@ -363,13 +363,13 @@ export default function AnalyticsBI() {
                             {m.alert && <AlertTriangle className="h-3 w-3 text-destructive" />}
                             {m.materiau}
                           </TableCell>
-                          <TableCell className="text-right text-sm tabular-nums">{m.theorique_total.toLocaleString()}</TableCell>
-                          <TableCell className="text-right text-sm tabular-nums">{m.reel_total.toLocaleString()}</TableCell>
+                          <TableCell className="text-right text-sm tabular-nums">{m.theorique_total.toLocaleString('fr-FR')}</TableCell>
+                          <TableCell className="text-right text-sm tabular-nums">{m.reel_total.toLocaleString('fr-FR')}</TableCell>
                           <TableCell className={cn('text-right text-sm font-semibold tabular-nums', m.variance_pct > 0 ? 'text-destructive' : 'text-emerald-500')}>
                             {m.variance_pct > 0 ? '+' : ''}{m.variance_pct}%
                           </TableCell>
                           <TableCell className={cn('text-right text-sm tabular-nums', m.cost_impact_dh > 0 ? 'text-destructive' : 'text-emerald-500')}>
-                            {m.cost_impact_dh > 0 ? '+' : ''}{m.cost_impact_dh.toLocaleString()} DH
+                            {m.cost_impact_dh > 0 ? '+' : ''}{m.cost_impact_dh.toLocaleString('fr-FR')} DH
                           </TableCell>
                         </TableRow>
                       ))}
@@ -409,7 +409,7 @@ export default function AnalyticsBI() {
                             {f.variance_pct > 0 ? '+' : ''}{f.variance_pct}%
                           </TableCell>
                           <TableCell className={cn('text-right text-sm font-semibold tabular-nums', f.leakage_dh > 0 ? 'text-destructive' : 'text-emerald-500')}>
-                            {f.leakage_dh > 0 ? '+' : ''}{f.leakage_dh.toLocaleString()} DH
+                            {f.leakage_dh > 0 ? '+' : ''}{f.leakage_dh.toLocaleString('fr-FR')} DH
                           </TableCell>
                         </TableRow>
                       ))}

@@ -266,10 +266,10 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
                     <TableCell className="font-mono text-xs">{bc.formule_id}</TableCell>
                     <TableCell className="text-right">{bc.volume_m3} m³</TableCell>
                     <TableCell className="text-right font-mono">
-                      {bc.prix_vente_m3.toLocaleString()} DH
+                      {bc.prix_vente_m3.toLocaleString('fr-FR')} DH
                     </TableCell>
                     <TableCell className="text-right font-mono font-semibold">
-                      {bc.total_ht.toLocaleString()} DH
+                      {bc.total_ht.toLocaleString('fr-FR')} DH
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
@@ -337,7 +337,7 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">{pv.pricePerM3}</p>
-                  <p className="font-mono">{selectedBc.prix_vente_m3.toLocaleString()} DH</p>
+                  <p className="font-mono">{selectedBc.prix_vente_m3.toLocaleString('fr-FR')} DH</p>
                 </div>
               </div>
 
@@ -390,7 +390,7 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
               <div className="p-4 rounded-lg bg-muted">
                 <p className="font-semibold">{selectedBc.bc_id} - {selectedBc.client?.nom_client}</p>
                 <p className="text-sm text-muted-foreground">
-                  {selectedBc.volume_m3} m³ × {selectedBc.prix_vente_m3.toLocaleString()} DH = {selectedBc.total_ht.toLocaleString()} DH
+                  {selectedBc.volume_m3} m³ × {selectedBc.prix_vente_m3.toLocaleString('fr-FR')} DH = {selectedBc.total_ht.toLocaleString('fr-FR')} DH
                 </p>
               </div>
 

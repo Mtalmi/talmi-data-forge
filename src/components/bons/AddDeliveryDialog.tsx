@@ -242,7 +242,7 @@ export function AddDeliveryDialog({ bc, open, onOpenChange, onCreateDelivery, on
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div><p className="text-muted-foreground">{ad.deliveryNum}</p><p className="font-semibold">{nbLivraisons + 1}</p></div>
                   <div><p className="text-muted-foreground">{ad.volume}</p><p className="font-mono font-semibold">{volume.toFixed(1)} m³</p></div>
-                  <div><p className="text-muted-foreground">{ad.amountHT}</p><p className="font-mono font-semibold text-primary">{(volume * bc.prix_vente_m3).toLocaleString()} DH</p></div>
+                  <div><p className="text-muted-foreground">{ad.amountHT}</p><p className="font-mono font-semibold text-primary">{(volume * bc.prix_vente_m3).toLocaleString('fr-FR')} DH</p></div>
                   <div><p className="text-muted-foreground">{ad.afterDelivery}</p><p className="font-mono">{(volumeLivre + volume).toFixed(1)} / {volumeTotal} m³</p></div>
                 </div>
               </CardContent>

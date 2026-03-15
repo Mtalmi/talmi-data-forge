@@ -597,7 +597,7 @@ export default function Contracts() {
                   </div>
                   <p className="text-sm text-muted-foreground mt-1">
                     {c.monthlyTotalLabel}: <span className="font-mono font-semibold text-foreground">
-                      {totalMonthly.toLocaleString()} MAD
+                      {totalMonthly.toLocaleString('fr-FR')} MAD
                     </span>
                   </p>
                 </CardContent>
@@ -656,7 +656,7 @@ export default function Contracts() {
                           </div>
                         </TableCell>
                         <TableCell className="font-mono">
-                          {contract.monthly_amount.toLocaleString()} MAD
+                          {contract.monthly_amount.toLocaleString('fr-FR')} MAD
                         </TableCell>
                         <TableCell className="text-sm">
                           <div className="flex items-center gap-1">

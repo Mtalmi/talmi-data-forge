@@ -288,7 +288,7 @@ export function FrontDeskValidation({
               <div className="flex justify-between items-center">
                 <span className="font-medium">Total:</span>
                 <span className="font-bold text-lg text-emerald-700 dark:text-emerald-300">
-                  {totalAmount.toLocaleString()} DH
+                  {totalAmount.toLocaleString('fr-FR')} DH
                 </span>
               </div>
             </div>

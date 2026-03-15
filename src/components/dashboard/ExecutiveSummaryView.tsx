@@ -80,7 +80,7 @@ function MetricTile({ label, value, numericValue, decimals = 0, trend, icon: Ico
           trend > 0 ? 'text-success' : trend < 0 ? 'text-destructive' : 'text-muted-foreground'
         )}>
           {trend > 0 ? <TrendingUp className="h-3 w-3" /> : trend < 0 ? <TrendingUp className="h-3 w-3 rotate-180" /> : null}
-          <span className="font-medium">{trend > 0 ? '+' : ''}{trend.toFixed(1)}% vs M-1</span>
+          <span className="font-medium">{trend > 0 ? '+' : ''}{trend.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}% vs M-1</span>
         </div>
       )}
     </motion.div>
@@ -91,7 +91,7 @@ export function ExecutiveSummaryView({ periodStats, dashboardStats, onClose }: E
   const metrics: MetricTileProps[] = [
     {
       label: 'Volume Total',
-      value: `${periodStats.totalVolume.toFixed(0)} m³`,
+      value: `${periodStats.totalVolume.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} m³`,
       numericValue: periodStats.totalVolume,
       trend: periodStats.volumeTrend,
       icon: Package,
@@ -100,7 +100,7 @@ export function ExecutiveSummaryView({ periodStats, dashboardStats, onClose }: E
     },
     {
       label: "Chiffre d'Affaires",
-      value: `${(periodStats.chiffreAffaires / 1000).toFixed(1)}K`,
+      value: `${(periodStats.chiffreAffaires / 1000).toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}K`,
       numericValue: Math.round(periodStats.chiffreAffaires / 1000),
       trend: periodStats.caTrend,
       icon: DollarSign,
@@ -109,7 +109,7 @@ export function ExecutiveSummaryView({ periodStats, dashboardStats, onClose }: E
     },
     {
       label: 'Marge Brute',
-      value: `${periodStats.margeBrutePct.toFixed(1)}%`,
+      value: `${periodStats.margeBrutePct.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`,
       numericValue: periodStats.margeBrutePct,
       decimals: 1,
       trend: periodStats.margeTrend,

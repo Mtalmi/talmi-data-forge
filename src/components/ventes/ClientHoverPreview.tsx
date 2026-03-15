@@ -102,9 +102,9 @@ export function ClientHoverPreview({ clientId, clientName, children }: ClientHov
   };
 
   const formatCurrency = (value: number) => {
-    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M DH`;
-    if (value >= 1000) return `${(value / 1000).toFixed(0)}K DH`;
-    return `${value.toLocaleString()} DH`;
+    if (value >= 1000000) return `${(value / 1000000).toLocaleString('fr-FR', { maximumFractionDigits: 1 })}M DH`;
+    if (value >= 1000) return `${Math.round(value / 1000).toLocaleString('fr-FR')}K DH`;
+    return `${value.toLocaleString('fr-FR')} DH`;
   };
 
   return (

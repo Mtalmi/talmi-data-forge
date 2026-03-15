@@ -106,7 +106,7 @@ interface DevisTableProps {
 // Helper to determine if devis is high priority
 const isHighPriority = (devis: Devis): { isPriority: boolean; reason: string } => {
   if (devis.total_ht >= HIGH_VALUE_THRESHOLD) {
-    return { isPriority: true, reason: `Valeur élevée (${devis.total_ht.toLocaleString()} DH)` };
+    return { isPriority: true, reason: `Valeur élevée (${devis.total_ht.toLocaleString('fr-FR')} DH)` };
   }
   if (devis.volume_m3 >= HIGH_VOLUME_THRESHOLD) {
     return { isPriority: true, reason: `Volume important (${devis.volume_m3} m³)` };

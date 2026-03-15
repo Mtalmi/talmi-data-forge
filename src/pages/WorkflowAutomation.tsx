@@ -130,7 +130,7 @@ const GoldTooltip = ({ active, payload, label }: any) => {
     <div className="rounded-lg px-4 py-2 shadow-xl" style={{ background: '#161D26', border: '1px solid #FFD700', borderRadius: 8 }}>
       <p className="text-xs mb-1" style={{ color: '#B0B8C1' }}>{label}</p>
       {payload.map((p: any, i: number) => (
-        <p key={i} className="font-mono font-semibold" style={{ color: '#FFD700', fontSize: 14 }}>{p.value.toLocaleString()}</p>
+        <p key={i} className="font-mono font-semibold" style={{ color: '#FFD700', fontSize: 14 }}>{p.value.toLocaleString('fr-FR')}</p>
       ))}
     </div>
   );

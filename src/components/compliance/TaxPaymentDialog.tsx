@@ -93,17 +93,17 @@ export function TaxPaymentDialog({
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">{tp.amount}:</span>
-              <span className="font-medium">{Number(obligation.amount).toLocaleString()} DH</span>
+              <span className="font-medium">{Number(obligation.amount).toLocaleString('fr-FR')} DH</span>
             </div>
             {Number(obligation.paid_amount) > 0 && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">{tp.alreadyPaid}:</span>
-                <span className="text-green-600">{Number(obligation.paid_amount).toLocaleString()} DH</span>
+                <span className="text-green-600">{Number(obligation.paid_amount).toLocaleString('fr-FR')} DH</span>
               </div>
             )}
             <div className="flex justify-between border-t pt-2">
               <span className="font-medium">{tp.remaining}:</span>
-              <span className="font-bold">{remainingAmount.toLocaleString()} DH</span>
+              <span className="font-bold">{remainingAmount.toLocaleString('fr-FR')} DH</span>
             </div>
           </div>
 
@@ -116,7 +116,7 @@ export function TaxPaymentDialog({
                   {obligation.days_overdue} {tp.penaltyDesc}
                 </p>
                 <p className="font-bold text-destructive mt-1">
-                  +{penalty.toLocaleString()} DH
+                  +{penalty.toLocaleString('fr-FR')} DH
                 </p>
               </div>
             </div>
@@ -194,12 +194,12 @@ export function TaxPaymentDialog({
             <div className="flex justify-between items-center">
               <span className="font-medium">{tp.totalToPay}:</span>
               <span className="text-2xl font-bold text-primary">
-                {totalWithPenalty.toLocaleString()} DH
+                {totalWithPenalty.toLocaleString('fr-FR')} DH
               </span>
             </div>
             {penalty > 0 && (
               <p className="text-xs text-muted-foreground mt-1">
-                {tp.principalLabel}: {formData.paidAmount.toLocaleString()} DH + {tp.penaltyLabel}: {penalty.toLocaleString()} DH
+                {tp.principalLabel}: {formData.paidAmount.toLocaleString('fr-FR')} DH + {tp.penaltyLabel}: {penalty.toLocaleString('fr-FR')} DH
               </p>
             )}
           </div>
