@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Brain, Clock, Loader2, RefreshCw, Sun, Moon } from 'lucide-react';
+import { ScheduledReportsSection } from './ScheduledReportsSection';
 
 interface Briefing {
   id: string;
@@ -137,6 +138,23 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
         <span className="text-xs text-white/40">
           {isMorning ? 'Ce matin' : (briefing.generated_at ? relativeTime(briefing.generated_at) : '—')}
         </span>
+        <button
+          title="Recevoir ce rapport automatiquement par email et/ou WhatsApp"
+          style={{
+            marginLeft: 'auto',
+            fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+            fontSize: 10, fontWeight: 600,
+            padding: '2px 10px', borderRadius: 6,
+            background: 'transparent',
+            border: '1px solid rgba(212,168,67,0.4)',
+            color: '#D4A843', cursor: 'pointer',
+            transition: 'background 150ms',
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(212,168,67,0.1)'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+        >
+          📅 Programmer
+        </button>
       </div>
     </div>
   );
@@ -218,6 +236,9 @@ export function IntelligenceBriefingCard() {
         <BriefingCard briefing={morningBriefing} type="morning" />
         <BriefingCard briefing={eveningBriefing} type="evening" />
       </div>
+
+      {/* Scheduled Reports */}
+      <ScheduledReportsSection />
     </div>
   );
 }
