@@ -163,44 +163,7 @@ export default function LeakageAlertBanner() {
         </div>
       )}
 
-      {/* Cross-Page Alert Indicators */}
-      <div style={{
-        borderTop: '1px solid rgba(239,68,68,0.15)',
-        padding: '8px 16px',
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: 6,
-        alignItems: 'center',
-      }}>
-        <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, color: '#F59E0B' }}>⚠</span>
-        {[
-          { label: 'Créances : 189K DH en retard (Sigma Bâtiment)', color: '#EF4444' },
-          { label: 'Logistique : T-09 maintenance', color: '#F59E0B' },
-          { label: 'Stocks : Adjuvant 6,7j autonomie', color: '#F59E0B' },
-          { label: 'Lab : NM 10.1.271 expire 26j', color: '#EF4444' },
-        ].map((alert, i) => (
-          <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-            {i > 0 && <span style={{ color: 'rgba(255,255,255,0.1)', margin: '0 2px' }}>·</span>}
-            <span
-              style={{
-                fontFamily: 'ui-monospace, SFMono-Regular, monospace',
-                fontSize: 11,
-                color: alert.color,
-                cursor: 'default',
-                padding: '1px 6px',
-                borderRadius: 4,
-                background: `${alert.color}08`,
-                border: `1px solid ${alert.color}20`,
-                transition: 'background 150ms',
-              }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = `${alert.color}15`; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = `${alert.color}08`; }}
-            >
-              {alert.label}
-            </span>
-          </span>
-        ))}
-      </div>
+      {/* Cross-page alerts removed — deduplicated to main amber strip */}
       </div>
     </>
   );

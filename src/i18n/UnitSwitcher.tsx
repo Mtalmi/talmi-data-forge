@@ -40,8 +40,8 @@ export function UnitSwitcher() {
         <span>{current.flag}</span>
         <span style={{
           fontFamily: M, fontSize: 9, fontWeight: 600, letterSpacing: '0.5px',
-          color: '#D4A843', border: '1px solid rgba(212,168,67,0.3)',
-          borderRadius: 4, padding: '1px 5px', background: 'rgba(212,168,67,0.08)',
+          color: '#D4A843', border: '1px solid #D4A843',
+          borderRadius: 4, padding: '1px 5px', background: 'transparent',
         }}>
           {config.badge}
         </span>

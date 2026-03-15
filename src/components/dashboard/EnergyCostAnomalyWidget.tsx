@@ -24,15 +24,15 @@ export function EnergyCostAnomalyWidget() {
         overflow: 'hidden',
         borderRadius: 8,
         border: '1px solid rgba(245, 158, 11, 0.15)',
-        borderTop: '2px solid #EF4444',
+        borderTop: '3px solid #F59E0B',
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
         padding: 16,
         transition: 'all 200ms ease-out',
       }}
       onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.2)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-      onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(245,158,11,0.15)'; e.currentTarget.style.borderTop = '2px solid #EF4444'; e.currentTarget.style.transform = 'translateY(0)'; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(245,158,11,0.15)'; e.currentTarget.style.borderTop = '3px solid #F59E0B'; e.currentTarget.style.transform = 'translateY(0)'; }}
     >
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(239,68,68,0.7), transparent)', zIndex: 99, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, transparent, rgba(245,158,11,0.7), transparent)', zIndex: 99, pointerEvents: 'none' }} />
       {/* Label */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>

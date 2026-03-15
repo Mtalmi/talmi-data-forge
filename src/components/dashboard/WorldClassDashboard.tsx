@@ -455,12 +455,12 @@ function AIAnalystBrief() {
   }, []);
 
   return (
-      <div
-        style={{ position: 'relative', overflow: 'hidden', background: 'linear-gradient(to right, rgba(212,168,67,0.04), transparent)', border: '1px solid rgba(212,168,67,0.12)', borderTop: '2px solid #D4A843', borderRadius: 8, transition: 'all 200ms ease-out' }}
+    <div
+        style={{ position: 'relative', overflow: 'hidden', background: 'linear-gradient(to right, rgba(212,168,67,0.04), transparent)', border: '1px solid rgba(212,168,67,0.12)', borderRadius: 8, transition: 'all 200ms ease-out' }}
         onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.12)'; e.currentTarget.style.borderTop = '2px solid #D4A843'; e.currentTarget.style.transform = 'translateY(0)'; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.12)'; e.currentTarget.style.transform = 'translateY(0)'; }}
       >
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 99, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: '#D4A843', zIndex: 99, pointerEvents: 'none' }} />
       <Card className="ops-enter ops-surface-card" style={{ borderRadius: 8, border: 'none', background: 'transparent', transition: 'all 200ms ease-out' }}>
 
 
@@ -502,7 +502,7 @@ function AIAnalystBrief() {
                   transform: i < visibleLines ? 'translateY(0)' : 'translateY(8px)',
                 }}
               >
-                <span className="w-1.5 h-1.5 rounded-full mt-[6px] shrink-0" style={{ background: '#D4A843', boxShadow: '0 0 8px rgba(212,168,67,0.5)' }} />
+                <span className="w-1.5 h-1.5 rounded-full mt-[6px] shrink-0" style={{ background: insight.tone === 'positive' ? '#22C55E' : insight.tone === 'warning' ? '#F59E0B' : '#EF4444', boxShadow: insight.tone === 'positive' ? '0 0 8px rgba(34,197,94,0.5)' : insight.tone === 'warning' ? '0 0 8px rgba(245,158,11,0.5)' : '0 0 8px rgba(239,68,68,0.5)' }} />
                 <span className="text-sm leading-relaxed">
                   {(() => {
                     const { headline, detail } = splitHeadlineDetail(insight.text);
@@ -1216,7 +1216,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <span className="text-slate-500">{q.test}</span>
-                    <span className="min-w-[48px] text-center text-xs font-medium px-2 py-0.5 rounded" style={{ background: q.ok ? 'rgba(52,211,153,0.1)' : 'rgba(251,191,36,0.1)', color: q.ok ? 'rgb(52,211,153)' : 'rgba(251,191,36,0.8)' }}>{q.ok ? 'OK' : 'VAR'}</span>
+                    <span className="min-w-[48px] text-center text-xs font-medium px-2 py-0.5 rounded" style={{ background: q.ok ? 'rgba(52,211,153,0.1)' : 'transparent', color: q.ok ? 'rgb(52,211,153)' : '#F59E0B', border: q.ok ? 'none' : '1px solid rgba(245,158,11,0.4)' }}>{q.ok ? 'OK' : 'VAR'}</span>
                     <span className="text-xs font-mono text-slate-600 tabular-nums">{q.time}</span>
                   </div>
                 </div>
@@ -1259,12 +1259,12 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   const maxVal = Math.max(...arAgingData.map(a => a.value), 1);
                   const pct = (d.value / maxVal) * 100;
                   const barStyle = i === 0
-                    ? { background: 'linear-gradient(to right, rgba(74,222,128,0.8), rgba(74,222,128,0.6))' }
+                    ? { background: 'linear-gradient(to right, #D4A843, #FDB913)' }
                     : i === 1
-                    ? { background: 'linear-gradient(90deg, #C4933B, #FDB913)', opacity: 0.55 }
+                    ? { background: 'linear-gradient(90deg, #D97706, #F59E0B)' }
                     : i === 2
-                    ? { background: 'linear-gradient(90deg, #b45309, #f59e0b)', opacity: 0.8 }
-                    : { background: 'linear-gradient(90deg, #dc2626, #ef4444)', opacity: 0.8 };
+                    ? { background: 'linear-gradient(90deg, #DC2626, #EF4444)' }
+                    : { background: 'linear-gradient(90deg, #991B1B, #B91C1C)' };
                   return (
                     <div key={i}>
                       <div className="flex justify-between mb-1">

@@ -830,47 +830,8 @@ export default function Dashboard() {
           {/* ═══ COMMAND CENTER TAB CONTENT ═══ */}
           {activeTab === 'command' && (
           <div key="tab-command" className="tbos-mobile-card-stack" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
-          {/* (0) BRIEFING MATINAL — Full AI Intelligence Summary */}
-          <div className="relative z-[1] mb-5" style={{ animation: 'ccSectionIn 300ms ease-out 0ms both' }}>
-            <div style={{
-              borderTop: '2px solid #D4A843',
-              background: 'rgba(212, 168, 67, 0.03)',
-              border: '1px solid rgba(212, 168, 67, 0.08)',
-              borderRadius: 10,
-              padding: 20,
-              position: 'relative',
-              overflow: 'hidden',
-            }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: '#D4A843' }} />
-              {/* Header */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, letterSpacing: 2, color: '#D4A843', fontWeight: 400 }}>
-                  ✦ BRIEFING MATINAL — 14 MARS 2026
-                </span>
-                <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 10, padding: '3px 10px', borderRadius: 4, border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', background: 'rgba(212,168,67,0.08)' }}>
-                  Généré par IA · Claude Opus
-                </span>
-              </div>
-              {/* Body */}
-              <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, color: '#9CA3AF', lineHeight: 1.7, margin: 0 }}>
-                Production nominale prévue à <strong style={{ color: '#D4A843' }}>280 m³</strong>. Stock ciment à <strong style={{ color: '#D4A843' }}>53%</strong> (7,5j autonomie). 1 non-conformité traitée (BN-0140 <SmartLabel term="Affaissement">affaissement</SmartLabel>). <strong style={{ color: '#D4A843' }}>3 livraisons</strong> planifiées — alerte retard Résidences Atlas (+14 min, béton à 47 min/90). T-09 en maintenance (retour demain 08:00). Pipeline commercial : <strong style={{ color: '#D4A843' }}>155K DH</strong>, 6 devis en attente. Point critique : Sigma Bâtiment — <strong style={{ color: '#EF4444' }}>189K DH impayés</strong>, probabilité défaut <strong style={{ color: '#EF4444' }}>78%</strong>, livraisons suspendues. Certification NM 10.1.271 expire dans 26 jours — 0/2 tests effectués, <strong style={{ color: '#EF4444' }}>action urgente</strong>.
-              </p>
-              {/* Action buttons */}
-              <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
-                <button style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: '#D4A843', color: '#0F1629', border: 'none', cursor: 'pointer', letterSpacing: '0.05em' }}>
-                  Voir Rapport Complet
-                </button>
-                <button style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: 'transparent', color: '#EF4444', border: '1px solid rgba(239,68,68,0.4)', cursor: 'pointer', letterSpacing: '0.05em' }}>
-                  Relancer Sigma Bâtiment
-                </button>
-                <button style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: 'transparent', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)', cursor: 'pointer', letterSpacing: '0.05em' }}>
-                  Planifier Test NM
-                </button>
-              </div>
-            </div>
-          </div>
 
-          {/* (1) Hero — Command Cockpit Strip */}
+          {/* (1) Hero — Command Cockpit Strip — GREETING + SCORE FIRST */}
           <div className="relative z-[1]" style={{ marginBottom: 20, animation: 'ccSectionIn 300ms ease-out 50ms both' }}>
             <div
               className="tbos-hero-cockpit rounded-xl backdrop-blur-sm"
@@ -913,9 +874,6 @@ export default function Dashboard() {
                   <DailyScoreGauge score={87} deltaVsYesterday={3} streak={12} weeklyRecord={{ score: 94, day: 'jeudi' }} />
                 </div>
               </div>
-
-              {/* ── CALENDRIER OPÉRATIONNEL MULTI-MARCHÉS ── */}
-              <MultiMarketCalendar />
 
               {/* ── ROW 2: STATS BAR (the hero — Production Live format) ── */}
               <div className="tbos-stats-bar flex items-center gap-8 py-3 bg-gradient-to-r from-[#D4A843]/[0.03] via-transparent to-transparent rounded-lg">
@@ -1035,6 +993,46 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* (0) BRIEFING MATINAL — Full AI Intelligence Summary */}
+          <div className="relative z-[1] mb-5" style={{ animation: 'ccSectionIn 300ms ease-out 80ms both' }}>
+            <div style={{
+              borderTop: '2px solid #D4A843',
+              background: 'rgba(212, 168, 67, 0.03)',
+              border: '1px solid rgba(212, 168, 67, 0.08)',
+              borderRadius: 10,
+              padding: 20,
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: '#D4A843' }} />
+              {/* Header */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, letterSpacing: 2, color: '#D4A843', fontWeight: 400 }}>
+                  ✦ BRIEFING MATINAL — 14 MARS 2026
+                </span>
+                <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 10, padding: '3px 10px', borderRadius: 4, border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', background: 'rgba(212,168,67,0.08)' }}>
+                  Généré par IA · Claude Opus
+                </span>
+              </div>
+              {/* Body */}
+              <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, color: '#9CA3AF', lineHeight: 1.7, margin: 0 }}>
+                Production nominale prévue à <strong style={{ color: '#D4A843' }}>280 m³</strong>. Stock ciment à <strong style={{ color: '#D4A843' }}>53%</strong> (7,5j autonomie). 1 non-conformité traitée (BN-0140 <SmartLabel term="Affaissement">affaissement</SmartLabel>). <strong style={{ color: '#D4A843' }}>3 livraisons</strong> planifiées — alerte retard Résidences Atlas (+14 min, béton à 47 min/90). T-09 en maintenance (retour demain 08:00). Pipeline commercial : <strong style={{ color: '#D4A843' }}>155K DH</strong>, 6 devis en attente. Point critique : Sigma Bâtiment — <strong style={{ color: '#EF4444' }}>189K DH impayés</strong>, probabilité défaut <strong style={{ color: '#EF4444' }}>78%</strong>, livraisons suspendues. Certification NM 10.1.271 expire dans 26 jours — 0/2 tests effectués, <strong style={{ color: '#EF4444' }}>action urgente</strong>.
+              </p>
+              {/* Action buttons */}
+              <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+                <button style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: '#D4A843', color: '#0F1629', border: 'none', cursor: 'pointer', letterSpacing: '0.05em' }}>
+                  Voir Rapport Complet
+                </button>
+                <button style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: 'transparent', color: '#EF4444', border: '1px solid rgba(239,68,68,0.4)', cursor: 'pointer', letterSpacing: '0.05em' }}>
+                  Relancer Sigma Bâtiment
+                </button>
+                <button style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: 'transparent', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)', cursor: 'pointer', letterSpacing: '0.05em' }}>
+                  Planifier Test NM
+                </button>
               </div>
             </div>
           </div>
@@ -1171,7 +1169,6 @@ export default function Dashboard() {
               sparkline: '0,24 20,20 40,22 60,18 80,16 100,14 120,10',
               secondaryLabel: 'P&L',
               secondaryValue: 'Net: 24.2K DH',
-              plBreakdown: true,
               target: 32,
               targetLabel: 'OBJ',
             },
@@ -1244,23 +1241,7 @@ export default function Dashboard() {
                   )}
                 </div>
                 <div style={{ marginTop: 'auto' }}>
-                  {/* P&L breakdown for Marge card */}
-                  {'plBreakdown' in kpi && kpi.plBreakdown && (
-                    <div style={{ borderTop: '1px solid rgba(212,168,67,0.08)', paddingTop: 8, marginBottom: 6 }}>
-                      {[
-                        { label: 'Revenu', value: '75.6K', color: '#D4A843' },
-                        { label: '− Matières', value: '37.8K', color: '#9CA3AF' },
-                        { label: '− Logistique', value: '5.2K', color: '#9CA3AF' },
-                        { label: '− Autres', value: '8.4K', color: '#9CA3AF' },
-                        { label: '= Net', value: '24.2K', color: '#22C55E' },
-                      ].map(row => (
-                        <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 10, lineHeight: 1.8 }}>
-                          <span style={{ color: '#9CA3AF' }}>{row.label}</span>
-                          <span style={{ color: row.color, fontWeight: row.label === '= Net' ? 600 : 200 }}>{row.value}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  {/* P&L breakdown removed — dedicated P&L card handles this */}
                   <div className="flex items-end justify-between pt-3 mt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
                     <svg width="130" height="44" viewBox="0 0 130 44" className="min-w-[130px] min-h-[44px]" style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.2))' }}>
                       {(() => {
@@ -1391,6 +1372,11 @@ export default function Dashboard() {
               </TiltCard>
             );
           })()}
+          </div>
+
+          {/* (3b) CALENDRIER OPÉRATIONNEL — reference material, below KPIs */}
+          <div className="relative z-[1] mb-5" style={{ animation: 'ccSectionIn 300ms ease-out 400ms both' }}>
+            <MultiMarketCalendar />
           </div>
 
           {/* (4) Intelligence IA section */}
