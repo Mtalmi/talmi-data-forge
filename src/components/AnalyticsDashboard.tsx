@@ -235,12 +235,12 @@ export default function AnalyticsDashboard() {
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={customerMetricsData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                  <XAxis dataKey="month" stroke="#666" />
-                  <YAxis yAxisId="left" stroke="#666" />
-                  <YAxis yAxisId="right" orientation="right" stroke="#666" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                  <XAxis dataKey="month" stroke="#9CA3AF" />
+                  <YAxis yAxisId="left" stroke="#9CA3AF" />
+                  <YAxis yAxisId="right" orientation="right" stroke="#9CA3AF" />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#1a1a1a", border: "1px solid #333" }}
+                    contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", color: "#FFFFFF" }}
                   />
                   <Legend />
                   <Line
