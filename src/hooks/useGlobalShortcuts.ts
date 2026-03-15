@@ -22,7 +22,7 @@ export function useGlobalShortcuts() {
     const handler = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
       const tag = target.tagName;
-      const isInput = tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable;
+      const isInput = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target.isContentEditable;
       const hasModal = !!document.querySelector('[data-tbos-modal]');
 
       // Escape always works
