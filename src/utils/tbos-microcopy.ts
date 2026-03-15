@@ -67,7 +67,7 @@ export function getShutdownUrgency(daysUntil: number, costPerDay?: string): Shut
 
 /* ─── TIME-CONTEXTUAL SUGGESTIONS ─── */
 export function getTimeContextualTip(): string {
-  const hour = new Date().getHours();
+  const hour = getMoroccoHour();
   if (hour < 8)  return 'Priorité du matin: vérifier les niveaux de stock et confirmer les premières livraisons.';
   if (hour < 12) return 'Production en cours. Surveillez le pic de cadence attendu entre 10h et 14h.';
   if (hour < 14) return 'Mi-journée. Bon moment pour vérifier les paiements et relancer les devis en attente.';
