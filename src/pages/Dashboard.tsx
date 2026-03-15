@@ -808,8 +808,7 @@ export default function Dashboard() {
   
 
 
-        {/* ── COMPETITIVE POSITIONING ── */}
-        <CompetitivePositioning />
+
 
           <div className="relative z-[1] mb-5" style={{
             background: 'linear-gradient(145deg, #11182E, #162036)',
