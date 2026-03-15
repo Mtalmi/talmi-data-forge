@@ -5,6 +5,7 @@ import {
 } from '@/components/ui/TBOSModal';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { sanitizeInput } from '@/lib/security';
 
 const MATERIAUX = [
   { value: 'ciment', label: 'Ciment', unit: 'kg' },
@@ -36,8 +37,6 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
 
   const selectedMat = MATERIAUX.find(m => m.value === materiau);
 
-  const sanitize = (s: string) => s.replace(/<[^>]*>/g, '').trim();
-
   const validate = () => {
     const e: Record<string, string> = {};
     if (!materiau) e.materiau = 'Champ requis';
@@ -51,32 +50,29 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
   };
 
   const handleSubmit = async () => {
-    if (loading) return; // double-submit guard
+    if (loading) return;
     if (!validate()) return;
     setLoading(true);
     try {
       const matLabel = selectedMat?.label || materiau;
       const qty = parseFloat(quantite);
 
-      // Get current stock level
       const { data: stockRow } = await supabase
         .from('stocks')
         .select('id, quantite_actuelle')
         .eq('materiau', matLabel)
         .maybeSingle();
 
-      const currentQty = stockRow?.quantite_actuelle || 0;
+      const currentQty = (stockRow as any)?.quantite_actuelle ?? 0;
 
-      // Prevent withdrawing more than available
       if (type === 'sortie' && qty > currentQty) {
-        setErrors({ quantite: `Stock insuffisant (disponible: ${currentQty} ${selectedMat?.unit})` });
+        setErrors({ quantite: `Stock insuffisant (disponible: ${currentQty} ${selectedMat?.unit || ''})` });
         setLoading(false);
         return;
       }
 
-      const newQty = type === 'entree' ? currentQty + qty : currentQty - qty;
+      const newQty = Math.max(0, type === 'entree' ? currentQty + qty : currentQty - qty);
 
-      // Insert mouvement
       const { error: mvtError } = await supabase
         .from('mouvements_stock')
         .insert({
@@ -85,14 +81,13 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
           quantite: qty,
           quantite_avant: currentQty,
           quantite_apres: newQty,
-          fournisseur: sanitize(fournisseur) || null,
-          notes: sanitize(notes) || null,
+          fournisseur: sanitizeInput(fournisseur) || null,
+          notes: sanitizeInput(notes) || null,
         });
 
       if (mvtError) throw mvtError;
 
-      // Update stock level
-      if (stockRow?.id) {
+      if ((stockRow as any)?.id) {
         const { error: updateError } = await supabase
           .from('stocks')
           .update({
@@ -100,22 +95,21 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
             updated_at: new Date().toISOString(),
             ...(type === 'entree' ? { derniere_reception_at: new Date().toISOString() } : {}),
           })
-          .eq('id', stockRow.id);
+          .eq('id', (stockRow as any).id);
 
         if (updateError) throw updateError;
       }
 
-      // Log activity
       await supabase.from('activity_log').insert({
         type: 'action',
-        message: `Mouvement ${type === 'entree' ? 'entrée' : 'sortie'} enregistré — ${matLabel} ${qty} ${selectedMat?.unit}`,
+        message: `Mouvement ${type === 'entree' ? 'entrée' : 'sortie'} enregistré — ${matLabel} ${qty} ${selectedMat?.unit || ''}`,
         source_page: 'stocks',
-        severite: type === 'sortie' && newQty < (stockRow?.quantite_actuelle || 0) * 0.2 ? 'warning' : 'info',
+        severite: type === 'sortie' && newQty < currentQty * 0.2 ? 'warning' : 'info',
       }).then(() => {});
 
-      const mvt = { type, materiau: matLabel, quantite: qty, fournisseur: sanitize(fournisseur), reference: sanitize(reference), date, responsable, notes: sanitize(notes) };
+      const mvt = { type, materiau: matLabel, quantite: qty, fournisseur: sanitizeInput(fournisseur), reference: sanitizeInput(reference), date, responsable, notes: sanitizeInput(notes) };
       onCreated?.(mvt);
-      showFormSuccess(`✓ Mouvement ${type === 'entree' ? 'entrée' : 'sortie'} enregistré — ${matLabel} ${qty} ${selectedMat?.unit}`);
+      showFormSuccess(`✓ Mouvement ${type === 'entree' ? 'entrée' : 'sortie'} enregistré — ${matLabel} ${qty} ${selectedMat?.unit || ''}`);
       resetAndClose();
     } catch (error: any) {
       console.error('Error saving stock movement:', error);
@@ -138,10 +132,9 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
       </>
     }>
       <TBOSFormStack>
-        {/* Type toggle */}
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 8 }} role="radiogroup" aria-label="Type de mouvement">
           {(['entree', 'sortie'] as const).map(t => (
-            <button key={t} onClick={() => setType(t)} style={{
+            <button key={t} onClick={() => setType(t)} role="radio" aria-checked={type === t} style={{
               flex: 1, padding: '10px 16px', borderRadius: 6, cursor: 'pointer',
               fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, fontWeight: 700,
               letterSpacing: '1.5px', textTransform: 'uppercase',

@@ -5,6 +5,7 @@ import {
   TBOSModal, TBOSField, TBOSInput, TBOSSelect, TBOSTextarea,
   TBOSPrimaryButton, TBOSGhostButton, TBOSFormRow, TBOSFormStack, showFormSuccess,
 } from '@/components/ui/TBOSModal';
+import { sanitizeClientName, sanitizeInput } from '@/lib/security';
 
 const SEGMENTS = [
   { value: 'Premium', label: 'Premium' },
@@ -28,16 +29,15 @@ export function NouveauClientModal({ open, onClose, onCreated }: Props) {
 
   const set = (k: string, v: string) => setForm(p => ({ ...p, [k]: v }));
 
-  const sanitize = (s: string) => s.replace(/<[^>]*>/g, '').trim();
   const emailValid = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
   const phoneValid = (p: string) => /^[+\d\s()-]{6,20}$/.test(p);
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!sanitize(form.nom)) e.nom = 'Champ requis';
+    if (!sanitizeClientName(form.nom)) e.nom = 'Champ requis';
     else if (form.nom.length > 100) e.nom = 'Max 100 caractères';
     if (!form.segment) e.segment = 'Champ requis';
-    if (!sanitize(form.contact)) e.contact = 'Champ requis';
+    if (!sanitizeInput(form.contact)) e.contact = 'Champ requis';
     if (!form.email.trim()) e.email = 'Champ requis';
     else if (!emailValid(form.email)) e.email = 'Format email invalide';
     else if (form.email.length > 255) e.email = 'Max 255 caractères';
@@ -48,18 +48,18 @@ export function NouveauClientModal({ open, onClose, onCreated }: Props) {
   };
 
   const handleSubmit = async () => {
-    if (loading) return; // double-submit guard
+    if (loading) return;
     if (!validate()) return;
     setLoading(true);
     try {
       const clientId = `CLI-${Date.now().toString(36).toUpperCase()}`;
       const { error } = await supabase.from('clients').insert({
         client_id: clientId,
-        nom_client: sanitize(form.nom),
+        nom_client: sanitizeClientName(form.nom),
         segment: form.segment,
         email: form.email.trim().toLowerCase(),
         telephone: form.telephone.trim(),
-        ville: sanitize(form.adresse) || null,
+        ville: sanitizeInput(form.adresse) || null,
         score_sante: 50,
         statut: 'actif',
       });
@@ -72,7 +72,7 @@ export function NouveauClientModal({ open, onClose, onCreated }: Props) {
         setLoading(false);
         return;
       }
-      showFormSuccess(`✓ Client "${sanitize(form.nom)}" créé avec succès — ${clientId}`);
+      showFormSuccess(`✓ Client "${sanitizeClientName(form.nom)}" créé avec succès — ${clientId}`);
       onCreated?.();
       resetAndClose();
     } catch (err: any) {

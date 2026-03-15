@@ -12,6 +12,7 @@ import { useSessionTimeout } from '@/hooks/useSessionTimeout';
 import { enforceHttps, logSecurityStatus } from '@/lib/security';
 import { applySecurityHeaders } from '@/lib/securityHeaders';
 import { useAuth } from '@/hooks/useAuth';
+import { useVisibilityRefresh } from '@/hooks/useVisibilityRefresh';
 
 interface SecurityProviderProps {
   children: ReactNode;
@@ -54,6 +55,13 @@ export function SecurityProvider({ children }: SecurityProviderProps) {
       console.log('⏱️ Session timeout: 2 hours of inactivity');
     }
   }, [isLoggedIn]);
+
+  // Refresh data when tab becomes visible again (after sleep/switch)
+  useVisibilityRefresh(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🛡️ Titanium Shield: Tab visible — refreshing session');
+    }
+  });
 
   return <>{children}</>;
 }

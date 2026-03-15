@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { generateNumero } from '@/lib/generateNumero';
 import { toast } from 'sonner';
 import { useDeliveredBons } from '@/hooks/useModalData';
+import { sanitizeInput } from '@/lib/security';
 
 const TVA_OPTIONS = [
   { value: '0', label: '0%' },
@@ -42,7 +43,7 @@ export function NouvelleFactureModal({ open, onClose, onCreated }: Props) {
     setBl(val);
     const found = bons.find(b => b.value === val);
     if (found) {
-      setMontantHT(String(found.montant));
+      setMontantHT(String(found.montant ?? 0));
       const d = new Date();
       d.setDate(d.getDate() + 30);
       setEcheance(d.toISOString().slice(0, 10));
@@ -52,13 +53,21 @@ export function NouvelleFactureModal({ open, onClose, onCreated }: Props) {
   const montantTTC = useMemo(() => {
     const ht = parseFloat(montantHT);
     const t = parseFloat(tva);
-    return ht > 0 ? ht * (1 + t / 100) : 0;
+    return ht > 0 && !isNaN(t) ? ht * (1 + t / 100) : 0;
   }, [montantHT, tva]);
 
   const validate = () => {
     const e: Record<string, string> = {};
     if (!bl) e.bl = 'Champ requis';
-    if (!montantHT || parseFloat(montantHT) <= 0) e.montantHT = 'Valeur doit être positive';
+    const ht = parseFloat(montantHT);
+    if (!montantHT || isNaN(ht) || ht <= 0) e.montantHT = 'Valeur doit être positive';
+
+    if (dateEmission && echeance) {
+      if (new Date(echeance) <= new Date(dateEmission)) {
+        e.echeance = 'L\'échéance doit être après la date d\'émission';
+      }
+    }
+
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -81,8 +90,8 @@ export function NouvelleFactureModal({ open, onClose, onCreated }: Props) {
           client_id: selectedBL?.clientId || 'UNKNOWN',
           client_nom: selectedBL?.client || null,
           formule_id: selectedBL?.formuleId || 'F-B25',
-          volume_m3: selectedBL?.volume || 8,
-          prix_vente_m3: selectedBL?.prixM3 || (ht / 8),
+          volume_m3: selectedBL?.volume ?? 0,
+          prix_vente_m3: selectedBL?.prixM3 ?? (ht / Math.max(1, selectedBL?.volume ?? 1)),
           total_ht: ht,
           tva_pct: tvaRate,
           total_ttc: ttc,
@@ -90,7 +99,7 @@ export function NouvelleFactureModal({ open, onClose, onCreated }: Props) {
           date_facture: dateEmission,
           date_echeance: echeance || null,
           mode_paiement: mode || null,
-          notes: notes || null,
+          notes: sanitizeInput(notes) || null,
           statut: 'courante',
         });
 
@@ -98,13 +107,13 @@ export function NouvelleFactureModal({ open, onClose, onCreated }: Props) {
 
       await supabase.from('activity_log').insert({
         type: 'action',
-        message: `Facture ${facId} émise — ${selectedBL?.client} · ${ttc.toLocaleString('fr-FR')} DH TTC`,
+        message: `Facture ${facId} émise — ${selectedBL?.client ?? 'Client'} · ${ttc.toLocaleString('fr-FR')} DH TTC`,
         source_page: 'creances',
         severite: 'success',
       });
 
       onCreated?.({ id: facId, bl: selectedBL?.label, client: selectedBL?.client, montantHT: ht, tva: tvaRate, montantTTC: ttc, dateEmission, echeance, mode });
-      showFormSuccess(`✓ Facture ${facId} émise — ${selectedBL?.client}`);
+      showFormSuccess(`✓ Facture ${facId} émise — ${selectedBL?.client ?? ''}`);
       resetAndClose();
     } catch (error: any) {
       console.error('Error creating invoice:', error);
@@ -122,7 +131,7 @@ export function NouvelleFactureModal({ open, onClose, onCreated }: Props) {
     <TBOSModal open={open} onClose={resetAndClose} title="Nouvelle Facture" footer={
       <>
         <TBOSGhostButton onClick={resetAndClose}>Annuler</TBOSGhostButton>
-        <TBOSPrimaryButton onClick={handleSubmit} loading={loading}>Émettre Facture</TBOSPrimaryButton>
+        <TBOSPrimaryButton onClick={handleSubmit} loading={loading} disabled={loading}>Émettre Facture</TBOSPrimaryButton>
       </>
     }>
       <TBOSFormStack>
@@ -131,7 +140,7 @@ export function NouvelleFactureModal({ open, onClose, onCreated }: Props) {
             options={bons.map(b => ({ value: b.value, label: b.label }))} placeholder={bons.length === 0 ? 'Aucun BL livré disponible' : 'Sélectionner un BL'} />
         </TBOSField>
 
-        {selectedBL && <TBOSDisplayField label="Client" value={selectedBL.client} />}
+        {selectedBL && <TBOSDisplayField label="Client" value={selectedBL.client ?? '—'} />}
 
         <TBOSFormRow cols={3}>
           <TBOSField label="Montant HT (DH)" required error={errors.montantHT}>
@@ -148,8 +157,8 @@ export function NouvelleFactureModal({ open, onClose, onCreated }: Props) {
           <TBOSField label="Date émission">
             <TBOSInput type="date" value={dateEmission} onChange={e => setDateEmission(e.target.value)} />
           </TBOSField>
-          <TBOSField label="Échéance">
-            <TBOSInput type="date" value={echeance} onChange={e => setEcheance(e.target.value)} />
+          <TBOSField label="Échéance" error={errors.echeance}>
+            <TBOSInput type="date" value={echeance} onChange={e => setEcheance(e.target.value)} hasError={!!errors.echeance} />
           </TBOSField>
         </TBOSFormRow>
 
@@ -158,7 +167,7 @@ export function NouvelleFactureModal({ open, onClose, onCreated }: Props) {
         </TBOSField>
 
         <TBOSField label="Notes">
-          <TBOSTextarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes..." />
+          <TBOSTextarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes..." maxLength={500} />
         </TBOSField>
       </TBOSFormStack>
     </TBOSModal>

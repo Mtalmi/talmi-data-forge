@@ -7,6 +7,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useTodayBatches } from '@/hooks/useModalData';
+import { sanitizeInput } from '@/lib/security';
 
 const TEST_TYPES = [
   { value: 'slump', label: 'Slump (Affaissement)', unit: 'cm', norme: '15-20 cm', min: 15, max: 20 },
@@ -50,15 +51,13 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
     return { ok: false, text: `✗ ${val < selectedTest.min ? '-' : '+'}${deviation}% hors norme` };
   }, [selectedTest, resultat]);
 
-  const sanitize = (s: string) => s.replace(/<[^>]*>/g, '').trim();
-
   const validate = () => {
     const e: Record<string, string> = {};
     if (!batch) e.batch = 'Champ requis';
     if (!testType) e.testType = 'Champ requis';
     const val = parseFloat(resultat);
     if (!resultat || isNaN(val)) e.resultat = 'Champ requis';
-    else if (val <= 0 && testType !== 'ratio_ec') e.resultat = 'Valeur doit être positive';
+    else if (val < 0 && testType !== 'ratio_ec') e.resultat = 'Valeur ne peut pas être négative';
     if (!operateur) e.operateur = 'Champ requis';
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -80,7 +79,7 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
         date_prelevement: new Date().toISOString().split('T')[0],
         technicien_prelevement: OPERATORS.find(o => o.value === operateur)?.label || operateur,
         technicien_test: OPERATORS.find(o => o.value === operateur)?.label || operateur,
-        notes: sanitize(notes) || null,
+        notes: sanitizeInput(notes) || null,
         alerte_qualite: !isConforme,
       };
 
@@ -119,7 +118,7 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
         }).then(() => {});
       }
 
-      const test = { batch, testType: selectedTest?.label, resultat: val, conforme: isConforme, operateur, notes: sanitize(notes) };
+      const test = { batch, testType: selectedTest?.label, resultat: val, conforme: isConforme, operateur, notes: sanitizeInput(notes) };
       onCreated?.(test);
       showFormSuccess(`✓ Test ${selectedTest?.label} enregistré — ${batch}`);
       resetAndClose();
@@ -165,7 +164,7 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
           {ecart && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <label style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 11, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Écart</label>
-              <div style={{
+              <div role="status" style={{
                 padding: '10px 14px', borderRadius: 6, fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 13,
                 fontWeight: 700, color: ecart.ok ? '#22C55E' : '#EF4444',
                 background: ecart.ok ? 'rgba(34,197,94,0.08)' : 'rgba(239,68,68,0.08)',
