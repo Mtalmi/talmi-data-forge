@@ -460,7 +460,7 @@ function AIAnalystBrief() {
         onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
         onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.12)'; e.currentTarget.style.transform = 'translateY(0)'; }}
       >
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 99, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: '#D4A843', zIndex: 99, pointerEvents: 'none' }} />
       <Card className="ops-enter ops-surface-card" style={{ borderRadius: 8, border: 'none', background: 'transparent', transition: 'all 200ms ease-out' }}>
 
 
