@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { AIAgentCard } from "@/components/shared/AIAgentCard";
 import { useUnitFormat } from '@/hooks/useUnitFormat';
 
 const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
