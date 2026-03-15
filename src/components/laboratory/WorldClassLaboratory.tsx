@@ -1208,7 +1208,7 @@ function HistoriqueNormesTab() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <BookOpen size={16} color={T.gold} />
-              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 13, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>✦ Référentiel Normes</span>
+              <span style={{ color: T.gold, fontFamily: MONO, fontWeight: 700, fontSize: 12, textTransform: 'uppercase' as const, letterSpacing: '0.15em' }}>✦ Référentiel Normes</span>
               <span style={{ fontFamily: MONO, fontSize: 10, color: '#D4A843', padding: '2px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4 }}>NM 10.1.008</span>
             </div>
           </div>
