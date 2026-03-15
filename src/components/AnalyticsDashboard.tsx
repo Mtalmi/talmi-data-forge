@@ -229,18 +229,18 @@ export default function AnalyticsDashboard() {
         {/* Customers Tab */}
         {activeTab === "customers" && (
           <Card className="bg-card border-border md:col-span-2">
-            <CardHeader>
-              <CardTitle>Customer Growth & Revenue</CardTitle>
-            </CardHeader>
-            <CardContent>
+              <CardHeader>
+                <CardTitle>Croissance Clients & Chiffre d'Affaires</CardTitle>
+              </CardHeader>
+              <CardContent>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={customerMetricsData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                  <XAxis dataKey="month" stroke="#9CA3AF" />
-                  <YAxis yAxisId="left" stroke="#9CA3AF" />
-                  <YAxis yAxisId="right" orientation="right" stroke="#9CA3AF" />
+                  <XAxis dataKey="month" tick={{ fill: '#9CA3AF', fontSize: 11 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                  <YAxis yAxisId="left" tick={{ fill: '#9CA3AF', fontSize: 11 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                  <YAxis yAxisId="right" orientation="right" tick={{ fill: '#9CA3AF', fontSize: 11 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", color: "#FFFFFF" }}
+                    contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", borderRadius: 8, color: "#FFFFFF" }}
                   />
                   <Legend />
                   <Line
