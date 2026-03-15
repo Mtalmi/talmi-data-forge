@@ -73,7 +73,7 @@ export function TBOSModal({ open, onClose, title, children, footer, width = 600 
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
       style={{
         position: 'fixed', inset: 0, zIndex: 100,
-        background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)',
+        background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: 16,
         opacity: visible ? 1 : 0,
@@ -87,7 +87,9 @@ export function TBOSModal({ open, onClose, title, children, footer, width = 600 
         aria-labelledby={titleId}
         style={{
           width, maxWidth: '95vw', maxHeight: '80vh',
-          background: '#1A2332',
+          background: 'rgba(26, 35, 50, 0.9)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
           border: '1px solid rgba(212,168,67,0.15)',
           borderRadius: 12,
           boxShadow: '0 16px 64px rgba(0,0,0,0.6)',

@@ -361,9 +361,9 @@ export function DevisDetailDialog({
               Shows when devis is validated/accepted
           ===================================================== */}
           {isLocked && (
-            <Alert className="bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-600">
-              <ShieldCheck className="h-4 w-4 text-slate-700 dark:text-slate-300" />
-              <AlertDescription className="text-slate-700 dark:text-slate-300">
+            <Alert className="bg-white/[0.04] border-white/[0.08]">
+              <ShieldCheck className="h-4 w-4 text-slate-400" />
+              <AlertDescription className="text-slate-300">
                 <strong>Document Scellé</strong> — Ce devis a été validé et ne peut plus être modifié. 
                 Les prix et conditions sont désormais contractuels.
                 {(devis as any).validated_by_name && (
@@ -640,7 +640,7 @@ export function DevisDetailDialog({
                     {correctionHistory.map((entry) => (
                       <div 
                         key={entry.id} 
-                        className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border-l-4 border-destructive shadow-sm"
+                        className="bg-white/[0.03] p-4 rounded-lg border-l-4 border-destructive shadow-sm"
                       >
                         <div className="flex justify-between items-start mb-2">
                           <span className="font-bold text-sm text-foreground">
@@ -651,7 +651,7 @@ export function DevisDetailDialog({
                           </span>
                         </div>
                         {entry.changes?.reason && (
-                          <p className="text-sm text-gray-700 dark:text-gray-300 italic mb-2">
+                          <p className="text-sm text-slate-300 italic mb-2">
                             "{entry.changes.reason}"
                           </p>
                         )}
@@ -667,7 +667,7 @@ export function DevisDetailDialog({
                   </div>
                 </ScrollArea>
               ) : (
-                <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-900/30 border border-dashed border-gray-300 dark:border-gray-700">
+                <div className="p-4 rounded-lg bg-white/[0.02] border border-dashed border-white/[0.1]">
                   <p className="text-sm text-muted-foreground italic text-center">
                     ✓ Aucune correction enregistrée pour ce devis.
                   </p>
