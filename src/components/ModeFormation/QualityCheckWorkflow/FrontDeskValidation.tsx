@@ -107,7 +107,7 @@ export function FrontDeskValidation({
       timestamp: new Date().toISOString(),
     };
 
-    console.log('[VERIFICATION_FORM]:', formData);
+    
     setVerificationSubmitted(true);
     setShowVerificationForm(false);
     
