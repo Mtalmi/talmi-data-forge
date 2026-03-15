@@ -3917,6 +3917,7 @@ nav,
   border-radius: var(--radius-md) !important;
   box-shadow: var(--sh-active) !important;
   backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
 }
 
 /* ─── Modal / Dialog ─── */
