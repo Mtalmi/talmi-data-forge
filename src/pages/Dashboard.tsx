@@ -1135,7 +1135,7 @@ export default function Dashboard() {
                   onMouseEnter={e => { e.currentTarget.style.background = '#FDB913'; }}
                   onMouseLeave={e => { e.currentTarget.style.background = '#D4A843'; }}
                 >
-                  Commander Adjuvant Maintenant
+                  Commander {demoData.shutdownRisk.material} Maintenant
                 </button>
                 <button
                   onClick={() => navigate('/stocks')}
