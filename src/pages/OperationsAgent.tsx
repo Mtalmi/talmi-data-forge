@@ -202,7 +202,7 @@ function RiskBadge({ level }: { level: string }) {
 function copyWebhookUrl(path: string) {
   const url = `${SUPABASE_URL}/functions/v1/${path}`;
   navigator.clipboard.writeText(url);
-  toast.success("Webhook URL copied to clipboard");
+  toast.success("URL du webhook copiée dans le presse-papier");
 }
 
 function timeAgo(dateStr: string): string {
