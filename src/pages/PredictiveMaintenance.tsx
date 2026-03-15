@@ -208,9 +208,9 @@ export default function PredictiveMaintenance() {
         {/* Critical alert banner */}
         {!alertDismissed && (
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border border-[#EF4444]/30 bg-[#EF4444]/10 px-5 py-4 flex items-center justify-between" style={{ animation: "pulse 2s ease-in-out infinite" }}>
-            <p className="text-sm"><span className="font-semibold text-[#EF4444]">🚨 CRITICAL:</span> <span className="text-[#B0B8C1]">Mixer Unit MX-003 (Casablanca North) — Bearing failure predicted in 3 days. Immediate inspection required.</span></p>
+            <p className="text-sm"><span className="font-semibold text-[#EF4444]">🚨 CRITIQUE :</span> <span className="text-[#B0B8C1]">Malaxeur MX-003 (Casablanca Nord) — Défaillance roulement prédite dans 3 jours. Inspection immédiate requise.</span></p>
             <div className="flex items-center gap-2">
-              <button onClick={() => setSelectedEquipment("MX-003")} className="px-3 py-1 text-xs rounded-lg bg-[#EF4444] text-white">View Details →</button>
+              <button onClick={() => setSelectedEquipment("MX-003")} className="px-3 py-1 text-xs rounded-lg bg-[#EF4444] text-white">Voir Détails →</button>
               <button onClick={() => setAlertDismissed(true)} className="text-[#B0B8C1] hover:text-white text-lg">×</button>
             </div>
           </motion.div>
