@@ -216,6 +216,11 @@ export function FacturesTable({
 
   const { sortedData: sortedFactures, sortKey, sortDirection, handleSort } = useTableSort(filteredFactures, '_date', 'desc');
 
+  const FACT_PAGE_SIZE = 25;
+  const [factPage, setFactPage] = useState(1);
+  useMemo(() => { setFactPage(1); }, [filteredFactures.length]);
+  const paginatedFactures = sortedFactures.slice((factPage - 1) * FACT_PAGE_SIZE, factPage * FACT_PAGE_SIZE);
+
   const handleSelectAll = (checked: boolean) => {
     if (!onSelectionChange) return;
     if (checked) {
