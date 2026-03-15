@@ -44,8 +44,10 @@ const INITIAL: DashboardLiveData = {
 export function useDashboardData() {
   const [data, setData] = useState<DashboardLiveData>(INITIAL);
   const mountedRef = useRef(true);
+  const fetchIdRef = useRef(0);
 
   const fetchAll = useCallback(async () => {
+    const currentFetchId = ++fetchIdRef.current;
     try {
       const today = new Date().toISOString().split('T')[0];
       const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
@@ -125,7 +127,7 @@ export function useDashboardData() {
           .gte('created_at', today + 'T00:00:00'),
       ]);
 
-      if (!mountedRef.current) return;
+      if (!mountedRef.current || currentFetchId !== fetchIdRef.current) return;
 
       // Calculate production
       const allBons = bonsToday.data || [];

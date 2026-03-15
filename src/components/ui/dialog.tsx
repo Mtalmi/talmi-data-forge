@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 // Use modal={false} to prevent Radix from setting pointer-events:none on body
 // which blocks Select/Dropdown portals on touch devices (iPad/mobile)
-const Dialog = ({ modal = false, ...props }: DialogPrimitive.DialogProps) => (
+const Dialog = ({ modal = true, ...props }: DialogPrimitive.DialogProps) => (
   <DialogPrimitive.Root modal={modal} {...props} />
 );
 
