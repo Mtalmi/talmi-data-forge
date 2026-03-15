@@ -321,7 +321,7 @@ export function OverviewTab({ AUTONOMY, STOCK_ALERTS_DB, REORDER_RECS, STOCKS, o
               { label: 'TENDANCE', value: trendDelta >= 0 ? `↑ +${trendDelta} pts` : `↓ ${trendDelta} pts`, color: trendDelta >= 0 ? '#22C55E' : '#EF4444' },
             ].map(s => (
               <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontFamily: MONO, fontSize: 10, color: '#9CA3AF', fontWeight: 600, letterSpacing: '0.1em' }}>{s.label}</span>
+                <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF', fontWeight: 600, letterSpacing: '0.1em' }}>{s.label}</span>
                 <span style={{ fontFamily: MONO, fontSize: 13, color: s.color, fontWeight: 600 }}>{s.value}</span>
               </div>
             ))}
