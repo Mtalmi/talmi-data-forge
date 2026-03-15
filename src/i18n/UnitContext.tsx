@@ -145,6 +145,8 @@ export function UnitProvider({ children }: { children: ReactNode }) {
       return cfg.pressure.roundTo > 1 ? Math.round(raw / cfg.pressure.roundTo) * cfg.pressure.roundTo : +(raw.toFixed(1));
     },
     distance: (km) => +(km * cfg.distance.factor).toFixed(cfg.distance.decimals),
+    speed: (kmh) => Math.round(kmh * cfg.speed.factor),
+    slump: (cm) => +(cm * cfg.slump.factor).toFixed(cfg.slump.decimals),
     grade: (g) => cfg.concreteGrades[g] ?? g,
     norm: (n) => cfg.norms[n] ?? n,
     isConverted: system !== 'mena',
