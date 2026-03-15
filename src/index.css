@@ -5888,28 +5888,53 @@ table tbody tr:hover,
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── BUTTON SYSTEM ── */
+/* ── BUTTON SYSTEM (Global baseline for ALL buttons) ── */
+button, [role="button"] {
+  cursor: pointer;
+}
+button:focus-visible, [role="button"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #0F1629, 0 0 0 4px #D4A843;
+  border-radius: 6px;
+}
+button:disabled, [role="button"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+@media (max-width: 768px) {
+  button, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
 .tbos-btn {
   font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace !important;
   font-size: 12px !important;
   font-weight: 600 !important;
-  letter-spacing: 0.5px !important;
+  padding: 8px 16px !important;
   border-radius: 6px !important;
-  padding: 8px 20px !important;
-  transition: all 200ms ease !important;
   cursor: pointer !important;
+  transition: all 150ms ease-out !important;
   display: inline-flex !important;
   align-items: center !important;
   gap: 6px !important;
   white-space: nowrap !important;
+  min-height: 44px !important;
+}
+.tbos-btn:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 2px #0F1629, 0 0 0 4px #D4A843 !important;
 }
 .tbos-btn:active { transform: scale(0.98) !important; }
+.tbos-btn:disabled { opacity: 0.5 !important; cursor: not-allowed !important; }
 
 .tbos-btn-primary {
   background: #D4A843 !important;
-  color: #0F1629 !important;
+  color: #FFFFFF !important;
   border: none !important;
 }
-.tbos-btn-primary:hover { background: #E8C96A !important; }
+.tbos-btn-primary:hover { background: #C49A3C !important; }
 
 .tbos-btn-secondary {
   background: transparent !important;
@@ -5937,7 +5962,7 @@ table tbody tr:hover,
   color: #9CA3AF !important;
   border: none !important;
 }
-.tbos-btn-ghost:hover { color: #D4A843 !important; }
+.tbos-btn-ghost:hover { color: #FFFFFF !important; background: rgba(255, 255, 255, 0.05) !important; }
 
 /* ── BADGE SYSTEM ── */
 .tbos-badge {

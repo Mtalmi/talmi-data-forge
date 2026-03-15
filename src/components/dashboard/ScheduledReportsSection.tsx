@@ -44,13 +44,8 @@ export function ScheduledReportsSection() {
               </span>
               <button
                 onClick={handleToast}
-                style={{
-                  fontFamily: MONO, fontSize: 10, color: '#64748B',
-                  background: 'transparent', border: 'none', cursor: 'pointer',
-                  padding: '2px 6px',
-                }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#64748B'; }}
+                className="tbos-btn tbos-btn-ghost"
+                style={{ padding: '2px 6px', minHeight: 'auto', fontSize: 10 }}
               >
                 {i === 0 ? 'Programmer' : 'Modifier'}
               </button>
@@ -59,17 +54,8 @@ export function ScheduledReportsSection() {
 
           <button
             onClick={handleToast}
-            style={{
-              fontFamily: MONO, fontSize: 11, fontWeight: 600,
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '8px 16px', borderRadius: 8,
-              background: 'transparent',
-              border: '1px solid rgba(212,168,67,0.3)',
-              color: '#D4A843', cursor: 'pointer',
-              transition: 'background 150ms',
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(212,168,67,0.08)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+            className="tbos-btn tbos-btn-secondary"
+            style={{ padding: '8px 16px' }}
           >
             <Plus size={13} />
             Nouveau Rapport

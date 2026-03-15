@@ -42,8 +42,7 @@ export default function FixPromptGenerator() {
         </select>
         <button
           onClick={generate}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-black"
-          style={{ background: 'linear-gradient(135deg, #FFD700, #B8860B)' }}
+          className="tbos-btn tbos-btn-primary"
         >
           <Wrench className="w-4 h-4" /> Générer Prompts Lovable
         </button>
@@ -56,7 +55,8 @@ export default function FixPromptGenerator() {
           </pre>
           <button
             onClick={copy}
-            className="absolute top-2 right-2 flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-md border border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/10 transition-colors"
+            className="absolute top-2 right-2 tbos-btn tbos-btn-secondary"
+            style={{ padding: '4px 8px', minHeight: 'auto', fontSize: 12 }}
           >
             <Copy className="w-3 h-3" /> Copier
           </button>
