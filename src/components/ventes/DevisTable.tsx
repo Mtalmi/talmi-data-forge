@@ -420,23 +420,17 @@ export function DevisTable({
                 className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
               />
             </TableHead>
-            {(['N° Devis', 'Client', 'Formule', 'Vol (m³)', 'Total HT (DH)', 'Statut', 'Score IA', 'Conversion', 'Date', 'Prté', 'Actions'] as const).map((label, i) => (
-              <TableHead
-                key={label}
-                style={{
-                  padding: '10px 8px',
-                  fontSize: 10,
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  letterSpacing: '1.5px',
-                  color: '#9CA3AF',
-                  fontFamily: 'ui-monospace, monospace',
-                  textAlign: i >= 3 && i !== 5 ? (i === 4 ? 'right' : 'center') : 'left',
-                }}
-              >
-                {label}
-              </TableHead>
-            ))}
+            <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>N° Devis</TableHead>
+            <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>Client</TableHead>
+            <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>Formule</TableHead>
+            <SortableTableHead label="Vol (m³)" sortKey="_volume" currentKey={sortKey} direction={sortDirection} onSort={handleSort} align="center" />
+            <SortableTableHead label="Total HT (DH)" sortKey="_total_ht" currentKey={sortKey} direction={sortDirection} onSort={handleSort} align="right" />
+            <SortableTableHead label="Statut" sortKey="_statut" currentKey={sortKey} direction={sortDirection} onSort={handleSort} />
+            <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace', textAlign: 'center' }}>Score IA</TableHead>
+            <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace', textAlign: 'center' }}>Conversion</TableHead>
+            <SortableTableHead label="Date" sortKey="_date" currentKey={sortKey} direction={sortDirection} onSort={handleSort} align="center" />
+            <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace', textAlign: 'center' }}>Prté</TableHead>
+            <TableHead style={{ padding: '10px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', fontFamily: 'ui-monospace, monospace' }}>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
