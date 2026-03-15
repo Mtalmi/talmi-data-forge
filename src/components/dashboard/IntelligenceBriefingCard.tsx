@@ -235,6 +235,9 @@ export function IntelligenceBriefingCard() {
         <BriefingCard briefing={morningBriefing} type="morning" />
         <BriefingCard briefing={eveningBriefing} type="evening" />
       </div>
+
+      {/* Scheduled Reports */}
+      <ScheduledReportsSection />
     </div>
   );
 }
