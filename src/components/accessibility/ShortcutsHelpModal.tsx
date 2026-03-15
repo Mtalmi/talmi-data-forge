@@ -120,7 +120,13 @@ export function ShortcutsHelpModal() {
               </div>
 
               {/* Footer */}
-              <div className="px-6 py-3" style={{ borderTop: '1px solid rgba(212,168,67,0.06)', textAlign: 'center' }}>
+              <div className="px-6 py-3 flex items-center justify-between" style={{ borderTop: '1px solid rgba(212,168,67,0.06)' }}>
+                <button
+                  onClick={() => { setOpen(false); setTimeout(() => window.dispatchEvent(new Event('tbos-start-tour')), 300); }}
+                  style={{ fontFamily: MONO, fontSize: 10, color: '#D4A843', background: 'transparent', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4, padding: '4px 10px', cursor: 'pointer' }}
+                >
+                  🎯 Visite Guidée
+                </button>
                 <span style={{ fontFamily: MONO, fontSize: 10, color: 'rgba(156,163,175,0.5)' }}>
                   Appuyez sur <kbd style={{ padding: '1px 5px', borderRadius: 3, border: '1px solid rgba(212,168,67,0.2)', background: 'rgba(212,168,67,0.08)', color: '#D4A843', fontSize: 10 }}>?</kbd> pour afficher/masquer cette aide
                 </span>
