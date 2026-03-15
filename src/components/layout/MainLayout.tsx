@@ -117,10 +117,10 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
               onPreviewRoleChange={setPreviewRole}
             />
           </div>
-        </div>
+        </header>
 
         {/* Main Content Area */}
-        <main className={`flex-1 min-w-0 overflow-x-hidden ${previewRole ? 'pt-1' : ''}`}>
+        <main id="tbos-main-content" className={`flex-1 min-w-0 overflow-x-hidden ${previewRole ? 'pt-1' : ''}`}>
           {/* Demo plant banner on non-dashboard pages */}
           {isDemo && (
             <div style={{
