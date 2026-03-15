@@ -367,6 +367,10 @@ export default function Ventes() {
 
         <div className="space-y-6 overflow-x-hidden max-w-full w-full relative z-[1]" style={{ width: '100%', padding: '32px 24px' }}>
 
+          <div className="mb-6">
+            <AIAgentCard type="ventes_briefing" title="Intelligence Ventes" />
+          </div>
+
           {/* ══════════════════════════════════════════════════════
               PREMIUM PAGE HEADER
               ══════════════════════════════════════════════════════ */}
