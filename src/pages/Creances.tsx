@@ -1720,6 +1720,12 @@ export default function Creances() {
                     })}
                   </TableBody>
                 </Table>
+                <TablePagination
+                  currentPage={crPage}
+                  totalItems={sortedReceivables.length}
+                  pageSize={CR_PAGE_SIZE}
+                  onPageChange={setCrPage}
+                />
               </CardContent>
             </Card>
           </TabsContent>
