@@ -70,6 +70,7 @@ const NOW_INDEX = 9;
 export default function Dashboard() {
   const { t, lang } = useI18n();
   const { user, role, isCeo, isAccounting } = useAuth();
+  const uf = useUnitFormat();
   const navigate = useNavigate();
   const { stats, loading: statsLoading, refresh } = useDashboardStats();
   const [period] = useState<Period>('month');
