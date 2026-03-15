@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { UnitInput, CurrencyInput } from '@/components/ui/FormattedInputs';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import {
@@ -229,24 +230,20 @@ export function DirectOrderDialog({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>{d.volumeM3} *</Label>
-              <Input
-                type="number"
-                step="0.5"
-                min="1"
-                max="100"
+              <UnitInput
+                unit="m³"
                 value={orderVolume}
-                onChange={(e) => setOrderVolume(e.target.value)}
+                onChange={setOrderVolume}
                 placeholder="Ex: 8"
+                maxValue={100}
               />
             </div>
             <div className="space-y-2">
               <Label>{d.sellingPrice} *</Label>
-              <Input
-                type="number"
-                step="0.01"
-                min="0"
+              <CurrencyInput
+                unit="DH/m³"
                 value={orderPrix}
-                onChange={(e) => setOrderPrix(e.target.value)}
+                onChange={setOrderPrix}
                 placeholder="Ex: 850"
               />
             </div>
