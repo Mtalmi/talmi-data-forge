@@ -2634,6 +2634,10 @@ export default function WorldClassDeliveries() {
         {activeTab === 'ia' && <IntelligenceIATab />}
 
       </div>
+
+      <NouveauVehiculeModal open={showVehiculeModal} onClose={() => setShowVehiculeModal(false)} />
+      <ReleveCarburantModal open={showCarburantModal} onClose={() => setShowCarburantModal(false)} />
+      <OptimiserRoutesModal open={showRoutesModal} onClose={() => setShowRoutesModal(false)} />
     </div>
   );
 }
