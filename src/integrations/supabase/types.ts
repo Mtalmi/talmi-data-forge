@@ -6609,7 +6609,7 @@ export type Database = {
           malaxeur: string | null
           notes: string | null
           operateur: string | null
-          photo_pupitre_url: string
+          photo_pupitre_url: string | null
           quality_status: string
           ratio_ec: number | null
           sable_reel_kg: number | null
@@ -6652,7 +6652,7 @@ export type Database = {
           malaxeur?: string | null
           notes?: string | null
           operateur?: string | null
-          photo_pupitre_url: string
+          photo_pupitre_url?: string | null
           quality_status?: string
           ratio_ec?: number | null
           sable_reel_kg?: number | null
@@ -6695,7 +6695,7 @@ export type Database = {
           malaxeur?: string | null
           notes?: string | null
           operateur?: string | null
-          photo_pupitre_url?: string
+          photo_pupitre_url?: string | null
           quality_status?: string
           ratio_ec?: number | null
           sable_reel_kg?: number | null
