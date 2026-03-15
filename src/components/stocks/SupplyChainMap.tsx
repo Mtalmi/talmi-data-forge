@@ -203,7 +203,7 @@ export function SupplyChainMap() {
           }}>
             <div style={{
               width: 48, height: 48, borderRadius: 12,
-              background: 'linear-gradient(135deg, #D4A843, #B8860B)',
+              background: 'linear-gradient(135deg, #D4A843, #C49A3C)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               <Factory size={22} color="#0B1120" strokeWidth={2.5} />

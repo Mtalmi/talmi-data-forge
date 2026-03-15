@@ -8,9 +8,9 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 const T = {
-  gold: '#FFD700',
-  goldDark: '#B8860B',
-  goldDeep: '#8B6914',
+  gold: '#D4A843',
+  goldDark: '#C49A3C',
+  goldDeep: '#C49A3C',
   cardBg: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
   cardBorder: '#1E2D4A',
 };

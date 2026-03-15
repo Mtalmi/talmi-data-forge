@@ -62,7 +62,7 @@ export default function DesignGuardian() {
           <button
             onClick={() => toast.info('Scan lancé — résultats dans ~3 min')}
             className="px-4 py-2 rounded-lg text-sm font-semibold text-black"
-            style={{ background: 'linear-gradient(135deg, #FFD700, #B8860B)' }}
+            style={{ background: 'linear-gradient(135deg, #D4A843, #C49A3C)' }}
           >
             Lancer Scan
           </button>

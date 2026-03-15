@@ -3,12 +3,12 @@ import { format, addDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 const T = {
-  gold: '#FFD700',
+  gold: '#D4A843',
   cardBorder: '#1E2D4A',
   textPri: '#F1F5F9',
   textSec: '#94A3B8',
   textDim: '#64748B',
-  success: '#10B981',
+  success: '#22C55E',
   warning: '#F59E0B',
   danger: '#EF4444',
 };

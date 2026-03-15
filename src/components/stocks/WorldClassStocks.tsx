@@ -130,8 +130,8 @@ function SectionHeader({ icon: Icon, label, right }: { icon: any; label: string;
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
       <Icon size={16} color={T.amber} />
-      <span style={{ color: '#FFD700', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em' }}>{label}</span>
-      <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, rgba(255,215,0,0.4), transparent 80%)` }} />
+      <span style={{ color: '#D4A843', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em' }}>{label}</span>
+      <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, rgba(212,168,67,0.4), transparent 80%)` }} />
       {right}
     </div>
   );
