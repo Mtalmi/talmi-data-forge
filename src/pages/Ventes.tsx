@@ -632,7 +632,30 @@ export default function Ventes() {
                       onExportCSV={() => exportDevisToCSV(filteredDevis, selectedDevisIds)}
                       onClearSelection={() => setSelectedDevisIds([])}
                     />
-                    <div className="flex justify-end">
+                    <div className="flex justify-end gap-2">
+                      <ExportButton
+                        data={filteredDevis.map(d => ({
+                          reference: d.devis_id,
+                          client: d.client?.nom_client || '',
+                          formule: d.formule_id,
+                          volume_m3: d.volume_m3,
+                          prix_m3: d.prix_vente_m3,
+                          total_ht: d.total_ht,
+                          statut: d.statut,
+                          date: d.created_at?.split('T')[0] || '',
+                        }))}
+                        columns={[
+                          { key: 'reference', label: 'Référence' },
+                          { key: 'client', label: 'Client' },
+                          { key: 'formule', label: 'Formule' },
+                          { key: 'volume_m3', label: 'Volume (m³)' },
+                          { key: 'prix_m3', label: 'Prix/m³ (DH)' },
+                          { key: 'total_ht', label: 'Total HT (DH)' },
+                          { key: 'statut', label: 'Statut' },
+                          { key: 'date', label: 'Date' },
+                        ]}
+                        filename={`TBOS_Devis_${format(new Date(), 'yyyy-MM-dd')}`}
+                      />
                       <BulkScorerButton devisList={filteredDevis} onDone={fetchData} />
                     </div>
                     <div style={{ borderTop: '1px solid rgba(212,168,67,0.2)', paddingTop: 16 }}>
