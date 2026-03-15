@@ -319,7 +319,7 @@ export default function CommunityForum() {
         <div className="flex-1 min-w-0">
           {/* Tabs */}
           <div className="flex gap-1 mb-5">
-            {([['latest', 'Latest'], ['top', 'Top This Week'], ['unanswered', 'Unanswered'], ['mine', 'My Posts']] as const).map(([id, label]) => (
+            {([['latest', 'Récents'], ['top', 'Top Semaine'], ['unanswered', 'Sans Réponse'], ['mine', 'Mes Posts']] as const).map(([id, label]) => (
               <button key={id} onClick={() => setActiveTab(id)} className="px-4 py-2 text-sm font-medium transition-all"
                 style={{ color: activeTab === id ? T.gold : T.text2, borderBottom: activeTab === id ? `2px solid ${T.gold}` : '2px solid transparent' }}>
                 {label}
