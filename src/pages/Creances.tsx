@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useTableSort } from '@/hooks/useTableSort';
+import { SortableTableHead } from '@/components/ui/SortableHeader';
 import { EmptyState } from '@/components/ui/states';
 import { NouvelleFactureModal } from '@/components/modals/NouvelleFactureModal';
 import { Plus } from 'lucide-react';
