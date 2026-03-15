@@ -35,6 +35,9 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
   const [warnings, setWarnings] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const isDirty = !!(client || chantier || formule || volume || notes);
+  useFormDirty(isDirty);
+
   const selectedFormule = FORMULES.find(f => f.value === formule);
   const effectivePrice = prixUnit || String(selectedFormule?.price || '');
   const total = useMemo(() => {
