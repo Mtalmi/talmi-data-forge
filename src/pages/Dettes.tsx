@@ -262,7 +262,7 @@ export default function Dettes() {
             <Button variant="outline" size="sm" onClick={() => {
               if (!payables.length) return;
               const headers = 'Fournisseur;N° Facture;Montant;Échéance;Statut';
-              const rows = payables.map(p => `${p.fournisseur_nom || ''};${p.numero_facture};${p.montant_ttc};${p.date_echeance};${p.statut}`).join('\n');
+              const rows = payables.map(p => `${p.fournisseur_name || ''};${p.invoice_number};${p.amount};${p.due_date};${p.status}`).join('\n');
               const blob = new Blob([`\uFEFF${headers}\n${rows}`], { type: 'text/csv;charset=utf-8;' });
               const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
               a.download = `TBOS_Dettes_${new Date().toISOString().slice(0,10)}.csv`;
