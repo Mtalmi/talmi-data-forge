@@ -1,5 +1,6 @@
 import { ReactNode, useState, useEffect } from 'react';
 import { useUnits } from '@/i18n/UnitContext';
+import { usePlant } from '@/contexts/PlantContext';
 import { TopNavBar } from './TopNavBar';
 import { QuickActionFAB } from './QuickActionFAB';
 import { BackToTop } from './BackToTop';
