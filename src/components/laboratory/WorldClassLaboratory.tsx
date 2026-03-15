@@ -508,39 +508,9 @@ function QualityAlertBar() {
 
         {/* Buttons */}
         <div style={{ display: 'flex', gap: 10, paddingLeft: 30 }}>
-          <button
-            onMouseEnter={() => setHov1(true)} onMouseLeave={() => setHov1(false)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px',
-              background: hov1 ? '#DC2626' : '#EF4444', color: '#fff',
-              border: 'none', borderRadius: 9, fontWeight: 700, fontSize: 12, cursor: 'pointer',
-              transition: 'all 160ms', fontFamily: 'DM Sans, sans-serif',
-            }}
-          >
-            <OctagonX size={13} /> Arrêter Production
-          </button>
-          <button
-            onMouseEnter={() => setHov2(true)} onMouseLeave={() => setHov2(false)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px',
-              background: hov2 ? 'rgba(212,168,67,0.1)' : 'transparent', color: '#D4A843',
-              border: '1px solid #D4A843', borderRadius: 9, fontWeight: 700, fontSize: 12, cursor: 'pointer',
-              transition: 'all 160ms', fontFamily: 'DM Sans, sans-serif',
-            }}
-          >
-            <Eye size={13} /> Voir Détails
-          </button>
-          <button
-            onMouseEnter={() => setHov3(true)} onMouseLeave={() => setHov3(false)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px',
-              background: hov3 ? 'rgba(212,168,67,0.1)' : 'transparent', color: '#D4A843',
-              border: '1px solid #D4A843', borderRadius: 9, fontWeight: 700, fontSize: 12, cursor: 'pointer',
-              transition: 'all 160ms', fontFamily: 'DM Sans, sans-serif',
-            }}
-          >
-            <CheckCheck size={13} /> Valider Correction
-          </button>
+          <ActionBtn label="Arrêter Production" icon={OctagonX} bg={T.danger} textCol="#fff" fill successLabel="⏹ Production Arrêtée" />
+          <ActionBtn label="Voir Détails" icon={Eye} outline="#D4A843" />
+          <ActionBtn label="Valider Correction" icon={CheckCheck} outline="#D4A843" successLabel="✓ Correction Validée" />
         </div>
       </div>
     </section>
