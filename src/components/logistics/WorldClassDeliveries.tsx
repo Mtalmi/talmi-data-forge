@@ -435,7 +435,7 @@ function DeliveryCard({ d, index }: { d: any; index: number }) {
       {/* P&L micro-row */}
       {d._pnl && (
         <div style={{ marginTop: 8, paddingTop: 6, borderTop: `1px solid ${T.cardBorder}`, fontFamily: MONO, fontSize: 10, color: T.textDim, lineHeight: 1.6 }}>
-          P&L {d._pnl.type}: {d._pnl.revenu} DH revenu − {d._pnl.matiere} matière − {d._pnl.fuel} fuel − {d._pnl.chauffeur} chauffeur = <span style={{ color: T.success }}>{d._pnl.net} DH net</span> (<span style={{ color: T.success }}>{d._pnl.pct}%</span>)
+          P&L {d._pnl.type}: {typeof d._pnl.revenu === 'number' ? d._pnl.revenu.toLocaleString('fr-FR') : d._pnl.revenu} {uf?.currSym || 'DH'} revenu − {typeof d._pnl.matiere === 'number' ? d._pnl.matiere.toLocaleString('fr-FR') : d._pnl.matiere} matière − {typeof d._pnl.fuel === 'number' ? d._pnl.fuel.toLocaleString('fr-FR') : d._pnl.fuel} fuel − {typeof d._pnl.chauffeur === 'number' ? d._pnl.chauffeur.toLocaleString('fr-FR') : d._pnl.chauffeur} chauffeur = <span style={{ color: T.success }}>{typeof d._pnl.net === 'number' ? d._pnl.net.toLocaleString('fr-FR') : d._pnl.net} {uf?.currSym || 'DH'} net</span> (<span style={{ color: T.success }}>{d._pnl.pct}%</span>)
         </div>
       )}
       {/* Client tracking mini-button */}
