@@ -161,6 +161,7 @@ const App = () => (
         <BrowserRouter>
           <ScrollToTop />
           <PageTitleManager />
+          <NavigationLogger />
           <OfflineIndicator />
           <AuthProvider>
             <PreviewRoleProvider>
