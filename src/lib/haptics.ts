@@ -29,7 +29,7 @@ export function triggerHaptic(pattern: HapticPattern = 'light'): void {
     navigator.vibrate(vibrationPattern);
   } catch (error) {
     // Silently fail on unsupported devices
-    console.debug('Haptic feedback not available:', error);
+    // Silently fail on unsupported devices
   }
 }
 

@@ -120,7 +120,7 @@ export function useSimulationScoring({ simulationType, difficulty, totalSteps }:
           });
       }
 
-      console.log(`[SIMULATION] Score saved for ${simulationType}: ${score.global}% (+${score.xpEarned} XP)`);
+      
     } catch (err) {
       console.error('[SIMULATION] Error saving score:', err);
     }

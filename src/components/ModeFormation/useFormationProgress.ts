@@ -164,7 +164,7 @@ export function useFormationProgress() {
               badge_level: 'gold',
             });
           
-          console.log(`[SIMULATION] User ${user.id} earned TBOS Certified Operator badge`);
+          
         }
 
         return true;
