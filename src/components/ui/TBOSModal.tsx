@@ -145,7 +145,7 @@ export function TBOSModal({ open, onClose, title, children, footer, width = 600 
 /* ── FORM COMPONENTS ── */
 
 const labelStyle: React.CSSProperties = {
-  fontFamily: MONO, fontSize: 11, letterSpacing: '1.5px', color: '#9CA3AF',
+  fontFamily: MONO, fontSize: 12, letterSpacing: '1.5px', color: '#9CA3AF',
   marginBottom: 4, textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 4,
 };
 
