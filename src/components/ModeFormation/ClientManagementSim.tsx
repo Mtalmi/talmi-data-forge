@@ -46,9 +46,7 @@ export function ClientManagementSim({ onComplete, onClose }: ClientManagementSim
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    console.log('[SIMULATION] Client Management:', {
-      clientName,
-      clientPhone,
+    // Simulation submitted
       clientEmail,
       historyViewed,
       receivablesChecked,

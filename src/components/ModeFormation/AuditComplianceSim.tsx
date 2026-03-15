@@ -49,9 +49,7 @@ export function AuditComplianceSim({ onComplete, onClose }: AuditComplianceSimPr
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    console.log('[SIMULATION] Audit & Compliance:', {
-      auditReviewed,
-      complianceChecked,
+    // Simulation submitted
       reportGenerated,
     });
 

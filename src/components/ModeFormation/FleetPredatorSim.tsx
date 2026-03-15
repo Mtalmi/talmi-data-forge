@@ -48,9 +48,7 @@ export function FleetPredatorSim({ onComplete, onClose }: FleetPredatorSimProps)
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    console.log('[SIMULATION] Fleet Predator:', {
-      selectedTruck,
-      fuelChecked,
+    // Simulation submitted
       maintenanceChecked,
       geofenceSet,
     });

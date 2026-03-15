@@ -64,9 +64,7 @@ export function ProductionManagementSim({ onComplete, onClose }: ProductionManag
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    console.log('[SIMULATION] Production:', {
-      selectedFormula,
-      volume,
+    // Simulation submitted
       productionProgress,
       metricsRecorded,
     });

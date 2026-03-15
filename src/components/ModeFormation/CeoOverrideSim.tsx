@@ -69,9 +69,7 @@ export function CeoOverrideSim({ onComplete, onClose }: CeoOverrideSimProps) {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    console.log('[SIMULATION] CEO Override:', {
-      token: generatedToken,
-      justification,
+    // Simulation submitted
     });
 
     await new Promise(resolve => setTimeout(resolve, 1500));

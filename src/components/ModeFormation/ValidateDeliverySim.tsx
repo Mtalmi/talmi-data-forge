@@ -70,9 +70,7 @@ export function ValidateDeliverySim({ onComplete, onClose }: ValidateDeliverySim
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    console.log('[SIMULATION] Validation livraison:', {
-      orderId: selectedOrder,
-      deliveredQuantity,
+    // Simulation submitted
       qualityChecks,
       qualityNotes,
     });

@@ -42,9 +42,7 @@ export function FinancialReportingSim({ onComplete, onClose }: FinancialReportin
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    console.log('[SIMULATION] Financial Reporting:', {
-      dailyReviewed,
-      cashFlowAnalyzed,
+    // Simulation submitted
       marginsChecked,
       forecastViewed,
     });

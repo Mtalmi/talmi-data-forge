@@ -47,9 +47,7 @@ export function QualityControlSim({ onComplete, onClose }: QualityControlSimProp
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    console.log('[SIMULATION] Contrôle qualité:', {
-      slumpValue,
-      tempValue,
+    // Simulation submitted
       photoTaken,
       reportGenerated,
     });

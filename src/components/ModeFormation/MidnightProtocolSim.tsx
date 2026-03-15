@@ -86,9 +86,7 @@ export function MidnightProtocolSim({ onComplete, onClose }: MidnightProtocolSim
   };
 
   const handleComplete = () => {
-    console.log('[SIMULATION] Midnight Protocol:', {
-      time: currentTime,
-      justification,
+    // Simulation completed
       ceoReason,
       overrideToken,
       transaction: DEMO_TRANSACTION,

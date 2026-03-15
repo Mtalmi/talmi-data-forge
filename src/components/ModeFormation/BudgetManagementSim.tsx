@@ -50,9 +50,7 @@ export function BudgetManagementSim({ onComplete, onClose }: BudgetManagementSim
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    console.log('[SIMULATION] Gestion budget terminée:', {
-      reviewedCategories,
-      forecastViewed,
+    // Simulation submitted
       alertsChecked,
     });
 

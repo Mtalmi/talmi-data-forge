@@ -69,9 +69,7 @@ export function CreateQuoteSim({ onComplete, onClose }: CreateQuoteSimProps) {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    console.log('[SIMULATION] Création devis béton:', {
-      quoteId: 'DEMO-DEVIS-001',
-      client: clientName,
+    // Simulation submitted
       contact: contactName,
       zone: selectedZone,
       product: selectedProduct,
