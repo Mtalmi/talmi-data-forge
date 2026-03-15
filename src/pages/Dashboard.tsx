@@ -1044,7 +1044,7 @@ export default function Dashboard() {
               {/* Header */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
                 <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, letterSpacing: 2, color: '#D4A843', fontWeight: 400 }}>
-                  ✦ BRIEFING MATINAL — 14 MARS 2026
+                  ✦ BRIEFING MATINAL — {now.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase()}
                 </span>
                 <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 10, padding: '3px 10px', borderRadius: 4, border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', background: 'rgba(212,168,67,0.08)' }}>
                   Généré par IA · Claude Opus
@@ -1052,7 +1052,7 @@ export default function Dashboard() {
               </div>
               {/* Body */}
               <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, color: '#9CA3AF', lineHeight: 1.7, margin: 0 }}>
-                Production nominale prévue à <strong style={{ color: '#D4A843' }}>280 m³</strong>. Stock ciment à <strong style={{ color: '#D4A843' }}>53%</strong> (7,5j autonomie). 1 non-conformité traitée (BN-0140 <SmartLabel term="Affaissement">affaissement</SmartLabel>). <strong style={{ color: '#D4A843' }}>3 livraisons</strong> planifiées — alerte retard Résidences Atlas (+14 min, béton à 47 min/90). T-09 en maintenance (retour demain 08:00). Pipeline commercial : <strong style={{ color: '#D4A843' }}>155K DH</strong>, 6 devis en attente. Point critique : Sigma Bâtiment — <strong style={{ color: '#EF4444' }}>189K DH impayés</strong>, probabilité défaut <strong style={{ color: '#EF4444' }}>78%</strong>, livraisons suspendues. Certification NM 10.1.271 expire dans 26 jours — 0/2 tests effectués, <strong style={{ color: '#EF4444' }}>action urgente</strong>.
+                Production nominale prévue à <strong style={{ color: '#D4A843' }}>{uf.fmtVolume(demoData.production.volume, 0)}</strong>. Stock {demoData.shutdownRisk.material} à <strong style={{ color: '#D4A843' }}>{demoData.shutdownRisk.currentStock}</strong>. <strong style={{ color: '#D4A843' }}>{demoData.production.batches} batches</strong>. Pipeline commercial : <strong style={{ color: '#D4A843' }}>{uf.fmtCurrencyK(demoData.pipeline.value)}</strong>, {demoData.pipeline.devis} devis en attente. Point critique : {demoData.riskClient.name} — <strong style={{ color: '#EF4444' }}>{uf.fmtCurrencyK(demoData.riskClient.amount)} impayés</strong>, probabilité défaut <strong style={{ color: '#EF4444' }}>{demoData.riskClient.defaultProb}%</strong>, livraisons suspendues.
               </p>
               {/* Action buttons */}
               <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
