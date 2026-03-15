@@ -281,8 +281,8 @@ export function GlobalSearch() {
           )}
 
           {!loading && query.length >= 2 && flatItems.length === 0 && (
-            <div style={{ padding: '32px 20px', textAlign: 'center', fontFamily: MONO, fontSize: 13, color: '#9CA3AF' }}>
-              Aucun résultat pour "{query}"
+            <div style={{ padding: '32px 20px', textAlign: 'center', fontFamily: MONO, fontSize: 13, color: '#9CA3AF', lineHeight: 1.6 }}>
+              Aucun résultat pour "{query}" — essayez un nom de client, un numéro de batch, ou une formule.
             </div>
           )}
 

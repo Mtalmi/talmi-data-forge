@@ -85,7 +85,7 @@ export function ChartEmptyState({
 }
 
 /* ─── TABLE EMPTY STATE ─── */
-export function TableEmptyState({ colSpan = 1, message = 'Aucun résultat' }: { colSpan?: number; message?: string }) {
+export function TableEmptyState({ colSpan = 1, message = 'Rien à signaler pour le moment.' }: { colSpan?: number; message?: string }) {
   return (
     <tr>
       <td colSpan={colSpan} style={{ textAlign: 'center', padding: '40px 16px' }}>
