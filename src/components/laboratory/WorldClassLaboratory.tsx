@@ -2021,6 +2021,7 @@ export default function WorldClassLaboratory() {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('essais');
   const [hoverNew, setHoverNew] = useState(false);
+  const [showTestModal, setShowTestModal] = useState(false);
   const { kpis: labKpis } = useLaboratoryLiveData();
 
   // Read location state for tab activation
