@@ -2080,7 +2080,7 @@ function IntelligenceIATab() {
 // ═════════════════════════════════════════════════════
 export default function WorldClassDeliveries() {
   const uf = useUnitFormat();
-  const [activeTab, setActiveTab] = useState('flotte');
+  const [activeTab, setActiveTab] = useTabSync('flotte');
   const [showVehiculeModal, setShowVehiculeModal] = useState(false);
   const [showCarburantModal, setShowCarburantModal] = useState(false);
   const [showRoutesModal, setShowRoutesModal] = useState(false);
