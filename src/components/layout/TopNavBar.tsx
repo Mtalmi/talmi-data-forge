@@ -130,6 +130,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#9CA3AF'; }}
             title="Paramètres"
+            aria-label="Paramètres"
             className="hidden md:flex"
           >
             <Settings size={16} strokeWidth={1.5} />

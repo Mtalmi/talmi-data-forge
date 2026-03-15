@@ -444,11 +444,12 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
             </div>
             <button
               onClick={(e) => { e.stopPropagation(); signOut(); }}
-              className="p-1 rounded-md transition-colors duration-200 flex-shrink-0"
+              className="p-1 rounded-md transition-colors duration-200 flex-shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4A843]"
               style={{ color: '#9CA3AF' }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#9CA3AF'; }}
               title="Déconnexion"
+              aria-label="Déconnexion"
             >
               <LogOut size={14} strokeWidth={1.5} />
             </button>
