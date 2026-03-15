@@ -58,7 +58,7 @@ export function PassationButton({ shiftInfo }: { shiftInfo?: string }) {
         )}
       </div>
       {state === 'done' && (
-        <p style={{ fontFamily: MONO, fontSize: 11, color: '#22C55E', opacity: 0.8, margin: 0 }}>
+        <p style={{ fontFamily: MONO, fontSize: 12, color: '#22C55E', opacity: 0.8, margin: 0 }}>
           ✓ Passation validée à {now} — l'équipe suivante a été notifiée. Bon shift!
         </p>
       )}

@@ -173,7 +173,7 @@ export function TBOSField({ label, required, error, children, style }: TBOSField
         {required && <span style={{ color: '#EF4444' }}>*</span>}
       </label>
       {children}
-      {error && <span role="alert" style={{ fontFamily: MONO, fontSize: 11, color: '#EF4444' }}>{error}</span>}
+      {error && <span role="alert" style={{ fontFamily: MONO, fontSize: 12, color: '#EF4444' }}>{error}</span>}
     </div>
   );
 }

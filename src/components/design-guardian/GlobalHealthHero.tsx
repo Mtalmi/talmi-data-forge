@@ -97,7 +97,7 @@ function KPICard({ label, value, icon, color, pulse }: {
 }) {
   return (
     <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
-      <div className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold mb-2">{label}</div>
+      <div className="text-xs uppercase tracking-widest text-slate-500 font-semibold mb-2">{label}</div>
       <div className="flex items-center gap-2">
         {pulse && <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />}
         <span className={`text-3xl font-extralight font-mono ${color}`}>{value}</span>

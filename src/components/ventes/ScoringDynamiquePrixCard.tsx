@@ -51,7 +51,7 @@ export function ScoringDynamiquePrixCard({ index }: { index?: number }) {
                   {r.ok ? (
                     <span style={{ fontSize: 12, fontWeight: 600, color: '#22C55E', background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 100, padding: '3px 12px', fontFamily: mono }}>OK</span>
                   ) : (
-                    <button style={{ background: 'transparent', color: '#D4A843', fontSize: 11, fontWeight: 600, padding: '4px 14px', borderRadius: 6, border: '1px solid #D4A843', cursor: 'pointer', fontFamily: mono }}>Recalculer</button>
+                    <button style={{ background: 'transparent', color: '#D4A843', fontSize: 12, fontWeight: 600, padding: '4px 14px', borderRadius: 6, border: '1px solid #D4A843', cursor: 'pointer', fontFamily: mono }}>Recalculer</button>
                   )}
                 </td>
               </tr>
