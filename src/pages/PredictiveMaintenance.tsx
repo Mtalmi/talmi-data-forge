@@ -38,7 +38,7 @@ function Sparkline({ data, color, height = 40 }: { data: number[]; color: string
 function GoldTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-[#FFD700]/30 bg-[#161D26] px-3 py-2 text-xs shadow-xl">
+    <div className="rounded-lg border border-[#D4A843]/30 bg-[#141929] px-3 py-2 text-xs shadow-xl">
       <p className="text-[#B0B8C1] mb-1">{label}</p>
       {payload.map((p: any, i: number) => (
         <p key={i} style={{ color: p.color }} className="font-mono font-semibold">{p.name}: {typeof p.value === 'number' ? p.value.toLocaleString() : p.value}</p>
