@@ -69,13 +69,6 @@ export function CreateQuoteSim({ onComplete, onClose }: CreateQuoteSimProps) {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulation submitted
-      contact: contactName,
-      zone: selectedZone,
-      product: selectedProduct,
-      quantity: qty,
-      totalTTC,
-    });
 
     await new Promise(resolve => setTimeout(resolve, 1500));
     
