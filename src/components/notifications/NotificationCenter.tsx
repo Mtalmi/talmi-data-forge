@@ -22,7 +22,8 @@ export default function NotificationCenter() {
   const [open, setOpen] = useState(false);
   const { stats, markAllAsRead } = useNotifications();
 
-  const unreadCount = stats.unread || 3; // fallback to demo count
+  const unreadCount = stats.unread || 3;
+  const badgeBounce = useValueFlash(unreadCount, 'badge-bounce', 300);
 
   return (
     <div style={{ position: 'relative' }}>
