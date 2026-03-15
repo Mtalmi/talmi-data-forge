@@ -160,7 +160,7 @@ export function useDashboardData() {
       const tresorerieValue = (paidThisMonth.data || []).reduce((s, f) => s + (f.total_ttc || 0), 0);
 
       // Pipeline
-      const pipelineValue = (devisActive.data || []).reduce((s, d) => s + (d.montant_total || 0), 0);
+      const pipelineValue = (devisActive.data || []).reduce((s, d) => s + (d.total_ht || 0), 0);
       const devisCount = (devisActive.data || []).length;
       const conversionRate = (devisTotal.count || 0) > 0 ? ((devisConverted.count || 0) / (devisTotal.count || 1)) * 100 : 0;
 
