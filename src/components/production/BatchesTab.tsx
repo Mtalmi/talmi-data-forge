@@ -272,8 +272,8 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
       <div className="flex gap-6">
 
         {/* ── TABLE ── */}
-        <div className="flex-1 min-w-0 flex flex-col">
-          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: '12px 12px 0 0', overflow: 'hidden' }}>
+        <div className="flex-1 min-w-0 flex flex-col" style={{ overflowX: 'auto' }}>
+          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: '12px 12px 0 0', overflow: 'hidden', minWidth: 1100 }}>
             {/* Headers */}
             <div className="grid items-center" style={{
               gridTemplateColumns: '110px 1fr 90px 70px 65px 90px 70px 60px 120px 100px 80px',
@@ -285,7 +285,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                 return (
                   <span key={h} style={{
                     fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.12em',
-                    color: 'rgba(255,255,255,0.35)', fontWeight: 500,
+                    color: '#9CA3AF', fontWeight: 600,
                     textAlign: align,
                     display: 'flex',
                     width: '100%',
