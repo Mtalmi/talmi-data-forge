@@ -36,6 +36,7 @@ export function TiltCard({ children, className, style, onClick }: TiltCardProps)
         ...style,
         perspective: '800px',
       }}
+      onClick={onClick}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
