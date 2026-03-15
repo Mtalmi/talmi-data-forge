@@ -1986,7 +1986,7 @@ export default function Dashboard() {
                     <div className="text-[8px] text-slate-400 mb-1.5">{plantData.formules[1] || uf.grade('F-B25')} · {uf.fmtVolume(8)} · {plantData.clients[2] || 'BTP Maroc'}</div>
                     <div className="flex items-center gap-2">
                       <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
-                        <div className="h-1.5 rounded-full relative overflow-hidden" style={{ width: '72%', background: 'linear-gradient(90deg, #D4A843, #E8C96A)', animation: 'progressGrow 1s ease forwards' }}>
+                        <div className="h-1.5 rounded-full relative overflow-hidden" style={{ width: '72%', background: 'linear-gradient(90deg, #D4A843, #E8C96A)', transformOrigin: 'left', animation: 'progressGrow 1s ease forwards' }}>
                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite]" />
                         </div>
                       </div>
