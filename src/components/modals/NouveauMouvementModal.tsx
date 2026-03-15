@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useFormDirty } from '@/hooks/useFormDirty';
 import {
   TBOSModal, TBOSField, TBOSInput, TBOSSelect, TBOSTextarea,
   TBOSPrimaryButton, TBOSGhostButton, TBOSFormRow, TBOSFormStack, showFormSuccess,
@@ -6,20 +7,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { sanitizeInput } from '@/lib/security';
-
-const MATERIAUX = [
-  { value: 'ciment', label: 'Ciment', unit: 'kg' },
-  { value: 'sable', label: 'Sable', unit: 'kg' },
-  { value: 'gravette', label: 'Gravette', unit: 'm³' },
-  { value: 'adjuvant', label: 'Adjuvant', unit: 'L' },
-  { value: 'eau', label: 'Eau', unit: 'L' },
-];
-
-const OPERATORS = [
-  { value: 'youssef', label: 'Youssef M.' },
-  { value: 'karim', label: 'Karim B.' },
-  { value: 'ahmed', label: 'Ahmed R.' },
-];
+import { getMoroccoToday } from '@/utils/timezone';
 
 interface Props { open: boolean; onClose: () => void; onCreated?: (mvt: any) => void; }
 
@@ -29,23 +17,73 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
   const [quantite, setQuantite] = useState('');
   const [fournisseur, setFournisseur] = useState('');
   const [reference, setReference] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [date, setDate] = useState(getMoroccoToday());
   const [responsable, setResponsable] = useState('');
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [warnings, setWarnings] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const selectedMat = MATERIAUX.find(m => m.value === materiau);
+  // Dynamic data from DB
+  const [materiaux, setMateriaux] = useState<{ value: string; label: string; unit: string }[]>([]);
+  const [operators, setOperators] = useState<{ value: string; label: string }[]>([]);
+
+  const isDirty = !!(materiau || quantite || fournisseur || reference || notes);
+  useFormDirty(isDirty);
+
+  // Load materiaux from stocks table + operators from profiles
+  useEffect(() => {
+    if (!open) return;
+    setDate(getMoroccoToday());
+    (async () => {
+      const [stocksRes, profilesRes] = await Promise.all([
+        supabase.from('stocks').select('materiau, unite').order('materiau'),
+        supabase.from('profiles').select('user_id, full_name').order('full_name'),
+      ]);
+
+      if (stocksRes.data?.length) {
+        const seen = new Set<string>();
+        setMateriaux(stocksRes.data.filter((s: any) => {
+          if (seen.has(s.materiau)) return false;
+          seen.add(s.materiau);
+          return true;
+        }).map((s: any) => ({
+          value: s.materiau,
+          label: `${s.materiau} (${s.unite || 'kg'})`,
+          unit: s.unite || 'kg',
+        })));
+      } else {
+        // Fallback if stocks table empty
+        setMateriaux([
+          { value: 'Ciment', label: 'Ciment (kg)', unit: 'kg' },
+          { value: 'Sable', label: 'Sable (kg)', unit: 'kg' },
+          { value: 'Gravette', label: 'Gravette (m³)', unit: 'm³' },
+          { value: 'Adjuvant', label: 'Adjuvant (L)', unit: 'L' },
+          { value: 'Eau', label: 'Eau (L)', unit: 'L' },
+        ]);
+      }
+
+      if (profilesRes.data) {
+        setOperators(profilesRes.data
+          .filter((p: any) => p.full_name)
+          .map((p: any) => ({ value: p.user_id, label: p.full_name }))
+        );
+      }
+    })();
+  }, [open]);
+
+  const selectedMat = materiaux.find(m => m.value === materiau);
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!materiau) e.materiau = 'Champ requis';
+    const w: string[] = [];
+    if (!materiau) e.materiau = 'Champ obligatoire';
     const qty = parseFloat(quantite);
-    if (!quantite || isNaN(qty)) e.quantite = 'Champ requis';
-    else if (qty <= 0) e.quantite = 'Valeur doit être supérieure à 0';
-    else if (qty > 1000000) e.quantite = 'Valeur trop élevée';
-    if (!responsable) e.responsable = 'Champ requis';
+    if (!quantite || isNaN(qty)) e.quantite = 'Champ obligatoire';
+    else if (qty <= 0) e.quantite = 'La quantité doit être supérieure à 0';
+    if (!responsable) e.responsable = 'Champ obligatoire';
     setErrors(e);
+    setWarnings(w);
     return Object.keys(e).length === 0;
   };
 
@@ -54,7 +92,7 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
     if (!validate()) return;
     setLoading(true);
     try {
-      const matLabel = selectedMat?.label || materiau;
+      const matLabel = materiau; // Already the DB label from stocks table
       const qty = parseFloat(quantite);
 
       const { data: stockRow } = await supabase
@@ -65,10 +103,15 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
 
       const currentQty = (stockRow as any)?.quantite_actuelle ?? 0;
 
+      // Sortie > stock: warn but allow (user confirmed)
       if (type === 'sortie' && qty > currentQty) {
-        setErrors({ quantite: `Stock insuffisant (disponible: ${currentQty} ${selectedMat?.unit || ''})` });
-        setLoading(false);
-        return;
+        const confirmed = window.confirm(
+          `Stock insuffisant — disponible : ${currentQty} ${selectedMat?.unit || ''}.\nQuantité demandée : ${qty} ${selectedMat?.unit || ''}.\n\nVoulez-vous continuer quand même ?`
+        );
+        if (!confirmed) {
+          setLoading(false);
+          return;
+        }
       }
 
       const newQty = Math.max(0, type === 'entree' ? currentQty + qty : currentQty - qty);
@@ -109,32 +152,40 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
 
       const mvt = { type, materiau: matLabel, quantite: qty, fournisseur: sanitizeInput(fournisseur), reference: sanitizeInput(reference), date, responsable, notes: sanitizeInput(notes) };
       onCreated?.(mvt);
-      showFormSuccess(`✓ Mouvement ${type === 'entree' ? 'entrée' : 'sortie'} enregistré — ${matLabel} ${qty} ${selectedMat?.unit || ''}`);
+      showFormSuccess('✓ Mouvement enregistré avec succès');
       resetAndClose();
     } catch (error: any) {
       console.error('Error saving stock movement:', error);
-      toast.error(`Erreur: ${error?.message || 'Impossible d\'enregistrer le mouvement'}`);
+      toast.error('Erreur lors de l\'enregistrement du mouvement');
       setLoading(false);
     }
   };
 
+  const handleClose = useCallback(() => {
+    if (isDirty) {
+      const confirmed = window.confirm('Modifications non sauvegardées. Voulez-vous quitter ?');
+      if (!confirmed) return;
+    }
+    resetAndClose();
+  }, [isDirty]);
+
   const resetAndClose = () => {
     setType('entree'); setMateriau(''); setQuantite(''); setFournisseur(''); setReference('');
-    setDate(new Date().toISOString().slice(0, 10)); setResponsable(''); setNotes('');
-    setErrors({}); setLoading(false); onClose();
+    setDate(getMoroccoToday()); setResponsable(''); setNotes('');
+    setErrors({}); setWarnings([]); setLoading(false); onClose();
   };
 
   return (
-    <TBOSModal open={open} onClose={resetAndClose} title="Nouveau Mouvement de Stock" footer={
+    <TBOSModal open={open} onClose={handleClose} title="Nouveau Mouvement de Stock" footer={
       <>
-        <TBOSGhostButton onClick={resetAndClose}>Annuler</TBOSGhostButton>
+        <TBOSGhostButton onClick={handleClose}>Annuler</TBOSGhostButton>
         <TBOSPrimaryButton onClick={handleSubmit} loading={loading} disabled={loading}>Enregistrer</TBOSPrimaryButton>
       </>
     }>
       <TBOSFormStack>
         <div style={{ display: 'flex', gap: 8 }} role="radiogroup" aria-label="Type de mouvement">
           {(['entree', 'sortie'] as const).map(t => (
-            <button key={t} onClick={() => setType(t)} role="radio" aria-checked={type === t} style={{
+            <button key={t} onClick={() => setType(t)} type="button" role="radio" aria-checked={type === t} style={{
               flex: 1, padding: '10px 16px', borderRadius: 6, cursor: 'pointer',
               fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, fontWeight: 700,
               letterSpacing: '1.5px', textTransform: 'uppercase',
@@ -151,7 +202,7 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
         <TBOSFormRow>
           <TBOSField label="Matériau" required error={errors.materiau}>
             <TBOSSelect value={materiau} onChange={e => setMateriau(e.target.value)} hasError={!!errors.materiau}
-              options={MATERIAUX.map(m => ({ value: m.value, label: `${m.label} (${m.unit})` }))} placeholder="Sélectionner" />
+              options={materiaux.map(m => ({ value: m.value, label: m.label }))} placeholder="Sélectionner" />
           </TBOSField>
           <TBOSField label={`Quantité${selectedMat ? ` (${selectedMat.unit})` : ''}`} required error={errors.quantite}>
             <TBOSInput type="number" step="0.1" min="0.1" value={quantite} onChange={e => setQuantite(e.target.value)}
@@ -174,7 +225,7 @@ export function NouveauMouvementModal({ open, onClose, onCreated }: Props) {
           </TBOSField>
           <TBOSField label="Responsable" required error={errors.responsable}>
             <TBOSSelect value={responsable} onChange={e => setResponsable(e.target.value)} hasError={!!errors.responsable}
-              options={OPERATORS} placeholder="Sélectionner" />
+              options={operators} placeholder="Sélectionner" />
           </TBOSField>
         </TBOSFormRow>
 
