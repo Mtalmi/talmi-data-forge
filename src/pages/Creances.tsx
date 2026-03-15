@@ -1370,6 +1370,7 @@ export default function Creances() {
                        <TableHead className="text-center">{t.pages.creances.delay}</TableHead>
                        <TableHead className="text-center">{t.pages.creances.status}</TableHead>
                        <TableHead className="text-center">Prédiction IA</TableHead>
+                       <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF' }}>📎</TableHead>
                        {canManageReceivables && <TableHead className="text-center">{t.pages.creances.actions}</TableHead>}
                     </TableRow>
                   </TableHeader>
