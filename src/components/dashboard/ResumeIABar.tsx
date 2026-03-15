@@ -22,6 +22,7 @@ function extractFirstSentence(content: string): string {
 }
 
 export const ResumeIABar = () => {
+  const navigate = useNavigate();
   const [recommendation, setRecommendation] = useState<string>('');
 
   useEffect(() => {
