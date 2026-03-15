@@ -29,7 +29,16 @@ import {
   AlertCircle,
   ExternalLink,
   FileText,
+  MoreVertical,
+  Eye,
 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 import { format, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { ClientHoverPreview } from '@/components/ventes/ClientHoverPreview';
