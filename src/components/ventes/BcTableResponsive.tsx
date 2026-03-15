@@ -1,4 +1,5 @@
 import React from 'react';
+import { Package } from 'lucide-react';
 import { BcTable } from './BcTable';
 import { BcCardMobile } from './BcCardMobile';
 import { BonCommande } from '@/hooks/useSalesWorkflow';
