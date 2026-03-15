@@ -172,14 +172,14 @@ const TEST_TYPE_COLOR: Record<string, string> = {
 };
 
 const RESULTS = [
-  { id: 'LAB-142', batch: 'BN-0142', type: 'Slump',          result: '18 cm',    norme: '15-20 cm', ecart: 'OK',              ecartType: 'ok',    status: 'Conforme'    },
-  { id: 'LAB-141', batch: 'BN-0141', type: 'Résistance 7j',  result: '28.5 MPa', norme: '>25 MPa',  ecart: '+14%',            ecartType: 'plus',  status: 'Conforme'    },
-  { id: 'LAB-140', batch: 'BN-0140', type: 'Slump',          result: '22 cm',    norme: '15-20 cm', ecart: '+10% hors norme', ecartType: 'bad',   status: 'Non-conforme'},
-  { id: 'LAB-139', batch: 'BN-0139', type: 'Température',    result: '28°C',     norme: '<32°C',    ecart: 'OK',              ecartType: 'ok',    status: 'Conforme'    },
-  { id: 'LAB-138', batch: 'BN-0138', type: 'Résistance 7j',  result: '32.1 MPa', norme: '>30 MPa',  ecart: '+7%',             ecartType: 'plus',  status: 'Conforme'    },
-  { id: 'LAB-137', batch: 'BN-0137', type: 'Air occlus',     result: '4.2%',     norme: '3-6%',     ecart: 'OK',              ecartType: 'ok',    status: 'Conforme'    },
-  { id: 'LAB-136', batch: 'BN-0136', type: 'Slump',          result: '17 cm',    norme: '15-20 cm', ecart: 'OK',              ecartType: 'ok',    status: 'Conforme'    },
-  { id: 'LAB-135', batch: 'BN-0135', type: 'Résistance 28j', result: '—',        norme: '>25 MPa',  ecart: '—',               ecartType: 'none',  status: 'En attente'  },
+  { id: 'LAB-142', batch: 'BN-0142', type: 'Slump',          result: '18 cm',    norme: '15-20 cm', ecart: 'OK',              ecartType: 'ok',    status: 'Conforme',     photos: 2 },
+  { id: 'LAB-141', batch: 'BN-0141', type: 'Résistance 7j',  result: '28.5 MPa', norme: '>25 MPa',  ecart: '+14%',            ecartType: 'plus',  status: 'Conforme',     photos: 3 },
+  { id: 'LAB-140', batch: 'BN-0140', type: 'Slump',          result: '22 cm',    norme: '15-20 cm', ecart: '+10% hors norme', ecartType: 'bad',   status: 'Non-conforme', photos: 1 },
+  { id: 'LAB-139', batch: 'BN-0139', type: 'Température',    result: '28°C',     norme: '<32°C',    ecart: 'OK',              ecartType: 'ok',    status: 'Conforme',     photos: 0 },
+  { id: 'LAB-138', batch: 'BN-0138', type: 'Résistance 7j',  result: '32.1 MPa', norme: '>30 MPa',  ecart: '+7%',             ecartType: 'plus',  status: 'Conforme',     photos: 2 },
+  { id: 'LAB-137', batch: 'BN-0137', type: 'Air occlus',     result: '4.2%',     norme: '3-6%',     ecart: 'OK',              ecartType: 'ok',    status: 'Conforme',     photos: 0 },
+  { id: 'LAB-136', batch: 'BN-0136', type: 'Slump',          result: '17 cm',    norme: '15-20 cm', ecart: 'OK',              ecartType: 'ok',    status: 'Conforme',     photos: 2 },
+  { id: 'LAB-135', batch: 'BN-0135', type: 'Résistance 28j', result: '—',        norme: '>25 MPa',  ecart: '—',               ecartType: 'none',  status: 'En attente',   photos: 0 },
 ];
 
 const TYPE_DIST = [
