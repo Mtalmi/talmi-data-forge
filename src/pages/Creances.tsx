@@ -1424,7 +1424,7 @@ export default function Creances() {
                           </div>
                         </TableCell>
                       </TableRow>
-                    ) : sortedReceivables.slice(0, 50).map((receivable) => {
+                    ) : paginatedReceivables.map((receivable) => {
                       const statusConfig = STATUS_CONFIG[receivable.status];
                       // Dispute detection: partial payment from same client
                       const isPartialPayment = receivable.amount_paid > 0 && receivable.amount_paid < receivable.amount && receivable.status !== 'paid';
