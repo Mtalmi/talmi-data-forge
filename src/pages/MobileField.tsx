@@ -811,7 +811,7 @@ export default function MobileField() {
         </div>
       </BottomSheet>
 
-      <BottomSheet open={newTestOpen} onClose={() => setNewTestOpen(false)} title="New Quality Test">
+      <BottomSheet open={newTestOpen} onClose={() => setNewTestOpen(false)} title="Nouveau Test Qualité">
         <div className="space-y-5">
           <div>
             <label className="text-sm text-[#B0B8C1] block mb-1">Batch ID</label>
