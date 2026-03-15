@@ -43,6 +43,7 @@ const TaxComplianceWidget = lazy(() => import('@/components/compliance').then(m 
 
 import { useCountUp } from '@/hooks/useCountUp';
 import { TiltCard } from '@/components/dashboard/TiltCard';
+import { MetricTooltip } from '@/components/ui/MetricTooltip';
 
 // ─── Sparkline data (hourly production) ───
 const SPARKLINE_DATA = [
