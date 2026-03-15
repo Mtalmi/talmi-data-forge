@@ -49,6 +49,7 @@ export function ExportButton<T extends Record<string, unknown>>({
     if (data.length === 0) { toast.error(eb.noData); return; }
     exportToCSV(data, columns, filename);
     toast.success(eb.exported.replace('{count}', String(data.length)));
+    logActivityEvent('action', `Export CSV généré: ${filename}`, 'SYSTÈME', 'success');
     setOpen(false);
   };
 
