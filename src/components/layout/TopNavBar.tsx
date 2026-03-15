@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { GlobalSearch } from '@/components/search/GlobalSearch';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
 import { ThemeToggle } from './ThemeToggle';
+import { PlantSelector } from './PlantSelector';
 import { SoundToggle } from './SoundToggle';
 import { RolePreviewSwitcher } from './RolePreviewSwitcher';
 import {
@@ -75,6 +76,9 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
         <div className="relative hidden md:block flex-shrink-0">
           <GlobalSearch />
         </div>
+
+        {/* Plant selector */}
+        <PlantSelector />
 
         {/* Center — breathing room */}
         <div className="flex-1" />
