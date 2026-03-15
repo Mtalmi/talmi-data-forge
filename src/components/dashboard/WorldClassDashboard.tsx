@@ -1272,7 +1272,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                     ? { background: 'linear-gradient(90deg, #DC2626, #EF4444)' }
                     : { background: 'linear-gradient(90deg, #991B1B, #B91C1C)' };
                   return (
-                    <div key={i}>
+                    <div key={i} onClick={() => navigate('/creances')} style={{ cursor: 'pointer' }}>
                       <div className="flex justify-between mb-1">
                         <span className="text-[10px] uppercase tracking-wider text-white/40" style={{ fontFamily: "'JetBrains Mono', monospace", ...(d.label === '>90j' ? { color: 'rgb(248,113,113)', fontWeight: '500' } : {}) }}>{d.label}</span>
                         <span style={{ fontSize: '13px', fontWeight: '500', color: 'white', fontFamily: "'JetBrains Mono', monospace" }}>{(d.value / 1000).toFixed(0)}K DH</span>
