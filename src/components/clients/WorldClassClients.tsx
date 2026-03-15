@@ -1266,7 +1266,7 @@ export default function WorldClassClients() {
         actions={
           <>
             <button
-              onClick={() => setIsCreateModalOpen(true)}
+              onClick={() => setShowNewClientModal(true)}
               style={{
                 background: '#D4A843',
                 color: '#0F1629',
