@@ -51,7 +51,7 @@ export function LiveBLTracker() {
 
   const fetchMissions = useCallback(async () => {
     try {
-      const today = format(new Date(), 'yyyy-MM-dd');
+      const today = getMoroccoToday();
 
       // Fetch active BLs for today
       const { data: bls, error } = await supabase

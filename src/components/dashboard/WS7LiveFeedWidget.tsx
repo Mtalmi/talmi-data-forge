@@ -27,7 +27,7 @@ export function WS7LiveFeedWidget() {
   const [todayCount, setTodayCount] = useState(0);
 
   const fetchData = async () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getMoroccoToday();
 
     const [batchesRes, logRes, countRes] = await Promise.all([
       supabase

@@ -57,7 +57,7 @@ export default function DriverView() {
   const [bons, setBons] = useState<BonLivraison[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const today = format(new Date(), 'yyyy-MM-dd');
+  const today = getMoroccoToday();
 
   // Fetch available trucks/drivers
   const fetchCamions = useCallback(async () => {

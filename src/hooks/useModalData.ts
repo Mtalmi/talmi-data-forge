@@ -84,7 +84,7 @@ export function useTodayBatches() {
 
   useEffect(() => {
     (async () => {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getMoroccoToday();
       const { data } = await (supabase as any)
         .from('production_batches')
         .select('batch_number, formule, volume_m3, status, bl_id')

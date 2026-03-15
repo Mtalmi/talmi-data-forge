@@ -53,7 +53,7 @@ export function QuickActionFAB() {
 
   const fetchPendingTasks = async () => {
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getMoroccoToday();
       const quickTasks: QuickTask[] = [];
 
       const { data: productionData } = await supabase

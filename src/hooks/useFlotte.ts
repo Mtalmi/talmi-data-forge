@@ -126,7 +126,7 @@ export function useFlotte() {
   // Fetch active deliveries for today to determine which trucks are in service
   const fetchActiveDeliveries = useCallback(async () => {
     try {
-      const today = format(new Date(), 'yyyy-MM-dd');
+      const today = getMoroccoToday();
       
       // Get all deliveries for today that have a truck assigned and are not yet completed
       // Includes: planification (scheduled), production, validation_technique, en_livraison

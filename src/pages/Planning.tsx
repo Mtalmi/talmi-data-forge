@@ -176,7 +176,7 @@ export default function Planning() {
     limite: number;
   } | null>(null);
   // Initialize date: always default to today unless explicit date param provided
-  const todayFormatted = format(new Date(), 'yyyy-MM-dd');
+  const todayFormatted = getMoroccoToday();
   const urlDate = searchParams.get('date');
   const [selectedDate, setSelectedDate] = useState(urlDate || todayFormatted);
 

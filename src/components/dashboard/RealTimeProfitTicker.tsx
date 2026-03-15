@@ -32,7 +32,7 @@ export function RealTimeProfitTicker() {
 
   const fetchProfitData = useCallback(async () => {
     try {
-      const today = format(new Date(), 'yyyy-MM-dd');
+      const today = getMoroccoToday();
       
       // Fetch today's invoiced revenue
       const { data: invoices } = await supabase

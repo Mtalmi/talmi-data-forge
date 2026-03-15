@@ -194,7 +194,7 @@ export function LiveFleetMap() {
 
   const fetchFleetPositions = useCallback(async () => {
     try {
-      const today = format(new Date(), 'yyyy-MM-dd');
+      const today = getMoroccoToday();
 
       // Get all trucks
       const { data: flotte, error: flotteError } = await supabase

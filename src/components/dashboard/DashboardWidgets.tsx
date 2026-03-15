@@ -77,7 +77,7 @@ export function TodaysPipelineWidget() {
 
   useEffect(() => {
     const fetchToday = async () => {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getMoroccoToday();
       const { data: bls } = await supabase
         .from('bons_livraison_reels')
         .select('volume_m3, workflow_status')

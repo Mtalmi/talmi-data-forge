@@ -290,7 +290,7 @@ export function usePointage() {
 
   // Get today's pointage for an employee
   const getTodayPointage = useCallback((employeId: string): Pointage | undefined => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getMoroccoToday();
     return pointages.find(p => p.employe_id === employeId && p.date_pointage === today);
   }, [pointages]);
 
