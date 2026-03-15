@@ -106,7 +106,7 @@ export function BudgetManagementSim({ onComplete, onClose }: BudgetManagementSim
         <div className="p-3 bg-muted/50 rounded-lg">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium">Budget Mensuel</span>
-            <span className="text-lg font-bold">{totalSpent.toLocaleString()} / {totalBudget.toLocaleString()} DH</span>
+            <span className="text-lg font-bold">{totalSpent.toLocaleString('fr-FR')} / {totalBudget.toLocaleString('fr-FR')} DH</span>
           </div>
           <Progress 
             value={(totalSpent / totalBudget) * 100} 
