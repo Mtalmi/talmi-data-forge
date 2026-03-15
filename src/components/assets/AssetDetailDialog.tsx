@@ -132,7 +132,7 @@ export function AssetDetailDialog({ asset, open, onOpenChange }: AssetDetailDial
                   <CardTitle className="text-sm font-medium text-muted-foreground">{dt.nbv}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-green-500">{asset.net_book_value.toLocaleString()} DH</p>
+                  <p className="text-2xl font-bold text-green-500">{asset.net_book_value.toLocaleString('fr-FR')} DH</p>
                 </CardContent>
               </Card>
             </div>
