@@ -80,6 +80,69 @@ export type Database = {
           },
         ]
       }
+      activity_log: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          metadata: Json | null
+          severite: string | null
+          source_page: string | null
+          type: string
+          user_name: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          metadata?: Json | null
+          severite?: string | null
+          source_page?: string | null
+          type?: string
+          user_name?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          metadata?: Json | null
+          severite?: string | null
+          source_page?: string | null
+          type?: string
+          user_name?: string | null
+        }
+        Relationships: []
+      }
+      ai_analyses: {
+        Row: {
+          agent_name: string
+          analysis_text: string
+          confidence: number | null
+          created_at: string | null
+          data_snapshot: Json | null
+          id: string
+          page: string
+        }
+        Insert: {
+          agent_name: string
+          analysis_text: string
+          confidence?: number | null
+          created_at?: string | null
+          data_snapshot?: Json | null
+          id?: string
+          page: string
+        }
+        Update: {
+          agent_name?: string
+          analysis_text?: string
+          confidence?: number | null
+          created_at?: string | null
+          data_snapshot?: Json | null
+          id?: string
+          page?: string
+        }
+        Relationships: []
+      }
       ai_briefings: {
         Row: {
           briefing_type: string | null
@@ -173,6 +236,51 @@ export type Database = {
           patterns?: Json | null
           risk_level?: string | null
           summary?: string
+        }
+        Relationships: []
+      }
+      alertes: {
+        Row: {
+          created_at: string | null
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          message: string
+          page_source: string | null
+          resolved: boolean | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severite: string
+          titre: string
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          message: string
+          page_source?: string | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severite?: string
+          titre: string
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          message?: string
+          page_source?: string | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severite?: string
+          titre?: string
+          type?: string
         }
         Relationships: []
       }
@@ -1284,6 +1392,7 @@ export type Database = {
           bc_id: string | null
           bl_id: string
           camion_assigne: string | null
+          chantier_adresse: string | null
           chauffeur_nom: string | null
           ciment_reel_kg: number
           client_confirmed_at: string | null
@@ -1291,6 +1400,7 @@ export type Database = {
           client_id: string
           client_signature_url: string | null
           consommation_calculee: number | null
+          contact_chantier: string | null
           created_at: string
           created_by: string | null
           cur_reel: number | null
@@ -1320,6 +1430,7 @@ export type Database = {
           machine_id: string | null
           marge_brute_pct: number | null
           mode_paiement: string | null
+          montant: number | null
           payment_recorded_at: string | null
           payment_recorded_by: string | null
           payment_recorded_by_name: string | null
@@ -1369,6 +1480,7 @@ export type Database = {
           bc_id?: string | null
           bl_id: string
           camion_assigne?: string | null
+          chantier_adresse?: string | null
           chauffeur_nom?: string | null
           ciment_reel_kg: number
           client_confirmed_at?: string | null
@@ -1376,6 +1488,7 @@ export type Database = {
           client_id: string
           client_signature_url?: string | null
           consommation_calculee?: number | null
+          contact_chantier?: string | null
           created_at?: string
           created_by?: string | null
           cur_reel?: number | null
@@ -1405,6 +1518,7 @@ export type Database = {
           machine_id?: string | null
           marge_brute_pct?: number | null
           mode_paiement?: string | null
+          montant?: number | null
           payment_recorded_at?: string | null
           payment_recorded_by?: string | null
           payment_recorded_by_name?: string | null
@@ -1454,6 +1568,7 @@ export type Database = {
           bc_id?: string | null
           bl_id?: string
           camion_assigne?: string | null
+          chantier_adresse?: string | null
           chauffeur_nom?: string | null
           ciment_reel_kg?: number
           client_confirmed_at?: string | null
@@ -1461,6 +1576,7 @@ export type Database = {
           client_id?: string
           client_signature_url?: string | null
           consommation_calculee?: number | null
+          contact_chantier?: string | null
           created_at?: string
           created_by?: string | null
           cur_reel?: number | null
@@ -1490,6 +1606,7 @@ export type Database = {
           machine_id?: string | null
           marge_brute_pct?: number | null
           mode_paiement?: string | null
+          montant?: number | null
           payment_recorded_at?: string | null
           payment_recorded_by?: string | null
           payment_recorded_by_name?: string | null
@@ -2076,6 +2193,45 @@ export type Database = {
         }
         Relationships: []
       }
+      certifications: {
+        Row: {
+          code: string
+          created_at: string | null
+          date_expiration: string | null
+          description: string | null
+          id: string
+          marche: string
+          prochaine_action: string | null
+          statut: string | null
+          tests_completes: number | null
+          tests_requis: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          date_expiration?: string | null
+          description?: string | null
+          id?: string
+          marche?: string
+          prochaine_action?: string | null
+          statut?: string | null
+          tests_completes?: number | null
+          tests_requis?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          date_expiration?: string | null
+          description?: string | null
+          id?: string
+          marche?: string
+          prochaine_action?: string | null
+          statut?: string | null
+          tests_completes?: number | null
+          tests_requis?: number | null
+        }
+        Relationships: []
+      }
       client_intelligence: {
         Row: {
           actions: string | null
@@ -2123,8 +2279,10 @@ export type Database = {
       }
       clients: {
         Row: {
+          actif: boolean | null
           adresse: string | null
           average_days_to_pay: number | null
+          ca_ytd: number | null
           client_id: string
           code_postal: string | null
           contact_personne: string | null
@@ -2145,16 +2303,21 @@ export type Database = {
           payment_score: number | null
           rc: string | null
           rc_document_url: string | null
+          score_sante: number | null
+          segment: string | null
           solde_du: number | null
           telephone: string | null
           total_invoiced: number | null
           total_paid: number | null
           updated_at: string
           ville: string | null
+          volume_mensuel_moy: number | null
         }
         Insert: {
+          actif?: boolean | null
           adresse?: string | null
           average_days_to_pay?: number | null
+          ca_ytd?: number | null
           client_id: string
           code_postal?: string | null
           contact_personne?: string | null
@@ -2175,16 +2338,21 @@ export type Database = {
           payment_score?: number | null
           rc?: string | null
           rc_document_url?: string | null
+          score_sante?: number | null
+          segment?: string | null
           solde_du?: number | null
           telephone?: string | null
           total_invoiced?: number | null
           total_paid?: number | null
           updated_at?: string
           ville?: string | null
+          volume_mensuel_moy?: number | null
         }
         Update: {
+          actif?: boolean | null
           adresse?: string | null
           average_days_to_pay?: number | null
+          ca_ytd?: number | null
           client_id?: string
           code_postal?: string | null
           contact_personne?: string | null
@@ -2205,12 +2373,15 @@ export type Database = {
           payment_score?: number | null
           rc?: string | null
           rc_document_url?: string | null
+          score_sante?: number | null
+          segment?: string | null
           solde_du?: number | null
           telephone?: string | null
           total_invoiced?: number | null
           total_paid?: number | null
           updated_at?: string
           ville?: string | null
+          volume_mensuel_moy?: number | null
         }
         Relationships: []
       }
@@ -2746,6 +2917,45 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_scores: {
+        Row: {
+          conformite_score: number | null
+          created_at: string | null
+          details: Json | null
+          id: string
+          ponctualite_score: number | null
+          production_score: number | null
+          recouvrement_score: number | null
+          score_date: string
+          score_total: number
+          stock_score: number | null
+        }
+        Insert: {
+          conformite_score?: number | null
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ponctualite_score?: number | null
+          production_score?: number | null
+          recouvrement_score?: number | null
+          score_date?: string
+          score_total: number
+          stock_score?: number | null
+        }
+        Update: {
+          conformite_score?: number | null
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ponctualite_score?: number | null
+          production_score?: number | null
+          recouvrement_score?: number | null
+          score_date?: string
+          score_total?: number
+          stock_score?: number | null
+        }
+        Relationships: []
+      }
       demo_requests: {
         Row: {
           created_at: string
@@ -2914,6 +3124,7 @@ export type Database = {
           created_by: string | null
           cut_per_m3: number
           date_expiration: string | null
+          date_livraison_souhaitee: string | null
           devis_id: string
           discrepancies_count: number | null
           distance_km: number
@@ -2970,6 +3181,7 @@ export type Database = {
           created_by?: string | null
           cut_per_m3: number
           date_expiration?: string | null
+          date_livraison_souhaitee?: string | null
           devis_id: string
           discrepancies_count?: number | null
           distance_km?: number
@@ -3026,6 +3238,7 @@ export type Database = {
           created_by?: string | null
           cut_per_m3?: number
           date_expiration?: string | null
+          date_livraison_souhaitee?: string | null
           devis_id?: string
           discrepancies_count?: number | null
           distance_km?: number
@@ -3953,12 +4166,16 @@ export type Database = {
           bl_id: string
           bls_inclus: string[] | null
           client_id: string
+          client_nom: string | null
           created_at: string
           created_by: string | null
           created_by_name: string | null
           created_by_role: string | null
           cur_reel: number | null
+          date_echeance: string | null
           date_facture: string
+          date_paiement: string | null
+          derniere_relance_at: string | null
           facture_id: string
           formule_id: string
           id: string
@@ -3969,8 +4186,11 @@ export type Database = {
           marge_brute_dh: number | null
           marge_brute_pct: number | null
           mode_paiement: string | null
+          montant_ht: number | null
+          notes: string | null
           prix_livraison_m3: number | null
           prix_vente_m3: number
+          relance_count: number | null
           statut: string
           total_ht: number
           total_ttc: number
@@ -3983,12 +4203,16 @@ export type Database = {
           bl_id: string
           bls_inclus?: string[] | null
           client_id: string
+          client_nom?: string | null
           created_at?: string
           created_by?: string | null
           created_by_name?: string | null
           created_by_role?: string | null
           cur_reel?: number | null
+          date_echeance?: string | null
           date_facture?: string
+          date_paiement?: string | null
+          derniere_relance_at?: string | null
           facture_id: string
           formule_id: string
           id?: string
@@ -3999,8 +4223,11 @@ export type Database = {
           marge_brute_dh?: number | null
           marge_brute_pct?: number | null
           mode_paiement?: string | null
+          montant_ht?: number | null
+          notes?: string | null
           prix_livraison_m3?: number | null
           prix_vente_m3: number
+          relance_count?: number | null
           statut?: string
           total_ht: number
           total_ttc: number
@@ -4013,12 +4240,16 @@ export type Database = {
           bl_id?: string
           bls_inclus?: string[] | null
           client_id?: string
+          client_nom?: string | null
           created_at?: string
           created_by?: string | null
           created_by_name?: string | null
           created_by_role?: string | null
           cur_reel?: number | null
+          date_echeance?: string | null
           date_facture?: string
+          date_paiement?: string | null
+          derniere_relance_at?: string | null
           facture_id?: string
           formule_id?: string
           id?: string
@@ -4029,8 +4260,11 @@ export type Database = {
           marge_brute_dh?: number | null
           marge_brute_pct?: number | null
           mode_paiement?: string | null
+          montant_ht?: number | null
+          notes?: string | null
           prix_livraison_m3?: number | null
           prix_vente_m3?: number
+          relance_count?: number | null
           statut?: string
           total_ht?: number
           total_ttc?: number
@@ -4302,7 +4536,10 @@ export type Database = {
         Row: {
           bc_mission_id: string | null
           capacite_m3: number | null
+          carburant_pct: number | null
           chauffeur: string | null
+          consommation_reelle_l_100km: number | null
+          consommation_theo_l_100km: number | null
           created_at: string
           date_last_visite_technique: string | null
           date_next_visite_technique: string | null
@@ -4330,6 +4567,8 @@ export type Database = {
           notes: string | null
           prochaine_maintenance_at: string | null
           proprietaire: string
+          revenu_jour: number | null
+          sante_score: number | null
           statut: string
           stopped_since: string | null
           telephone_chauffeur: string | null
@@ -4339,7 +4578,10 @@ export type Database = {
         Insert: {
           bc_mission_id?: string | null
           capacite_m3?: number | null
+          carburant_pct?: number | null
           chauffeur?: string | null
+          consommation_reelle_l_100km?: number | null
+          consommation_theo_l_100km?: number | null
           created_at?: string
           date_last_visite_technique?: string | null
           date_next_visite_technique?: string | null
@@ -4367,6 +4609,8 @@ export type Database = {
           notes?: string | null
           prochaine_maintenance_at?: string | null
           proprietaire?: string
+          revenu_jour?: number | null
+          sante_score?: number | null
           statut?: string
           stopped_since?: string | null
           telephone_chauffeur?: string | null
@@ -4376,7 +4620,10 @@ export type Database = {
         Update: {
           bc_mission_id?: string | null
           capacite_m3?: number | null
+          carburant_pct?: number | null
           chauffeur?: string | null
+          consommation_reelle_l_100km?: number | null
+          consommation_theo_l_100km?: number | null
           created_at?: string
           date_last_visite_technique?: string | null
           date_next_visite_technique?: string | null
@@ -4404,6 +4651,8 @@ export type Database = {
           notes?: string | null
           prochaine_maintenance_at?: string | null
           proprietaire?: string
+          revenu_jour?: number | null
+          sante_score?: number | null
           statut?: string
           stopped_since?: string | null
           telephone_chauffeur?: string | null
@@ -5022,6 +5271,96 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      livraisons: {
+        Row: {
+          arrivee_at: string | null
+          bon_livraison_id: string | null
+          carburant_l: number | null
+          chantier: string | null
+          chauffeur_nom: string | null
+          client_id: string | null
+          client_nom: string | null
+          confirmation_chantier: Json | null
+          conformite_beton: boolean | null
+          cout_carburant: number | null
+          cout_chauffeur: number | null
+          created_at: string | null
+          depart_at: string | null
+          distance_km: number | null
+          duree_minutes: number | null
+          formule: string | null
+          fraicheur_restante_min: number | null
+          id: string
+          melange_at: string | null
+          profit_net: number | null
+          retour_vide_pct: number | null
+          satisfaction_score: number | null
+          statut: string | null
+          temperature_dest_celsius: number | null
+          temps_attente_min: number | null
+          vehicule_id: string | null
+          volume_m3: number | null
+        }
+        Insert: {
+          arrivee_at?: string | null
+          bon_livraison_id?: string | null
+          carburant_l?: number | null
+          chantier?: string | null
+          chauffeur_nom?: string | null
+          client_id?: string | null
+          client_nom?: string | null
+          confirmation_chantier?: Json | null
+          conformite_beton?: boolean | null
+          cout_carburant?: number | null
+          cout_chauffeur?: number | null
+          created_at?: string | null
+          depart_at?: string | null
+          distance_km?: number | null
+          duree_minutes?: number | null
+          formule?: string | null
+          fraicheur_restante_min?: number | null
+          id?: string
+          melange_at?: string | null
+          profit_net?: number | null
+          retour_vide_pct?: number | null
+          satisfaction_score?: number | null
+          statut?: string | null
+          temperature_dest_celsius?: number | null
+          temps_attente_min?: number | null
+          vehicule_id?: string | null
+          volume_m3?: number | null
+        }
+        Update: {
+          arrivee_at?: string | null
+          bon_livraison_id?: string | null
+          carburant_l?: number | null
+          chantier?: string | null
+          chauffeur_nom?: string | null
+          client_id?: string | null
+          client_nom?: string | null
+          confirmation_chantier?: Json | null
+          conformite_beton?: boolean | null
+          cout_carburant?: number | null
+          cout_chauffeur?: number | null
+          created_at?: string | null
+          depart_at?: string | null
+          distance_km?: number | null
+          duree_minutes?: number | null
+          formule?: string | null
+          fraicheur_restante_min?: number | null
+          id?: string
+          melange_at?: string | null
+          profit_net?: number | null
+          retour_vide_pct?: number | null
+          satisfaction_score?: number | null
+          statut?: string | null
+          temperature_dest_celsius?: number | null
+          temps_attente_min?: number | null
+          vehicule_id?: string | null
+          volume_m3?: number | null
+        }
+        Relationships: []
       }
       loan_compliance_alerts: {
         Row: {
@@ -5959,6 +6298,30 @@ export type Database = {
         }
         Relationships: []
       }
+      parametres: {
+        Row: {
+          cle: string
+          description: string | null
+          id: string
+          updated_at: string | null
+          valeur: string
+        }
+        Insert: {
+          cle: string
+          description?: string | null
+          id?: string
+          updated_at?: string | null
+          valeur: string
+        }
+        Update: {
+          cle?: string
+          description?: string | null
+          id?: string
+          updated_at?: string | null
+          valeur?: string
+        }
+        Relationships: []
+      }
       payment_schedules: {
         Row: {
           amount: number
@@ -6227,27 +6590,40 @@ export type Database = {
           bl_id: string
           ciment_reel_kg: number
           ciment_theo_kg: number
+          client_id: string | null
+          client_nom: string | null
+          completed_at: string | null
+          conformite_status: string | null
+          cout_matiere: number | null
           created_at: string | null
           eau_reel_l: number
           eau_theo_l: number
           entered_at: string | null
           entered_by: string | null
           entered_by_name: string | null
+          formule: string | null
           gravette_reel_kg: number | null
           gravette_theo_kg: number | null
           has_critical_variance: boolean | null
           id: string
+          malaxeur: string | null
           notes: string | null
+          operateur: string | null
           photo_pupitre_url: string
           quality_status: string
+          ratio_ec: number | null
           sable_reel_kg: number | null
           sable_theo_kg: number | null
+          slump_cm: number | null
+          status: string | null
+          temperature_celsius: number | null
           updated_at: string | null
           variance_adjuvant_pct: number | null
           variance_ciment_pct: number | null
           variance_eau_pct: number | null
           variance_gravette_pct: number | null
           variance_sable_pct: number | null
+          volume_m3: number | null
           ws7_batch_id: string | null
         }
         Insert: {
@@ -6257,27 +6633,40 @@ export type Database = {
           bl_id: string
           ciment_reel_kg: number
           ciment_theo_kg: number
+          client_id?: string | null
+          client_nom?: string | null
+          completed_at?: string | null
+          conformite_status?: string | null
+          cout_matiere?: number | null
           created_at?: string | null
           eau_reel_l: number
           eau_theo_l: number
           entered_at?: string | null
           entered_by?: string | null
           entered_by_name?: string | null
+          formule?: string | null
           gravette_reel_kg?: number | null
           gravette_theo_kg?: number | null
           has_critical_variance?: boolean | null
           id?: string
+          malaxeur?: string | null
           notes?: string | null
+          operateur?: string | null
           photo_pupitre_url: string
           quality_status?: string
+          ratio_ec?: number | null
           sable_reel_kg?: number | null
           sable_theo_kg?: number | null
+          slump_cm?: number | null
+          status?: string | null
+          temperature_celsius?: number | null
           updated_at?: string | null
           variance_adjuvant_pct?: number | null
           variance_ciment_pct?: number | null
           variance_eau_pct?: number | null
           variance_gravette_pct?: number | null
           variance_sable_pct?: number | null
+          volume_m3?: number | null
           ws7_batch_id?: string | null
         }
         Update: {
@@ -6287,27 +6676,40 @@ export type Database = {
           bl_id?: string
           ciment_reel_kg?: number
           ciment_theo_kg?: number
+          client_id?: string | null
+          client_nom?: string | null
+          completed_at?: string | null
+          conformite_status?: string | null
+          cout_matiere?: number | null
           created_at?: string | null
           eau_reel_l?: number
           eau_theo_l?: number
           entered_at?: string | null
           entered_by?: string | null
           entered_by_name?: string | null
+          formule?: string | null
           gravette_reel_kg?: number | null
           gravette_theo_kg?: number | null
           has_critical_variance?: boolean | null
           id?: string
+          malaxeur?: string | null
           notes?: string | null
+          operateur?: string | null
           photo_pupitre_url?: string
           quality_status?: string
+          ratio_ec?: number | null
           sable_reel_kg?: number | null
           sable_theo_kg?: number | null
+          slump_cm?: number | null
+          status?: string | null
+          temperature_celsius?: number | null
           updated_at?: string | null
           variance_adjuvant_pct?: number | null
           variance_ciment_pct?: number | null
           variance_eau_pct?: number | null
           variance_gravette_pct?: number | null
           variance_sable_pct?: number | null
+          volume_m3?: number | null
           ws7_batch_id?: string | null
         }
         Relationships: [
@@ -6745,6 +7147,72 @@ export type Database = {
           },
         ]
       }
+      recettes: {
+        Row: {
+          actif: boolean | null
+          adjuvant_l_m3: number | null
+          ciment_kg_m3: number | null
+          classe_eu: string | null
+          created_at: string | null
+          eau_l_m3: number | null
+          formule: string
+          gravette_kg_m3: number | null
+          id: string
+          marge_cible_pct: number | null
+          nom_complet: string | null
+          prix_revient_m3: number | null
+          prix_vente_min_m3: number | null
+          psi_us: string | null
+          ratio_ec: number | null
+          resistance_cible_mpa: number | null
+          sable_kg_m3: number | null
+          slump_cible_cm: number | null
+          slump_tolerance_cm: number | null
+        }
+        Insert: {
+          actif?: boolean | null
+          adjuvant_l_m3?: number | null
+          ciment_kg_m3?: number | null
+          classe_eu?: string | null
+          created_at?: string | null
+          eau_l_m3?: number | null
+          formule: string
+          gravette_kg_m3?: number | null
+          id?: string
+          marge_cible_pct?: number | null
+          nom_complet?: string | null
+          prix_revient_m3?: number | null
+          prix_vente_min_m3?: number | null
+          psi_us?: string | null
+          ratio_ec?: number | null
+          resistance_cible_mpa?: number | null
+          sable_kg_m3?: number | null
+          slump_cible_cm?: number | null
+          slump_tolerance_cm?: number | null
+        }
+        Update: {
+          actif?: boolean | null
+          adjuvant_l_m3?: number | null
+          ciment_kg_m3?: number | null
+          classe_eu?: string | null
+          created_at?: string | null
+          eau_l_m3?: number | null
+          formule?: string
+          gravette_kg_m3?: number | null
+          id?: string
+          marge_cible_pct?: number | null
+          nom_complet?: string | null
+          prix_revient_m3?: number | null
+          prix_vente_min_m3?: number | null
+          psi_us?: string | null
+          ratio_ec?: number | null
+          resistance_cible_mpa?: number | null
+          sable_kg_m3?: number | null
+          slump_cible_cm?: number | null
+          slump_tolerance_cm?: number | null
+        }
+        Relationships: []
+      }
       relances_factures: {
         Row: {
           client_id: string
@@ -7028,42 +7496,54 @@ export type Database = {
       }
       stocks: {
         Row: {
+          autonomie_jours: number | null
           capacite_max: number | null
+          consommation_moy_jour: number | null
           created_at: string
           derniere_modification_notes: string | null
           derniere_modification_par: string | null
           derniere_modification_type: string | null
           derniere_reception_at: string | null
+          fournisseur_principal: string | null
           id: string
           materiau: string
+          prix_unitaire: number | null
           quantite_actuelle: number
           seuil_alerte: number
           unite: string
           updated_at: string
         }
         Insert: {
+          autonomie_jours?: number | null
           capacite_max?: number | null
+          consommation_moy_jour?: number | null
           created_at?: string
           derniere_modification_notes?: string | null
           derniere_modification_par?: string | null
           derniere_modification_type?: string | null
           derniere_reception_at?: string | null
+          fournisseur_principal?: string | null
           id?: string
           materiau: string
+          prix_unitaire?: number | null
           quantite_actuelle?: number
           seuil_alerte?: number
           unite: string
           updated_at?: string
         }
         Update: {
+          autonomie_jours?: number | null
           capacite_max?: number | null
+          consommation_moy_jour?: number | null
           created_at?: string
           derniere_modification_notes?: string | null
           derniere_modification_par?: string | null
           derniere_modification_type?: string | null
           derniere_reception_at?: string | null
+          fournisseur_principal?: string | null
           id?: string
           materiau?: string
+          prix_unitaire?: number | null
           quantite_actuelle?: number
           seuil_alerte?: number
           unite?: string
