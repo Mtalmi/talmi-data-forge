@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bell } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
+import { useValueFlash } from '@/hooks/useRealtimeVisuals';
 
 const MONO = 'ui-monospace, SFMono-Regular, monospace';
 
