@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 const M     = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
 const GOLD  = '#D4A843';
 const AMBER = '#F59E0B';
