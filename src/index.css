@@ -6210,3 +6210,28 @@ table tbody tr:hover,
   filter: drop-shadow(0 0 6px currentColor);
   transition: filter 200ms ease;
 }
+
+/* ═══ FIX 11: Real-time visual feedback animations ═══ */
+
+/* Value flash on real-time update (gold highlight then fade) */
+@keyframes valueFlash {
+  0% { color: hsl(var(--primary)); text-shadow: 0 0 8px hsla(var(--primary) / 0.5); }
+  100% { color: inherit; text-shadow: none; }
+}
+.value-updated {
+  animation: valueFlash 1s ease-out;
+}
+
+/* Badge bounce when notification count changes */
+@keyframes badgeBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+.badge-bounce {
+  animation: badgeBounce 300ms ease;
+}
+
+/* Smooth stock bar fill transitions */
+.stock-bar-fill {
+  transition: width 500ms ease;
+}

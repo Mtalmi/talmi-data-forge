@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
+import { debounce } from '@/utils/debounce';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
@@ -26,6 +27,18 @@ export function ProductionSearchBar({
   const ps = t.productionSearch;
   const dateLocale = getDateLocale(lang);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+
+  // Debounce actual filter callback by 300ms
+  const debouncedSearch = useMemo(
+    () => debounce((q: string) => onSearchChange(q), 300),
+    [onSearchChange]
+  );
+
+  const handleSearchInput = useCallback((value: string) => {
+    setLocalSearch(value);       // update input immediately
+    debouncedSearch(value);      // debounce the filter
+  }, [debouncedSearch]);
 
   const quickRanges = [
     { label: ps.today, days: 0 },
@@ -46,6 +59,7 @@ export function ProductionSearchBar({
   };
 
   const clearFilters = () => {
+    setLocalSearch('');
     onSearchChange('');
     onDateRangeChange({ from: null, to: null });
   };
@@ -58,8 +72,8 @@ export function ProductionSearchBar({
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder={ps.placeholder}
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
+          value={localSearch}
+          onChange={(e) => handleSearchInput(e.target.value)}
           className="pl-9 h-9"
         />
       </div>

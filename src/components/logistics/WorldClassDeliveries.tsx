@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { useTabSync } from '@/hooks/useTabSync';
 import { useUnitFormat } from '@/hooks/useUnitFormat';
 import { NouveauVehiculeModal } from '@/components/modals/NouveauVehiculeModal';
 import { ReleveCarburantModal } from '@/components/modals/ReleveCarburantModal';
@@ -2079,7 +2080,7 @@ function IntelligenceIATab() {
 // ═════════════════════════════════════════════════════
 export default function WorldClassDeliveries() {
   const uf = useUnitFormat();
-  const [activeTab, setActiveTab] = useState('flotte');
+  const [activeTab, setActiveTab] = useTabSync('flotte');
   const [showVehiculeModal, setShowVehiculeModal] = useState(false);
   const [showCarburantModal, setShowCarburantModal] = useState(false);
   const [showRoutesModal, setShowRoutesModal] = useState(false);

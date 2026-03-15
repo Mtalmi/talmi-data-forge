@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useUnitFormat } from '@/hooks/useUnitFormat';
 import { NouveauTestModal } from '@/components/modals/NouveauTestModal';
-import { useLocation } from 'react-router-dom';
+import { useTabSync } from '@/hooks/useTabSync';
 import { supabase } from '@/integrations/supabase/client';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -2046,29 +2046,14 @@ function IntelligenceIATab() {
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────
 export default function WorldClassLaboratory() {
-  const location = useLocation();
-  const [activeTab, setActiveTab] = useState('essais');
+  const [activeTab, setActiveTab] = useTabSync('essais', {
+    'intelligence-ia': 'ia',
+    'ia': 'ia',
+    'essais-du-jour': 'essais',
+  });
   const [hoverNew, setHoverNew] = useState(false);
   const [showTestModal, setShowTestModal] = useState(false);
   const { kpis: labKpis } = useLaboratoryLiveData();
-
-  // Read location state for tab activation
-  useEffect(() => {
-    const state = location.state as { activeTab?: string } | null;
-    if (state?.activeTab) {
-      const tabMap: Record<string, string> = {
-        'intelligence-ia': 'ia',
-        'ia': 'ia',
-        'essais': 'essais',
-        'essais-du-jour': 'essais',
-        'historique': 'historique',
-        'analytique': 'analytique',
-      };
-      const mapped = tabMap[state.activeTab] || state.activeTab;
-      setActiveTab(mapped);
-      window.history.replaceState({}, '');
-    }
-  }, [location.state]);
 
   const TABS = [
     { id: 'essais', label: 'ESSAIS DU JOUR' },

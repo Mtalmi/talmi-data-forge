@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, lazy, Suspense, useCallback, useMemo } from 'react';
 import { useLiveSimulation } from '@/hooks/useLiveSimulation';
 import { triggerPrint } from '@/lib/printUtils';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
 import { AnimatePresence } from 'framer-motion';
 import { NouveauDevisModal } from '@/components/modals/NouveauDevisModal';
@@ -132,7 +132,16 @@ export default function Dashboard() {
   const [showExecutiveSummary, setShowExecutiveSummary] = useState(false);
   const [hoveredChartIdx, setHoveredChartIdx] = useState<number | null>(null);
   const [alertDismissed, setAlertDismissed] = useState(false);
-  const [activeTab, setActiveTab] = useState<'command' | 'production' | 'operations' | 'intelligence'>('command');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTabRaw] = useState<'command' | 'production' | 'operations' | 'intelligence'>(() => {
+    const urlTab = searchParams.get('tab');
+    if (urlTab && ['command', 'production', 'operations', 'intelligence'].includes(urlTab)) return urlTab as any;
+    return 'command';
+  });
+  const setActiveTab = (tab: typeof activeTab) => {
+    setActiveTabRaw(tab);
+    setSearchParams({ tab }, { replace: true });
+  };
   const [searchFocused, setSearchFocused] = useState(false);
   const [bellOpen, setBellOpen] = useState(false);
   const [bellSeen, setBellSeen] = useState(false);

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { NouveauMouvementModal } from '@/components/modals/NouveauMouvementModal';
 import { ControleQualiteModal, AjustementManuelModal } from '@/components/modals/StockControlModals';
-import { useLocation } from 'react-router-dom';
+import { useTabSync } from '@/hooks/useTabSync';
 import { toast } from 'sonner';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip,
@@ -731,30 +731,17 @@ function HeroScoreCounter({ target }: { target: number }) {
 // MAIN
 // ─────────────────────────────────────────────────────
 export default function WorldClassStocks({ silosContent, onNewMovement }: { silosContent?: React.ReactNode; onNewMovement?: () => void }) {
-  const location = useLocation();
-  const [activeTab, setActiveTab] = useState('silos');
+  const [activeTab, setActiveTab] = useTabSync('silos', {
+    'surveillance-ia': 'alertes',
+    'alertes': 'alertes',
+    'vue-ensemble': 'overview',
+    'overview': 'overview',
+    'mouvements': 'mouvements',
+  });
   const [showMouvementModal, setShowMouvementModal] = useState(false);
   const [showControleModal, setShowControleModal] = useState(false);
   const [showAjustementModal, setShowAjustementModal] = useState(false);
   const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, REORDER_RECS, loading } = useStocksLiveData();
-
-  // Read location state for tab activation
-  useEffect(() => {
-    const state = location.state as { activeTab?: string } | null;
-    if (state?.activeTab) {
-      const tabMap: Record<string, string> = {
-        'surveillance-ia': 'alertes',
-        'alertes': 'alertes',
-        'silos': 'silos',
-        'vue-ensemble': 'overview',
-        'overview': 'overview',
-        'mouvements': 'mouvements',
-      };
-      const mapped = tabMap[state.activeTab] || state.activeTab;
-      setActiveTab(mapped);
-      window.history.replaceState({}, '');
-    }
-  }, [location.state]);
   const tabs = [
     { id: 'silos', label: 'SILOS' },
     { id: 'overview', label: "VUE D'ENSEMBLE" },
