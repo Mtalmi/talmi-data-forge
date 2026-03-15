@@ -890,7 +890,7 @@ function CarteGPSTab() {
                     <Shield size={16} color={T.gold} />
                     <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: T.textPri }}>Zones de Sécurité Actives</span>
                   </div>
-                  <button style={{ fontFamily: MONO, fontSize: 10, padding: '4px 10px', background: 'transparent', border: `1px solid ${T.gold}`, borderRadius: 6, color: T.gold, cursor: 'pointer' }}>+ Ajouter</button>
+                  <span style={{ fontFamily: MONO, fontSize: 10, padding: '4px 10px', background: 'transparent', border: `1px solid ${T.gold}`, borderRadius: 6, color: T.gold, cursor: 'default', display: 'inline-block', opacity: 0.5 }}>+ Ajouter</span>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <div style={{ padding: '10px 12px', background: 'rgba(255,255,255,0.02)', borderRadius: 8, border: `1px solid ${T.cardBorder}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

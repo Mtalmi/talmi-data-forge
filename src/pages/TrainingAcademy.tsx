@@ -494,8 +494,8 @@ export default function TrainingAcademy() {
                     )}
                     <div className="flex items-center justify-between">
                       <span className="text-xs" style={{ color: T.text2 }}>👥 {c.enrolled} enrolled</span>
-                      {!c.completed && c.progress === 0 && <button className="text-xs font-medium" style={{ color: T.gold }}>Start Course →</button>}
-                      {!c.completed && c.progress > 0 && <button className="text-xs font-medium" style={{ color: T.gold }}>Continue →</button>}
+                      {!c.completed && c.progress === 0 && <span className="text-xs font-medium cursor-pointer hover:opacity-80" style={{ color: T.gold }}>Start Course →</span>}
+                      {!c.completed && c.progress > 0 && <span className="text-xs font-medium cursor-pointer hover:opacity-80" style={{ color: T.gold }}>Continue →</span>}
                     </div>
                   </div>
                 </motion.div>
