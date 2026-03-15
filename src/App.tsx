@@ -148,6 +148,7 @@ function PageTitleManager() {
 const App = () => (
   <I18nProvider>
   <UnitProvider>
+  <PlantProvider>
     <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <TooltipProvider>
