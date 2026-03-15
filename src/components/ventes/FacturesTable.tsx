@@ -481,6 +481,7 @@ export function FacturesTable({
           pageSize={FACT_PAGE_SIZE}
           onPageChange={setFactPage}
         />
+        </>
       )}
     </div>
 
