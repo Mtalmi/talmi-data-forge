@@ -79,29 +79,49 @@ function useBarWidth(target: number, delay = 0) {
 // ─────────────────────────────────────────────────────
 function useLaboratoryLiveData() {
   const [kpis, setKpis] = useState({ testsToday: 8, conformes: 7, nonConformes: 1, enAttente: 2 });
+  const [certifications, setCertifications] = useState<any[]>([]);
+  const [labTests, setLabTests] = useState<any[]>([]);
+
   const fetchData = useCallback(async () => {
     try {
       const today = new Date().toISOString().split('T')[0];
-      const { data: batches } = await supabase.from('production_batches')
-        .select('id, bl_id, batch_number, quality_status, variance_ciment_pct, variance_eau_pct, created_at')
-        .gte('created_at', today)
-        .order('created_at', { ascending: false });
-      if (batches?.length) {
-        const conformes = batches.filter(b => b.quality_status === 'conforme').length;
-        const nonConformes = batches.filter(b => b.quality_status === 'non_conforme').length;
-        const enAttente = batches.filter(b => !b.quality_status || b.quality_status === 'pending').length;
+      const [batchesRes, certsRes, testsRes] = await Promise.all([
+        supabase.from('production_batches')
+          .select('id, bl_id, batch_number, formule, volume_m3, client_nom, quality_status, conformite_status, operateur, slump_cm, ratio_ec, temperature_celsius, variance_ciment_pct, variance_eau_pct, created_at, completed_at')
+          .gte('created_at', today)
+          .order('created_at', { ascending: false }),
+        supabase.from('certifications')
+          .select('*')
+          .order('date_expiration', { ascending: true }),
+        supabase.from('tests_laboratoire')
+          .select('*')
+          .gte('date_prelevement', today)
+          .order('created_at', { ascending: false }),
+      ]);
+
+      const batches = batchesRes.data || [];
+      if (batches.length) {
+        const conformes = batches.filter(b => b.conformite_status === 'conforme' || b.quality_status === 'conforme').length;
+        const nonConformes = batches.filter(b => b.conformite_status === 'non_conforme' || b.quality_status === 'non_conforme' || b.quality_status === 'critical').length;
+        const enAttente = batches.filter(b => b.conformite_status === 'en_attente' || (!b.quality_status || b.quality_status === 'pending')).length;
         setKpis({ testsToday: batches.length, conformes, nonConformes, enAttente });
       }
+      setCertifications(certsRes.data || []);
+      setLabTests(testsRes.data || []);
     } catch (err) { console.error('Laboratory live data error:', err); }
   }, []);
+
   useEffect(() => {
     fetchData();
     const channel = supabase.channel('wc-laboratory-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'production_batches' }, fetchData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tests_laboratoire' }, fetchData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'certifications' }, fetchData)
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [fetchData]);
-  return { kpis };
+
+  return { kpis, certifications, labTests };
 }
 
 // ─────────────────────────────────────────────────────

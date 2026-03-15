@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { NouveauDevisModal } from '@/components/modals/NouveauDevisModal';
 import { useN8nWorkflow } from '@/hooks/useN8nWorkflow';
 import { toast as sonnerToast } from 'sonner';
 import { useI18n } from '@/i18n/I18nContext';
+import { supabase } from '@/integrations/supabase/client';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -134,28 +135,54 @@ function Metric({ value, suffix = '', prefix = '', size = 30, color = T.gold }: 
   );
 }
 
+const funnelBase = [
+  { stageKey: 'leads' as const, count: 48, value: 1200, rate: 100, width: '100%', stage: 'Leads' },
+  { stageKey: 'quotesSent' as const, count: 24, value: 847, rate: 50, width: '72%', stage: 'Devis Envoyés' },
+  { stageKey: 'activePOs' as const, count: 12, value: 504, rate: 25, width: '45%', stage: 'BC Actifs' },
+  { stageKey: 'closedDeals' as const, count: 8, value: 338, rate: 17, width: '28%', stage: 'Conclus' },
+];
+const donutBase = [
+  { nameKey: 'leads' as const, value: 1200, name: 'Leads' },
+  { nameKey: 'quotesLabel' as const, value: 847, name: 'Devis' },
+  { nameKey: 'activePOs' as const, value: 504, name: 'BC Actifs' },
+  { nameKey: 'closedDeals' as const, value: 338, name: 'Conclus' },
+];
+
+/* ─── LIVE DATA HOOK ─── */
+function useVentesLiveData() {
+  const [devis, setDevis] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchAll = useCallback(async () => {
+    try {
+      const { data } = await supabase
+        .from('devis')
+        .select('id, devis_id, client_id, formule_id, volume_m3, prix_vente_m3, total_ht, statut, score_ia, niveau_score, probabilite_conversion, ai_recommandation, date_livraison_souhaitee, created_at')
+        .order('created_at', { ascending: false });
+      setDevis(data || []);
+    } catch (e) { console.error('Ventes fetch error:', e); }
+    finally { setLoading(false); }
+  }, []);
+
+  useEffect(() => {
+    fetchAll();
+    const ch = supabase.channel('wc-ventes-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'devis' }, () => fetchAll())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [fetchAll]);
+
+  return { devis, loading, refresh: fetchAll };
+}
+
 /* ═══════════════════════════════════════════════════════
    SECTION 1: PIPELINE
 ══════════════════════════════════════════════════════ */
-const funnelStages = ['leads', 'quotesSent', 'activePOs', 'closedDeals'] as const;
-const funnelBase = [
-  { stageKey: 'leads' as const, count: 48, value: 1200, rate: 100, width: '100%' },
-  { stageKey: 'quotesSent' as const, count: 24, value: 847, rate: 50, width: '72%' },
-  { stageKey: 'activePOs' as const, count: 12, value: 504, rate: 25, width: '45%' },
-  { stageKey: 'closedDeals' as const, count: 8, value: 338, rate: 17, width: '28%' },
-];
-
-const donutBase = [
-  { nameKey: 'leads' as const, value: 1200 },
-  { nameKey: 'quotesLabel' as const, value: 847 },
-  { nameKey: 'activePOs' as const, value: 504 },
-  { nameKey: 'closedDeals' as const, value: 338 },
-];
-const DONUT_COLORS = ['rgba(212,168,67,0.9)', 'rgba(212,168,67,0.7)', 'rgba(212,168,67,0.5)', 'rgba(212,168,67,0.3)'];
 
 function PipelineSection() {
   const { t } = useI18n();
   const vt = t.pages.ventes;
+  const { devis, loading } = useVentesLiveData();
   const [barWidths, setBarWidths] = useState([0, 0, 0, 0]);
   const goldOpacities = [1, 0.75, 0.50, 0.35];
 
@@ -167,21 +194,46 @@ function PipelineSection() {
     quotesLabel: vt.quotesLabel,
   };
 
-  const funnelData = funnelBase.map(f => ({ ...f, stage: stageLabels[f.stageKey] || f.stageKey }));
-  const donutData = donutBase.map(d => ({ ...d, name: stageLabels[d.nameKey] || d.nameKey }));
+  // Derive pipeline from real devis data
+  const pipeline = useMemo(() => {
+    if (!devis.length) return null;
+    const brouillon = devis.filter(d => d.statut === 'brouillon');
+    const envoye = devis.filter(d => d.statut === 'envoye');
+    const accepte = devis.filter(d => d.statut === 'accepte');
+    const refuse = devis.filter(d => d.statut === 'refuse');
+    const active = [...brouillon, ...envoye];
+    const pipelineTotal = active.reduce((s, d) => s + (d.total_ht || 0), 0);
+    const conversionRate = devis.length > 0 ? Math.round((accepte.length / devis.length) * 100) : 0;
+    const avgDealSize = active.length > 0 ? Math.round(pipelineTotal / active.length / 1000) : 0;
 
-  useEffect(() => {
-    funnelData.forEach((_, i) => {
-      setTimeout(() => {
-        setBarWidths(prev => { const next = [...prev]; next[i] = 1; return next; });
-      }, i * 150);
-    });
-  }, []);
+    return {
+      total: Math.round(pipelineTotal / 1000),
+      conversion: conversionRate,
+      avgDeal: avgDealSize,
+      funnel: [
+        { stage: 'Leads', count: devis.length, value: Math.round(devis.reduce((s, d) => s + (d.total_ht || 0), 0) / 1000), rate: 100, width: '100%' },
+        { stage: stageLabels.quotesSent, count: envoye.length, value: Math.round(envoye.reduce((s, d) => s + (d.total_ht || 0), 0) / 1000), rate: devis.length > 0 ? Math.round((envoye.length / devis.length) * 100) : 0, width: `${Math.max(20, devis.length > 0 ? (envoye.length / devis.length) * 100 : 0)}%` },
+        { stage: stageLabels.activePOs, count: accepte.length, value: Math.round(accepte.reduce((s, d) => s + (d.total_ht || 0), 0) / 1000), rate: devis.length > 0 ? Math.round((accepte.length / devis.length) * 100) : 0, width: `${Math.max(15, devis.length > 0 ? (accepte.length / devis.length) * 100 : 0)}%` },
+        { stage: stageLabels.closedDeals, count: refuse.length, value: Math.round(refuse.reduce((s, d) => s + (d.total_ht || 0), 0) / 1000), rate: devis.length > 0 ? Math.round((refuse.length / devis.length) * 100) : 0, width: `${Math.max(10, devis.length > 0 ? (refuse.length / devis.length) * 100 : 0)}%` },
+      ],
+      donut: [
+        { name: 'Brouillon', value: brouillon.length },
+        { name: stageLabels.quotesSent, value: envoye.length },
+        { name: stageLabels.activePOs, value: accepte.length },
+        { name: stageLabels.closedDeals, value: refuse.length },
+      ],
+    };
+  }, [devis]);
+
+  // Use real data or fallback
+  const funnelData = pipeline?.funnel || funnelBase.map(f => ({ ...f, stage: stageLabels[f.stageKey] || f.stageKey }));
+  const donutData = pipeline?.donut || donutBase.map(d => ({ ...d, name: stageLabels[d.nameKey] || d.nameKey }));
+  const DONUT_COLORS = ['rgba(212,168,67,0.9)', 'rgba(212,168,67,0.7)', 'rgba(212,168,67,0.5)', 'rgba(212,168,67,0.3)'];
 
   const kpiLabels = [
-    { label: vt.pipelineTotal, value: 847, suffix: 'K DH', trend: '↑ 12%', trendLabel: vt.vsLastMonth, trendColor: '#10B981' },
-    { label: vt.conversionRateLabel, value: 34, suffix: '%', trend: '→', trendLabel: 'stable', trendColor: 'rgba(255,255,255,0.4)' },
-    { label: vt.averageDealSize, value: 42, suffix: 'K DH', trend: '↑ 5%', trendLabel: '', trendColor: '#10B981' },
+    { label: vt.pipelineTotal, value: pipeline?.total || 847, suffix: 'K DH', trend: '↑ 12%', trendLabel: vt.vsLastMonth, trendColor: '#10B981' },
+    { label: vt.conversionRateLabel, value: pipeline?.conversion || 34, suffix: '%', trend: '→', trendLabel: 'stable', trendColor: 'rgba(255,255,255,0.4)' },
+    { label: vt.averageDealSize, value: pipeline?.avgDeal || 42, suffix: 'K DH', trend: '↑ 5%', trendLabel: '', trendColor: '#10B981' },
     { label: vt.salesCycle, value: 28, suffix: ` ${vt.days}`, trend: `↓ 3 ${vt.trendDays}`, trendLabel: '', trendColor: '#10B981' },
   ];
 

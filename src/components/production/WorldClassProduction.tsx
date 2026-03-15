@@ -215,9 +215,9 @@ function useProductionLiveData() {
           .eq('date_livraison', today),
         supabase
           .from('production_batches')
-          .select('id, bl_id, batch_number, quality_status, has_critical_variance, entered_at, ciment_reel_kg, eau_reel_l, variance_ciment_pct, variance_eau_pct, entered_by_name')
-          .order('entered_at', { ascending: false })
-          .limit(20),
+          .select('id, bl_id, batch_number, formule, volume_m3, client_nom, status, conformite_status, quality_status, has_critical_variance, operateur, temperature_celsius, ratio_ec, slump_cm, cout_matiere, entered_at, created_at, completed_at, ciment_reel_kg, eau_reel_l, variance_ciment_pct, variance_eau_pct, entered_by_name')
+          .order('created_at', { ascending: false })
+          .limit(50),
         supabase
           .from('bons_livraison_reels')
           .select('bl_id, volume_m3, quality_status, date_livraison, variance_ciment_pct')
@@ -490,19 +490,35 @@ export default function WorldClassProduction() {
 
   // ── Derived KPIs (with realistic fallbacks when DB is empty) ──
   const kpis = useMemo(() => {
-    const produced = bons.filter(b => b.workflow_status === 'validation_technique').reduce((s, b) => s + (b.volume_m3 || 0), 0);
-    const inProgress = bons.filter(b => b.workflow_status === 'production').reduce((s, b) => s + (b.volume_m3 || 0), 0);
-    const planned = bons.filter(b => b.workflow_status === 'planification').reduce((s, b) => s + (b.volume_m3 || 0), 0);
-    const totalVolume = produced + inProgress + planned;
+    // Use production_batches as primary source (seeded data)
+    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    const todayBatches = batches.filter(b => b.created_at?.startsWith(todayStr));
+    const completedBatches = todayBatches.filter(b => b.status === 'complete' || b.status === 'decharge');
+    const inProgressBatches = todayBatches.filter(b => b.status === 'en_cours');
 
-    const completedBatches = batches.filter(b => b.quality_status === 'ok' || b.quality_status === 'warning').length;
-    const criticalBatches = batches.filter(b => b.quality_status === 'critical').length;
-    const totalBatches = batches.length;
-    const conformity = totalBatches > 0 ? Math.round(((totalBatches - criticalBatches) / totalBatches) * 100) : 100;
+    // Volume from batches
+    const batchVolume = completedBatches.reduce((s, b) => s + (b.volume_m3 || 0), 0);
+    const inProgressVolume = inProgressBatches.reduce((s, b) => s + (b.volume_m3 || 0), 0);
+
+    // Fallback to BL if no batches
+    const blVolume = bons.filter(b => b.workflow_status === 'validation_technique').reduce((s, b) => s + (b.volume_m3 || 0), 0);
+    const blInProgress = bons.filter(b => b.workflow_status === 'production').reduce((s, b) => s + (b.volume_m3 || 0), 0);
+    const blPlanned = bons.filter(b => b.workflow_status === 'planification').reduce((s, b) => s + (b.volume_m3 || 0), 0);
+
+    const produced = batchVolume > 0 ? batchVolume : blVolume;
+    const inProgress = inProgressVolume > 0 ? inProgressVolume : blInProgress;
+    const planned = blPlanned;
+    const totalVolume = produced + inProgress + planned;
+    const totalBatches = todayBatches.length > 0 ? todayBatches.length : batches.length;
+
+    // Conformity from conformite_status or quality_status
+    const nonConformes = todayBatches.filter(b => b.conformite_status === 'non_conforme' || b.quality_status === 'critical').length;
+    const tested = todayBatches.filter(b => b.conformite_status && b.conformite_status !== 'en_attente').length || totalBatches;
+    const conformity = tested > 0 ? Math.round(((tested - nonConformes) / tested) * 1000) / 10 : 100;
 
     const hasData = totalVolume > 0 || totalBatches > 0;
     if (hasData) {
-      return { produced, inProgress, planned, totalVolume, completedBatches, conformity, totalBatches, isDemo: false };
+      return { produced, inProgress, planned, totalVolume, completedBatches: completedBatches.length || totalBatches, conformity, totalBatches, isDemo: false };
     }
     return {
       produced: 671, inProgress: 8, planned: 2,
@@ -524,14 +540,31 @@ export default function WorldClassProduction() {
   const hourlyData = useMemo(() => {
     const hourMap: Record<string, number> = {};
     for (let h = 6; h <= 18; h++) hourMap[`${h}h`] = 0;
-    bons.forEach(b => {
-      if (b.production_batch_time || b.heure_prevue) {
-        const timeStr = b.production_batch_time || b.heure_prevue;
-        const hour = parseInt(timeStr?.split(':')[0] || '0', 10);
-        const key = `${hour}h`;
-        if (hourMap[key] !== undefined) hourMap[key] += b.volume_m3 || 0;
-      }
-    });
+
+    // Primary: use production_batches completed_at/created_at
+    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    const todayBatches = batches.filter(b => b.created_at?.startsWith(todayStr) && b.status === 'complete');
+    if (todayBatches.length > 0) {
+      todayBatches.forEach(b => {
+        const ts = b.completed_at || b.created_at;
+        if (ts) {
+          const hour = new Date(ts).getHours();
+          const key = `${hour}h`;
+          if (hourMap[key] !== undefined) hourMap[key] += b.volume_m3 || 0;
+        }
+      });
+    } else {
+      // Fallback: use bons
+      bons.forEach(b => {
+        if (b.production_batch_time || b.heure_prevue) {
+          const timeStr = b.production_batch_time || b.heure_prevue;
+          const hour = parseInt(timeStr?.split(':')[0] || '0', 10);
+          const key = `${hour}h`;
+          if (hourMap[key] !== undefined) hourMap[key] += b.volume_m3 || 0;
+        }
+      });
+    }
+
     const liveData = Object.entries(hourMap).map(([hour, volume]) => ({ hour, volume: Math.round(volume), objectif: 90, lastWeek: 0 }));
     const hasLive = liveData.some(d => d.volume > 0);
     if (hasLive) return liveData;
@@ -545,7 +578,7 @@ export default function WorldClassProduction() {
       '12h': 48, '13h': 85, '14h': 78, '15h': 68, '16h': 62, '17h': 50, '18h': 3,
     };
     return Object.entries(demoVolumes).map(([hour, volume]) => ({ hour, volume, objectif: 90, lastWeek: lastWeekVolumes[hour] || 0 }));
-  }, [bons]);
+  }, [bons, batches]);
 
   const hasHourlyData = hourlyData.some(d => d.volume > 0);
 

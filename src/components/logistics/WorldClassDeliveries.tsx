@@ -136,6 +136,7 @@ function useDeliveriesLiveData() {
   const [weekBons, setWeekBons] = useState<any[]>([]);
   const [allBons, setAllBons] = useState<any[]>([]);
   const [fleet, setFleet] = useState<any[]>([]);
+  const [todayLivraisons, setTodayLivraisons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const today = format(new Date(), 'yyyy-MM-dd');
   const weekStart = format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
@@ -144,16 +145,18 @@ function useDeliveriesLiveData() {
 
   const fetchAll = useCallback(async () => {
     try {
-      const [bonsRes, weekRes, allRes, fleetRes] = await Promise.all([
+      const [bonsRes, weekRes, allRes, fleetRes, livraisonsRes] = await Promise.all([
         supabase.from('bons_livraison_reels').select('bl_id, client_id, volume_m3, workflow_status, heure_prevue, camion_assigne, chauffeur_nom, formule_id, date_livraison, heure_depart_centrale, heure_arrivee_chantier, prix_vente_m3').eq('date_livraison', today),
         supabase.from('bons_livraison_reels').select('bl_id, volume_m3, date_livraison, workflow_status').gte('date_livraison', weekStart).lte('date_livraison', weekEnd),
         supabase.from('bons_livraison_reels').select('bl_id, volume_m3, date_livraison, workflow_status').gte('date_livraison', last7Start).order('date_livraison', { ascending: true }),
-        supabase.from('flotte').select('id_camion, immatriculation, statut, chauffeur_actuel').limit(20),
+        supabase.from('flotte').select('id_camion, immatriculation, statut, chauffeur, sante_score, capacite_m3, carburant_pct, consommation_reelle_l_100km, revenu_jour, km_compteur, derniere_maintenance_at, prochaine_maintenance_at').limit(20),
+        supabase.from('livraisons').select('*').gte('created_at', today + 'T00:00:00').order('created_at', { ascending: false }),
       ]);
       setTodayBons(bonsRes.data || []);
       setWeekBons(weekRes.data || []);
       setAllBons(allRes.data || []);
       setFleet(fleetRes.data || []);
+      setTodayLivraisons(livraisonsRes.data || []);
     } catch (e) { console.error('Deliveries fetch error:', e); }
     finally { setLoading(false); }
   }, [today, weekStart, weekEnd, last7Start]);
@@ -163,11 +166,12 @@ function useDeliveriesLiveData() {
     const ch = supabase.channel('wc-deliveries-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, () => fetchAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'flotte' }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'livraisons' }, () => fetchAll())
       .subscribe();
     return () => { supabase.removeChannel(ch); };
   }, [fetchAll]);
 
-  return { todayBons, weekBons, allBons, fleet, loading };
+  return { todayBons, weekBons, allBons, fleet, todayLivraisons, loading };
 }
 
 // ─────────────────────────────────────────────────────
