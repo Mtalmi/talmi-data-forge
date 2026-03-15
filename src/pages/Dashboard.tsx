@@ -1304,11 +1304,11 @@ export default function Dashboard() {
           {(() => {
             const MONO = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
             const waterfall = [
-              { label: 'Revenu', amount: 75600, color: '#D4A843', pct: 100 },
-              { label: 'Matières', amount: -37800, color: '#EF4444', pct: 50 },
-              { label: 'Logistique', amount: -5200, color: '#EF4444', pct: 6.9 },
-              { label: 'Personnel', amount: -8400, color: '#EF4444', pct: 11.1 },
-              { label: 'Net', amount: 24200, color: '#22C55E', pct: 32 },
+              { label: 'Revenu', amount: uf.rawCurrency(75600), color: '#D4A843', pct: 100 },
+              { label: 'Matières', amount: -uf.rawCurrency(37800), color: '#EF4444', pct: 50 },
+              { label: 'Logistique', amount: -uf.rawCurrency(5200), color: '#EF4444', pct: 6.9 },
+              { label: 'Personnel', amount: -uf.rawCurrency(8400), color: '#EF4444', pct: 11.1 },
+              { label: 'Net', amount: uf.rawCurrency(24200), color: '#22C55E', pct: 32 },
             ];
             const plSparkline = '0,38 15,34 30,30 45,28 60,22 75,18 90,14 105,10 120,8';
             return (
