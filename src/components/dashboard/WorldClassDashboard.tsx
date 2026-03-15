@@ -111,7 +111,7 @@ import {
 } from 'recharts';
 import { supabase } from '@/integrations/supabase/client';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
-import { format, subDays } from 'date-fns';
+import { format, subDays, startOfMonth } from 'date-fns';
 import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
 import LiveBatchProgress from '@/components/dashboard/LiveBatchProgress';
 import { ComplianceWidget } from '@/components/dashboard/ComplianceWidget';
