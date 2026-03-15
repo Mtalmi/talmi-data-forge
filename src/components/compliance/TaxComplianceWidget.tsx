@@ -119,7 +119,7 @@ export function TaxComplianceWidget() {
                     </Badge>
                   </div>
                   <span className="font-medium">
-                    {Number(ob.amount).toLocaleString()} DH
+                    {Number(ob.amount).toLocaleString('fr-FR')} DH
                   </span>
                 </div>
               );
