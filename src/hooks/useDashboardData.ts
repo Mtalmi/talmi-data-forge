@@ -127,7 +127,7 @@ export function useDashboardData() {
           .gte('created_at', today + 'T00:00:00'),
       ]);
 
-      if (!mountedRef.current) return;
+      if (!mountedRef.current || currentFetchId !== fetchIdRef.current) return;
 
       // Calculate production
       const allBons = bonsToday.data || [];
