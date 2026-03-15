@@ -1543,6 +1543,41 @@ export default function Creances() {
                               }
                             })()}
                           </TableCell>
+                          {/* 📎 Documents column */}
+                          <TableCell className="text-center">
+                            {(() => {
+                              const isPaid = receivable.status === 'paid';
+                              const hasBlSigne = isPaid || receivable.days_overdue <= 0;
+                              if (isPaid || hasBlSigne) {
+                                return (
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: '#22C55E' }}>📎 Facture + BL signé</span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Documentation complète pour recouvrement</TooltipContent>
+                                  </Tooltip>
+                                );
+                              }
+                              if (receivable.days_overdue > 0 && receivable.days_overdue <= 30) {
+                                return (
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: '#F59E0B' }}>📎 Facture seule</span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Preuve de livraison manquante — affaiblit le recouvrement</TooltipContent>
+                                  </Tooltip>
+                                );
+                              }
+                              return (
+                                <Tooltip>
+                                  <TooltipTrigger>
+                                    <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: '#EF4444' }}>📎 Aucun</span>
+                                  </TooltipTrigger>
+                                  <TooltipContent>Aucune documentation — recouvrement compromis</TooltipContent>
+                                </Tooltip>
+                              );
+                            })()}
+                          </TableCell>
                           {canManageReceivables && (
                             <TableCell className="text-center">
                               <div className="flex gap-1 justify-center">
