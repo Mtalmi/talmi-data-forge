@@ -193,6 +193,6 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
           </DropdownMenu>
         </div>
       </div>
-    </header>
+    </div>
   );
 }

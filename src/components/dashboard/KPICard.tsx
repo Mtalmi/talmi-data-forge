@@ -148,4 +148,6 @@ const KPICard = React.memo(function KPICard({
       )}
     </div>
   );
-}
+});
+
+export default KPICard;
