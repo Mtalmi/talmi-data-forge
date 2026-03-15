@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { NouvellePlanificationModal } from '@/components/modals/NouvellePlanificationModal';
 import { useNavigate } from 'react-router-dom';
+import { useTabSync } from '@/hooks/useTabSync';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, ReferenceLine,
   XAxis, YAxis, Tooltip, ResponsiveContainer,
