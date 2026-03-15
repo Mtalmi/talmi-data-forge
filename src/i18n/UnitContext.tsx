@@ -14,6 +14,8 @@ export interface UnitConfig {
   temperature: { unit: string; convert: (c: number) => number };
   pressure: { unit: string; factor: number; roundTo: number };
   distance: { unit: string; factor: number; decimals: number };
+  speed: { unit: string; factor: number };
+  slump: { unit: string; factor: number; decimals: number };
   concreteGrades: Record<string, string>;
   norms: Record<string, string>;
   fuelConvert: (lPer100km: number) => { value: number; unit: string };
