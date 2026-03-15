@@ -315,6 +315,7 @@ const App = () => (
   </PlantProvider>
   </UnitProvider>
   </I18nProvider>
+  </RootErrorBoundary>
 );
 
 export default App;
