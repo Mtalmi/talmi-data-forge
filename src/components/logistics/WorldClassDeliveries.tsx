@@ -1354,7 +1354,69 @@ function AnalytiqueTab() {
         </svg>
       </Card>
 
-      {/* ROW 4 — ACTION */}
+      {/* ROW 4 — ESG / CARBON FOOTPRINT */}
+      <section>
+        <SectionHeader icon={Leaf} label="✦ Empreinte Carbone — Flotte" right={<IABadge />} />
+        <div style={{ borderTop: '2px solid #22C55E', background: 'rgba(34,197,94,0.02)', border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}>
+            {[
+              { label: 'CO₂ CE MOIS', value: '0.8 T', delta: '↘ −15% vs M-1', color: T.success, borderColor: '#22C55E' },
+              { label: 'CO₂ PAR LIVRAISON', value: '22.8 kg', delta: 'vs secteur 31.2 kg', color: T.success, borderColor: '#22C55E' },
+              { label: 'OBJECTIF ANNUEL', value: '8.5 T / 12 T', delta: '71% consommé à 75% de l\'année ✓', color: T.success, borderColor: T.gold },
+            ].map((kpi, i) => (
+              <div key={i} style={{ borderTop: `2px solid ${kpi.borderColor}`, background: 'rgba(255,255,255,0.02)', borderRadius: 10, padding: '14px 16px' }}>
+                <p style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, color: '#9CA3AF', letterSpacing: '1.5px', textTransform: 'uppercase' as const, marginBottom: 8 }}>{kpi.label}</p>
+                <p style={{ fontFamily: MONO, fontSize: 28, fontWeight: 200, color: i < 2 ? T.success : T.gold, margin: '0 0 4px' }}>{kpi.value}</p>
+                <p style={{ fontFamily: MONO, fontSize: 11, color: kpi.color, margin: 0 }}>{kpi.delta}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Monthly CO₂ chart */}
+          <p style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, color: '#9CA3AF', letterSpacing: '1.5px', textTransform: 'uppercase' as const, marginBottom: 12 }}>ÉMISSIONS CO₂ — 12 MOIS</p>
+          <svg width="100%" height={120} viewBox="0 0 600 120" preserveAspectRatio="none" style={{ display: 'block', marginBottom: 16 }}>
+            {/* Target line */}
+            <line x1={0} y1={30} x2={600} y2={30} stroke="#22C55E" strokeWidth={1} strokeDasharray="4,4" opacity={0.5} />
+            <text x={605} y={34} fill="#22C55E" fontSize={8} fontFamily="ui-monospace">1T objectif</text>
+            {/* Bars */}
+            {[1.1, 1.0, 0.95, 1.05, 0.9, 0.85, 0.92, 0.88, 0.82, 0.85, 0.78, 0.8].map((v, i) => {
+              const h = (v / 1.2) * 90;
+              return <rect key={i} x={i * 50 + 5} y={120 - h} width={38} height={h} rx={3} fill="url(#esgGrad)" opacity={0.8} />;
+            })}
+            {['Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc','Jan','Fév','Mar'].map((m, i) => (
+              <text key={i} x={i * 50 + 24} y={118} textAnchor="middle" fill="#64748B" fontSize={7} fontFamily="ui-monospace">{m}</text>
+            ))}
+            <defs>
+              <linearGradient id="esgGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#D4A843" stopOpacity={0.8} />
+                <stop offset="100%" stopColor="#D4A843" stopOpacity={0.2} />
+              </linearGradient>
+            </defs>
+          </svg>
+
+          {/* Summary strip */}
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 16, padding: '10px 0', borderTop: `1px dashed ${T.gold}40`, borderBottom: `1px dashed ${T.gold}40` }}>
+            {[
+              { label: 'TOTAL YTD', value: '8.5 T' },
+              { label: 'TRAJECTOIRE', value: 'Sous objectif ✓' },
+              { label: 'VS SECTEUR', value: '−27%' },
+              { label: 'ÉCONOMIE ROUTES IA', value: '−2.1 T' },
+            ].map((s, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontFamily: MONO, fontSize: 10, color: '#9CA3AF', letterSpacing: '1px' }}>{s.label}:</span>
+                <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 600, color: T.gold }}>{s.value}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Insight */}
+          <p style={{ fontFamily: MONO, fontSize: 12, color: T.textDim, lineHeight: 2, margin: 0 }}>
+            L'optimisation des routes IA a réduit les émissions de <strong style={{ color: T.gold }}>2.1 T CO₂</strong> sur 12 mois (<strong style={{ color: T.gold }}>−15%</strong>). Équivalent : <strong style={{ color: T.gold }}>850 arbres</strong> préservés. Ce score qualifie Atlas Concrete pour la certification <strong style={{ color: T.success }}>ISO 14001</strong> et les marchés publics à critères ESG.
+          </p>
+        </div>
+      </section>
+
+      {/* ROW 5 — AI INSIGHT */}
       <section>
         <SectionHeader icon={Brain} label="✦ Insight IA — Analyse Flotte" right={<IABadge />} />
         <div style={{ borderTop: `2px solid ${T.gold}`, background: 'rgba(212,168,67,0.03)', border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: 20 }}>

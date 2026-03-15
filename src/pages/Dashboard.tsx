@@ -2274,6 +2274,25 @@ export default function Dashboard() {
           );
         })()}
 
+        {/* ESG Widget */}
+        <div style={{
+          borderTop: '2px solid #22C55E',
+          background: 'rgba(15,23,41,0.8)',
+          border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: 12, padding: '14px 18px',
+          backdropFilter: 'blur(4px)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <span style={{ fontFamily: "ui-monospace, monospace", fontSize: 11, fontWeight: 700, color: '#22C55E', letterSpacing: '1px' }}>🌿 EMPREINTE CARBONE</span>
+            <span style={{ fontFamily: "ui-monospace, monospace", fontSize: 9, padding: '2px 8px', borderRadius: 4, border: '1px solid rgba(34,197,94,0.3)', color: '#22C55E', background: 'rgba(34,197,94,0.08)', marginLeft: 'auto' }}>
+              ESG Score: A
+            </span>
+          </div>
+          <p style={{ fontFamily: "ui-monospace, monospace", fontSize: 11, color: '#94A3B8', lineHeight: 1.8, margin: 0 }}>
+            <span style={{ color: '#22C55E', fontWeight: 600 }}>0.8 T CO₂</span> ce mois · <span style={{ color: '#22C55E' }}>−15%</span> vs M-1 · Trajectoire: <span style={{ color: '#22C55E' }}>✓ sous objectif</span>
+          </p>
+        </div>
+
         </div>
         )}
 
