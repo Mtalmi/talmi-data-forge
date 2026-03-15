@@ -41,8 +41,9 @@ export function MonthlyBudgetGauge() {
 
   const fetchBudgetStats = useCallback(async () => {
     try {
-      const now = new Date();
-      const monthYear = now.toISOString().slice(0, 7);
+      const year = getMoroccoYear();
+      const month = getMoroccoMonth();
+      const monthYear = `${year}-${String(month + 1).padStart(2, '0')}`;
       
       // Get monthly cap data
       const { data: capData } = await supabase
