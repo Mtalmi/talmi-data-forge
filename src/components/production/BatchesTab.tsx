@@ -363,7 +363,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                     </span>
                   </div>
                   {/* Actions */}
-                  <div className="flex items-center justify-center gap-1">
+                  <div className="flex items-center justify-center gap-1" onClick={e => e.stopPropagation()}>
                     <button className="flex items-center justify-center cursor-pointer" style={{ width: 28, height: 28, borderRadius: 6, background: 'transparent', border: 'none' }}>
                       <Eye size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.25)' }} />
                     </button>
