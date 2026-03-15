@@ -11,6 +11,7 @@ const T = {
 };
 
 export function WeatherAlertBanner() {
+  const navigate = useNavigate();
   const [dismissed, setDismissed] = useState(false);
 
   if (dismissed) return null;
