@@ -6,13 +6,7 @@ import {
 } from '@/components/ui/TBOSModal';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-
-const BATCHES = [
-  { value: 'BN-0142', label: 'BN-0142 — F-B25 · 8m³', formule: 'F-B25', blId: 'BL-2603-009' },
-  { value: 'BN-0141', label: 'BN-0141 — F-B30 · 6m³', formule: 'F-B30', blId: 'BL-2603-010' },
-  { value: 'BN-0140', label: 'BN-0140 — F-B25 · 10m³', formule: 'F-B25', blId: 'BL-2603-011' },
-  { value: 'BN-0139', label: 'BN-0139 — F-B35 · 8m³', formule: 'F-B35', blId: 'BL-2603-009' },
-];
+import { useTodayBatches } from '@/hooks/useModalData';
 
 const TEST_TYPES = [
   { value: 'slump', label: 'Slump (Affaissement)', unit: 'cm', norme: '15-20 cm', min: 15, max: 20 },
@@ -33,6 +27,7 @@ const OPERATORS = [
 interface Props { open: boolean; onClose: () => void; onCreated?: (test: any) => void; }
 
 export function NouveauTestModal({ open, onClose, onCreated }: Props) {
+  const { batches } = useTodayBatches();
   const [batch, setBatch] = useState('');
   const [testType, setTestType] = useState('');
   const [resultat, setResultat] = useState('');
@@ -41,7 +36,7 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
-  const selectedBatch = BATCHES.find(b => b.value === batch);
+  const selectedBatch = batches.find(b => b.value === batch);
   const selectedTest = TEST_TYPES.find(t => t.value === testType);
 
   const ecart = useMemo(() => {
@@ -79,7 +74,6 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
       const blId = selectedBatch?.blId || 'BL-2603-009';
       const formuleId = selectedBatch?.formule || 'F-B25';
 
-      // Build insert data based on test type
       const insertData: Record<string, any> = {
         bl_id: blId,
         formule_id: formuleId,
@@ -91,7 +85,7 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
       };
 
       if (testType === 'slump') {
-        insertData.affaissement_mm = val * 10; // cm to mm
+        insertData.affaissement_mm = val * 10;
         insertData.affaissement_conforme = isConforme;
       } else if (testType === 'resistance_7j') {
         insertData.resistance_7j_mpa = val;
@@ -106,7 +100,6 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
       const { error } = await supabase.from('tests_laboratoire').insert(insertData as any);
       if (error) throw error;
 
-      // Log activity
       await supabase.from('activity_log').insert({
         type: 'action',
         message: `Test ${selectedTest?.label} enregistré — ${batch} · ${val} ${selectedTest?.unit} · ${isConforme ? 'Conforme' : 'Non-conforme'}`,
@@ -114,7 +107,6 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
         severite: isConforme ? 'info' : 'warning',
       }).then(() => {});
 
-      // Create alert if non-conforme
       if (!isConforme) {
         await supabase.from('alertes').insert({
           type: 'qualite',
@@ -154,7 +146,7 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
         <TBOSFormRow>
           <TBOSField label="Batch" required error={errors.batch}>
             <TBOSSelect value={batch} onChange={e => setBatch(e.target.value)} hasError={!!errors.batch}
-              options={BATCHES} placeholder="Sélectionner un batch" />
+              options={batches} placeholder="Sélectionner un batch" />
           </TBOSField>
           <TBOSField label="Type de test" required error={errors.testType}>
             <TBOSSelect value={testType} onChange={e => setTestType(e.target.value)} hasError={!!errors.testType}

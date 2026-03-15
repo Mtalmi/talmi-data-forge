@@ -7,15 +7,7 @@ import {
   TBOSFormRow, TBOSFormStack, showFormSuccess,
 } from '@/components/ui/TBOSModal';
 import { formatNumber } from '@/utils/formatters';
-
-const CLIENTS = [
-  { value: 'CLI-TGCC05', label: 'TGCC' },
-  { value: 'CLI-CM01', label: 'Constructions Modernes SA' },
-  { value: 'CLI-BTP02', label: 'BTP Maroc SARL' },
-  { value: 'CLI-SRC04', label: 'Saudi Readymix' },
-  { value: 'CLI-CBS03', label: 'Ciments & Béton du Sud' },
-  { value: 'CLI-SBT06', label: 'Sigma Bâtiment' },
-];
+import { useClients } from '@/hooks/useModalData';
 
 const FORMULES = [
   { value: 'F-B20', label: 'F-B20 (20 MPa)', price: 750 },
@@ -29,6 +21,7 @@ const SIGMA_CLIENT_ID = 'CLI-SBT06';
 interface Props { open: boolean; onClose: () => void; onCreated?: (devis: any) => void; }
 
 export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
+  const { clients } = useClients();
   const [client, setClient] = useState('');
   const [chantier, setChantier] = useState('');
   const [formule, setFormule] = useState('');
@@ -74,12 +67,12 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
   };
 
   const handleSubmit = async () => {
-    if (loading) return; // double-submit guard
+    if (loading) return;
     if (!validate()) return;
     setLoading(true);
     try {
       const devisId = `DEV-${new Date().getFullYear().toString().slice(-2)}${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 900) + 100)}`;
-      const clientLabel = CLIENTS.find(c => c.value === client)?.label || client;
+      const clientLabel = clients.find(c => c.value === client)?.label || client;
       const vol = parseFloat(volume);
       const prix = parseFloat(effectivePrice);
 
@@ -109,7 +102,6 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
 
       if (error) throw error;
 
-      // Log activity
       await supabase.from('activity_log').insert({
         type: 'action',
         message: `Devis ${devisId} créé — ${clientLabel} · ${formule} · ${formatNumber(vol, { decimals: 1 })} m³ · ${formatNumber(vol * prix)} DH`,
@@ -148,7 +140,6 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
       </>
     }>
       <TBOSFormStack>
-        {/* Sigma warning */}
         {isSigmaSelected && (
           <div style={{
             fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
@@ -163,7 +154,7 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
         <TBOSFormRow>
           <TBOSField label="Client" required error={errors.client}>
             <TBOSSelect data-field="client" value={client} onChange={e => setClient(e.target.value)}
-              hasError={!!errors.client} options={CLIENTS} placeholder="Sélectionner un client" />
+              hasError={!!errors.client} options={clients} placeholder="Sélectionner un client" />
           </TBOSField>
           <TBOSField label="Chantier" required error={errors.chantier}>
             <TBOSInput data-field="chantier" value={chantier} onChange={e => setChantier(e.target.value)}
