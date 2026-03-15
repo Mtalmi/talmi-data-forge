@@ -1708,7 +1708,7 @@ export default function Dashboard() {
                             </div>
                             <div style={{ maxHeight: expandedKpi === 'produit' ? '120px' : '0', overflow: 'hidden', transition: 'max-height 300ms ease' }}>
                               <div style={{ fontSize: '12px', color: '#9CA3AF', padding: '8px 12px', borderTop: '1px solid rgba(212,168,67,0.1)' }}>
-                                Objectif: 800 m³ · Réalisé: 671 m³ · Écart: -129 m³ · Tendance: ↗ rattrapage 15h
+                                Objectif: {uf.fmtVolume(800)} · Réalisé: {uf.fmtVolume(671)} · Écart: -{uf.fmtVolume(129)} · Tendance: ↗ rattrapage 15h
                               </div>
                             </div>
                           </div>
