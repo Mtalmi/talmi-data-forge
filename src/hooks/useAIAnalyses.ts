@@ -35,6 +35,8 @@ export function useLatestAnalysis(type: string) {
         .limit(1)
         .maybeSingle();
 
+      console.log("[AIAnalyses]", type, { data, error });
+
       if (error) throw error;
       return data as AIAnalysis | null;
     },

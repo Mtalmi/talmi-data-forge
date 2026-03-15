@@ -357,7 +357,7 @@ export function ExecutiveCommandCenter() {
       </div>
 
       {/* AI Intelligence Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border border-red-500 min-h-[200px]">
         <AIAgentCard type="score_global" title="Score Global" icon={<BarChart3 className="h-4 w-4 text-[#D4A843]" />} />
         <AIAgentCard type="stock_analysis" title="Analyse Stocks" icon={<Package className="h-4 w-4 text-[#D4A843]" />} />
         <AIAgentCard type="ventes_forecast" title="Prévisions Ventes" icon={<TrendingUp className="h-4 w-4 text-[#D4A843]" />} />
