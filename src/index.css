@@ -3443,8 +3443,11 @@ html {
 .tbos-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(212, 168, 67, 0.08);
+  border-top: 2px solid #D4A843;
   border-radius: 8px !important;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease, background 200ms ease;
   position: relative;
   overflow: hidden;
@@ -3454,6 +3457,9 @@ html {
   border-color: rgba(212, 168, 67, 0.15);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.tbos-card .tbos-card {
+  border-top: 1px solid rgba(212, 168, 67, 0.08);
 }
 
 /* ─── Hero Card (Depth Level 3) ─── */
