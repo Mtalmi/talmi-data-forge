@@ -201,7 +201,7 @@ export default function WorkflowAutomation() {
     const iv = setInterval(() => {
       i++;
       setTestStep(i);
-      if (i >= steps) { clearInterval(iv); setTimeout(() => { setTestRunning(false); setTestStep(-1); setToast('✅ Test Completed — 3 actions would execute'); }, 400); }
+      if (i >= steps) { clearInterval(iv); setTimeout(() => { setTestRunning(false); setTestStep(-1); setToast('✅ Test terminé — 3 actions seraient exécutées'); }, 400); }
     }, 400);
   };
 
