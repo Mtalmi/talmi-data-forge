@@ -1587,7 +1587,7 @@ export default function Dashboard() {
                         <g>
                           <rect x={nx - 11} y={ny - 10} width="22" height="7" rx="1.5" fill="#0f1729" stroke="rgba(212,168,67,0.4)" strokeWidth="0.4" />
                           <text x={nx} y={ny - 5} textAnchor="middle" fill="#D4A843" fontSize="3.5" fontFamily="ui-monospace, 'JetBrains Mono', monospace" fontWeight="600">
-                            {actualVal} m³/h
+                            {+(uf.rawVolume(actualVal)).toFixed(0)} {uf.volUnit}/h
                           </text>
                           <rect x={nx + 12} y={ny - 10} width="16" height="7" rx="3.5" fill={isAbove ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)'} />
                           <text x={nx + 20} y={ny - 5} textAnchor="middle" fill={isAbove ? 'rgba(52,211,153,0.9)' : 'rgba(248,113,113,0.9)'} fontSize="3" fontFamily="ui-monospace, 'JetBrains Mono', monospace" fontWeight="600">
