@@ -239,6 +239,21 @@ body {
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(212, 168, 67, 0.3) transparent;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ─── iOS Safari: prevent zoom on input focus (font-size < 16px triggers zoom) ─── */
+input, textarea, select {
+  font-size: 16px;
+}
+
+/* ─── iOS Safari: 100vh fix (address bar included) ─── */
+.full-height {
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
 }
 
 /* ─── TBOS Top Navbar ─── */
@@ -543,6 +558,7 @@ body {
 /* ─── Tab content minimum height ─── */
 .tbos-tab-content {
   min-height: calc(100vh - 140px);
+  min-height: calc(100dvh - 140px);
   animation: tbosTabFadeIn 200ms ease forwards;
 }
 
@@ -2357,6 +2373,7 @@ body {
 .landing-hero {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2402,6 +2419,7 @@ body {
   background: hsl(0 0% 3% / 0.8);
   border: 1px solid hsl(51 100% 50% / 0.1);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -3101,6 +3119,7 @@ body {
 .top-nav {
   background: hsl(var(--background) / 0.95);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid hsl(var(--border));
 }
 
@@ -3915,6 +3934,7 @@ nav,
   border-radius: var(--radius-md) !important;
   box-shadow: var(--sh-active) !important;
   backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
 }
 
 /* ─── Modal / Dialog ─── */

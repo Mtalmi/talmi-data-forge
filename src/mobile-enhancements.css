@@ -87,6 +87,7 @@
     @apply fixed inset-0 bg-black/60 z-40 lg:hidden;
     @apply transition-opacity duration-300;
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
 
   .mobile-sidebar {
