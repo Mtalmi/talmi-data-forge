@@ -289,7 +289,7 @@ export default function AnalyticsDashboard() {
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", color: "#FFFFFF" }}
+                    contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", borderRadius: 8, color: "#FFFFFF" }}
                   />
                 </PieChart>
               </ResponsiveContainer>
