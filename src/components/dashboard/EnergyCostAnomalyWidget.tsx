@@ -24,7 +24,7 @@ export function EnergyCostAnomalyWidget() {
         overflow: 'hidden',
         borderRadius: 8,
         border: '1px solid rgba(245, 158, 11, 0.15)',
-        borderTop: '2px solid #EF4444',
+        borderTop: '3px solid #F59E0B',
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
         padding: 16,
         transition: 'all 200ms ease-out',
