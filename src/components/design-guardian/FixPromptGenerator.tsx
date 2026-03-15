@@ -55,9 +55,11 @@ export default function FixPromptGenerator() {
           </pre>
           <button
             onClick={copy}
-            className="absolute top-2 right-2 flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-md border border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/10 transition-colors"
+            className="absolute top-2 right-2 tbos-btn tbos-btn-secondary"
+            style={{ padding: '4px 8px', minHeight: 'auto', fontSize: 12 }}
           >
             <Copy className="w-3 h-3" /> Copier
+          </button>
           </button>
         </div>
       )}

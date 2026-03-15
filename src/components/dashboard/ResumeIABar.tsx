@@ -70,10 +70,10 @@ export const ResumeIABar = () => {
           </span>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <button onClick={() => navigate('/', { state: { activeTab: 'intelligence' } })} style={{ borderWidth: '1px', borderStyle: 'solid', borderColor: '#D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '12px', transition: 'all 150ms' }}>
+          <button onClick={() => navigate('/', { state: { activeTab: 'intelligence' } })} className="tbos-btn tbos-btn-secondary" style={{ padding: '6px 16px', minHeight: 36 }}>
             Voir Rapport
           </button>
-          <button onClick={() => { const el = document.querySelector('[data-main-scroll]'); el?.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ borderWidth: '1px', borderStyle: 'solid', borderColor: 'rgba(156,163,175,0.3)', color: '#9CA3AF', background: 'transparent', borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', fontSize: '12px', transition: 'all 150ms' }}>
+          <button onClick={() => { const el = document.querySelector('[data-main-scroll]'); el?.scrollTo({ top: 0, behavior: 'smooth' }); }} className="tbos-btn tbos-btn-ghost" style={{ padding: '6px 16px', minHeight: 36 }}>
             Ignorer
           </button>
         </div>

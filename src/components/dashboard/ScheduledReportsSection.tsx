@@ -54,17 +54,8 @@ export function ScheduledReportsSection() {
 
           <button
             onClick={handleToast}
-            style={{
-              fontFamily: MONO, fontSize: 11, fontWeight: 600,
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '8px 16px', borderRadius: 8,
-              background: 'transparent',
-              border: '1px solid rgba(212,168,67,0.3)',
-              color: '#D4A843', cursor: 'pointer',
-              transition: 'background 150ms',
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(212,168,67,0.08)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+            className="tbos-btn tbos-btn-secondary"
+            style={{ padding: '8px 16px' }}
           >
             <Plus size={13} />
             Nouveau Rapport
