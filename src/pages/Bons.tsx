@@ -485,13 +485,33 @@ export default function Bons() {
       ? bonsList.filter(b => b.bl_id.toLowerCase().includes(searchQuery.toLowerCase()) || getClientName(b.client_id).toLowerCase().includes(searchQuery.toLowerCase()))
       : bonsList;
 
+    // Add sortable fields
+    const sortableBons = searchedBons.map(b => ({
+      ...b,
+      _date: b.date_livraison || '',
+      _volume: b.volume_m3 ?? 0,
+      _client: getClientName(b.client_id),
+    }));
+
+    return <SortableBonsTable bons={sortableBons} showExpand={showExpand} />;
+  };
+
+  // Extracted into a sub-component so hooks are valid
+  const SortableBonsTable = ({ bons: bonsList, showExpand }: { bons: (BonLivraison & { _date: string; _volume: number; _client: string })[]; showExpand: boolean }) => {
+    const { sortedData, sortKey: bSortKey, sortDirection: bSortDir, handleSort: bHandleSort } = useTableSort(bonsList, '_date', 'desc');
+
     return (
       <div style={{ borderRadius: 12, overflow: 'hidden', border: `1px solid ${T.cardBorder}` }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ borderBottom: `1px solid ${T.cardBorder}` }}>
-              {['N° BON', 'DATE', 'CLIENT', 'FORMULE', 'VOLUME', 'WORKFLOW', 'PAIEMENT', 'VAL.', 'ACTIONS'].map(h => (
-                <th key={h} style={{ padding: '10px 14px', textAlign: h === 'VOLUME' ? 'right' : 'left', fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, color: T.textSec, fontWeight: 600 }}>{h}</th>
+              <th style={{ padding: '10px 14px', textAlign: 'left', fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, color: T.textSec, fontWeight: 600 }}>N° BON</th>
+              <SortableHeader label="DATE" sortKey="_date" currentKey={bSortKey} direction={bSortDir} onSort={bHandleSort} />
+              <SortableHeader label="CLIENT" sortKey="_client" currentKey={bSortKey} direction={bSortDir} onSort={bHandleSort} />
+              <th style={{ padding: '10px 14px', textAlign: 'left', fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, color: T.textSec, fontWeight: 600 }}>FORMULE</th>
+              <SortableHeader label="VOLUME" sortKey="_volume" currentKey={bSortKey} direction={bSortDir} onSort={bHandleSort} align="right" />
+              {['WORKFLOW', 'PAIEMENT', 'VAL.', 'ACTIONS'].map(h => (
+                <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, color: T.textSec, fontWeight: 600 }}>{h}</th>
               ))}
             </tr>
           </thead>
