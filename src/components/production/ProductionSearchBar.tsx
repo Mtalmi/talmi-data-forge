@@ -71,8 +71,8 @@ export function ProductionSearchBar({
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder={ps.placeholder}
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
+          value={localSearch}
+          onChange={(e) => handleSearchInput(e.target.value)}
           className="pl-9 h-9"
         />
       </div>
