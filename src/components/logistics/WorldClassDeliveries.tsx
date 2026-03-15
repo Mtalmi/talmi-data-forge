@@ -1652,7 +1652,7 @@ function IntelligenceIATab() {
       <Card style={{ borderTop: `2px solid ${T.danger}` }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: T.gold, letterSpacing: '2px' }}>✦ AGENT IA: SURVEILLANCE CARBURANT</span>
+            <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: T.gold, letterSpacing: '0.15em' }}>✦ AGENT IA: SURVEILLANCE CARBURANT</span>
             <span style={{ fontFamily: MONO, fontSize: 11, padding: '2px 8px', borderRadius: 4, background: 'transparent', border: `1px solid ${T.danger}40`, color: T.danger }}>FORENSIQUE</span>
           </div>
           <IABadge />

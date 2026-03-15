@@ -19,8 +19,8 @@ export function RelanceIntelligenteCard() {
       borderRadius: 12, borderTop: '2px solid #F59E0B', padding: 24,
     }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
-        <span style={{ color: '#D4A843', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '2px', fontFamily: mono }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 20 }}>
+        <span style={{ color: '#D4A843', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: mono, whiteSpace: 'nowrap', flexShrink: 0 }}>
           ✦ Agent IA: Relance Intelligente
         </span>
         <WhatsAppBadge />
