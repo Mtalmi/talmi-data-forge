@@ -971,7 +971,7 @@ export default function Dashboard() {
                     </span>
                     <span className="text-muted-foreground/20">|</span>
                     <span className="text-muted-foreground/40">
-                      {now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} · {demoData.location}
+                      {formattedDate} · {demoData.location}
                     </span>
                     <span className="text-muted-foreground/20">|</span>
                     <span className="text-muted-foreground/40">
