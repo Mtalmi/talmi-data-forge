@@ -135,7 +135,8 @@ export function useSalesWorkflow() {
           .from('bons_livraison_reels')
           .select('bl_id, bc_id, workflow_status, volume_m3, validation_technique')
           .not('bc_id', 'is', null)
-          .order('created_at', { ascending: false }),
+          .order('created_at', { ascending: false })
+          .limit(1000),
       ]);
 
       if (devisRes.error) throw devisRes.error;

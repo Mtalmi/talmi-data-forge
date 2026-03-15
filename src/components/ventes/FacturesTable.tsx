@@ -133,7 +133,8 @@ export function FacturesTable({
       const { data: facturesData, error: facturesError } = await supabase
         .from('factures')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(500);
 
       if (facturesError) throw facturesError;
 
