@@ -156,7 +156,7 @@ export function ProductionLiveMetrics({
             <span className="text-xs text-muted-foreground">File d'Attente</span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-extralight text-blue-500">{volumeMetrics.planned.toFixed(0)}</span>
+            <span className="text-2xl font-extralight text-blue-500">{isFinite(volumeMetrics.planned) ? volumeMetrics.planned.toFixed(0) : '0'}</span>
             <span className="text-sm text-muted-foreground">m³ à produire</span>
           </div>
           <div className="text-xs text-muted-foreground mt-1">

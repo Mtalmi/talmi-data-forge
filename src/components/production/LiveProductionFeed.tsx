@@ -160,7 +160,7 @@ export function LiveProductionFeed({ bons, onBatchAdded, className }: LiveProduc
         'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-mono',
         isCritical ? 'bg-destructive/20 text-destructive' : 'bg-warning/20 text-warning'
       )}>
-        {label}: +{value.toFixed(1)}%
+        {label}: +{isFinite(value) ? value.toFixed(1) : '--'}%
       </span>
     );
   };

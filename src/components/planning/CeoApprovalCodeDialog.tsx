@@ -76,7 +76,7 @@ export function CeoApprovalCodeDialog({
   };
 
   const depassement = solde - limite;
-  const depassementPct = ((depassement / limite) * 100).toFixed(0);
+  const depassementPct = limite > 0 ? ((depassement / limite) * 100).toFixed(0) : '0';
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
