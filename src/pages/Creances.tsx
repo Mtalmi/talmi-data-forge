@@ -958,7 +958,7 @@ export default function Creances() {
                     <div className="flex items-center gap-1.5">
                       <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 4 }}>Taux Recouvrement</p>
                       <MetricTooltip title="TAUX DE RECOUVREMENT">
-                        {`Facturé: **${Math.round(stats.totalInvoiced / 1000)}K DH**. Encaissé: **${Math.round(stats.totalCollected / 1000)}K DH**. En attente: !!${Math.round(stats.totalPending / 1000)}K DH!!. En retard: ~~${Math.round(stats.totalOverdue / 1000)}K DH~~. Sans les clients à risque, le taux serait **${Math.min(99.2, stats.collectionRate + 5).toFixed(1)}%**.`}
+                        {`Taux actuel: **${rate.toFixed(1)}%**. Encours total: **${Math.round(stats.totalOutstanding / 1000)}K DH**. À risque (60j+): ~~${Math.round(stats.atRiskAmount / 1000)}K DH~~. **${stats.clientsWithOverdue}** client${stats.clientsWithOverdue > 1 ? 's' : ''} en retard. DSO moyen: **${stats.dsoAverage}j**. Objectif: !!>85%!!. Sans les clients à risque, le taux serait **${Math.min(99.2, stats.collectionRate + 5).toFixed(1)}%**.`}
                       </MetricTooltip>
                     </div>
                   </div>
