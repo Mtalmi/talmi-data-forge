@@ -504,7 +504,7 @@ export default function Bons() {
     return (
       <div style={{ borderRadius: 12, overflow: 'hidden', border: `1px solid ${T.cardBorder}` }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
+          <thead style={{ position: 'sticky', top: 0, zIndex: 10, background: '#0F1629', boxShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
             <tr style={{ borderBottom: `1px solid ${T.cardBorder}` }}>
               <th style={{ padding: '10px 14px', textAlign: 'left', fontFamily: MONO, fontSize: 11, letterSpacing: 1.5, color: T.textSec, fontWeight: 600 }}>N° BON</th>
               <SortableHeader label="DATE" sortKey="_date" currentKey={bSortKey} direction={bSortDir} onSort={bHandleSort} />
