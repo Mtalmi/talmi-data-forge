@@ -1044,7 +1044,7 @@ export default function Dashboard() {
                   {/* LEFT: Action Buttons */}
                   <div className="flex flex-wrap items-center gap-3">
                     <button
-                      onClick={() => navigate('/ventes')}
+                      onClick={() => setShowDevisModal(true)}
                       className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
                       style={{ background: 'transparent', border: '1px solid #D4A843', color: '#D4A843' }}
                       onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.1)'; }}
