@@ -272,6 +272,27 @@ export function RendementOptimizerCard() {
           )}
         </MetricCard>
       </div>
+
+      {/* Recommendation box */}
+      <div style={{
+        borderLeft: '4px solid #D4A843',
+        background: 'rgba(212,168,67,0.03)',
+        padding: 16,
+        borderRadius: '0 8px 8px 0',
+        marginTop: 20,
+      }}>
+        <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 13, color: '#9CA3AF', lineHeight: 1.6 }}>
+          <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation :</span> {hasRendement && d.plannedVolume > 0 && d.producedVolume / d.plannedVolume < 0.9
+            ? `Rendement sous objectif (${Math.round((d.producedVolume / d.plannedVolume) * 100)}%). Vérifier les temps d'attente inter-batch et optimiser la séquence de chargement.`
+            : "Rendement optimal maintenu. Continuer la cadence actuelle. Prochain créneau d'optimisation : regrouper les livraisons F-B25 entre 14h-16h pour réduire les temps morts malaxeur."}
+        </p>
+      </div>
+
+      {/* Footer */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}>
+        <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 10, color: 'rgba(212,168,67,0.5)' }}>Généré par IA · Claude Opus</span>
+        <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>il y a 5min</span>
+      </div>
     </section>
   );
 }
