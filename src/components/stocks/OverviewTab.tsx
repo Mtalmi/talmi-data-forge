@@ -163,7 +163,7 @@ export function OverviewTab({ AUTONOMY, STOCK_ALERTS_DB, REORDER_RECS, STOCKS, o
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 40 }}>
             {/* Left — Score */}
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <p style={{ fontFamily: MONO, letterSpacing: '2px', fontSize: 11, color: '#9CA3AF', marginBottom: 12 }}>
+              <p style={{ fontFamily: MONO, letterSpacing: '2px', fontSize: 12, color: '#9CA3AF', marginBottom: 12 }}>
                 SANTÉ GLOBALE DES STOCKS
               </p>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
