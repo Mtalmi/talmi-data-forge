@@ -284,7 +284,7 @@ export function TreasuryWidget() {
               )}
             />
             <p className="text-xs text-muted-foreground text-right">
-              {(monthlyStats.level1Cap - monthlyStats.level1Spent).toLocaleString()} MAD {t.widgets.treasury.remaining}
+              {(monthlyStats.level1Cap - monthlyStats.level1Spent).toLocaleString('fr-FR')} MAD {t.widgets.treasury.remaining}
             </p>
           </div>
 
