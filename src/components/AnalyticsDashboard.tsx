@@ -176,16 +176,16 @@ export default function AnalyticsDashboard() {
             {/* Efficiency Metrics */}
             <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle>Agent Efficiency Score</CardTitle>
+                <CardTitle>Score d'Efficacité par Agent</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={agentPerformanceData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="agent" angle={-45} textAnchor="end" height={100} stroke="#9CA3AF" />
-                    <YAxis stroke="#9CA3AF" domain={[85, 100]} />
+                    <XAxis dataKey="agent" angle={-45} textAnchor="end" height={100} tick={{ fill: '#9CA3AF', fontSize: 10 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                    <YAxis tick={{ fill: '#9CA3AF', fontSize: 11 }} domain={[85, 100]} tickFormatter={v => `${v}%`} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
                     <Tooltip
-                      contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", color: "#FFFFFF" }}
+                      contentStyle={{ backgroundColor: "#1A1F35", border: "1px solid #D4A843", borderRadius: 8, color: "#FFFFFF" }}
                       formatter={(value) => `${value}%`}
                     />
                     <Bar dataKey="efficiency" fill="#E8C96A" />
