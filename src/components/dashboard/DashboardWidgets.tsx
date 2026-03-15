@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { LiveIndicator } from '@/components/ui/LiveIndicator';
 import { getMoroccoToday } from '@/utils/timezone';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -337,6 +338,7 @@ export function StockLevelsWidget() {
       <div className="flex items-center gap-2 mb-3">
         <Package className="h-4 w-4 text-primary" />
         <h4 className="font-semibold text-sm">{t.widgets.stockLevels.title}</h4>
+        <LiveIndicator />
         <ArrowRight className="h-3 w-3 text-muted-foreground ml-auto group-hover:text-primary transition-colors" />
       </div>
 

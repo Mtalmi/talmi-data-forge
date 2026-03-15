@@ -6332,7 +6332,7 @@ button:disabled, [role="button"]:disabled {
   transition: filter 200ms ease;
 }
 
-/* ═══ FIX 11: Real-time visual feedback animations ═══ */
+/* ═══ Real-time visual feedback animations ═══ */
 
 /* Value flash on real-time update (gold highlight then fade) */
 @keyframes valueFlash {
@@ -6340,16 +6340,39 @@ button:disabled, [role="button"]:disabled {
   100% { color: inherit; text-shadow: none; }
 }
 .value-updated {
-  animation: valueFlash 1s ease-out;
+  animation: valueFlash 500ms ease-out;
 }
 
-/* Badge bounce when notification count changes */
+/* Badge bounce when status/count changes */
 @keyframes badgeBounce {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.3); }
 }
 .badge-bounce {
   animation: badgeBounce 300ms ease;
+}
+
+/* New row highlight — gold flash then fade */
+@keyframes rowHighlight {
+  0% { background: rgba(212, 168, 67, 0.15); }
+  100% { background: transparent; }
+}
+.tbos-row-new {
+  animation: rowHighlight 2s ease-out forwards;
+}
+
+/* Live indicator pulse */
+@keyframes liveIndicatorPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+.tbos-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: hsl(142 71% 45%);
+  animation: liveIndicatorPulse 2s ease-in-out infinite;
+  flex-shrink: 0;
 }
 
 /* Smooth stock bar fill transitions */

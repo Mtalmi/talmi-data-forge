@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState, useCallback, forwardRef, createElement } from 'react';
+import { useEffect, useRef, useState, useCallback, forwardRef, createElement, useMemo } from 'react';
+import { useValueFlash } from '@/hooks/useRealtimeVisuals';
+import { LiveIndicator } from '@/components/ui/LiveIndicator';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { CheckCircle2 } from 'lucide-react';
@@ -873,6 +875,8 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
 
   const totalAR = useAnimatedCounter(Math.round(arAgingData.reduce((s, d) => s + d.value, 0) / 1000) || 77);
   const prodTotal = useAnimatedCounter(Math.round(stats.totalVolume) || 851, 1500);
+  const prodFlash = useValueFlash(stats.totalVolume);
+  const arFlash = useValueFlash(arAgingData.length);
 
   const prodChartData = hourlyProductionData.length ? hourlyProductionData : [
     { hour: '6h', volume: 12 }, { hour: '8h', volume: 65 }, { hour: '10h', volume: 95 },
@@ -1033,6 +1037,10 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             <span className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground/40 font-medium">Score Opérationnel du Jour</span>
             <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontWeight: 100, fontSize: '56px', color: '#D4A843', textShadow: '0 0 20px rgba(212,168,67,0.2)', lineHeight: 1.1 }}>8.7/10</span>
             <span className="inline-flex items-center text-xs rounded px-2 py-0.5 gap-1 mt-1" style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid #22C55E', color: '#22C55E' }}>↗ +0.4 pts vs hier</span>
+            <div className="flex items-center gap-2 mt-2">
+              <LiveIndicator />
+              <span style={{ fontSize: 9, color: 'rgba(148,163,184,0.4)', fontFamily: 'ui-monospace, monospace', letterSpacing: '0.05em' }}>TEMPS RÉEL</span>
+            </div>
             <div style={{ display:'flex', gap:'6px', marginTop:'6px' }}>
               <span style={{ fontSize:'12px', background:'rgba(212,168,67,0.06)', border:'1px solid #D4A843', borderRadius:'4px', padding:'2px 10px', color:'#D4A843', fontFamily:'ui-monospace, monospace' }}>LIVRAISONS 60%</span>
               <span style={{ fontSize:'12px', background:'rgba(212,168,67,0.06)', border:'1px solid #D4A843', borderRadius:'4px', padding:'2px 10px', color:'#D4A843', fontFamily:'ui-monospace, monospace' }}>QUALITÉ 96%</span>
