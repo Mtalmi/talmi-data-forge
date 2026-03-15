@@ -746,16 +746,16 @@ export default function Dashboard() {
 
                 {/* Market Selector Pills */}
                 <div className="flex items-center gap-2" style={{ marginTop: 8 }}>
-                  {([
-                    { id: 'ma', flag: '🇲🇦', label: 'Atlas Concrete Morocco' },
-                    { id: 'eu', flag: '🇪🇺', label: 'Demo EU Plant' },
-                    { id: 'us', flag: '🇺🇸', label: 'Demo US Plant' },
-                  ] as const).map(market => {
-                    const active = demoMarket === market.id;
+                  {plantData && [
+                    { id: 'ma' as const, flag: '🇲🇦', label: 'Atlas Concrete Morocco' },
+                    { id: 'eu' as const, flag: '🇪🇺', label: 'Demo EU Plant' },
+                    { id: 'us' as const, flag: '🇺🇸', label: 'Demo US Plant' },
+                  ].map(market => {
+                    const active = activePlant === market.id;
                     return (
                       <button
                         key={market.id}
-                        onClick={() => setDemoMarket(market.id)}
+                        onClick={() => setActivePlant(market.id)}
                         style={{
                           fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
                           fontSize: 10,
@@ -769,9 +769,12 @@ export default function Dashboard() {
                           fontWeight: active ? 700 : 500,
                           transition: 'all 200ms',
                           whiteSpace: 'nowrap',
+                          transform: 'scale(1)',
                         }}
+                        onMouseDown={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(0.97)'; }}
+                        onMouseUp={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)'; }}
                         onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.color = '#D4A843'; }}
-                        onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.color = '#9CA3AF'; }}
+                        onMouseLeave={e => { if (!active) { (e.currentTarget as HTMLElement).style.color = '#9CA3AF'; (e.currentTarget as HTMLElement).style.transform = 'scale(1)'; } }}
                       >
                         {market.flag} {market.label}
                       </button>
