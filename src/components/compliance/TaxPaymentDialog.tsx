@@ -116,7 +116,7 @@ export function TaxPaymentDialog({
                   {obligation.days_overdue} {tp.penaltyDesc}
                 </p>
                 <p className="font-bold text-destructive mt-1">
-                  +{penalty.toLocaleString()} DH
+                  +{penalty.toLocaleString('fr-FR')} DH
                 </p>
               </div>
             </div>
