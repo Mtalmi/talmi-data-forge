@@ -4,6 +4,7 @@ import { useTableSort } from '@/hooks/useTableSort';
 import { SortableTableHead } from '@/components/ui/SortableHeader';
 import { TablePagination } from '@/components/ui/TablePagination';
 import { Skeleton } from '@/components/ui/skeleton';
+import { TableSkeletonRows, TableEmptyState } from '@/components/ui/TableStates';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
