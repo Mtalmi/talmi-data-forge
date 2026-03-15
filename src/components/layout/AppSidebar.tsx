@@ -145,6 +145,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
         { title: nav.auditLog || 'Journal', url: '/journal', icon: BookOpen },
         { title: nav.approvals || 'Approbations', url: '/approbations', icon: CheckSquare },
         { title: nav.supervisorAudit || 'Audit', url: '/audit-superviseur', icon: Search },
+        { title: '🎯 Visite Guidée', url: '/__tour', icon: BookOpen },
       ],
     },
   ], [nav]);
