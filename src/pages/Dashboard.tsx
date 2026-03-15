@@ -1305,6 +1305,7 @@ export default function Dashboard() {
             const plSparkline = '0,38 15,34 30,30 45,28 60,22 75,18 90,14 105,10 120,8';
             return (
               <TiltCard
+                onClick={() => navigate('/creances')}
                 className="tbos-hero-card group cursor-pointer shimmer-effect h-full flex flex-col min-w-0 relative overflow-hidden hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 ease-out"
                 style={{
                   background: 'rgba(255,255,255,0.02)',
