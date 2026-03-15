@@ -34,8 +34,8 @@ const T = {
   textPri: '#F1F5F9', textSec: '#94A3B8', textDim: '#64748B',
   border: 'rgba(255,255,255,0.06)',
 };
-const MONO = "'JetBrains Mono', monospace";
-const SANS = "'DM Sans', sans-serif";
+const MONO = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace";
+const SANS = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace";
 
 // ─── TYPES ────────────────────────────────────────────────────
 interface Equipment {

@@ -132,7 +132,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
     { id: 'ecarts', label: 'Écarts', count: counts.ecart, icon: AlertTriangle },
   ];
 
-  const mono = 'JetBrains Mono, monospace';
+  const mono = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace";
 
   return (
     <>
