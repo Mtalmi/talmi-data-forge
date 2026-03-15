@@ -59,7 +59,7 @@ export function PassationButton({ shiftInfo }: { shiftInfo?: string }) {
       </div>
       {state === 'done' && (
         <p style={{ fontFamily: MONO, fontSize: 11, color: '#22C55E', opacity: 0.8, margin: 0 }}>
-          Validée à {now} par Max Talmi
+          ✓ Passation validée à {now} — l'équipe suivante a été notifiée. Bon shift!
         </p>
       )}
       <style>{`@keyframes tbosActionSpin { to { transform: rotate(360deg); } }`}</style>
