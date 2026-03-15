@@ -116,11 +116,32 @@ export function useUnitFormat() {
     return `${fmt(value, 1)} ${unit}`;
   };
 
+  /** Format speed (source: km/h) → "45 km/h" or "28 mph" */
+  const fmtSpeed = (kmh: number) => {
+    const v = u.speed(kmh);
+    return `${v} ${u.config.speed.unit}`;
+  };
+
+  /** Format slump (source: cm) → "18 cm" or "7.1 in" */
+  const fmtSlump = (cm: number) => {
+    const v = u.slump(cm);
+    return `${fmt(v, u.config.slump.decimals)} ${u.config.slump.unit}`;
+  };
+
   /** Convert concrete grade name */
   const grade = u.grade;
 
   /** Convert norm name */
   const norm = u.norm;
+
+  /** Volume unit only */
+  const volUnit = u.config.volume.unit;
+
+  /** Pressure unit only */
+  const presUnit = u.config.pressure.unit;
+
+  /** Speed unit only */
+  const speedUnit = u.config.speed.unit;
 
   /** Whether values are converted (non-MENA) */
   const isConverted = u.isConverted;
@@ -131,9 +152,9 @@ export function useUnitFormat() {
 
   return {
     fmtVolume, fmtVolumeRate, fmtWeight, fmtLiquid, fmtTemp, fmtPressure,
-    fmtDistance, fmtCurrency, fmtCurrencyK, fmtFuel,
+    fmtDistance, fmtCurrency, fmtCurrencyK, fmtFuel, fmtSpeed, fmtSlump,
     grade, norm,
-    volUnit, distUnit, currSym, currKUnit,
+    volUnit, distUnit, currSym, currKUnit, presUnit, speedUnit,
     rawCurrency, rawCurrencyK, rawVolume, rawTemp,
     isConverted, systemLabel, systemBadge,
   };

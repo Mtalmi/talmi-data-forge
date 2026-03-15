@@ -23,11 +23,14 @@ interface MainLayoutProps {
 }
 
 function ConversionNote() {
-  const { config, system } = useUnits();
+  const { system } = useUnits();
   if (system === 'mena') return null;
+  const text = system === 'us'
+    ? 'Values displayed in US Imperial — source data in metric MENA'
+    : 'Valeurs affichées en EUR — données sources en DH';
   return (
     <div style={{ textAlign: 'center', padding: '8px 0', fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 9, color: 'rgba(156,163,175,0.3)' }}>
-      Valeurs converties — données sources en unités {config.label.toUpperCase()}
+      {text}
     </div>
   );
 }
