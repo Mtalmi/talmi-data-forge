@@ -210,10 +210,10 @@ export function OrderFormFields({
               <Phone className="h-4 w-4 text-muted-foreground" />
               {o.phone}
             </Label>
-            <Input
+            <PhoneInput
               value={telephoneChantier}
-              onChange={(e) => setTelephoneChantier(e.target.value)}
-              placeholder="+212 6XX XXX XXX"
+              onChange={setTelephoneChantier}
+              placeholder="+212 6XX XX XX XX"
             />
           </div>
         </div>
