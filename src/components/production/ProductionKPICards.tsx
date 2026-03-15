@@ -42,7 +42,7 @@ export function ProductionKPICards({
             <Package className="h-4 w-4 text-blue-500" />
             <span className="text-xs text-muted-foreground">Volume</span>
           </div>
-          <p className="text-2xl font-bold text-blue-500 mt-1">{totalVolume.toFixed(0)}</p>
+          <p className="text-2xl font-extralight text-blue-500 mt-1">{totalVolume.toFixed(0)}</p>
           <p className="text-xs text-muted-foreground">m³</p>
         </CardContent>
       </Card>
