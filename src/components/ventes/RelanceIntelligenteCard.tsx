@@ -25,7 +25,7 @@ export function RelanceIntelligenteCard() {
         </span>
         <WhatsAppBadge />
         <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(212,168,67,0.3), transparent 80%)' }} />
-        <span style={{ fontSize: 9, fontWeight: 600, color: '#D4A843', background: 'rgba(212,168,67,0.06)', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 100, padding: '3px 10px', fontFamily: mono }}>
+        <span style={{ fontSize: 12, fontWeight: 600, color: '#D4A843', background: 'rgba(212,168,67,0.06)', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 100, padding: '3px 10px', fontFamily: mono }}>
           ✨ Généré par IA · Claude Opus
         </span>
       </div>
@@ -33,19 +33,19 @@ export function RelanceIntelligenteCard() {
       {/* KPIs */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 20 }}>
         <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 10, padding: '16px 18px', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, fontFamily: mono }}>Devis en Retard</p>
+          <p style={{ color: '#9CA3AF', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, fontFamily: mono }}>Devis en Retard</p>
           <span style={{ fontFamily: mono, fontSize: 42, fontWeight: 100, color: '#F59E0B' }}>{retardVal}</span>
-          <p style={{ fontSize: 10, color: '#9CA3AF', fontFamily: mono, marginTop: 4 }}>&gt; 30 jours sans réponse</p>
+          <p style={{ fontSize: 12, color: '#9CA3AF', fontFamily: mono, marginTop: 4 }}>&gt; 30 jours sans réponse</p>
         </div>
         <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 10, padding: '16px 18px', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, fontFamily: mono }}>Revenu à Risque</p>
+          <p style={{ color: '#9CA3AF', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, fontFamily: mono }}>Revenu à Risque</p>
           <span style={{ fontFamily: mono, fontSize: 42, fontWeight: 100, color: '#EF4444' }}>{revenuVal}K</span>
           <span style={{ fontSize: 16, color: '#9CA3AF', fontFamily: mono, marginLeft: 4 }}>DH</span>
         </div>
         <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 10, padding: '16px 18px', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, fontFamily: mono }}>Taux de Récupération</p>
+          <p style={{ color: '#9CA3AF', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, fontFamily: mono }}>Taux de Récupération</p>
           <span style={{ fontFamily: mono, fontSize: 42, fontWeight: 100, color: '#22C55E' }}>{tauxVal}%</span>
-          <p style={{ fontSize: 10, color: '#9CA3AF', fontFamily: mono, marginTop: 4 }}>historique relances</p>
+          <p style={{ fontSize: 12, color: '#9CA3AF', fontFamily: mono, marginTop: 4 }}>historique relances</p>
         </div>
       </div>
 
@@ -55,7 +55,7 @@ export function RelanceIntelligenteCard() {
           <thead>
             <tr>
               {['Client', 'Devis', 'Montant', 'Jours sans réponse', 'Action'].map(h => (
-                <th key={h} style={{ textAlign: 'left', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', padding: '0 12px 10px 0', fontFamily: mono }}>{h}</th>
+                <th key={h} style={{ textAlign: 'left', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#9CA3AF', padding: '0 12px 10px 0', fontFamily: mono }}>{h}</th>
               ))}
             </tr>
           </thead>

@@ -16,7 +16,7 @@ function OverviewApproveBtn({ mat, qty }: { mat: string; qty: string }) {
       onMouseDown={e => { if (state === 'idle') (e.currentTarget as HTMLElement).style.transform = 'scale(0.97)'; }}
       onMouseUp={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)'; }}
       style={{
-        fontFamily: MONO, fontSize: 11, fontWeight: 600, borderRadius: 6, padding: '6px 14px', transition: 'all 200ms', border: 'none',
+        fontFamily: MONO, fontSize: 12, fontWeight: 600, borderRadius: 6, padding: '6px 14px', transition: 'all 200ms', border: 'none',
         background: state === 'done' ? 'rgba(34,197,94,0.15)' : '#D4A843',
         color: state === 'done' ? '#22C55E' : '#0F1629',
         cursor: state === 'idle' ? 'pointer' : 'default',
@@ -163,7 +163,7 @@ export function OverviewTab({ AUTONOMY, STOCK_ALERTS_DB, REORDER_RECS, STOCKS, o
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 40 }}>
             {/* Left — Score */}
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <p style={{ fontFamily: MONO, letterSpacing: '2px', fontSize: 11, color: '#9CA3AF', marginBottom: 12 }}>
+              <p style={{ fontFamily: MONO, letterSpacing: '2px', fontSize: 12, color: '#9CA3AF', marginBottom: 12 }}>
                 SANTÉ GLOBALE DES STOCKS
               </p>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
@@ -183,7 +183,7 @@ export function OverviewTab({ AUTONOMY, STOCK_ALERTS_DB, REORDER_RECS, STOCKS, o
                   { label: 'Rotation ⚠', color: '#F59E0B' },
                 ].map(pill => (
                   <span key={pill.label} style={{
-                    fontFamily: MONO, fontSize: 10, fontWeight: 600,
+                    fontFamily: MONO, fontSize: 12, fontWeight: 600,
                     padding: '4px 10px', borderRadius: 999,
                     background: `${pill.color}15`, border: `1px solid ${pill.color}40`,
                     color: pill.color,
@@ -261,7 +261,7 @@ export function OverviewTab({ AUTONOMY, STOCK_ALERTS_DB, REORDER_RECS, STOCKS, o
               ✦ INTELLIGENCE IA — SANTÉ STOCK
             </span>
             <span style={{
-              fontFamily: MONO, fontSize: 10, color: '#D4A843',
+              fontFamily: MONO, fontSize: 12, color: '#D4A843',
               background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)',
               padding: '4px 10px', borderRadius: 999,
             }}>
@@ -300,9 +300,9 @@ export function OverviewTab({ AUTONOMY, STOCK_ALERTS_DB, REORDER_RECS, STOCKS, o
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke={T.amberGrid} vertical={false} />
-              <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11, fontFamily: MONO }} />
-              <YAxis domain={[60, 100]} axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10, fontFamily: MONO }} />
-              <ReferenceLine y={80} stroke="#D4A843" strokeDasharray="6 4" strokeOpacity={0.4} label={{ value: 'Seuil 80', fill: '#9CA3AF', fontSize: 10, fontFamily: MONO, position: 'right' }} />
+              <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 12, fontFamily: MONO }} />
+              <YAxis domain={[60, 100]} axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 12, fontFamily: MONO }} />
+              <ReferenceLine y={80} stroke="#D4A843" strokeDasharray="6 4" strokeOpacity={0.4} label={{ value: 'Seuil 80', fill: '#9CA3AF', fontSize: 12, fontFamily: MONO, position: 'right' }} />
               <RechartsTooltip content={<TrendTooltip />} cursor={{ stroke: '#D4A843', strokeDasharray: '3 3', strokeOpacity: 0.3 }} />
               <Area type="monotone" dataKey="score" stroke="#D4A843" strokeWidth={2} fill="url(#trendFillGrad)" dot={false} activeDot={{ r: 5, fill: '#D4A843', stroke: '#0F1629', strokeWidth: 2 }} />
               {/* Pulse dot on last point */}
@@ -321,7 +321,7 @@ export function OverviewTab({ AUTONOMY, STOCK_ALERTS_DB, REORDER_RECS, STOCKS, o
               { label: 'TENDANCE', value: trendDelta >= 0 ? `↑ +${trendDelta} pts` : `↓ ${trendDelta} pts`, color: trendDelta >= 0 ? '#22C55E' : '#EF4444' },
             ].map(s => (
               <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontFamily: MONO, fontSize: 10, color: '#9CA3AF', fontWeight: 600, letterSpacing: '0.1em' }}>{s.label}</span>
+                <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF', fontWeight: 600, letterSpacing: '0.1em' }}>{s.label}</span>
                 <span style={{ fontFamily: MONO, fontSize: 13, color: s.color, fontWeight: 600 }}>{s.value}</span>
               </div>
             ))}

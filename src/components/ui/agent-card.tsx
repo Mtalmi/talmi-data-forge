@@ -58,7 +58,7 @@ export function AgentContainer({ children, severity = 'predictive', index, class
             alignItems: 'center',
             justifyContent: 'center',
             fontFamily: MONO,
-            fontSize: 10,
+            fontSize: 12,
             color: '#D4A843',
             flexShrink: 0,
           }}>
@@ -124,7 +124,7 @@ export function AgentHeader({ name, severityBadge, hideBranding }: AgentHeaderPr
         {badge && (
           <span style={{
             fontFamily: MONO,
-            fontSize: 9,
+            fontSize: 12,
             fontWeight: 600,
             color: badge.color,
             background: badge.bg,
@@ -140,7 +140,7 @@ export function AgentHeader({ name, severityBadge, hideBranding }: AgentHeaderPr
         {!hideBranding && (
           <span style={{
             fontFamily: MONO,
-            fontSize: 9,
+            fontSize: 12,
             fontWeight: 600,
             color: '#D4A843',
             background: 'rgba(212,168,67,0.06)',
@@ -184,7 +184,7 @@ export function AgentKPITriplet({ kpis }: { kpis: [AgentKPI, AgentKPI, AgentKPI]
         }}>
           <div style={{
             fontFamily: MONO,
-            fontSize: 10,
+            fontSize: 12,
             letterSpacing: '1.5px',
             color: '#9CA3AF',
             textTransform: 'uppercase',
@@ -204,7 +204,7 @@ export function AgentKPITriplet({ kpis }: { kpis: [AgentKPI, AgentKPI, AgentKPI]
           {kpi.subtitle && (
             <div style={{
               fontFamily: MONO,
-              fontSize: 11,
+              fontSize: 12,
               color: '#9CA3AF',
               marginTop: 4,
             }}>
@@ -256,7 +256,7 @@ export function AgentRecommendation({ children, severity = 'gold', title }: Agen
       {title && (
         <div style={{
           fontFamily: MONO,
-          fontSize: 10,
+          fontSize: 12,
           letterSpacing: '1.5px',
           color,
           textTransform: 'uppercase',

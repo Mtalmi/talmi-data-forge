@@ -75,7 +75,7 @@ export function TrendIndicator({ value, label, className, invertColor = false }:
   return (
     <span
       className={cn('inline-flex items-center gap-1', className)}
-      style={{ fontFamily: MONO, fontSize: 11, color }}
+      style={{ fontFamily: MONO, fontSize: 12, color }}
     >
       <span>{arrow}</span>
       <span style={{ fontWeight: 600 }}>{text}</span>
@@ -108,7 +108,7 @@ export function SectionHeader({ children, className }: SectionHeaderProps) {
       <span
         style={{
           fontFamily: MONO,
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: 700,
           letterSpacing: '0.15em',
           color: '#D4A843',

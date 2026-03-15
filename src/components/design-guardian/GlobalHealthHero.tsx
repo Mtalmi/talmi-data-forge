@@ -4,7 +4,7 @@ import { AUDIT_PAGES, AUDIT_ISSUES } from './audit-data';
 
 const T = {
   card: 'bg-slate-800/50 border border-slate-700 rounded-xl',
-  label: 'text-[10px] uppercase tracking-widest text-slate-500 font-semibold',
+  label: 'text-xs uppercase tracking-widest text-slate-500 font-semibold',
   gold: '#D4A843',
 };
 
@@ -45,7 +45,7 @@ export default function GlobalHealthHero() {
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className={`text-3xl font-extralight font-mono ${scoreColor}`}>{animatedScore}</span>
-            <span className="text-[10px] text-slate-500 font-semibold">/10</span>
+            <span className="text-xs text-slate-500 font-semibold">/10</span>
           </div>
         </div>
         {/* Info */}
@@ -97,7 +97,7 @@ function KPICard({ label, value, icon, color, pulse }: {
 }) {
   return (
     <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
-      <div className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold mb-2">{label}</div>
+      <div className="text-xs uppercase tracking-widest text-slate-500 font-semibold mb-2">{label}</div>
       <div className="flex items-center gap-2">
         {pulse && <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />}
         <span className={`text-3xl font-extralight font-mono ${color}`}>{value}</span>

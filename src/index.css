@@ -344,7 +344,7 @@ html {
 }
 .tbos-agent-kpi-label {
   font-family: ui-monospace, SFMono-Regular, monospace;
-  font-size: 10px;
+  font-size: 12px;
   color: #9CA3AF;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -415,7 +415,7 @@ html {
 }
 .tbos-table thead th {
   font-family: ui-monospace, SFMono-Regular, monospace !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   letter-spacing: 1.5px !important;
   font-weight: 400 !important;
   color: #9CA3AF !important;
@@ -494,19 +494,19 @@ html {
   border-radius: 6px !important;
   box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important;
   font-family: ui-monospace, SFMono-Regular, monospace !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   color: #FFFFFF !important;
   padding: 8px 12px !important;
 }
 .recharts-tooltip-item {
   color: #D4A843 !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-family: ui-monospace, SFMono-Regular, monospace !important;
 }
 .recharts-tooltip-label {
   color: #FFFFFF !important;
   font-weight: 600 !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-family: ui-monospace, SFMono-Regular, monospace !important;
 }
 .recharts-active-dot circle {
@@ -3120,7 +3120,7 @@ html {
   gap: 4px;
   padding: 2px 8px;
   border-radius: 100px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   background: hsl(145 65% 45% / 0.12);
   color: hsl(145 65% 45%);
@@ -3133,7 +3133,7 @@ html {
   gap: 4px;
   padding: 2px 8px;
   border-radius: 100px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   background: hsl(350 100% 50% / 0.12);
   color: hsl(350 100% 60%);
@@ -3146,7 +3146,7 @@ html {
   gap: 4px;
   padding: 2px 8px;
   border-radius: 100px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   background: hsl(var(--muted));
   color: hsl(var(--muted-foreground));
@@ -3487,7 +3487,7 @@ html {
   padding: 32px 8px 16px;
 }
 .tbos-section-header span {
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.2em;
   font-weight: 500;
@@ -3508,7 +3508,7 @@ html {
   gap: 6px;
   padding: 4px 12px;
   border-radius: 9999px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -3761,7 +3761,7 @@ nav,
   line-height: 1;
 }
 .workflow-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -3873,7 +3873,7 @@ nav,
 [class*="tag"] {
   border-radius: 100px !important;
   font-weight: 600 !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   letter-spacing: 0.05em !important;
 }
 
@@ -3990,7 +3990,7 @@ hr,
   border: 1px solid rgba(34, 197, 94, 0.3);
   border-radius: 100px;
   padding: 2px 10px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.05em;
   display: inline-flex;
@@ -4003,7 +4003,7 @@ hr,
   border: 1px solid rgba(245, 158, 11, 0.3);
   border-radius: 100px;
   padding: 2px 10px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.05em;
   display: inline-flex;
@@ -4017,7 +4017,7 @@ hr,
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 100px;
   padding: 2px 10px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.05em;
   display: inline-flex;
@@ -4031,7 +4031,7 @@ hr,
   border: 1px solid rgba(59, 130, 246, 0.3);
   border-radius: 100px;
   padding: 2px 10px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.05em;
   display: inline-flex;
@@ -4044,7 +4044,7 @@ hr,
   border: 1px solid hsl(var(--primary) / 0.3);
   border-radius: 100px;
   padding: 2px 10px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.05em;
   display: inline-flex;
@@ -4213,7 +4213,7 @@ textarea.valid {
 /* Recharts axis text — unified monospace */
 .recharts-cartesian-axis-tick-value {
   fill: #9CA3AF !important;
-  font-size: 10px !important;
+  font-size: 12px !important;
   font-family: ui-monospace, SFMono-Regular, monospace !important;
   letter-spacing: 0.5px !important;
 }
@@ -4683,7 +4683,7 @@ textarea.valid {
   background: rgba(239, 68, 68, 0.15);
   border: 1px solid rgba(239, 68, 68, 0.35);
   color: #ef4444;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -4967,7 +4967,7 @@ textarea:-webkit-autofill {
   gap: 3px;
   padding: 2px 8px;
   border-radius: 100px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   background: hsl(var(--success) / 0.12);
   color: hsl(var(--success));
@@ -4979,7 +4979,7 @@ textarea:-webkit-autofill {
   gap: 3px;
   padding: 2px 8px;
   border-radius: 100px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   background: hsl(var(--destructive) / 0.12);
   color: hsl(var(--destructive));
@@ -4991,7 +4991,7 @@ textarea:-webkit-autofill {
   gap: 3px;
   padding: 2px 8px;
   border-radius: 100px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   background: hsl(var(--muted));
   color: hsl(var(--muted-foreground));
@@ -5057,7 +5057,7 @@ textarea:-webkit-autofill {
 [class*="tag"] {
   border-radius: 100px !important;
   font-weight: 600 !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   letter-spacing: 0.05em !important;
 }
 

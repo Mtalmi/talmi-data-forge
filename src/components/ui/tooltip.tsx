@@ -24,7 +24,7 @@ const TooltipContent = React.forwardRef<
       background: '#1A2332',
       color: '#FFFFFF',
       fontFamily: 'ui-monospace, SFMono-Regular, monospace',
-      fontSize: 11,
+      fontSize: 12,
       padding: '6px 10px',
       borderRadius: 6,
       border: '1px solid rgba(212, 168, 67, 0.15)',
