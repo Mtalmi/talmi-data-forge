@@ -215,9 +215,9 @@ function useProductionLiveData() {
           .eq('date_livraison', today),
         supabase
           .from('production_batches')
-          .select('id, bl_id, batch_number, quality_status, has_critical_variance, entered_at, ciment_reel_kg, eau_reel_l, variance_ciment_pct, variance_eau_pct, entered_by_name')
-          .order('entered_at', { ascending: false })
-          .limit(20),
+          .select('id, bl_id, batch_number, formule, volume_m3, client_nom, status, conformite_status, quality_status, has_critical_variance, operateur, temperature_celsius, ratio_ec, slump_cm, cout_matiere, entered_at, created_at, completed_at, ciment_reel_kg, eau_reel_l, variance_ciment_pct, variance_eau_pct, entered_by_name')
+          .order('created_at', { ascending: false })
+          .limit(50),
         supabase
           .from('bons_livraison_reels')
           .select('bl_id, volume_m3, quality_status, date_livraison, variance_ciment_pct')
