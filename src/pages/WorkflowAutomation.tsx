@@ -369,18 +369,18 @@ export default function WorkflowAutomation() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div>
-                  <p className="text-xs mb-1" style={{ color: '#B0B8C1' }}>Hours saved this week</p>
+                  <p className="text-xs mb-1" style={{ color: '#B0B8C1' }}>Heures économisées cette semaine</p>
                   <p className="text-3xl font-mono font-semibold" style={{ color: '#FFD700', fontFamily: "'JetBrains Mono', monospace" }}><AnimNum target={47.3} decimals={1} /> hrs</p>
                 </div>
                 <div>
-                  <p className="text-xs mb-1" style={{ color: '#B0B8C1' }}>At $35/hr avg labor cost</p>
-                  <p className="text-3xl font-mono font-semibold" style={{ color: '#FFD700', fontFamily: "'JetBrains Mono', monospace" }}>$<AnimNum target={1655} /></p>
-                  <p className="text-xs" style={{ color: '#B0B8C1' }}>saved this week</p>
+                  <p className="text-xs mb-1" style={{ color: '#B0B8C1' }}>Au coût moyen de 350 DH/h</p>
+                  <p className="text-3xl font-mono font-semibold" style={{ color: '#FFD700', fontFamily: "'JetBrains Mono', monospace" }}><AnimNum target={16550} /> DH</p>
+                  <p className="text-xs" style={{ color: '#B0B8C1' }}>économisés cette semaine</p>
                 </div>
                 <div>
-                  <p className="text-xs mb-1" style={{ color: '#B0B8C1' }}>Projected annual savings</p>
-                  <p className="text-3xl font-mono font-semibold" style={{ color: '#FFD700', fontFamily: "'JetBrains Mono', monospace" }}>$<AnimNum target={86060} /></p>
-                  <p className="text-xs" style={{ color: '#B0B8C1' }}>saved this year</p>
+                  <p className="text-xs mb-1" style={{ color: '#B0B8C1' }}>Économies annuelles projetées</p>
+                  <p className="text-3xl font-mono font-semibold" style={{ color: '#FFD700', fontFamily: "'JetBrains Mono', monospace" }}><AnimNum target={860600} /> DH</p>
+                  <p className="text-xs" style={{ color: '#B0B8C1' }}>économisés cette année</p>
                 </div>
               </div>
               <button onClick={() => { navigator.clipboard?.writeText('TBOS Automation: 47.3hrs saved this week'); setToast('Link copied! 📋'); }}
