@@ -1265,7 +1265,7 @@ export default function Dashboard() {
                     {kpi.label}
                   </div>
                   <div className="flex items-baseline gap-2 leading-none">
-                     <span className="tbos-hero-stat-number text-3xl font-mono tracking-tight text-white" style={{
+                     <span className={`tbos-hero-stat-number text-3xl font-mono tracking-tight text-white ${flashClass}`} style={{
                        fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
                        fontWeight: 200, lineHeight: 1,
                        textShadow: aboveTarget
