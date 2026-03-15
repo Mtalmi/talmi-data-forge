@@ -115,7 +115,7 @@ export function FinancialReportingSim({ onComplete, onClose }: FinancialReportin
                   </div>
                   <div className="p-3 bg-white dark:bg-gray-900 rounded-lg">
                     <p className="text-xs text-muted-foreground">Encaissements</p>
-                    <p className="text-lg font-bold text-emerald-600">65,000 DH</p>
+                    <p className="text-lg font-bold text-emerald-600">65 000 DH</p>
                   </div>
                   <div className="p-3 bg-white dark:bg-gray-900 rounded-lg">
                     <p className="text-xs text-muted-foreground">Dépenses</p>
