@@ -4,12 +4,14 @@ import {
   TBOSDisplayField, TBOSPrimaryButton, TBOSGhostButton,
   TBOSFormRow, TBOSFormStack, showFormSuccess,
 } from '@/components/ui/TBOSModal';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const BATCHES = [
-  { value: 'BN-0142', label: 'BN-0142 — F-B25 · 8m³' },
-  { value: 'BN-0141', label: 'BN-0141 — F-B30 · 6m³' },
-  { value: 'BN-0140', label: 'BN-0140 — F-B25 · 10m³' },
-  { value: 'BN-0139', label: 'BN-0139 — F-B35 · 8m³' },
+  { value: 'BN-0142', label: 'BN-0142 — F-B25 · 8m³', formule: 'F-B25', blId: 'BL-2603-009' },
+  { value: 'BN-0141', label: 'BN-0141 — F-B30 · 6m³', formule: 'F-B30', blId: 'BL-2603-010' },
+  { value: 'BN-0140', label: 'BN-0140 — F-B25 · 10m³', formule: 'F-B25', blId: 'BL-2603-011' },
+  { value: 'BN-0139', label: 'BN-0139 — F-B35 · 8m³', formule: 'F-B35', blId: 'BL-2603-009' },
 ];
 
 const TEST_TYPES = [
@@ -39,6 +41,7 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
+  const selectedBatch = BATCHES.find(b => b.value === batch);
   const selectedTest = TEST_TYPES.find(t => t.value === testType);
 
   const ecart = useMemo(() => {
@@ -52,24 +55,87 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
     return { ok: false, text: `✗ ${val < selectedTest.min ? '-' : '+'}${deviation}% hors norme` };
   }, [selectedTest, resultat]);
 
+  const sanitize = (s: string) => s.replace(/<[^>]*>/g, '').trim();
+
   const validate = () => {
     const e: Record<string, string> = {};
     if (!batch) e.batch = 'Champ requis';
     if (!testType) e.testType = 'Champ requis';
-    if (!resultat || parseFloat(resultat) <= 0) e.resultat = 'Valeur doit être positive';
+    const val = parseFloat(resultat);
+    if (!resultat || isNaN(val)) e.resultat = 'Champ requis';
+    else if (val <= 0 && testType !== 'ratio_ec') e.resultat = 'Valeur doit être positive';
     if (!operateur) e.operateur = 'Champ requis';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
   const handleSubmit = async () => {
+    if (loading) return;
     if (!validate()) return;
     setLoading(true);
-    await new Promise(r => setTimeout(r, 800));
-    const test = { batch, testType: selectedTest?.label, resultat: parseFloat(resultat), conforme: ecart?.ok, operateur, notes };
-    onCreated?.(test);
-    showFormSuccess(`✓ Test ${selectedTest?.label} enregistré — ${batch}`);
-    resetAndClose();
+    try {
+      const val = parseFloat(resultat);
+      const isConforme = ecart?.ok ?? true;
+      const blId = selectedBatch?.blId || 'BL-2603-009';
+      const formuleId = selectedBatch?.formule || 'F-B25';
+
+      // Build insert data based on test type
+      const insertData: Record<string, any> = {
+        bl_id: blId,
+        formule_id: formuleId,
+        date_prelevement: new Date().toISOString().split('T')[0],
+        technicien_prelevement: OPERATORS.find(o => o.value === operateur)?.label || operateur,
+        technicien_test: OPERATORS.find(o => o.value === operateur)?.label || operateur,
+        notes: sanitize(notes) || null,
+        alerte_qualite: !isConforme,
+      };
+
+      if (testType === 'slump') {
+        insertData.affaissement_mm = val * 10; // cm to mm
+        insertData.affaissement_conforme = isConforme;
+      } else if (testType === 'resistance_7j') {
+        insertData.resistance_7j_mpa = val;
+        insertData.date_test_7j = new Date().toISOString().split('T')[0];
+        insertData.resistance_conforme = isConforme;
+      } else if (testType === 'resistance_28j') {
+        insertData.resistance_28j_mpa = val;
+        insertData.date_test_28j = new Date().toISOString().split('T')[0];
+        insertData.resistance_conforme = isConforme;
+      }
+
+      const { error } = await supabase.from('tests_laboratoire').insert(insertData);
+      if (error) throw error;
+
+      // Log activity
+      await supabase.from('activity_log').insert({
+        type: 'action',
+        message: `Test ${selectedTest?.label} enregistré — ${batch} · ${val} ${selectedTest?.unit} · ${isConforme ? 'Conforme' : 'Non-conforme'}`,
+        source_page: 'laboratoire',
+        severite: isConforme ? 'info' : 'warning',
+      }).then(() => {});
+
+      // Create alert if non-conforme
+      if (!isConforme) {
+        await supabase.from('alertes').insert({
+          type: 'qualite',
+          severite: 'warning',
+          titre: `Non-conformité ${batch}`,
+          message: `${selectedTest?.label}: ${val} ${selectedTest?.unit} (${ecart?.text}). Formule ${formuleId}.`,
+          entity_type: 'test',
+          entity_id: batch,
+          page_source: 'laboratoire',
+        }).then(() => {});
+      }
+
+      const test = { batch, testType: selectedTest?.label, resultat: val, conforme: isConforme, operateur, notes: sanitize(notes) };
+      onCreated?.(test);
+      showFormSuccess(`✓ Test ${selectedTest?.label} enregistré — ${batch}`);
+      resetAndClose();
+    } catch (error: any) {
+      console.error('Error saving test:', error);
+      toast.error(`Erreur: ${error?.message || 'Impossible d\'enregistrer le test'}`);
+      setLoading(false);
+    }
   };
 
   const resetAndClose = () => {
@@ -81,7 +147,7 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
     <TBOSModal open={open} onClose={resetAndClose} title="Nouveau Test Laboratoire" footer={
       <>
         <TBOSGhostButton onClick={resetAndClose}>Annuler</TBOSGhostButton>
-        <TBOSPrimaryButton onClick={handleSubmit} loading={loading}>Enregistrer Test</TBOSPrimaryButton>
+        <TBOSPrimaryButton onClick={handleSubmit} loading={loading} disabled={loading}>Enregistrer Test</TBOSPrimaryButton>
       </>
     }>
       <TBOSFormStack>
@@ -95,6 +161,8 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
               options={TEST_TYPES.map(t => ({ value: t.value, label: t.label }))} placeholder="Sélectionner" />
           </TBOSField>
         </TBOSFormRow>
+
+        {selectedBatch && <TBOSDisplayField label="Formule" value={selectedBatch.formule} />}
 
         <TBOSFormRow cols={3}>
           <TBOSField label={`Résultat${selectedTest ? ` (${selectedTest.unit})` : ''}`} required error={errors.resultat}>
@@ -123,7 +191,7 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
         </TBOSField>
 
         <TBOSField label="Notes">
-          <TBOSTextarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Observations..." />
+          <TBOSTextarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Observations..." maxLength={500} />
         </TBOSField>
       </TBOSFormStack>
     </TBOSModal>

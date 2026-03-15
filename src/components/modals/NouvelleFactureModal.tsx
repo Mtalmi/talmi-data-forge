@@ -68,6 +68,7 @@ export function NouvelleFactureModal({ open, onClose, onCreated }: Props) {
   };
 
   const handleSubmit = async () => {
+    if (loading) return;
     if (!validate()) return;
     setLoading(true);
     try {
