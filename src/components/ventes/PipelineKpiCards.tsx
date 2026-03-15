@@ -111,7 +111,14 @@ export function PipelineKpiCards({ devisList }: PipelineKpiCardsProps) {
           onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, #1a1f2e, #141824)'; e.currentTarget.style.transform = 'translateY(0)'; }}
         >
           <AnimatedValue value={card.value} color={card.color} unit={card.unit} />
-          <p style={{ fontFamily: monoFont, fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#9CA3AF', marginTop: 6 }}>{card.label}</p>
+          <div className="flex items-center justify-between">
+            <p style={{ fontFamily: monoFont, fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#9CA3AF', marginTop: 6 }}>{card.label}</p>
+            {'tooltipTitle' in card && (
+              <MetricTooltip title={(card as any).tooltipTitle}>
+                {(card as any).tooltipBody}
+              </MetricTooltip>
+            )}
+          </div>
           <p style={{ fontSize: 12, fontWeight: 500, color: card.subtitleColor, marginTop: 4 }}>{card.subtitle}</p>
           <MiniSparkline />
         </div>
