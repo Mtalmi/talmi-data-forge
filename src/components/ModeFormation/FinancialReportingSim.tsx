@@ -102,7 +102,7 @@ export function FinancialReportingSim({ onComplete, onClose }: FinancialReportin
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 bg-white dark:bg-gray-900 rounded-lg">
                     <p className="text-xs text-muted-foreground">CA du jour</p>
-                    <p className="text-lg font-bold text-emerald-600">87,500 DH</p>
+                    <p className="text-lg font-bold text-emerald-600">87 500 DH</p>
                     <div className="flex items-center gap-1 text-xs text-emerald-600">
                       <TrendingUp className="h-3 w-3" />
                       +12% vs hier
