@@ -107,7 +107,7 @@ export function FrontDeskValidation({
       timestamp: new Date().toISOString(),
     };
 
-    console.log('[VERIFICATION_FORM]:', formData);
+    
     setVerificationSubmitted(true);
     setShowVerificationForm(false);
     
@@ -130,7 +130,7 @@ export function FrontDeskValidation({
       timestamp: new Date().toISOString(),
     };
 
-    console.log('[REJECTION_FORM]:', formData);
+    
     setRejectionSubmitted(true);
     setShowRejectionForm(false);
     toast.info('📋 Formulaire de rejet soumis - Livraison marquée comme REJETÉE');

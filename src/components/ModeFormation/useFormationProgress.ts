@@ -105,8 +105,6 @@ export function useFormationProgress() {
       // Update local state
       setCompletedSimulations(prev => [...prev, simulationType]);
 
-      // Log to audit (simulation prefix)
-      console.log(`[SIMULATION] User ${user.id} completed: ${simulationType}`);
 
       return { success: true };
     } catch (err) {
@@ -131,7 +129,7 @@ export function useFormationProgress() {
       }
 
       setCompletedSimulations([]);
-      console.log(`[SIMULATION] User ${user.id} reset all progress`);
+      
 
       return { success: true };
     } catch (err) {
@@ -166,7 +164,7 @@ export function useFormationProgress() {
               badge_level: 'gold',
             });
           
-          console.log(`[SIMULATION] User ${user.id} earned TBOS Certified Operator badge`);
+          
         }
 
         return true;

@@ -49,12 +49,6 @@ export function ForensicAnalysisSim({ onComplete, onClose }: ForensicAnalysisSim
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    console.log('[SIMULATION] Forensic Analysis:', {
-      logsReviewed,
-      comparisonDone,
-      anomaliesIdentified,
-      reportGenerated,
-    });
 
     await new Promise(resolve => setTimeout(resolve, 1500));
     

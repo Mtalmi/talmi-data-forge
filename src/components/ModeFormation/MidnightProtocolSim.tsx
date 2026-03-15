@@ -86,13 +86,6 @@ export function MidnightProtocolSim({ onComplete, onClose }: MidnightProtocolSim
   };
 
   const handleComplete = () => {
-    console.log('[SIMULATION] Midnight Protocol:', {
-      time: currentTime,
-      justification,
-      ceoReason,
-      overrideToken,
-      transaction: DEMO_TRANSACTION,
-    });
     toast.success('🎉 Protocole Minuit Validé!', {
       description: 'Transaction approuvée par CEO avec token d\'urgence.',
     });

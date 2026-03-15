@@ -1121,7 +1121,6 @@ export default function Dashboard() {
           </div>
 
           {/* ═══ AI INTELLIGENCE GRID ═══ */}
-          {(() => { console.log("COMMAND CENTER RENDERING"); return null; })()}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-5" style={{ animation: 'ccSectionIn 300ms ease-out 70ms both' }}>
             <AIAgentCard type="daily_score" title="Score Quotidien" icon={<Calculator className="h-4 w-4 text-[#D4A843]" />} />
             <AIAgentCard type="morning_briefing" title="Briefing du Matin" icon={<Sun className="h-4 w-4 text-[#D4A843]" />} />

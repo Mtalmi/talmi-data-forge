@@ -115,7 +115,7 @@ export function QuickHumidityFAB({ onComplete, className }: QuickHumidityFABProp
       });
 
       if (error) {
-        console.log('Water correction calculated:', { humidityValue, correctionEau, photoUrl });
+        // Water correction error handled by toast below
       }
 
       hapticSuccess();

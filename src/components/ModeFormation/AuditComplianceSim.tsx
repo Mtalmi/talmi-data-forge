@@ -49,11 +49,6 @@ export function AuditComplianceSim({ onComplete, onClose }: AuditComplianceSimPr
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    console.log('[SIMULATION] Audit & Compliance:', {
-      auditReviewed,
-      complianceChecked,
-      reportGenerated,
-    });
 
     await new Promise(resolve => setTimeout(resolve, 1500));
     

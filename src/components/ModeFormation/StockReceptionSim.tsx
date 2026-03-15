@@ -77,17 +77,6 @@ export function StockReceptionSim({ onComplete, onClose }: StockReceptionSimProp
       rejection: rejectionForm,
     });
 
-    // Log complete audit trail
-    console.log('[AUDIT_TRAIL] Complete Stock Reception:', {
-      order: DEMO_ORDER,
-      qualityCheck: qualityCheckData,
-      validation: {
-        quantity: confirmedQuantity,
-        verificationForm,
-        rejectionForm,
-      },
-      timestamp: new Date().toISOString(),
-    });
 
     if (rejectionForm) {
       toast.info('📋 Réception marquée comme REJETÉE');

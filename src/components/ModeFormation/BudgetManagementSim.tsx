@@ -50,11 +50,6 @@ export function BudgetManagementSim({ onComplete, onClose }: BudgetManagementSim
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    console.log('[SIMULATION] Gestion budget terminée:', {
-      reviewedCategories,
-      forecastViewed,
-      alertsChecked,
-    });
 
     await new Promise(resolve => setTimeout(resolve, 1500));
     

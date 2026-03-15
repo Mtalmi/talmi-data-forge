@@ -42,12 +42,6 @@ export function FinancialReportingSim({ onComplete, onClose }: FinancialReportin
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    console.log('[SIMULATION] Financial Reporting:', {
-      dailyReviewed,
-      cashFlowAnalyzed,
-      marginsChecked,
-      forecastViewed,
-    });
 
     await new Promise(resolve => setTimeout(resolve, 1500));
     

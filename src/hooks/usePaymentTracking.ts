@@ -290,7 +290,7 @@ export function usePaymentTracking() {
           errors.push(`${payment.client_nom}: ${error.message}`);
         } else {
           sent++;
-          console.log(`Payment reminder sent to ${payment.client_nom} (${payment.client_email})`);
+          sent++;
         }
       } catch (err) {
         failed++;

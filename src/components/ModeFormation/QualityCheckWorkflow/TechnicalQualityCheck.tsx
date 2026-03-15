@@ -95,7 +95,7 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
       timestamp: new Date().toISOString(),
     };
 
-    console.log('[QUALITY_CHECK]:', qualityCheckData);
+    
     
     const statusLabel = qualityStatus === 'conforme' ? tq.statusConforme : qualityStatus === 'a_verifier' ? tq.statusAVerifier : tq.statusNonConforme;
     toast.success(tq.assessmentSubmitted, {

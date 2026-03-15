@@ -158,21 +158,21 @@ export function DevisTable({
   const scoreDevis = async (devisId: string, devisDbId: string) => {
     setScoringId(devisDbId);
     try {
-      console.log('[ScoreIA] Calling webhook for devis:', devisId);
+      // Call webhook for AI scoring
       const res = await fetch('https://talmi.app.n8n.cloud/webhook/deal-scorer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ devis_id: devisId }),
       });
       const webhookResult = await res.json();
-      console.log('[ScoreIA] Webhook response:', webhookResult);
+      // Refetch score from DB
 
       // Refetch from Supabase
       const { data, error } = await (supabase.from('devis' as any) as any)
         .select('score_ia, niveau_score, ai_recommandation, probabilite_conversion, scored_at')
         .eq('devis_id', devisId)
         .single();
-      console.log('[ScoreIA] Supabase refetch:', { data, error });
+      // Score refetched
 
       if (data && data.score_ia != null) {
         setLocalScores(prev => ({ ...prev, [devisDbId]: data }));

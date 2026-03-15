@@ -70,12 +70,6 @@ export function ValidateDeliverySim({ onComplete, onClose }: ValidateDeliverySim
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    console.log('[SIMULATION] Validation livraison:', {
-      orderId: selectedOrder,
-      deliveredQuantity,
-      qualityChecks,
-      qualityNotes,
-    });
 
     await new Promise(resolve => setTimeout(resolve, 1500));
     

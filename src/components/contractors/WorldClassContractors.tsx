@@ -811,10 +811,8 @@ export default function WorldClassContractors() {
   const coutMTDTotal = contractors.reduce((s: number, c: any) => s + (c.cout_mtd || 0), 0);
   const coutMTDK = Math.round(coutMTDTotal / 1000);
 
-  // Debug logs
-  useEffect(() => {
-    console.log('[WC-KPI] contractors.length =', actifCount, '| missionsEnCours =', missionsEnCours, '| coutMTDTotal =', coutMTDTotal, '| coutMTDK =', coutMTDK);
-  }, [actifCount, missionsEnCours, coutMTDTotal, coutMTDK]);
+
+
 
   // Derive cost donut from live contractor data
   const costDonut: CostDonutItem[] = useMemo(() => {
