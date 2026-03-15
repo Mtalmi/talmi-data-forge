@@ -388,8 +388,8 @@ function DeliveryCard({ d, index }: { d: any; index: number }) {
         {d.heure_prevue && <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} color={T.textDim} /><span style={{ color: T.textDim, fontSize: 11 }}>{d.heure_prevue}</span></div>}
         {/* Weather */}
         {wx && (
-          <span style={{ fontFamily: MONO, fontSize: 11, color: wx.color }} title={wx.tooltip || ''}>
-            {wx.text}
+          <span style={{ fontFamily: MONO, fontSize: 11, color: wx.tempC > 35 ? T.danger : wx.tempC > 30 ? T.warning : T.textSec }} title={wx.tooltip || ''}>
+            ☀ {uf.fmtTemp(wx.tempC)}
           </span>
         )}
         {d._delay && <span style={{ fontFamily: MONO, fontSize: 10, padding: '2px 6px', borderRadius: 4, background: 'rgba(239,68,68,0.15)', color: T.danger, border: `1px solid ${T.danger}40` }}>{d._delay}</span>}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useUnitFormat } from '@/hooks/useUnitFormat';
 import { FlaskConical, Sparkles, TestTube, BarChart3 } from 'lucide-react';
 
 const T = {
