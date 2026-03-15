@@ -273,7 +273,7 @@ export function TreasuryWidget() {
                 'font-mono font-semibold',
                 capPercentage >= 90 ? 'text-destructive' : capPercentage >= 70 ? 'text-warning' : 'text-success'
               )}>
-                {monthlyStats.level1Spent.toLocaleString()} / {monthlyStats.level1Cap.toLocaleString()}
+                {monthlyStats.level1Spent.toLocaleString('fr-FR')} / {monthlyStats.level1Cap.toLocaleString('fr-FR')}
               </span>
             </div>
             <Progress 
