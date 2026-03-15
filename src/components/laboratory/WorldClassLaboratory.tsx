@@ -2077,18 +2077,42 @@ export default function WorldClassLaboratory() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         actions={
-          <button
-            onClick={() => setShowTestModal(true)}
-            onMouseEnter={() => setHoverNew(true)} onMouseLeave={() => setHoverNew(false)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 7, padding: '7px 16px',
-              background: '#D4A843', color: '#0F1629',
-              border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12,
-              cursor: 'pointer', transition: 'all 150ms', fontFamily: 'DM Sans, sans-serif',
-            }}
-          >
-            <Plus size={14} /> Nouveau Test
-          </button>
+          <>
+            <ExportButton
+              data={labTests.map((t: any) => ({
+                reference: t.reference || t.id?.substring(0, 8),
+                formule: t.formule_id || '',
+                date: t.date_prelevement || '',
+                slump: t.slump_cm || '',
+                resistance_7j: t.resistance_7j || '',
+                resistance_28j: t.resistance_28j || '',
+                statut: t.statut || '',
+              }))}
+              columns={[
+                { key: 'reference', label: 'Référence' },
+                { key: 'formule', label: 'Formule' },
+                { key: 'date', label: 'Date' },
+                { key: 'slump', label: 'Slump (cm)' },
+                { key: 'resistance_7j', label: 'Rés. 7J (MPa)' },
+                { key: 'resistance_28j', label: 'Rés. 28J (MPa)' },
+                { key: 'statut', label: 'Statut' },
+              ]}
+              filename={`TBOS_Laboratoire_${new Date().toISOString().split('T')[0]}`}
+              style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: 8 }}
+            />
+            <button
+              onClick={() => setShowTestModal(true)}
+              onMouseEnter={() => setHoverNew(true)} onMouseLeave={() => setHoverNew(false)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 7, padding: '7px 16px',
+                background: '#D4A843', color: '#0F1629',
+                border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12,
+                cursor: 'pointer', transition: 'all 150ms', fontFamily: 'DM Sans, sans-serif',
+              }}
+            >
+              <Plus size={14} /> Nouveau Test
+            </button>
+          </>
         }
       />
 
