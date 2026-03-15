@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import { Navigate } from "react-router-dom";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { OfflineIndicator } from "@/components/layout/OfflineIndicator";
 import { Toaster } from "@/components/ui/toaster";
