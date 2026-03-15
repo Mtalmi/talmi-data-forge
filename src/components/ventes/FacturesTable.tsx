@@ -294,7 +294,7 @@ export function FacturesTable({
           </p>
         </div>
       ) : (
-        <Table>
+        <>
           <TableHeader>
             <TableRow>
               {onSelectionChange && (
