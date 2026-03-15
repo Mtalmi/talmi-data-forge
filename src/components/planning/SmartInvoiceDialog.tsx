@@ -456,7 +456,7 @@ export function SmartInvoiceDialog({
                 {margePct < 20 && <AlertTriangle className="h-4 w-4" />}
                 Marge Brute
               </span>
-              <span className="font-mono font-bold">{margePct.toFixed(1)}%</span>
+              <span className="font-mono font-bold">{isFinite(margePct) ? margePct.toFixed(1) : '--'}%</span>
             </div>
           )}
 

@@ -492,7 +492,7 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
                       v.status === 'critical' ? 'border-destructive text-destructive' : 'border-warning text-warning'
                     )}
                   >
-                    {v.label}: {v.percent.toFixed(1)}%
+                    {v.label}: {isFinite(v.percent) ? v.percent.toFixed(1) : '--'}%
                   </Badge>
                 ))}
               </div>
