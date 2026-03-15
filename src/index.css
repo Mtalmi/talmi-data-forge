@@ -4631,7 +4631,7 @@ textarea.valid {
 .check-success {
   stroke-dasharray: 24;
   animation: checkDraw 0.4s var(--ease-out) forwards;
-  stroke: #10b981;
+  stroke: #22c55e;
 }
 
 /* ══════════════════════════════════════════════════════════════
