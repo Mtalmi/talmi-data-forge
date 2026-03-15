@@ -128,12 +128,12 @@ export function SmartAlertsWidget({ alerts, dashboardStats }: SmartAlertsWidgetP
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-xs font-bold truncate">{sa.alert.title}</span>
+                  <span className="text-xs font-bold truncate" title={sa.alert.title}>{sa.alert.title}</span>
                   <div className={cn('p-0.5 rounded', impactColors[sa.impact])}>
                     <ImpactIcon className="h-2.5 w-2.5" />
                   </div>
                 </div>
-                <p className="text-[10px] text-muted-foreground line-clamp-1">{sa.alert.message}</p>
+                <p className="text-[10px] text-muted-foreground line-clamp-1" title={sa.alert.message}>{sa.alert.message}</p>
                 <div className="flex items-center gap-1 mt-1.5 text-[10px] text-primary font-medium">
                   <ChevronRight className="h-3 w-3" />
                   {sa.action}

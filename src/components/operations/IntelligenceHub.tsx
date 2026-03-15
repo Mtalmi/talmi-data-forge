@@ -337,7 +337,7 @@ export function IntelligenceHub({ devisStats }: IntelligenceHubProps) {
               <div className="flex items-center gap-3">
                 <ScoreBadge score={forecast.score_sante} />
                 {forecast.resume && (
-                  <span className="text-xs text-muted-foreground line-clamp-1 flex-1">{forecast.resume}</span>
+                  <span className="text-xs text-muted-foreground line-clamp-1 flex-1" title={forecast.resume || undefined}>{forecast.resume}</span>
                 )}
               </div>
               {tauxNum != null && (
