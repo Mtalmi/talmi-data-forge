@@ -24,6 +24,7 @@ import { DailyScoreGauge } from '@/components/dashboard/DailyScoreGauge';
 import { MultiMarketCalendar } from '@/components/dashboard/MultiMarketCalendar';
 import { ScenarioSimulator } from '@/components/dashboard/ScenarioSimulator';
 import ROICalculator from '@/components/dashboard/ROICalculator';
+import { CompetitivePositioning } from '@/components/dashboard/CompetitivePositioning';
 import ActivityFeed from '@/components/dashboard/ActivityFeed';
 import { tbosToast } from '@/hooks/useTbosToast';
 import { useUnitFormat } from '@/hooks/useUnitFormat';
