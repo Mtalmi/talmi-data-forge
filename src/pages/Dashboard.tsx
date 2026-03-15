@@ -74,7 +74,7 @@ export default function Dashboard() {
   const uf = useUnitFormat();
   const navigate = useNavigate();
   const location = useLocation();
-  const { activePlant, plant: plantData, setPlant: setActivePlant, isDemo, fadeOpacity } = usePlant();
+  const { activePlant, plant: plantData, demoData, setPlant: setActivePlant, isDemo, fadeOpacity } = usePlant();
   const { stats, loading: statsLoading, refresh } = useDashboardStats();
   const [period] = useState<Period>('month');
   const { stats: periodStats, loading: periodLoading, refresh: refreshPeriod } = useDashboardStatsWithPeriod(period);
