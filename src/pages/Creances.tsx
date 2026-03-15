@@ -1377,7 +1377,7 @@ export default function Creances() {
                   <TableBody>
                     {filteredReceivables.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={canManageReceivables ? 8 : 7} className="h-32 text-center">
+                        <TableCell colSpan={canManageReceivables ? 9 : 8} className="h-32 text-center">
                           <div className="flex flex-col items-center gap-2 text-muted-foreground">
                             <FileText className="h-8 w-8" />
                              <p className="font-medium">{t.pages.creances.noReceivables}</p>
