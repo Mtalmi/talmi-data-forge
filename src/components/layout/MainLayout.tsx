@@ -136,7 +136,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
               {plant.flag} Données de démonstration — {plant.pillLabel}
             </div>
           )}
-          <div className="mobile-content safe-area-bottom overflow-x-hidden w-full min-w-0" style={{ padding: '0 32px', margin: 0 }}>
+          <div className="mobile-content safe-area-bottom overflow-x-hidden w-full min-w-0 px-4 md:px-8" style={{ margin: 0 }}>
             <div className="tbos-content-wrapper w-full">
               <SectionErrorBoundary section="Contenu principal">
                 <PageTransition>
