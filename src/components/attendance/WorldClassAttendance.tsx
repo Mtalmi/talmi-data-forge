@@ -205,7 +205,7 @@ function AttendanceGauge({ value }: { value: number }) {
           fill="none" stroke={color} strokeWidth={12} strokeLinecap="round"
           style={{ filter: `drop-shadow(0 0 8px ${color}80)`, transition: 'all 0.05s linear' }}
         />
-        <text x={cx} y={cy + 8} textAnchor="middle" style={{ fontFamily: MONO, fontSize: 24, fontWeight: 800, fill: color }}>{value}%</text>
+        <text x={cx} y={cy + 8} textAnchor="middle" style={{ fontFamily: MONO, fontSize: 24, fontWeight: 100, fill: color }}>{value}%</text>
         <text x={cx} y={cy + 26} textAnchor="middle" style={{ fontFamily: SANS, fontSize: 9, fill: T.textDim }}>Taux Présence</text>
       </svg>
     </div>
