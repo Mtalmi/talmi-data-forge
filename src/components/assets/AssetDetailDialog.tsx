@@ -320,7 +320,7 @@ export function AssetDetailDialog({ asset, open, onOpenChange }: AssetDetailDial
                           <TableCell>{format(new Date(m.maintenance_date), 'P', { locale: calendarLocale })}</TableCell>
                           <TableCell><Badge variant="outline">{m.maintenance_type}</Badge></TableCell>
                           <TableCell className="max-w-[200px] truncate">{m.description || '-'}</TableCell>
-                          <TableCell className="text-right font-mono">{m.cost > 0 ? `${m.cost.toLocaleString()} DH` : '-'}</TableCell>
+                          <TableCell className="text-right font-mono">{m.cost > 0 ? `${m.cost.toLocaleString('fr-FR')} DH` : '-'}</TableCell>
                           <TableCell>{m.performed_by || '-'}</TableCell>
                         </TableRow>
                       ))}

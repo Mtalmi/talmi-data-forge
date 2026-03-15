@@ -414,15 +414,15 @@ export function CreateQuoteSim({ onComplete, onClose }: CreateQuoteSimProps) {
                       </div>
                       <div className="flex justify-between pt-2">
                         <span>Sous-total:</span>
-                        <span>{subtotal.toLocaleString()} DH</span>
+                        <span>{subtotal.toLocaleString('fr-FR')} DH</span>
                       </div>
                       <div className="flex justify-between">
                         <span>TVA (20%):</span>
-                        <span>{tva.toLocaleString()} DH</span>
+                        <span>{tva.toLocaleString('fr-FR')} DH</span>
                       </div>
                       <div className="flex justify-between font-bold text-lg pt-2 border-t">
                         <span>TOTAL TTC:</span>
-                        <span className="text-emerald-600">{totalTTC.toLocaleString()} DH</span>
+                        <span className="text-emerald-600">{totalTTC.toLocaleString('fr-FR')} DH</span>
                       </div>
                     </div>
                     {notes && (

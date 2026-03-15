@@ -170,7 +170,7 @@ export function ExpenseDetailDialog({ expense, open, onClose }: ExpenseDetailDia
                 <div>
                   <p className="text-muted-foreground">{d.mileage}</p>
                   <p className="font-mono font-medium">
-                    {expense.kilometrage ? `${expense.kilometrage.toLocaleString()} km` : '—'}
+                    {expense.kilometrage ? `${expense.kilometrage.toLocaleString('fr-FR')} km` : '—'}
                   </p>
                 </div>
               </div>
