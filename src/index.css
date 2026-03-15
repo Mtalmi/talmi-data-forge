@@ -6054,7 +6054,10 @@ table tbody tr:hover,
 .tbos-card {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(212, 168, 67, 0.08);
+  border-top: 2px solid #D4A843;
   border-radius: 8px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: border-color 200ms ease;
 }
 .tbos-card:hover {
