@@ -43,7 +43,7 @@ export function RelanceIntelligenteCard() {
           <span style={{ fontSize: 16, color: '#9CA3AF', fontFamily: mono, marginLeft: 4 }}>DH</span>
         </div>
         <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 10, padding: '16px 18px', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, fontFamily: mono }}>Taux de Récupération</p>
+          <p style={{ color: '#9CA3AF', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, fontFamily: mono }}>Taux de Récupération</p>
           <span style={{ fontFamily: mono, fontSize: 42, fontWeight: 100, color: '#22C55E' }}>{tauxVal}%</span>
           <p style={{ fontSize: 10, color: '#9CA3AF', fontFamily: mono, marginTop: 4 }}>historique relances</p>
         </div>
