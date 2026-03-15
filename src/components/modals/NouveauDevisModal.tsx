@@ -83,15 +83,25 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
       const vol = parseFloat(volume);
       const prix = parseFloat(effectivePrice);
 
+      const cutPerM3 = prix * 0.5;
+      const fixedCostPerM3 = 50;
+      const transportExtra = 30;
+      const totalCostPerM3 = cutPerM3 + fixedCostPerM3 + transportExtra;
+      const marginPct = ((prix - totalCostPerM3) / prix) * 100;
+
       const { error } = await supabase.from('devis').insert({
         devis_id: devisId,
         client_id: client,
         formule_id: formule,
         volume_m3: vol,
         prix_vente_m3: prix,
-        cut_per_m3: prix * 0.5, // estimated material cost
+        cut_per_m3: cutPerM3,
+        fixed_cost_per_m3: fixedCostPerM3,
+        transport_extra_per_m3: transportExtra,
+        total_cost_per_m3: totalCostPerM3,
+        margin_pct: Math.round(marginPct * 10) / 10,
         total_ht: vol * prix,
-        distance_km: 15, // default
+        distance_km: 15,
         statut: 'brouillon',
         notes: sanitize(notes) || null,
         date_livraison_souhaitee: dateLivraison || null,
