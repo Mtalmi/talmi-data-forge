@@ -327,6 +327,11 @@ export default function Creances() {
 
   const { sortedData: sortedReceivables, sortKey: crSortKey, sortDirection: crSortDir, handleSort: crHandleSort } = useTableSort(filteredReceivables, '_due_date', 'asc');
 
+  const CR_PAGE_SIZE = 25;
+  const [crPage, setCrPage] = useState(1);
+  useMemo(() => { setCrPage(1); }, [filteredReceivables.length]);
+  const paginatedReceivables = sortedReceivables.slice((crPage - 1) * CR_PAGE_SIZE, crPage * CR_PAGE_SIZE);
+
   const overdueByClient = getOverdueByClient();
 
   // AI Credit Score calculation (0-100)
