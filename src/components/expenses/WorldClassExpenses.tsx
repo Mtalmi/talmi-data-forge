@@ -319,6 +319,7 @@ function useExpensesLiveData() {
       todaySpend,
       dailyBudget: budgetTotal > 0 ? Math.round((budgetTotal * 1000) / daysInMonth) : 8000,
     });
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -332,7 +333,7 @@ function useExpensesLiveData() {
     return () => { clearInterval(interval); throttledFetch.cancel(); supabase.removeChannel(ch); };
   }, [fetch]);
 
-  return data;
+  return { ...data, loading };
 }
 
 // ─────────────────────────────────────────────────────

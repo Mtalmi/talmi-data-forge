@@ -95,6 +95,7 @@ function useReportsLiveData() {
         ] : PIE_DATA,
       }));
     } catch (err) { console.error('Reports live data error:', err); }
+    finally { setLoading(false); }
   }, []);
   useEffect(() => {
     fetchData();
@@ -105,7 +106,7 @@ function useReportsLiveData() {
       .subscribe();
     return () => { throttledFetch.cancel(); supabase.removeChannel(channel); };
   }, [fetchData]);
-  return data;
+  return { ...data, loading };
 }
 
 // ─────────────────────────────────────────────────────
