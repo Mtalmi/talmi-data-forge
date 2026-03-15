@@ -814,10 +814,10 @@ export default function MobileField() {
       <BottomSheet open={newTestOpen} onClose={() => setNewTestOpen(false)} title="Nouveau Test Qualité">
         <div className="space-y-5">
           <div>
-            <label className="text-sm text-[#B0B8C1] block mb-1">Batch ID</label>
+            <label className="text-sm text-[#B0B8C1] block mb-1">ID Batch</label>
             <div className="flex gap-2">
               <input className="flex-1 h-14 rounded-xl px-4 text-sm text-white outline-none placeholder:text-[#B0B8C1]/50 focus:border-[#FFD700] transition-colors"
-                style={{ background: '#1C2533', border: '1px solid #2A3545' }} placeholder="Enter or scan batch ID" defaultValue="B-2847" />
+                style={{ background: '#1C2533', border: '1px solid #2A3545' }} placeholder="Saisir ou scanner l'ID batch" defaultValue="B-2847" />
               <button className="w-14 h-14 rounded-xl flex items-center justify-center" style={{ background: '#1C2533', border: '1px solid #2A3545' }}>
                 <Camera className="w-5 h-5 text-[#FFD700]" />
               </button>
