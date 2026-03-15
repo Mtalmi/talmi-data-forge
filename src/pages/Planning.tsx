@@ -1561,7 +1561,7 @@ export default function Planning() {
                 <div className="p-1.5 rounded-lg bg-[#D4A843]/10 shrink-0"><Truck className="h-4 w-4" style={{ color: '#D4A843' }} /></div>
                 <div className="min-w-0">
                   <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 36, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#D4A843' }}>{displayAvailableCamions}/{displayTotalCamions}</p>
-                  <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.trucksAvailable}</p>
+                  <p className="text-xs text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.trucksAvailable}</p>
                 </div>
               </div>
               <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(245, 158, 11, 0.15)', borderTop: '2px solid #D4A843', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
