@@ -116,7 +116,7 @@ export function AssetDetailDialog({ asset, open, onOpenChange }: AssetDetailDial
                   <CardTitle className="text-sm font-medium text-muted-foreground">{dt.grossValue}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold">{asset.purchase_price.toLocaleString()} DH</p>
+                  <p className="text-2xl font-bold">{asset.purchase_price.toLocaleString('fr-FR')} DH</p>
                 </CardContent>
               </Card>
               <Card>
