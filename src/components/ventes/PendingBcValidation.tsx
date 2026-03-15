@@ -266,10 +266,10 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
                     <TableCell className="font-mono text-xs">{bc.formule_id}</TableCell>
                     <TableCell className="text-right">{bc.volume_m3} m³</TableCell>
                     <TableCell className="text-right font-mono">
-                      {bc.prix_vente_m3.toLocaleString()} DH
+                      {bc.prix_vente_m3.toLocaleString('fr-FR')} DH
                     </TableCell>
                     <TableCell className="text-right font-mono font-semibold">
-                      {bc.total_ht.toLocaleString()} DH
+                      {bc.total_ht.toLocaleString('fr-FR')} DH
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
