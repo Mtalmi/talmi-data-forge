@@ -482,7 +482,7 @@ function DonutFormulaCard({ productData, totalProductVolume, cardBg, cardBorder 
 // ─────────────────────────────────────────────────────
 export default function WorldClassProduction() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useTabSync('overview');
   const [openPlanningModal, setOpenPlanningModal] = useState(false);
   const [mounted, setMounted] = useState(false);
   useEffect(() => { const t = setTimeout(() => setMounted(true), 50); return () => clearTimeout(t); }, []);
