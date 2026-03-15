@@ -222,7 +222,7 @@ function FusionSourceCard({ src, onToggle }: { src: FusionSource; onToggle: (id:
         <Switch checked={src.active} onCheckedChange={() => onToggle(src.id)} />
       </div>
       <div className="flex items-center justify-between">
-        <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>{src.dataPoints.toLocaleString()} pts</span>
+        <span style={{ fontFamily: MONO, fontSize: 10, color: T.textDim }}>{src.dataPoints.toLocaleString('fr-FR')} pts</span>
         <span style={{ fontFamily: MONO, fontSize: 9.5, color: src.active ? T.green : T.red }}>{src.lastSync}</span>
       </div>
     </div>

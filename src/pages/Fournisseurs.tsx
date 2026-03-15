@@ -613,8 +613,8 @@ export default function Fournisseurs() {
                     {alertesReappro.map(a => (
                       <TableRow key={a.id}>
                         <TableCell className="font-medium">{a.materiau}</TableCell>
-                        <TableCell>{a.seuil_alerte.toLocaleString()}</TableCell>
-                        <TableCell>{a.quantite_reorder.toLocaleString()}</TableCell>
+                        <TableCell>{a.seuil_alerte.toLocaleString('fr-FR')}</TableCell>
+                        <TableCell>{a.quantite_reorder.toLocaleString('fr-FR')}</TableCell>
                         <TableCell>{a.fournisseur?.nom_fournisseur || '-'}</TableCell>
                         <TableCell>{a.delai_commande_jours} {t.pages.fournisseurs.days}</TableCell>
                         <TableCell>

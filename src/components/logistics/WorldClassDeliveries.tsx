@@ -1916,9 +1916,9 @@ function IntelligenceIATab() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
-          <IAKPICard label="REVENUS NON-RÉCLAMÉS" value="16,600 DH" color={T.danger} subtitle="ce mois" borderColor={T.danger} />
-          <IAKPICard label="RÉCUPÉRÉ YTD" value="8,400 DH" color={T.success} subtitle="grâce aux alertes IA" borderColor={T.success} />
-          <IAKPICard label="POTENTIEL ANNUEL" value="+145,000 DH" color={T.gold} subtitle="si 100% facturation" borderColor={T.gold} />
+          <IAKPICard label="REVENUS NON-RÉCLAMÉS" value="16 600 DH" color={T.danger} subtitle="ce mois" borderColor={T.danger} />
+          <IAKPICard label="RÉCUPÉRÉ YTD" value="8 400 DH" color={T.success} subtitle="grâce aux alertes IA" borderColor={T.success} />
+          <IAKPICard label="POTENTIEL ANNUEL" value="+145 000 DH" color={T.gold} subtitle="si 100% facturation" borderColor={T.gold} />
         </div>
 
         <p style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '1.5px', color: T.textDim, marginBottom: 14, textTransform: 'uppercase' as const }}>SOURCES DE REVENUS PERDUS</p>

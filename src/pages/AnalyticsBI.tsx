@@ -363,13 +363,13 @@ export default function AnalyticsBI() {
                             {m.alert && <AlertTriangle className="h-3 w-3 text-destructive" />}
                             {m.materiau}
                           </TableCell>
-                          <TableCell className="text-right text-sm tabular-nums">{m.theorique_total.toLocaleString()}</TableCell>
-                          <TableCell className="text-right text-sm tabular-nums">{m.reel_total.toLocaleString()}</TableCell>
+                          <TableCell className="text-right text-sm tabular-nums">{m.theorique_total.toLocaleString('fr-FR')}</TableCell>
+                          <TableCell className="text-right text-sm tabular-nums">{m.reel_total.toLocaleString('fr-FR')}</TableCell>
                           <TableCell className={cn('text-right text-sm font-semibold tabular-nums', m.variance_pct > 0 ? 'text-destructive' : 'text-emerald-500')}>
                             {m.variance_pct > 0 ? '+' : ''}{m.variance_pct}%
                           </TableCell>
                           <TableCell className={cn('text-right text-sm tabular-nums', m.cost_impact_dh > 0 ? 'text-destructive' : 'text-emerald-500')}>
-                            {m.cost_impact_dh > 0 ? '+' : ''}{m.cost_impact_dh.toLocaleString()} DH
+                            {m.cost_impact_dh > 0 ? '+' : ''}{m.cost_impact_dh.toLocaleString('fr-FR')} DH
                           </TableCell>
                         </TableRow>
                       ))}
