@@ -27,6 +27,18 @@ export function ProductionSearchBar({
   const ps = t.productionSearch;
   const dateLocale = getDateLocale(lang);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+
+  // Debounce actual filter callback by 300ms
+  const debouncedSearch = useMemo(
+    () => debounce((q: string) => onSearchChange(q), 300),
+    [onSearchChange]
+  );
+
+  const handleSearchInput = useCallback((value: string) => {
+    setLocalSearch(value);       // update input immediately
+    debouncedSearch(value);      // debounce the filter
+  }, [debouncedSearch]);
 
   const quickRanges = [
     { label: ps.today, days: 0 },
