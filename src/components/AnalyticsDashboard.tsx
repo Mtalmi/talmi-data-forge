@@ -247,7 +247,7 @@ export default function AnalyticsDashboard() {
                     yAxisId="left"
                     type="monotone"
                     dataKey="customers"
-                    stroke="#FFD700"
+                    stroke="#D4A843"
                     strokeWidth={2}
                     name="Active Customers"
                   />
