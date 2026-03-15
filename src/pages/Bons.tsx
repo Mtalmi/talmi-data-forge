@@ -55,6 +55,7 @@ import { toast } from 'sonner';
 import { format, isToday, differenceInDays, getDaysInMonth, getDate, startOfMonth, subMonths, endOfMonth } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { ResponsiveContainer, AreaChart, Area, ReferenceLine, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Bar, BarChart, ComposedChart, Line, PieChart, Pie, Cell, FunnelChart, Funnel, LabelList } from 'recharts';
+import { CopyableText } from '@/components/ui/CopyableText';
 
 // ─── Constants ───
 const MONO = 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace';
@@ -575,7 +576,7 @@ export default function Bons() {
                   >
                     <td style={{ padding: '10px 14px', fontFamily: MONO, color: T.gold, fontSize: 13 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        {b.bl_id}
+                        <CopyableText text={b.bl_id} style={{ color: T.gold, fontFamily: MONO }}>{b.bl_id}</CopyableText>
                         {b.alerte_ecart && <AlertCircle size={14} color={T.danger} />}
                       </div>
                     </td>

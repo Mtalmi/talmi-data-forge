@@ -29,6 +29,7 @@ import { useFournisseurs, Fournisseur, Achat, FactureFournisseur } from '@/hooks
 import { format } from 'date-fns';
 
 import PurchaseOrderForm from '@/components/suppliers/PurchaseOrderForm';
+import { CopyableText } from '@/components/ui/CopyableText';
 
 const statusColors: Record<string, string> = {
   en_attente: 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30',
@@ -544,7 +545,7 @@ export default function Fournisseurs() {
                         
                         return (
                           <TableRow key={f.id} className={isOverdue ? 'bg-red-50' : ''}>
-                            <TableCell className="font-mono">{f.numero_facture}</TableCell>
+                            <TableCell className="font-mono"><CopyableText text={f.numero_facture}>{f.numero_facture}</CopyableText></TableCell>
                             <TableCell>{f.fournisseur?.nom_fournisseur || '-'}</TableCell>
                             <TableCell>{format(new Date(f.date_facture), 'dd/MM/yyyy')}</TableCell>
                             <TableCell className={isOverdue ? 'text-red-600 font-medium' : ''}>
