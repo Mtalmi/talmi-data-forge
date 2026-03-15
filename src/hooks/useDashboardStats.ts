@@ -162,9 +162,10 @@ export function useDashboardStats() {
 
       // E/C Ratio (all deliveries with data)
       const ecData = currentDeliveries?.filter(d => d.eau_reel_l && d.ciment_reel_kg && d.ciment_reel_kg > 0) || [];
-      const tauxECMoyen = ecData.length > 0 
-        ? ecData.reduce((sum, d) => sum + ((d.eau_reel_l || 0) / (d.ciment_reel_kg || 1)), 0) / ecData.length 
-        : 0;
+      const tauxECMoyen = safeDivide(
+        ecData.reduce((sum, d) => sum + safeDivide(d.eau_reel_l || 0, d.ciment_reel_kg || 0), 0),
+        ecData.length
+      );
 
       // Pending payments
       const pendingPaymentsTotal = clientsWithDelay?.reduce((sum, c) => sum + (c.solde_du || 0), 0) || 0;

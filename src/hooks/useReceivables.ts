@@ -199,11 +199,11 @@ export function useReceivables() {
       const atRiskAmount = atRisk.reduce((sum, r) => sum + r.amount_due, 0);
 
       const totalInvoiced = processedReceivables.reduce((sum, r) => sum + r.amount, 0);
-      const collectionRate = totalInvoiced > 0 ? (totalPaid / totalInvoiced) * 100 : 0;
+      const collectionRate = safeDivide(totalPaid, totalInvoiced) * 100; // 0% if all unpaid, never NaN
 
       // Calculate DSO
       const totalDaysOverdue = overdue.reduce((sum, r) => sum + r.days_overdue, 0);
-      const dsoAverage = overdue.length > 0 ? Math.round(totalDaysOverdue / overdue.length) : 0;
+      const dsoAverage = Math.round(safeDivide(totalDaysOverdue, overdue.length));
 
       const clientsWithOverdue = new Set(overdue.map(r => r.client_id)).size;
 

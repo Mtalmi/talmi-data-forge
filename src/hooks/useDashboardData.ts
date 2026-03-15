@@ -171,7 +171,7 @@ export function useDashboardData() {
       // Pipeline
       const pipelineValue = (devisActive.data || []).reduce((s, d) => s + (d.total_ht || 0), 0);
       const devisCount = (devisActive.data || []).length;
-      const conversionRate = (devisTotal.count || 0) > 0 ? ((devisConverted.count || 0) / (devisTotal.count || 1)) * 100 : 0;
+      const conversionRate = safeDivide((devisConverted.count || 0), (devisTotal.count || 0)) * 100;
 
       // Stocks
       const stockLevels = (stocksRes.data || []).map(s => ({

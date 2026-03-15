@@ -386,7 +386,7 @@ export function IntelligenceHub({ devisStats }: IntelligenceHubProps) {
                     <span className={cn('font-mono font-bold text-sm',
                       (d.score_ia ?? 0) >= 80 ? 'text-green-400' : (d.score_ia ?? 0) >= 60 ? 'text-yellow-400' : 'text-red-400'
                     )}>
-                      {d.score_ia}/100
+                      {d.score_ia ?? '—'}/100
                     </span>
                     <span className="text-muted-foreground font-mono">{relTime(d.scored_at)}</span>
                   </div>

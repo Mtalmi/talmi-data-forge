@@ -198,18 +198,18 @@ export function useDashboardStatsWithPeriod(period: Period) {
         const prevVolume = prevDeliveries?.reduce((sum, d) => sum + (d.volume_m3 || 0), 0) || 0;
         const prevCA = prevFactures?.reduce((sum, f) => sum + (f.total_ht || 0), 0) || 0;
         const prevCurValues = prevDeliveries?.filter(d => d.cur_reel).map(d => d.cur_reel!) || [];
-        const prevCurMoyen = prevCurValues.length > 0 ? prevCurValues.reduce((a, b) => a + b, 0) / prevCurValues.length : 0;
+        const prevCurMoyen = safeDivide(prevCurValues.reduce((a, b) => a + b, 0), prevCurValues.length);
         const prevMargeValues = prevDeliveries?.filter(d => d.marge_brute_pct !== null).map(d => d.marge_brute_pct!) || [];
-        const prevMargeMoyen = prevMargeValues.length > 0 ? prevMargeValues.reduce((a, b) => a + b, 0) / prevMargeValues.length : 0;
+        const prevMargeMoyen = safeDivide(prevMargeValues.reduce((a, b) => a + b, 0), prevMargeValues.length);
 
         const margeValues = currentDeliveries?.filter(d => d.marge_brute_pct !== null).map(d => d.marge_brute_pct!) || [];
-        const margeMoyen = margeValues.length > 0 ? margeValues.reduce((a, b) => a + b, 0) / margeValues.length : 0;
+        const margeMoyen = safeDivide(margeValues.reduce((a, b) => a + b, 0), margeValues.length);
 
         // Calculate trends
-        const volumeTrend = prevVolume > 0 ? ((totalVolume - prevVolume) / prevVolume) * 100 : 0;
-        const caTrend = prevCA > 0 ? ((chiffreAffaires - prevCA) / prevCA) * 100 : 0;
-        const curTrend = prevCurMoyen > 0 ? ((curMoyen - prevCurMoyen) / prevCurMoyen) * 100 : 0;
-        const margeTrend = prevMargeMoyen > 0 ? ((margeMoyen - prevMargeMoyen) / prevMargeMoyen) * 100 : 0;
+        const volumeTrend = safeDivide(totalVolume - prevVolume, prevVolume) * 100;
+        const caTrend = safeDivide(chiffreAffaires - prevCA, prevCA) * 100;
+        const curTrend = safeDivide(curMoyen - prevCurMoyen, prevCurMoyen) * 100;
+        const margeTrend = safeDivide(margeMoyen - prevMargeMoyen, prevMargeMoyen) * 100;
 
         setStats({
           totalVolume,
