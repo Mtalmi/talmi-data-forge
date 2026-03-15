@@ -5,6 +5,7 @@ import { Plus } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nContext';
 import MainLayout from '@/components/layout/MainLayout';
 import { useReceivables, Receivable } from '@/hooks/useReceivables';
+import { safeDivide } from '@/utils/rounding';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

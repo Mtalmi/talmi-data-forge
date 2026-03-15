@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { getMoroccoToday, getMoroccoYesterday, getMoroccoMonthStart } from '@/utils/timezone';
+import { safeDivide, roundPercent } from '@/utils/rounding';
 import { throttle } from '@/utils/debounce';
 
 export interface DashboardLiveData {
