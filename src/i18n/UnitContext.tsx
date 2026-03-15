@@ -14,6 +14,8 @@ export interface UnitConfig {
   temperature: { unit: string; convert: (c: number) => number };
   pressure: { unit: string; factor: number; roundTo: number };
   distance: { unit: string; factor: number; decimals: number };
+  speed: { unit: string; factor: number };
+  slump: { unit: string; factor: number; decimals: number };
   concreteGrades: Record<string, string>;
   norms: Record<string, string>;
   fuelConvert: (lPer100km: number) => { value: number; unit: string };
@@ -32,6 +34,8 @@ const CONFIGS: Record<UnitSystem, UnitConfig> = {
     temperature: { unit: '°C', convert: (c) => c },
     pressure: { unit: 'MPa', factor: 1, roundTo: 1 },
     distance: { unit: 'km', factor: 1, decimals: 1 },
+    speed: { unit: 'km/h', factor: 1 },
+    slump: { unit: 'cm', factor: 1, decimals: 0 },
     concreteGrades: { 'F-B20': 'F-B20', 'F-B25': 'F-B25', 'F-B30': 'F-B30', 'F-B35': 'F-B35' },
     norms: { 'NM 10.1.008': 'NM 10.1.008', 'NM 10.1.271': 'NM 10.1.271' },
     fuelConvert: (v) => ({ value: v, unit: 'L/100km' }),
@@ -48,6 +52,8 @@ const CONFIGS: Record<UnitSystem, UnitConfig> = {
     temperature: { unit: '°C', convert: (c) => c },
     pressure: { unit: 'MPa', factor: 1, roundTo: 1 },
     distance: { unit: 'km', factor: 1, decimals: 1 },
+    speed: { unit: 'km/h', factor: 1 },
+    slump: { unit: 'cm', factor: 1, decimals: 0 },
     concreteGrades: { 'F-B20': 'C20/25', 'F-B25': 'C25/30', 'F-B30': 'C30/37', 'F-B35': 'C35/45' },
     norms: { 'NM 10.1.008': 'EN 206-1', 'NM 10.1.271': 'EN 206-1' },
     fuelConvert: (v) => ({ value: v, unit: 'L/100km' }),
@@ -64,6 +70,8 @@ const CONFIGS: Record<UnitSystem, UnitConfig> = {
     temperature: { unit: '°F', convert: (c) => (c * 9) / 5 + 32 },
     pressure: { unit: 'PSI', factor: 145.038, roundTo: 50 },
     distance: { unit: 'mi', factor: 0.621, decimals: 1 },
+    speed: { unit: 'mph', factor: 0.621 },
+    slump: { unit: 'in', factor: 1 / 2.54, decimals: 1 },
     concreteGrades: { 'F-B20': '2500 PSI', 'F-B25': '3500 PSI', 'F-B30': '4500 PSI', 'F-B35': '5000 PSI' },
     norms: { 'NM 10.1.008': 'ASTM C94', 'NM 10.1.271': 'ASTM C94' },
     fuelConvert: (v) => ({ value: v > 0 ? Math.round(235.215 / v * 10) / 10 : 0, unit: 'MPG' }),
@@ -90,6 +98,10 @@ interface UnitContextValue {
   pressure: (mpa: number) => number;
   /** Convert distance from km */
   distance: (km: number) => number;
+  /** Convert speed from km/h */
+  speed: (kmh: number) => number;
+  /** Convert slump from cm */
+  slump: (cm: number) => number;
   /** Convert concrete grade name */
   grade: (g: string) => string;
   /** Convert norm name */
@@ -133,6 +145,8 @@ export function UnitProvider({ children }: { children: ReactNode }) {
       return cfg.pressure.roundTo > 1 ? Math.round(raw / cfg.pressure.roundTo) * cfg.pressure.roundTo : +(raw.toFixed(1));
     },
     distance: (km) => +(km * cfg.distance.factor).toFixed(cfg.distance.decimals),
+    speed: (kmh) => Math.round(kmh * cfg.speed.factor),
+    slump: (cm) => +(cm * cfg.slump.factor).toFixed(cfg.slump.decimals),
     grade: (g) => cfg.concreteGrades[g] ?? g,
     norm: (n) => cfg.norms[n] ?? n,
     isConverted: system !== 'mena',
@@ -153,6 +167,8 @@ const fallback: UnitContextValue = {
   temp: (v) => v,
   pressure: (v) => v,
   distance: (v) => v,
+  speed: (v) => v,
+  slump: (v) => v,
   grade: (g) => g,
   norm: (n) => n,
   isConverted: false,

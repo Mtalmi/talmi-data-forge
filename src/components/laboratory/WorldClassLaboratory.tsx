@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useUnitFormat } from '@/hooks/useUnitFormat';
 import { NouveauTestModal } from '@/components/modals/NouveauTestModal';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';

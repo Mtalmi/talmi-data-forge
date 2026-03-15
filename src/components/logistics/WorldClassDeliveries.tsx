@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { useUnitFormat } from '@/hooks/useUnitFormat';
 import { NouveauVehiculeModal } from '@/components/modals/NouveauVehiculeModal';
 import { ReleveCarburantModal } from '@/components/modals/ReleveCarburantModal';
 import { OptimiserRoutesModal } from '@/components/modals/OptimiserRoutesModal';
@@ -262,14 +263,14 @@ function ScoreRing({ score, size = 72 }: { score: number; size?: number }) {
 // ─────────────────────────────────────────────────────
 // FLEET HEALTH DATA
 // ─────────────────────────────────────────────────────
-const FLEET_HEALTH_DATA = [
-  { name: 'T-04 Toupie 8m³', score: 92, insight: 'RAS — véhicule optimal', fullDiag: 'Moteur: optimal · Pneus: 85% · Vidange: OK (il y a 12j) · Batterie: 98% · Freins: 90%', revenue: '18,200 DH', driver: 'Youssef Benali', driverStats: '3 livr. · 127 km · score 92', maintenance: { text: 'Prochaine maintenance: vidange dans 1,200 km (estimé 18 mars)', color: T.textDim } },
-  { name: 'T-07 Toupie 10m³', score: 74, insight: 'Vidange recommandée dans 5j', fullDiag: 'Moteur: bon · Pneus: 72% · Vidange: URGENT (dans 5j / 800km) · Batterie: 91% · Freins: 78%', revenue: '12,460 DH', driver: 'Karim Idrissi', driverStats: '2 livr. · 98 km · score 87', maintenance: { text: 'Prochaine maintenance: vidange dans 400 km (estimé 16 mars) ⚠', color: T.warning } },
-  { name: 'T-09 Toupie 8m³', score: 58, insight: '⚠ Pneus à vérifier — usure détectée', fullDiag: 'Moteur: attention · Pneus: 35% CRITIQUE · Vidange: OK · Batterie: 84% · Freins: 65% — vibrations détectées', revenue: '0 DH', driver: '—', driverStats: 'En maintenance depuis 10/03', maintenance: { text: 'En maintenance: pneus en remplacement — retour estimé 15 mars 08:00', color: T.danger } },
-  { name: 'T-12 Toupie 8m³', score: 86, insight: 'Visite technique dans 3 semaines', fullDiag: 'Moteur: optimal · Pneus: 80% · Vidange: OK · Batterie: 95% · Freins: 88% · VT prévue 28/03', revenue: '8,300 DH', driver: 'Mehdi Tazi', driverStats: '1 livr. · 45 km · score 94', maintenance: { text: 'Prochaine maintenance: visite technique dans 3 semaines ✓', color: T.textDim } },
+const FLEET_HEALTH_RAW = [
+  { name: 'T-04 Toupie 8m³', score: 92, insight: 'RAS — véhicule optimal', fullDiag: 'Moteur: optimal · Pneus: 85% · Vidange: OK (il y a 12j) · Batterie: 98% · Freins: 90%', revenuRaw: 18200, driver: 'Youssef Benali', driverKm: 127, driverScore: 92, driverLivr: 3, maintenance: { text: 'Prochaine maintenance: vidange dans 1,200 km (estimé 18 mars)', color: T.textDim } },
+  { name: 'T-07 Toupie 10m³', score: 74, insight: 'Vidange recommandée dans 5j', fullDiag: 'Moteur: bon · Pneus: 72% · Vidange: URGENT (dans 5j / 800km) · Batterie: 91% · Freins: 78%', revenuRaw: 12460, driver: 'Karim Idrissi', driverKm: 98, driverScore: 87, driverLivr: 2, maintenance: { text: 'Prochaine maintenance: vidange dans 400 km (estimé 16 mars) ⚠', color: T.warning } },
+  { name: 'T-09 Toupie 8m³', score: 58, insight: '⚠ Pneus à vérifier — usure détectée', fullDiag: 'Moteur: attention · Pneus: 35% CRITIQUE · Vidange: OK · Batterie: 84% · Freins: 65% — vibrations détectées', revenuRaw: 0, driver: '—', driverKm: 0, driverScore: 0, driverLivr: 0, maintenance: { text: 'En maintenance: pneus en remplacement — retour estimé 15 mars 08:00', color: T.danger } },
+  { name: 'T-12 Toupie 8m³', score: 86, insight: 'Visite technique dans 3 semaines', fullDiag: 'Moteur: optimal · Pneus: 80% · Vidange: OK · Batterie: 95% · Freins: 88% · VT prévue 28/03', revenuRaw: 8300, driver: 'Mehdi Tazi', driverKm: 45, driverScore: 94, driverLivr: 1, maintenance: { text: 'Prochaine maintenance: visite technique dans 3 semaines ✓', color: T.textDim } },
 ];
 
-function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; delay?: number }) {
+function FleetHealthCard({ v, delay = 0, uf }: { v: typeof FLEET_HEALTH_RAW[0]; delay?: number; uf: ReturnType<typeof useUnitFormat> }) {
   const [visible, setVisible] = useState(false);
   const [hov, setHov] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
@@ -304,11 +305,11 @@ function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; del
           <div style={{ fontSize: 10, color: T.textDim, textAlign: 'center', lineHeight: 1.6, paddingTop: 6, borderTop: `1px solid ${T.cardBorder}` }}>{v.fullDiag}</div>
         </div>
         <IABadge small />
-        <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textAlign: 'center', margin: 0 }}>Revenu/jour: {v.revenue}</p>
+        <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textAlign: 'center', margin: 0 }}>Revenu/jour: {uf.fmtCurrency(v.revenuRaw)}</p>
         {/* Driver info */}
         <div style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 8, marginTop: 4 }}>
           <p style={{ fontFamily: MONO, fontSize: 12, color: T.textPri, textAlign: 'center', margin: '0 0 2px' }}>{v.driver}</p>
-          <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textAlign: 'center', margin: 0 }}>{v.driverStats}</p>
+          <p style={{ fontFamily: MONO, fontSize: 11, color: T.textDim, textAlign: 'center', margin: 0 }}>{v.driverLivr} livr. · {uf.fmtDistance(v.driverKm)} · score {v.driverScore}</p>
         </div>
         {/* Maintenance prédictive */}
         {(v as any).maintenance && (
@@ -323,9 +324,9 @@ function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; del
 // SEEDED DELIVERIES
 // ─────────────────────────────────────────────────────
 const SEEDED_DELIVERIES = [
-  { bl_id: 'BL-2024-A8F3', client_id: 'Résidences Atlas', formule_id: 'B30', volume_m3: 12, camion_assigne: 'T-04', chauffeur_nom: 'Youssef Benali', workflow_status: 'production', heure_prevue: '10:30', _destination: 'Chantier Maarif — Casablanca', _eta: '≈ 14 min', _delay: '+14 min', _freshness: { min: 47, max: 90, mixTime: '09:15', label: '⏱ 47 min' }, _weather: { text: '☀ 34°C', color: T.warning }, _freshAlert: '⚠ Chaleur + retard — risque qualité béton', _pnl: { type: 'estimé', revenu: '6,200', matiere: '3,100', fuel: '480', chauffeur: '350', net: '2,270', pct: '36.6' } },
-  { bl_id: 'BL-2024-C1D7', client_id: 'Groupe Addoha', formule_id: 'B25', volume_m3: 8, camion_assigne: 'T-07', chauffeur_nom: 'Karim Idrissi', workflow_status: 'validation_technique', heure_prevue: '08:15', _destination: 'Résidence Rabat Center', _eta: 'Livré à 09:02', _freshness: { min: 52, max: 90, mixTime: '', label: '✓ Livré à 52 min', done: true }, _weather: { text: '☀ 30°C', color: T.textSec }, _feedback: { stars: 4, attente: '12 min', conforme: true }, _pnl: { type: 'réel', revenu: '4,800', matiere: '2,400', fuel: '320', chauffeur: '280', net: '1,800', pct: '37.5' } },
-  { bl_id: 'BL-2024-E5B2', client_id: 'Saham Immobilier', formule_id: 'B35', volume_m3: 10, camion_assigne: 'T-12', chauffeur_nom: 'Mehdi Tazi', workflow_status: 'planification', heure_prevue: '14:00', _destination: 'Marina Kénitra — Lot 7', _eta: 'Départ prévu 13:45', _freshness: { min: 90, max: 90, mixTime: '13:30', label: '⏱ 90 min', planned: true }, _weather: { text: '☀ 38°C', color: T.danger, tooltip: 'Température élevée — temps de prise réduit. Adjuvant retardateur recommandé.' }, _pnl: { type: 'estimé', revenu: '5,500', matiere: '2,750', fuel: '400', chauffeur: '300', net: '2,050', pct: '37.3' } },
+  { bl_id: 'BL-2024-A8F3', client_id: 'Résidences Atlas', formule_id: 'B30', volume_m3: 12, camion_assigne: 'T-04', chauffeur_nom: 'Youssef Benali', workflow_status: 'production', heure_prevue: '10:30', _destination: 'Chantier Maarif — Casablanca', _eta: '≈ 14 min', _delay: '+14 min', _freshness: { min: 47, max: 90, mixTime: '09:15', label: '⏱ 47 min' }, _weather: { tempC: 34 }, _freshAlert: '⚠ Chaleur + retard — risque qualité béton', _pnl: { type: 'estimé', revenu: 6200, matiere: 3100, fuel: 480, chauffeur: 350, net: 2270, pct: 36.6 } },
+  { bl_id: 'BL-2024-C1D7', client_id: 'Groupe Addoha', formule_id: 'B25', volume_m3: 8, camion_assigne: 'T-07', chauffeur_nom: 'Karim Idrissi', workflow_status: 'validation_technique', heure_prevue: '08:15', _destination: 'Résidence Rabat Center', _eta: 'Livré à 09:02', _freshness: { min: 52, max: 90, mixTime: '', label: '✓ Livré à 52 min', done: true }, _weather: { tempC: 30 }, _feedback: { stars: 4, attente: '12 min', conforme: true }, _pnl: { type: 'réel', revenu: 4800, matiere: 2400, fuel: 320, chauffeur: 280, net: 1800, pct: 37.5 } },
+  { bl_id: 'BL-2024-E5B2', client_id: 'Saham Immobilier', formule_id: 'B35', volume_m3: 10, camion_assigne: 'T-12', chauffeur_nom: 'Mehdi Tazi', workflow_status: 'planification', heure_prevue: '14:00', _destination: 'Marina Kénitra — Lot 7', _eta: 'Départ prévu 13:45', _freshness: { min: 90, max: 90, mixTime: '13:30', label: '⏱ 90 min', planned: true }, _weather: { tempC: 38, tooltip: 'Température élevée — temps de prise réduit. Adjuvant retardateur recommandé.' }, _pnl: { type: 'estimé', revenu: 5500, matiere: 2750, fuel: 400, chauffeur: 300, net: 2050, pct: 37.3 } },
 ];
 
 function getStatusDisplay(ws: string | null) {
@@ -355,6 +356,7 @@ function FreshnessRing({ min, max, done, planned }: { min: number; max: number; 
 }
 
 function DeliveryCard({ d, index }: { d: any; index: number }) {
+  const uf = useUnitFormat();
   const [hov, setHov] = useState(false);
   const status = getStatusDisplay(d.workflow_status);
   const isOdd = index % 2 !== 0;
@@ -380,14 +382,14 @@ function DeliveryCard({ d, index }: { d: any; index: number }) {
           {d._destination && <p style={{ fontSize: 10, color: T.textSec, marginTop: 2 }}>{d._destination}</p>}
         </div>
         <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, fontFamily: MONO, fontWeight: 700, background: `${fColor}18`, color: fColor, border: `1px solid ${fColor}40` }}>{d.formule_id || '—'}</span>
-        <p style={{ fontFamily: MONO, fontSize: 16, fontWeight: 200, color: T.gold }}>{d.volume_m3} m³</p>
+        <p style={{ fontFamily: MONO, fontSize: 16, fontWeight: 200, color: T.gold }}>{d.volume_m3} {d.volume_m3 ? 'm³' : ''}</p>
         {d.camion_assigne && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, fontFamily: MONO, fontWeight: 700, background: 'transparent', border: `1px solid ${T.gold}40`, color: T.gold }}>{d.camion_assigne}</span>}
         {d.chauffeur_nom && <span style={{ color: T.textDim, fontSize: 11 }}>{d.chauffeur_nom}</span>}
         {d.heure_prevue && <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} color={T.textDim} /><span style={{ color: T.textDim, fontSize: 11 }}>{d.heure_prevue}</span></div>}
         {/* Weather */}
         {wx && (
-          <span style={{ fontFamily: MONO, fontSize: 11, color: wx.color }} title={wx.tooltip || ''}>
-            {wx.text}
+          <span style={{ fontFamily: MONO, fontSize: 11, color: wx.tempC > 35 ? T.danger : wx.tempC > 30 ? T.warning : T.textSec }} title={wx.tooltip || ''}>
+            ☀ {uf.fmtTemp(wx.tempC)}
           </span>
         )}
         {d._delay && <span style={{ fontFamily: MONO, fontSize: 10, padding: '2px 6px', borderRadius: 4, background: 'rgba(239,68,68,0.15)', color: T.danger, border: `1px solid ${T.danger}40` }}>{d._delay}</span>}
@@ -434,7 +436,7 @@ function DeliveryCard({ d, index }: { d: any; index: number }) {
       {/* P&L micro-row */}
       {d._pnl && (
         <div style={{ marginTop: 8, paddingTop: 6, borderTop: `1px solid ${T.cardBorder}`, fontFamily: MONO, fontSize: 10, color: T.textDim, lineHeight: 1.6 }}>
-          P&L {d._pnl.type}: {d._pnl.revenu} DH revenu − {d._pnl.matiere} matière − {d._pnl.fuel} fuel − {d._pnl.chauffeur} chauffeur = <span style={{ color: T.success }}>{d._pnl.net} DH net</span> (<span style={{ color: T.success }}>{d._pnl.pct}%</span>)
+          P&L {d._pnl.type}: {typeof d._pnl.revenu === 'number' ? d._pnl.revenu.toLocaleString('fr-FR') : d._pnl.revenu} {uf?.currSym || 'DH'} revenu − {typeof d._pnl.matiere === 'number' ? d._pnl.matiere.toLocaleString('fr-FR') : d._pnl.matiere} matière − {typeof d._pnl.fuel === 'number' ? d._pnl.fuel.toLocaleString('fr-FR') : d._pnl.fuel} fuel − {typeof d._pnl.chauffeur === 'number' ? d._pnl.chauffeur.toLocaleString('fr-FR') : d._pnl.chauffeur} chauffeur = <span style={{ color: T.success }}>{typeof d._pnl.net === 'number' ? d._pnl.net.toLocaleString('fr-FR') : d._pnl.net} {uf?.currSym || 'DH'} net</span> (<span style={{ color: T.success }}>{d._pnl.pct}%</span>)
         </div>
       )}
       {/* Client tracking mini-button */}
@@ -2072,6 +2074,7 @@ function IntelligenceIATab() {
 // MAIN COMPONENT
 // ═════════════════════════════════════════════════════
 export default function WorldClassDeliveries() {
+  const uf = useUnitFormat();
   const [activeTab, setActiveTab] = useState('flotte');
   const [showVehiculeModal, setShowVehiculeModal] = useState(false);
   const [showCarburantModal, setShowCarburantModal] = useState(false);
@@ -2253,7 +2256,7 @@ export default function WorldClassDeliveries() {
             <section>
               <SectionHeader icon={Truck} label="✦ Santé Flotte IA" />
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-                {FLEET_HEALTH_DATA.map((v, i) => <FleetHealthCard key={v.name} v={v} delay={i * 100} />)}
+                {FLEET_HEALTH_RAW.map((v, i) => <FleetHealthCard key={v.name} v={v} delay={i * 100} uf={uf} />)}
               </div>
             </section>
 

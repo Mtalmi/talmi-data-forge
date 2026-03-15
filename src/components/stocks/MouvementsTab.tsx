@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useUnitFormat } from '@/hooks/useUnitFormat';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip,
   ResponsiveContainer, CartesianGrid, Cell,
