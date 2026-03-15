@@ -68,7 +68,7 @@ export function ProductionKPICards({
             <CheckCircle className="h-4 w-4 text-purple-500" />
             <span className="text-xs text-muted-foreground">Validés</span>
           </div>
-          <p className="text-2xl font-bold text-purple-500 mt-1">{validatedCount}</p>
+          <p className="text-2xl font-extralight text-purple-500 mt-1">{validatedCount}</p>
           <p className="text-xs text-muted-foreground">/ {totalBons}</p>
         </CardContent>
       </Card>
