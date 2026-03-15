@@ -119,7 +119,8 @@ export function useSalesWorkflow() {
             client:clients(nom_client, adresse, email),
             formule:formules_theoriques(designation)
           `)
-          .order('created_at', { ascending: false }),
+          .order('created_at', { ascending: false })
+          .limit(500),
         supabase
           .from('bons_commande')
           .select(`
@@ -127,13 +128,15 @@ export function useSalesWorkflow() {
             client:clients(nom_client, adresse, telephone),
             formule:formules_theoriques(designation)
           `)
-          .order('created_at', { ascending: false }),
+          .order('created_at', { ascending: false })
+          .limit(500),
         // Fetch linked BLs for each BC to show workflow status
         supabase
           .from('bons_livraison_reels')
           .select('bl_id, bc_id, workflow_status, volume_m3, validation_technique')
           .not('bc_id', 'is', null)
-          .order('created_at', { ascending: false }),
+          .order('created_at', { ascending: false })
+          .limit(1000),
       ]);
 
       if (devisRes.error) throw devisRes.error;

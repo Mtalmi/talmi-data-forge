@@ -119,7 +119,8 @@ export function useReceivables() {
           mode_paiement,
           facture_id
         `)
-        .order('date_livraison', { ascending: false });
+        .order('date_livraison', { ascending: false })
+        .limit(500);
 
       if (bonsError) throw bonsError;
 

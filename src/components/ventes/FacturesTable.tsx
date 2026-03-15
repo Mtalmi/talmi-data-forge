@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTableSort } from '@/hooks/useTableSort';
 import { SortableTableHead } from '@/components/ui/SortableHeader';
+import { TablePagination } from '@/components/ui/TablePagination';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -133,7 +134,8 @@ export function FacturesTable({
       const { data: facturesData, error: facturesError } = await supabase
         .from('factures')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(500);
 
       if (facturesError) throw facturesError;
 
@@ -214,6 +216,11 @@ export function FacturesTable({
 
   const { sortedData: sortedFactures, sortKey, sortDirection, handleSort } = useTableSort(filteredFactures, '_date', 'desc');
 
+  const FACT_PAGE_SIZE = 25;
+  const [factPage, setFactPage] = useState(1);
+  useMemo(() => { setFactPage(1); }, [filteredFactures.length]);
+  const paginatedFactures = sortedFactures.slice((factPage - 1) * FACT_PAGE_SIZE, factPage * FACT_PAGE_SIZE);
+
   const handleSelectAll = (checked: boolean) => {
     if (!onSelectionChange) return;
     if (checked) {
@@ -287,6 +294,7 @@ export function FacturesTable({
           </p>
         </div>
       ) : (
+        <>
         <Table>
           <TableHeader>
             <TableRow>
@@ -313,7 +321,7 @@ export function FacturesTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedFactures.map((facture) => {
+            {paginatedFactures.map((facture) => {
               const statusConfig = FACTURE_STATUS_CONFIG[facture.statut] || FACTURE_STATUS_CONFIG.emise;
               const isSelected = selectedIds.includes(facture.id);
               const isConsolidated = facture.is_consolidee && facture.bls_inclus && facture.bls_inclus.length > 1;
@@ -467,6 +475,13 @@ export function FacturesTable({
             })}
           </TableBody>
         </Table>
+        <TablePagination
+          currentPage={factPage}
+          totalItems={sortedFactures.length}
+          pageSize={FACT_PAGE_SIZE}
+          onPageChange={setFactPage}
+        />
+        </>
       )}
     </div>
 

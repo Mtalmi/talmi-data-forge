@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useTableSort } from '@/hooks/useTableSort';
 import { SortableTableHead } from '@/components/ui/SortableHeader';
+import { TablePagination } from '@/components/ui/TablePagination';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -146,6 +147,13 @@ export function DevisTable({
     _statut: d.statut || '',
   })), [devisList]);
   const { sortedData: sortedDevis, sortKey, sortDirection, handleSort } = useTableSort(sortableDevis, '_date', 'desc');
+
+  const PAGE_SIZE = 25;
+  const [currentPage, setCurrentPage] = useState(1);
+  // Reset page when data changes (filter applied)
+  const prevLen = useMemo(() => sortedDevis.length, [sortedDevis.length]);
+  useMemo(() => { setCurrentPage(1); }, [devisList.length]);
+  const paginatedDevis = sortedDevis.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   const scoreDevis = async (devisId: string, devisDbId: string) => {
     setScoringId(devisDbId);
@@ -434,7 +442,7 @@ export function DevisTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedDevis.map((devis) => {
+          {paginatedDevis.map((devis) => {
             const statusConfig = DEVIS_STATUS_CONFIG[devis.statut] || DEVIS_STATUS_CONFIG.en_attente;
             const expirationBadge = renderExpirationBadge(devis);
             const priorityIndicator = renderPriorityIndicator(devis);
@@ -701,6 +709,12 @@ export function DevisTable({
         </TableBody>
       </Table>
       </div>
+      <TablePagination
+        currentPage={currentPage}
+        totalItems={sortedDevis.length}
+        pageSize={PAGE_SIZE}
+        onPageChange={setCurrentPage}
+      />
       
       {/* Confirmation Dialog for Annulé Status */}
       <AlertDialog open={!!cancelConfirmDevis} onOpenChange={(open) => !open && setCancelConfirmDevis(null)}>

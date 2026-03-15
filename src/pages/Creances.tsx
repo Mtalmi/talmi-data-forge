@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useTableSort } from '@/hooks/useTableSort';
 import { SortableTableHead } from '@/components/ui/SortableHeader';
+import { TablePagination } from '@/components/ui/TablePagination';
 import { EmptyState } from '@/components/ui/states';
 import { NouvelleFactureModal } from '@/components/modals/NouvelleFactureModal';
 import { Plus } from 'lucide-react';
@@ -325,6 +326,11 @@ export default function Creances() {
   })), [receivables, searchTerm, statusFilter]);
 
   const { sortedData: sortedReceivables, sortKey: crSortKey, sortDirection: crSortDir, handleSort: crHandleSort } = useTableSort(filteredReceivables, '_due_date', 'asc');
+
+  const CR_PAGE_SIZE = 25;
+  const [crPage, setCrPage] = useState(1);
+  useMemo(() => { setCrPage(1); }, [filteredReceivables.length]);
+  const paginatedReceivables = sortedReceivables.slice((crPage - 1) * CR_PAGE_SIZE, crPage * CR_PAGE_SIZE);
 
   const overdueByClient = getOverdueByClient();
 
@@ -1418,7 +1424,7 @@ export default function Creances() {
                           </div>
                         </TableCell>
                       </TableRow>
-                    ) : sortedReceivables.slice(0, 50).map((receivable) => {
+                    ) : paginatedReceivables.map((receivable) => {
                       const statusConfig = STATUS_CONFIG[receivable.status];
                       // Dispute detection: partial payment from same client
                       const isPartialPayment = receivable.amount_paid > 0 && receivable.amount_paid < receivable.amount && receivable.status !== 'paid';
@@ -1714,6 +1720,12 @@ export default function Creances() {
                     })}
                   </TableBody>
                 </Table>
+                <TablePagination
+                  currentPage={crPage}
+                  totalItems={sortedReceivables.length}
+                  pageSize={CR_PAGE_SIZE}
+                  onPageChange={setCrPage}
+                />
               </CardContent>
             </Card>
           </TabsContent>

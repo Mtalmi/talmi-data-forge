@@ -295,7 +295,7 @@ export default function Bons() {
   const fetchData = useCallback(async () => {
     try {
       const [bonsRes, formulesRes, clientsRes] = await Promise.all([
-        supabase.from('bons_livraison_reels').select('*').order('created_at', { ascending: false }),
+        supabase.from('bons_livraison_reels').select('*').order('created_at', { ascending: false }).limit(500),
         supabase.from('formules_theoriques').select('formule_id, designation, ciment_kg_m3, adjuvant_l_m3'),
         supabase.from('clients').select('client_id, nom_client, limite_credit_dh, solde_du'),
       ]);
