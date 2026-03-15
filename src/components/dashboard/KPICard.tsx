@@ -1,3 +1,4 @@
+import React from 'react';
 import { cn } from '@/lib/utils';
 import { LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { useCountUp } from '@/hooks/useCountUp';
@@ -14,7 +15,7 @@ interface KPICardProps {
   target?: number;
 }
 
-export default function KPICard({
+const KPICard = React.memo(function KPICard({
   value,
   title,
   subtitle,
@@ -147,4 +148,6 @@ export default function KPICard({
       )}
     </div>
   );
-}
+});
+
+export default KPICard;

@@ -6235,3 +6235,43 @@ table tbody tr:hover,
 .stock-bar-fill {
   transition: width 500ms ease;
 }
+
+/* ═══ FIX 30: Touch device tooltip fallback ═══ */
+@media (hover: none) and (pointer: coarse) {
+  /* On touch devices, tooltips should be tap-triggered, not hover */
+  [title]:not(button):not(a) {
+    cursor: pointer;
+  }
+  /* Disable hover-only tooltip triggers on touch */
+  .tooltip-hover-only {
+    display: none;
+  }
+}
+
+/* ═══ FIX 19: Focus visible for accessibility ═══ */
+:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+/* ═══ FIX 29: Enhanced print stylesheet ═══ */
+@media print {
+  /* Ensure text colors are readable */
+  span, p, div, h1, h2, h3, h4, h5, h6, label {
+    color: #000 !important;
+  }
+  /* Keep gold accent for key headings */
+  h1, h2 {
+    color: #8B6914 !important;
+  }
+  /* Ensure SVG charts print properly */
+  svg {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+  /* Remove all animations */
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

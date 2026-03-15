@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, lazy, Suspense, useCallback, useMemo } from 'react';
+import { getMoroccoGreeting, getMoroccoFormattedDate } from '@/utils/timezone';
 import { useLiveSimulation } from '@/hooks/useLiveSimulation';
 import { triggerPrint } from '@/lib/printUtils';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
@@ -202,14 +203,9 @@ export default function Dashboard() {
   const rawFirst = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Max';
   const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1);
 
-  // Time-aware greeting based on browser local time
-  const getGreeting = () => {
-    const hours = new Date().getHours();
-    if (hours < 12) return 'Bonjour';
-    if (hours < 18) return 'Bon après-midi';
-    return 'Bonsoir';
-  };
-  const greeting = getGreeting();
+  // Time-aware greeting using Morocco timezone
+  const greeting = getMoroccoGreeting();
+  const formattedDate = getMoroccoFormattedDate();
 
   // Auto-refresh — useDashboardStats already polls every 30s + has realtime,
   // so we only need to check payment delays and refresh period stats
@@ -975,7 +971,7 @@ export default function Dashboard() {
                     </span>
                     <span className="text-muted-foreground/20">|</span>
                     <span className="text-muted-foreground/40">
-                      {now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} · {demoData.location}
+                      {formattedDate} · {demoData.location}
                     </span>
                     <span className="text-muted-foreground/20">|</span>
                     <span className="text-muted-foreground/40">

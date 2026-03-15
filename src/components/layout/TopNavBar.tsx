@@ -63,7 +63,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
   };
 
   return (
-    <header
+    <div
       className="w-full tbos-top-navbar"
       style={{
         background: '#0F1629',
@@ -193,6 +193,6 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
           </DropdownMenu>
         </div>
       </div>
-    </header>
+    </div>
   );
 }

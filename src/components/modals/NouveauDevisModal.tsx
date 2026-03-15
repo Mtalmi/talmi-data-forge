@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useFormDirty } from '@/hooks/useFormDirty';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
@@ -33,6 +34,9 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [warnings, setWarnings] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const isDirty = !!(client || chantier || formule || volume || notes);
+  useFormDirty(isDirty);
 
   const selectedFormule = FORMULES.find(f => f.value === formule);
   const effectivePrice = prixUnit || String(selectedFormule?.price || '');

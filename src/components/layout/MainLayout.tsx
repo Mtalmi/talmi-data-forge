@@ -100,7 +100,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
         )}
 
         {/* Top Bar with hamburger — sticky */}
-        <div
+        <header
           className="tbos-top-navbar-shell flex items-center shrink-0 sticky top-0 z-30"
           style={{ height: 56, minHeight: 56, background: '#0F1629' }}
         >
@@ -117,10 +117,10 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
               onPreviewRoleChange={setPreviewRole}
             />
           </div>
-        </div>
+        </header>
 
         {/* Main Content Area */}
-        <main className={`flex-1 min-w-0 overflow-x-hidden ${previewRole ? 'pt-1' : ''}`}>
+        <main id="tbos-main-content" className={`flex-1 min-w-0 overflow-x-hidden ${previewRole ? 'pt-1' : ''}`}>
           {/* Demo plant banner on non-dashboard pages */}
           {isDemo && (
             <div style={{

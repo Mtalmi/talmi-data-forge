@@ -31,7 +31,11 @@ export function DailyScoreGauge({
   const dashOffset = circumference * (1 - pct);
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
+    <div
+      style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}
+      role="img"
+      aria-label={`Score opérationnel: ${score} sur 100. ${deltaVsYesterday > 0 ? '+' : ''}${deltaVsYesterday} par rapport à hier. Série: ${streak} jours au-dessus de 80.`}
+    >
       {/* Circular Gauge */}
       <div style={{ position: 'relative', width: 80, height: 80, flexShrink: 0 }}>
         <svg width="80" height="80" viewBox="0 0 80 80" style={{ transform: 'rotate(-90deg)' }}>

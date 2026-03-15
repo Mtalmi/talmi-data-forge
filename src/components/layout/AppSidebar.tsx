@@ -126,7 +126,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       items: [
         { title: 'Résumé IA', url: '/__dashboard_intel', icon: Sparkles },
         { title: 'Alertes Actives', url: '/__dashboard_intel_alerts', icon: Bell, badge: 5, badgeStyle: 'red' },
-        { title: 'Agents IA', url: '/__dashboard_intel_agents', icon: Brain, badge: 24, badgeStyle: 'gold' },
+        { title: 'Agents IA', url: '/__dashboard_intel_agents', icon: Brain },
         { title: 'Rapports', url: '/__dashboard_rapports', icon: FileBarChart },
         { title: 'Historique', url: '/__dashboard_intel_history', icon: Clock },
         { title: nav.analytics || 'Analytics', url: '/analytics', icon: TrendingUp },
@@ -224,7 +224,8 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
   const userInitials = userName.slice(0, 2).toUpperCase();
 
   return (
-    <aside
+    <nav
+      aria-label="Navigation principale"
       data-tour="sidebar"
       className={cn(
         'fixed top-0 left-0 bottom-0 z-50 flex flex-col transition-transform duration-300 ease-out',
@@ -472,6 +473,6 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 8, color: 'rgba(156,163,175,0.2)', textAlign: 'center', padding: 8 }}>
         TBOS v2.0 · Atlas Concrete Morocco
       </div>
-    </aside>
+    </nav>
   );
 }
