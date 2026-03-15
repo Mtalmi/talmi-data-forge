@@ -42,6 +42,8 @@ interface TopNavBarProps {
 export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) {
   const { user, role: actualRole, signOut, isCeo: actualIsCeo } = useAuth();
   const { t } = useI18n();
+  const navigate = useNavigate();
+  const { t } = useI18n();
 
   const effectiveRole = previewRole || actualRole;
   const initials = user?.email?.charAt(0).toUpperCase() || 'U';
