@@ -1294,7 +1294,7 @@ export default function WorldClassClients() {
               }}
             >
               <Plus size={13} />
-              Add new client
+              Nouveau Client
             </button>
             <span style={{ fontFamily: MONO, fontSize: 13, color: '#9CA3AF', letterSpacing: '0.5px' }}>{liveClock}</span>
           </>
