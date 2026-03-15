@@ -78,7 +78,7 @@ export function TaxComplianceWidget() {
           <div className="flex items-center gap-2 p-2 rounded-lg bg-destructive/10 text-destructive">
             <AlertTriangle className="h-4 w-4" />
             <span className="text-sm font-medium">
-              {t.widgets.taxCompliance.arrears}: {totalArrears.toLocaleString()} DH
+              {t.widgets.taxCompliance.arrears}: {totalArrears.toLocaleString('fr-FR')} DH
             </span>
           </div>
         )}
