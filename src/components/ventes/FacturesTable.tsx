@@ -174,10 +174,10 @@ export function FacturesTable({
           const blClientIds = [...new Set(blData.map(b => b.client_id))];
           const { data: blClients } = await supabase
             .from('clients')
-            .select('client_id, nom')
+            .select('client_id, nom_client')
             .in('client_id', blClientIds);
           
-          const blClientMap = new Map((blClients || []).map(c => [c.client_id, c.nom]));
+          const blClientMap = new Map((blClients || []).map(c => [c.client_id, c.nom_client]));
           for (const bl of blData) {
             const name = blClientMap.get(bl.client_id);
             if (name) fallbackClientNames[bl.bl_id] = name;
