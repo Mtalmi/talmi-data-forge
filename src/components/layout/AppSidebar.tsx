@@ -182,11 +182,19 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
 
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/' || location.pathname === '/dashboard';
+    if (path.startsWith('/__dashboard_')) return location.pathname === '/' || location.pathname === '/dashboard';
     return location.pathname === path;
   };
 
   const handleNav = (url: string) => {
-    navigate(url);
+    // Intelligence section items → navigate to dashboard with tab state
+    if (url === '/__dashboard_intel' || url === '/__dashboard_intel_alerts' || url === '/__dashboard_intel_agents' || url === '/__dashboard_intel_history') {
+      navigate('/', { state: { activeTab: 'intelligence' } });
+    } else if (url === '/__dashboard_rapports') {
+      navigate('/', { state: { activeTab: 'command', scrollTo: 'rapports' } });
+    } else {
+      navigate(url);
+    }
     if (window.innerWidth < 768) onClose();
   };
 
