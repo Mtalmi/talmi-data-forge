@@ -1957,7 +1957,7 @@ export default function Dashboard() {
                   { id: 'BL-2602-067', test: 'Slump 22cm', ok: false, time: '18:28' },
                   { id: 'BL-2602-073', test: 'Slump 17cm', ok: true, time: '19:13' },
                 ].map((q, i) => (
-                  <div key={i} className="group flex items-center justify-between gap-3 py-2 px-2 rounded-lg transition-all duration-150 hover:bg-white/[0.03]">
+                  <div key={i} onClick={() => navigate('/laboratoire')} className="group flex items-center justify-between gap-3 py-2 px-2 rounded-lg transition-all duration-150 hover:bg-white/[0.03] cursor-pointer">
                     <div className="flex items-center gap-2">
                       <span className={`w-2 h-2 rounded-full inline-block mr-2 flex-shrink-0 ${q.ok ? 'bg-green-400' : 'bg-amber-400 animate-pulse'}`} />
                       <span className="text-sm font-mono text-slate-400 tabular-nums">{q.id}</span>
