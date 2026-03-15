@@ -279,10 +279,10 @@ export function FixedAssetsDashboard() {
                           </TableCell>
                           <TableCell>{categoryLabels[asset.category]}</TableCell>
                           <TableCell className="text-right font-mono">
-                            {asset.purchase_price.toLocaleString()} DH
+                            {asset.purchase_price.toLocaleString('fr-FR')} DH
                           </TableCell>
                           <TableCell className="text-right font-mono text-green-500">
-                            {asset.net_book_value.toLocaleString()} DH
+                            {asset.net_book_value.toLocaleString('fr-FR')} DH
                           </TableCell>
                           <TableCell>{asset.location}</TableCell>
                           <TableCell>
