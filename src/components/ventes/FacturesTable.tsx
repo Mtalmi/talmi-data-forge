@@ -474,6 +474,12 @@ export function FacturesTable({
             })}
           </TableBody>
         </Table>
+        <TablePagination
+          currentPage={factPage}
+          totalItems={sortedFactures.length}
+          pageSize={FACT_PAGE_SIZE}
+          onPageChange={setFactPage}
+        />
       )}
     </div>
 
