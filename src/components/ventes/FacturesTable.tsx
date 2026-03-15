@@ -320,7 +320,7 @@ export function FacturesTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedFactures.map((facture) => {
+            {paginatedFactures.map((facture) => {
               const statusConfig = FACTURE_STATUS_CONFIG[facture.statut] || FACTURE_STATUS_CONFIG.emise;
               const isSelected = selectedIds.includes(facture.id);
               const isConsolidated = facture.is_consolidee && facture.bls_inclus && facture.bls_inclus.length > 1;
