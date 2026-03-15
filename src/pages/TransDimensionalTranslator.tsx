@@ -56,7 +56,7 @@ function ResultPanel({ result, loading }: { result: string; loading: boolean }) 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-4">
           <ScrollArea className="h-[400px] rounded-lg border border-border bg-card p-4">
             {loading && !result && <Loader2 className="animate-spin mx-auto text-primary" />}
-            <pre className="whitespace-pre-wrap text-sm text-foreground font-sans leading-relaxed">{result}</pre>
+            <pre className="whitespace-pre-wrap text-sm text-foreground font-mono leading-relaxed">{result}</pre>
           </ScrollArea>
         </motion.div>
       )}
