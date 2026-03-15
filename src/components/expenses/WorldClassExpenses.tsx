@@ -55,6 +55,7 @@ function getCatConfig(cat: string) {
 // LIVE DATA HOOK
 // ─────────────────────────────────────────────────────
 function useExpensesLiveData() {
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState({
     totalThisMonth: 0,
     budgetRemaining: 0,
