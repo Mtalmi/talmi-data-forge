@@ -381,7 +381,7 @@ function DeliveryCard({ d, index }: { d: any; index: number }) {
           {d._destination && <p style={{ fontSize: 10, color: T.textSec, marginTop: 2 }}>{d._destination}</p>}
         </div>
         <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, fontFamily: MONO, fontWeight: 700, background: `${fColor}18`, color: fColor, border: `1px solid ${fColor}40` }}>{d.formule_id || '—'}</span>
-        <p style={{ fontFamily: MONO, fontSize: 16, fontWeight: 200, color: T.gold }}>{d.volume_m3} m³</p>
+        <p style={{ fontFamily: MONO, fontSize: 16, fontWeight: 200, color: T.gold }}>{d.volume_m3} {d.volume_m3 ? 'm³' : ''}</p>
         {d.camion_assigne && <span style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, fontFamily: MONO, fontWeight: 700, background: 'transparent', border: `1px solid ${T.gold}40`, color: T.gold }}>{d.camion_assigne}</span>}
         {d.chauffeur_nom && <span style={{ color: T.textDim, fontSize: 11 }}>{d.chauffeur_nom}</span>}
         {d.heure_prevue && <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} color={T.textDim} /><span style={{ color: T.textDim, fontSize: 11 }}>{d.heure_prevue}</span></div>}
