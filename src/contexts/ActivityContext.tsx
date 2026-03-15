@@ -45,6 +45,7 @@ export function ActivityProvider({ children }: { children: ReactNode }) {
   const [entries, setEntries] = useState<ActivityEntry[]>(() => loadFromStorage());
   const [unreadCount, setUnreadCount] = useState(0);
   const mountedRef = useRef(true);
+  const logRef = useRef<ActivityContextValue['log']>(null!);
 
   useEffect(() => {
     mountedRef.current = true;
