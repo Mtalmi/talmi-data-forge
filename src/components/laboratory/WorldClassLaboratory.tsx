@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { ReferenceLine } from 'recharts';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { PassationButton } from '@/components/ui/PassationButton';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -508,39 +509,9 @@ function QualityAlertBar() {
 
         {/* Buttons */}
         <div style={{ display: 'flex', gap: 10, paddingLeft: 30 }}>
-          <button
-            onMouseEnter={() => setHov1(true)} onMouseLeave={() => setHov1(false)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px',
-              background: hov1 ? '#DC2626' : '#EF4444', color: '#fff',
-              border: 'none', borderRadius: 9, fontWeight: 700, fontSize: 12, cursor: 'pointer',
-              transition: 'all 160ms', fontFamily: 'DM Sans, sans-serif',
-            }}
-          >
-            <OctagonX size={13} /> Arrêter Production
-          </button>
-          <button
-            onMouseEnter={() => setHov2(true)} onMouseLeave={() => setHov2(false)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px',
-              background: hov2 ? 'rgba(212,168,67,0.1)' : 'transparent', color: '#D4A843',
-              border: '1px solid #D4A843', borderRadius: 9, fontWeight: 700, fontSize: 12, cursor: 'pointer',
-              transition: 'all 160ms', fontFamily: 'DM Sans, sans-serif',
-            }}
-          >
-            <Eye size={13} /> Voir Détails
-          </button>
-          <button
-            onMouseEnter={() => setHov3(true)} onMouseLeave={() => setHov3(false)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px',
-              background: hov3 ? 'rgba(212,168,67,0.1)' : 'transparent', color: '#D4A843',
-              border: '1px solid #D4A843', borderRadius: 9, fontWeight: 700, fontSize: 12, cursor: 'pointer',
-              transition: 'all 160ms', fontFamily: 'DM Sans, sans-serif',
-            }}
-          >
-            <CheckCheck size={13} /> Valider Correction
-          </button>
+          <ActionBtn label="Arrêter Production" icon={OctagonX} bg={T.danger} textCol="#fff" fill successLabel="⏹ Production Arrêtée" />
+          <ActionBtn label="Voir Détails" icon={Eye} outline="#D4A843" />
+          <ActionBtn label="Valider Correction" icon={CheckCheck} outline="#D4A843" successLabel="✓ Correction Validée" />
         </div>
       </div>
     </section>
@@ -846,19 +817,7 @@ function EssaisDuJourTab({ labKpis }: { labKpis: { testsToday: number; conformes
             ))}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 20, paddingTop: 16, borderTop: `1px solid ${T.cardBorder}`, flexWrap: 'wrap', gap: 12 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <button style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 20px', background: T.gold, border: 'none', borderRadius: 9, color: '#0F1629', fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
-                <CheckCheck size={13} /> Valider Passation
-              </button>
-              <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', padding: '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4, background: 'rgba(212,168,67,0.06)' }}>
-                Généré par IA · Claude Opus
-              </span>
-            </div>
-            <span style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF' }}>
-              Prochain shift: 14h00 — Sarah L., Karim B.
-            </span>
-          </div>
+          <PassationButton />
         </Card>
       </section>
     </div>
@@ -2133,21 +2092,67 @@ export default function WorldClassLaboratory() {
 }
 
 // ─────────────────────────────────────────────────────
-// ACTION BUTTON HELPER
+// ACTION BUTTON HELPER — with state transitions
 // ─────────────────────────────────────────────────────
-function ActionBtn({ label, icon: Icon, bg, textCol, fill, outline }: { label: string; icon: React.ElementType; bg?: string; textCol?: string; fill?: boolean; outline?: string }) {
+function ActionBtn({ label, icon: Icon, bg, textCol, fill, outline, successLabel }: { label: string; icon: React.ElementType; bg?: string; textCol?: string; fill?: boolean; outline?: string; successLabel?: string }) {
   const [hov, setHov] = useState(false);
+  const [state, setState] = useState<'idle' | 'loading' | 'done'>('idle');
   const color = fill ? (textCol ?? '#fff') : (outline ?? T.gold);
+
+  const handleClick = () => {
+    if (state !== 'idle') return;
+    setState('loading');
+    setTimeout(() => setState('done'), 1000);
+  };
+
+  if (state === 'done') {
+    return (
+      <button disabled style={{
+        display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px',
+        background: 'rgba(34,197,94,0.15)', color: '#22C55E',
+        border: '1px solid rgba(34,197,94,0.3)', borderRadius: 9,
+        fontWeight: 700, fontSize: 12, cursor: 'default', opacity: 0.7,
+        fontFamily: 'DM Sans, sans-serif',
+      }}>
+        ✓ {successLabel || label.replace('Arrêter', 'Arrêté').replace('Notifier', 'Notifié').replace('Ajuster', 'Ajusté').replace('Valider', 'Validé').replace('Créer', 'Créé')}
+        {label === 'Notifier Responsable' && (
+          <span style={{ display: 'block', fontSize: 9, color: '#9CA3AF', marginLeft: 4 }}>
+            Envoyé à {new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+          </span>
+        )}
+      </button>
+    );
+  }
+
+  if (state === 'loading') {
+    return (
+      <button disabled style={{
+        display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px',
+        background: fill ? bg : 'transparent',
+        border: fill ? 'none' : `1px solid ${outline}`,
+        borderRadius: 9, fontWeight: 700, fontSize: 12, cursor: 'default',
+        fontFamily: 'DM Sans, sans-serif',
+      }}>
+        <svg width="14" height="14" viewBox="0 0 16 16" style={{ animation: 'tbosActionSpin 0.8s linear infinite' }}>
+          <circle cx="8" cy="8" r="6" fill="none" stroke={color} strokeWidth="2" strokeDasharray="28" strokeDashoffset="8" strokeLinecap="round" />
+        </svg>
+        <style>{`@keyframes tbosActionSpin { to { transform: rotate(360deg); } }`}</style>
+      </button>
+    );
+  }
+
   return (
     <button
-      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      onClick={handleClick}
+      onMouseDown={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(0.97)'; }}
+      onMouseUp={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)'; }}
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => { setHov(false); }}
       style={{
         display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px',
         background: fill ? (hov ? `${bg}CC` : bg) : (hov ? 'rgba(212,168,67,0.1)' : 'transparent'),
         border: fill ? 'none' : `1px solid ${outline}`,
         borderRadius: 9, color, fontWeight: 700, fontSize: 12, cursor: 'pointer',
         transition: 'all 160ms', fontFamily: 'DM Sans, sans-serif',
-        transform: hov ? 'scale(1.03)' : 'scale(1)',
       }}
     >
       <Icon size={13} /> {label}

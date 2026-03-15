@@ -1,11 +1,52 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
+import { GoldSpinner } from '@/hooks/useActionButton';
 import {
   XAxis, YAxis, Tooltip as RechartsTooltip,
   ResponsiveContainer, CartesianGrid, Area, AreaChart, ReferenceLine,
 } from 'recharts';
 import { TrendingUp, AlertTriangle, ShoppingCart } from 'lucide-react';
 import { SmartReorderQueue } from '@/components/stocks/SmartReorderQueue';
+
+function OverviewApproveBtn({ mat, qty }: { mat: string; qty: string }) {
+  const [state, setState] = useState<'idle' | 'loading' | 'done'>('idle');
+  const handleClick = () => { if (state !== 'idle') return; setState('loading'); setTimeout(() => { setState('done'); toast.success(`Commande ${mat} approuvée — ${qty}`); }, 1000); };
+  return (
+    <button onClick={handleClick} disabled={state !== 'idle'}
+      onMouseDown={e => { if (state === 'idle') (e.currentTarget as HTMLElement).style.transform = 'scale(0.97)'; }}
+      onMouseUp={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)'; }}
+      style={{
+        fontFamily: MONO, fontSize: 11, fontWeight: 600, borderRadius: 6, padding: '6px 14px', transition: 'all 200ms', border: 'none',
+        background: state === 'done' ? 'rgba(34,197,94,0.15)' : '#D4A843',
+        color: state === 'done' ? '#22C55E' : '#0F1629',
+        cursor: state === 'idle' ? 'pointer' : 'default',
+        opacity: state === 'done' ? 0.7 : 1,
+        pointerEvents: state === 'idle' ? 'auto' : 'none',
+      }}>
+      {state === 'loading' ? <GoldSpinner size={14} /> : state === 'done' ? '✓ Approuvé' : 'Approuver'}
+    </button>
+  );
+}
+
+function OverviewApproveAllBtn() {
+  const [state, setState] = useState<'idle' | 'loading' | 'done'>('idle');
+  const handleClick = () => { if (state !== 'idle') return; setState('loading'); setTimeout(() => { setState('done'); toast.success('Toutes les commandes approuvées'); }, 1500); };
+  return (
+    <button onClick={handleClick} disabled={state !== 'idle'}
+      onMouseDown={e => { if (state === 'idle') (e.currentTarget as HTMLElement).style.transform = 'scale(0.97)'; }}
+      onMouseUp={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)'; }}
+      style={{
+        fontFamily: MONO, fontSize: 12, fontWeight: 600, borderRadius: 8, padding: '10px 24px', transition: 'all 200ms', border: 'none',
+        background: state === 'done' ? 'rgba(34,197,94,0.15)' : '#D4A843',
+        color: state === 'done' ? '#22C55E' : '#0F1629',
+        cursor: state === 'idle' ? 'pointer' : 'default',
+        opacity: state === 'done' ? 0.7 : 1,
+        pointerEvents: state === 'idle' ? 'auto' : 'none',
+      }}>
+      {state === 'loading' ? <GoldSpinner size={16} /> : state === 'done' ? '✓ Tout Approuvé' : 'Approuver Tout'}
+    </button>
+  );
+}
 
 const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
 const T = {
@@ -769,19 +810,7 @@ function ReorderQueue() {
                 <td style={{ padding: '12px 16px', fontFamily: MONO, fontSize: 12, fontWeight: 200, color: '#D4A843' }}>{r.cost}</td>
                 <td style={{ padding: '12px 16px', fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>{r.delai}</td>
                 <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                  <button
-                    onClick={() => toast.success(`Commande ${r.mat} approuvée`)}
-                    style={{
-                      fontFamily: MONO, fontSize: 11, fontWeight: 600,
-                      background: '#D4A843', color: '#0F1629',
-                      border: 'none', borderRadius: 6, padding: '6px 14px',
-                      cursor: 'pointer', transition: 'opacity 200ms',
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; }}
-                    onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
-                  >
-                    Approuver
-                  </button>
+                  <OverviewApproveBtn mat={r.mat} qty={r.qty} />
                 </td>
               </tr>
             ))}
@@ -793,19 +822,7 @@ function ReorderQueue() {
                   <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>
                     Commande groupée : remise estimée <span style={{ color: '#22C55E', fontWeight: 600 }}>-4.2%</span> (<span style={{ color: '#22C55E', fontWeight: 600 }}>1,400 DH</span> économisés)
                   </span>
-                  <button
-                    onClick={() => toast.success('Toutes les commandes approuvées')}
-                    style={{
-                      fontFamily: MONO, fontSize: 12, fontWeight: 600,
-                      background: '#D4A843', color: '#0F1629',
-                      border: 'none', borderRadius: 8, padding: '10px 24px',
-                      cursor: 'pointer', transition: 'opacity 200ms',
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; }}
-                    onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
-                  >
-                    Approuver Tout
-                  </button>
+                  <OverviewApproveAllBtn />
                 </div>
               </td>
             </tr>

@@ -15,6 +15,7 @@ import { useCountUp } from '@/hooks/useCountUp';
 import { supabase } from '@/integrations/supabase/client';
 import { format, startOfDay, endOfDay, startOfWeek, endOfWeek } from 'date-fns';
 import BatchesTab from './BatchesTab';
+import { PassationButton } from '@/components/ui/PassationButton';
 import RecettesTab from './RecettesTab';
 import PlanningTab from './PlanningTab';
 import { PageHeader } from '@/components/layout/PageHeader';
@@ -875,10 +876,7 @@ export default function WorldClassProduction() {
               </div>
               <p style={{ fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>Prochain shift: Opérateurs — Ahmed K., Rachid M., Samir T.</p>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-              <button style={{ border: '1px solid #D4A843', color: '#0F1629', background: '#D4A843', borderRadius: '6px', padding: '8px 20px', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>Valider Passation</button>
-              <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 4, background: 'rgba(212,168,67,0.15)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)' }}>Généré par IA · Claude Opus</span>
-            </div>
+            <PassationButton shiftInfo="Prochain shift: Opérateurs — Ahmed K., Rachid M., Samir T." />
           </div>
         </section>
 
