@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useFormDirty } from '@/hooks/useFormDirty';
 import {
   TBOSModal, TBOSField, TBOSInput, TBOSSelect, TBOSTextarea,
   TBOSDisplayField, TBOSPrimaryButton, TBOSGhostButton,
@@ -8,27 +9,23 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useTodayBatches } from '@/hooks/useModalData';
 import { sanitizeInput } from '@/lib/security';
+import { safeDivide } from '@/utils/rounding';
+import { getMoroccoToday } from '@/utils/timezone';
 
 const TEST_TYPES = [
-  { value: 'slump', label: 'Slump (Affaissement)', unit: 'cm', norme: '15-20 cm', min: 15, max: 20 },
+  { value: 'slump', label: 'Affaissement (Slump)', unit: 'cm', norme: '15-20 cm', min: 15, max: 20 },
   { value: 'resistance_7j', label: 'Résistance 7j', unit: 'MPa', norme: '>25 MPa', min: 25, max: 999 },
   { value: 'resistance_28j', label: 'Résistance 28j', unit: 'MPa', norme: '>30 MPa', min: 30, max: 999 },
   { value: 'temperature', label: 'Température', unit: '°C', norme: '15-32 °C', min: 15, max: 32 },
-  { value: 'air_occlus', label: 'Air occlus', unit: '%', norme: '3-6%', min: 3, max: 6 },
+  { value: 'air_occlus', label: 'Teneur en air', unit: '%', norme: '3-6%', min: 3, max: 6 },
   { value: 'ratio_ec', label: 'Ratio E/C', unit: '', norme: '<0.55', min: 0, max: 0.55 },
-];
-
-const OPERATORS = [
-  { value: 'youssef', label: 'Youssef M.' },
-  { value: 'sarah', label: 'Sarah L.' },
-  { value: 'karim', label: 'Karim B.' },
-  { value: 'ahmed', label: 'Ahmed R.' },
 ];
 
 interface Props { open: boolean; onClose: () => void; onCreated?: (test: any) => void; }
 
 export function NouveauTestModal({ open, onClose, onCreated }: Props) {
   const { batches } = useTodayBatches();
+  const [operators, setOperators] = useState<{ value: string; label: string }[]>([]);
   const [batch, setBatch] = useState('');
   const [testType, setTestType] = useState('');
   const [resultat, setResultat] = useState('');
@@ -36,6 +33,26 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+
+  const isDirty = !!(batch || testType || resultat || operateur || notes);
+  useFormDirty(isDirty);
+
+  // Load operators from profiles table
+  useEffect(() => {
+    if (!open) return;
+    (async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('user_id, full_name')
+        .order('full_name');
+      if (data) {
+        setOperators(data
+          .filter((p: any) => p.full_name)
+          .map((p: any) => ({ value: p.user_id, label: p.full_name }))
+        );
+      }
+    })();
+  }, [open]);
 
   const selectedBatch = batches.find(b => b.value === batch);
   const selectedTest = TEST_TYPES.find(t => t.value === testType);
@@ -45,20 +62,19 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
     const val = parseFloat(resultat);
     if (isNaN(val)) return null;
     if (val >= selectedTest.min && val <= selectedTest.max) return { ok: true, text: '✓ Conforme' };
-    const deviation = val < selectedTest.min
-      ? (((selectedTest.min - val) / selectedTest.min) * 100).toFixed(1)
-      : (((val - selectedTest.max) / selectedTest.max) * 100).toFixed(1);
-    return { ok: false, text: `✗ ${val < selectedTest.min ? '-' : '+'}${deviation}% hors norme` };
+    const ref = val < selectedTest.min ? selectedTest.min : selectedTest.max;
+    const deviation = safeDivide(Math.abs(val - ref), ref) * 100;
+    return { ok: false, text: `✗ ${val < selectedTest.min ? '-' : '+'}${deviation.toFixed(1)}% hors norme` };
   }, [selectedTest, resultat]);
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!batch) e.batch = 'Champ requis';
-    if (!testType) e.testType = 'Champ requis';
+    if (!batch) e.batch = 'Champ obligatoire';
+    if (!testType) e.testType = 'Champ obligatoire';
     const val = parseFloat(resultat);
-    if (!resultat || isNaN(val)) e.resultat = 'Champ requis';
-    else if (val < 0 && testType !== 'ratio_ec') e.resultat = 'Valeur ne peut pas être négative';
-    if (!operateur) e.operateur = 'Champ requis';
+    if (!resultat || isNaN(val)) e.resultat = 'Champ obligatoire';
+    // Negative and zero values are valid for some tests — no blanket block
+    if (!operateur) e.operateur = 'Champ obligatoire';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -70,15 +86,17 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
     try {
       const val = parseFloat(resultat);
       const isConforme = ecart?.ok ?? true;
-      const blId = selectedBatch?.blId || 'BL-2603-009';
+      const blId = selectedBatch?.blId || batch;
       const formuleId = selectedBatch?.formule || 'F-B25';
+      const today = getMoroccoToday();
+      const operateurLabel = operators.find(o => o.value === operateur)?.label || operateur;
 
       const insertData: Record<string, any> = {
         bl_id: blId,
         formule_id: formuleId,
-        date_prelevement: new Date().toISOString().split('T')[0],
-        technicien_prelevement: OPERATORS.find(o => o.value === operateur)?.label || operateur,
-        technicien_test: OPERATORS.find(o => o.value === operateur)?.label || operateur,
+        date_prelevement: today,
+        technicien_prelevement: operateurLabel,
+        technicien_test: operateurLabel,
         notes: sanitizeInput(notes) || null,
         alerte_qualite: !isConforme,
       };
@@ -88,11 +106,11 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
         insertData.affaissement_conforme = isConforme;
       } else if (testType === 'resistance_7j') {
         insertData.resistance_7j_mpa = val;
-        insertData.date_test_7j = new Date().toISOString().split('T')[0];
+        insertData.date_test_7j = today;
         insertData.resistance_conforme = isConforme;
       } else if (testType === 'resistance_28j') {
         insertData.resistance_28j_mpa = val;
-        insertData.date_test_28j = new Date().toISOString().split('T')[0];
+        insertData.date_test_28j = today;
         insertData.resistance_conforme = isConforme;
       }
 
@@ -118,16 +136,24 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
         }).then(() => {});
       }
 
-      const test = { batch, testType: selectedTest?.label, resultat: val, conforme: isConforme, operateur, notes: sanitizeInput(notes) };
+      const test = { batch, testType: selectedTest?.label, resultat: val, conforme: isConforme, operateur: operateurLabel, notes: sanitizeInput(notes) };
       onCreated?.(test);
-      showFormSuccess(`✓ Test ${selectedTest?.label} enregistré — ${batch}`);
+      showFormSuccess(`✓ Test enregistré avec succès`);
       resetAndClose();
     } catch (error: any) {
       console.error('Error saving test:', error);
-      toast.error(`Erreur: ${error?.message || 'Impossible d\'enregistrer le test'}`);
+      toast.error('Erreur lors de l\'enregistrement du test');
       setLoading(false);
     }
   };
+
+  const handleClose = useCallback(() => {
+    if (isDirty) {
+      const confirmed = window.confirm('Modifications non sauvegardées. Voulez-vous quitter ?');
+      if (!confirmed) return;
+    }
+    resetAndClose();
+  }, [isDirty]);
 
   const resetAndClose = () => {
     setBatch(''); setTestType(''); setResultat(''); setOperateur(''); setNotes('');
@@ -135,9 +161,9 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
   };
 
   return (
-    <TBOSModal open={open} onClose={resetAndClose} title="Nouveau Test Laboratoire" footer={
+    <TBOSModal open={open} onClose={handleClose} title="Nouveau Test Laboratoire" footer={
       <>
-        <TBOSGhostButton onClick={resetAndClose}>Annuler</TBOSGhostButton>
+        <TBOSGhostButton onClick={handleClose}>Annuler</TBOSGhostButton>
         <TBOSPrimaryButton onClick={handleSubmit} loading={loading} disabled={loading}>Enregistrer Test</TBOSPrimaryButton>
       </>
     }>
@@ -178,7 +204,7 @@ export function NouveauTestModal({ open, onClose, onCreated }: Props) {
 
         <TBOSField label="Opérateur" required error={errors.operateur}>
           <TBOSSelect value={operateur} onChange={e => setOperateur(e.target.value)} hasError={!!errors.operateur}
-            options={OPERATORS} placeholder="Sélectionner" />
+            options={operators} placeholder="Sélectionner" />
         </TBOSField>
 
         <TBOSField label="Notes">
