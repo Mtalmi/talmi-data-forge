@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, lazy, Suspense, useCallback, useMemo } from 'react';
+import { useLiveSimulation } from '@/hooks/useLiveSimulation';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
 import { AnimatePresence } from 'framer-motion';
@@ -286,10 +287,20 @@ export default function Dashboard() {
   const marge = useCountUp(demoData.production.marge, 1800, 600, 1);
   const rawTresorerie = useCountUp(demoData.tresorerie.value / 1000, 1800, 800);
 
-  // Converted values for display
+  // Live simulation — fluctuates values every 60s
+  const simBase = useMemo(() => ({
+    prodVolume: demoData.production.volume,
+    revenue: demoData.revenue.today,
+    marge: demoData.production.marge,
+    conformite: demoData.production.conformite,
+  }), [demoData.production.volume, demoData.revenue.today, demoData.production.marge, demoData.production.conformite]);
+  const sim = useLiveSimulation(simBase);
+
+  // Converted values for display (use sim values when count-up is done)
   const prodVolume = uf.rawVolume(rawProdVolume);
   const ca = +(uf.rawCurrencyK(rawCa * 1000)).toFixed(1);
   const tresorerie = Math.round(uf.rawCurrencyK(rawTresorerie * 1000));
+  const flashClass = sim.flash ? 'tbos-value-flash' : '';
 
   // Build sparkline SVG path
   const maxV = Math.max(...SPARKLINE_DATA.map(d => d.v));
@@ -572,7 +583,7 @@ export default function Dashboard() {
             >
               <Bell className="h-3.5 w-3.5 text-slate-500" />
               {!bellSeen && (
-                <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] flex items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white px-1" style={{ border: '2px solid #0a0f1e' }}>2</span>
+                <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] flex items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white px-1 tbos-notif-bounce" style={{ border: '2px solid #0a0f1e' }}>2</span>
               )}
             </button>
             {bellOpen && (
@@ -889,7 +900,7 @@ export default function Dashboard() {
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/50" />
                         <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
                       </span>
-                      <span className="font-semibold uppercase tracking-wide text-emerald-400">OPERATIONAL</span>
+                      <span className="font-semibold uppercase tracking-wide text-emerald-400 tbos-op-breathe">OPERATIONAL</span>
                     </span>
                     <span className="text-muted-foreground/20">|</span>
                     <span className="text-muted-foreground/40">
@@ -912,8 +923,8 @@ export default function Dashboard() {
                 {/* Capacity */}
                 <div className="flex flex-col items-center justify-center flex-shrink-0 w-[90px]">
                   <span className="tbos-hero-stat-number text-3xl font-bold tracking-tight text-[#D4A843]" style={{ textShadow: '0 0 30px rgba(212, 168, 67, 0.2)' }}>87<span className="text-lg font-normal text-[#D4A843]/50">%</span></span>
-                  <div className="w-[80px] h-[3px] bg-white/10 rounded-full mt-1.5">
-                    <div className="h-full rounded-full bg-gradient-to-r from-[#D4A843]/80 to-[#D4A843]" style={{ width: '87%' }} />
+                   <div className="w-[80px] h-[3px] bg-white/10 rounded-full mt-1.5">
+                     <div className="h-full rounded-full bg-gradient-to-r from-[#D4A843]/80 to-[#D4A843] tbos-bar-grow" style={{ width: '87%' }} />
                   </div>
                   <span className="text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase mt-1.5">CAPACITÉ</span>
                 </div>
@@ -1046,7 +1057,7 @@ export default function Dashboard() {
                 <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, letterSpacing: 2, color: '#D4A843', fontWeight: 400 }}>
                   ✦ BRIEFING MATINAL — {now.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase()}
                 </span>
-                <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 10, padding: '3px 10px', borderRadius: 4, border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', background: 'rgba(212,168,67,0.08)' }}>
+                <span className="tbos-ai-badge" style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 10, padding: '3px 10px', borderRadius: 4, border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', background: 'rgba(212,168,67,0.08)', transition: 'box-shadow 200ms ease' }}>
                   Généré par IA · Claude Opus
                 </span>
               </div>
@@ -1103,7 +1114,7 @@ export default function Dashboard() {
 
           {/* (2b) PRÉDICTION ARRÊT USINE */}
           <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" style={{ animation: 'ccSectionIn 300ms ease-out 150ms both' }}>
-            <div style={{
+            <div className="tbos-shutdown-pulse" style={{
               background: 'rgba(245, 158, 11, 0.05)',
               borderLeft: '4px solid #F59E0B',
               borderRadius: 8,
@@ -1147,11 +1158,12 @@ export default function Dashboard() {
                   Voir Analyse Complète
                 </button>
                 {/* AI badge */}
-                <span className="ml-auto" style={{
+                <span className="ml-auto tbos-ai-badge" style={{
                   fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
                   fontSize: 9, letterSpacing: '0.5px', color: '#D4A843',
                   background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.2)',
                   borderRadius: 20, padding: '3px 10px', whiteSpace: 'nowrap',
+                  transition: 'box-shadow 200ms ease',
                 }}>
                   ✨ Généré par IA · Claude Opus
                 </span>
@@ -1253,7 +1265,7 @@ export default function Dashboard() {
                     {kpi.label}
                   </div>
                   <div className="flex items-baseline gap-2 leading-none">
-                     <span className="tbos-hero-stat-number text-3xl font-mono tracking-tight text-white" style={{
+                     <span className={`tbos-hero-stat-number text-3xl font-mono tracking-tight text-white ${flashClass}`} style={{
                        fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
                        fontWeight: 200, lineHeight: 1,
                        textShadow: aboveTarget
@@ -1307,7 +1319,7 @@ export default function Dashboard() {
                                 <text x={130 - pad} y={targetY - 3} textAnchor="end" fill="rgba(255,255,255,0.35)" fontSize="9" fontFamily="ui-monospace, monospace">{(kpi as any).targetLabel || 'OBJ'}</text>
                               </>
                             )}
-                            <polyline fill="none" stroke="#D4A843" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={polyStr} style={{ opacity: 0.7 }} />
+                            <polyline className="tbos-sparkline-draw" fill="none" stroke="#D4A843" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={polyStr} style={{ opacity: 0.7, '--dash-total': '500' } as React.CSSProperties} />
                             {last && <circle cx={last.x} cy={last.y} r="2.5" fill="#D4A843" style={{ opacity: 0.9 }} />}
                           </>
                         );
