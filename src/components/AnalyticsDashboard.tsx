@@ -281,7 +281,7 @@ export default function AnalyticsDashboard() {
                     labelLine={false}
                     label={({ name, value }) => `${name}: ${value}`}
                     outerRadius={80}
-                    fill="#8884d8"
+                    fill="#D4A843"
                     dataKey="value"
                   >
                     {agentDistribution.map((entry, index) => (

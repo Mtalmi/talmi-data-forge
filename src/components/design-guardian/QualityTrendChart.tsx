@@ -17,12 +17,12 @@ export default function QualityTrendChart() {
           <Tooltip content={<TbosChartTooltip unit="/ 10" />} cursor={crosshairCursor} />
           {/* Target zone */}
           <ReferenceArea y1={8.5} y2={10} fill="rgba(16,185,129,0.05)" />
-          <ReferenceLine y={8.5} stroke="rgba(16,185,129,0.4)" strokeDasharray="6 4" label={{ value: '8.5', fill: '#10b981', fontSize: 10, position: 'right' }} />
+          <ReferenceLine y={8.5} stroke="rgba(34,197,94,0.4)" strokeDasharray="6 4" label={{ value: '8.5', fill: '#22C55E', fontSize: 10, position: 'right' }} />
           {/* Event markers */}
-          <ReferenceLine x="J-19" stroke="rgba(255,215,0,0.3)" strokeDasharray="4 3" label={{ value: 'Wave 1 AI', fill: '#FFD700', fontSize: 9, position: 'top' }} />
-          <ReferenceLine x="J-11" stroke="rgba(59,130,246,0.3)" strokeDasharray="4 3" label={{ value: 'Design Elev.', fill: '#3b82f6', fontSize: 9, position: 'top' }} />
-          <ReferenceLine x="J-1" stroke="rgba(168,85,247,0.3)" strokeDasharray="4 3" label={{ value: 'Wave 2 AI', fill: '#a855f7', fontSize: 9, position: 'top' }} />
-          <Line type="monotone" dataKey="score" stroke="#FFD700" strokeWidth={2} dot={false} activeDot={<EnhancedActiveDot />} />
+          <ReferenceLine x="J-19" stroke="rgba(212,168,67,0.3)" strokeDasharray="4 3" label={{ value: 'Wave 1 AI', fill: '#D4A843', fontSize: 9, position: 'top' }} />
+          <ReferenceLine x="J-11" stroke="rgba(212,168,67,0.3)" strokeDasharray="4 3" label={{ value: 'Design Elev.', fill: '#D4A843', fontSize: 9, position: 'top' }} />
+          <ReferenceLine x="J-1" stroke="rgba(212,168,67,0.3)" strokeDasharray="4 3" label={{ value: 'Wave 2 AI', fill: '#D4A843', fontSize: 9, position: 'top' }} />
+          <Line type="monotone" dataKey="score" stroke="#D4A843" strokeWidth={2} dot={false} activeDot={<EnhancedActiveDot />} />
         </LineChart>
       </ResponsiveContainer>
     </div>

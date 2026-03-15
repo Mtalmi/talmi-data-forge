@@ -25,8 +25,8 @@ export default function DimensionRadarChart() {
           <Radar
             name="Score"
             dataKey="score"
-            stroke="#FFD700"
-            fill="#FFD700"
+            stroke="#D4A843"
+            fill="#D4A843"
             fillOpacity={0.15}
             strokeWidth={2}
           />

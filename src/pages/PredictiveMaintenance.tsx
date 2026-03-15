@@ -198,7 +198,7 @@ export default function PredictiveMaintenance() {
           {!alertDismissed && (
             <button className="px-3 py-1.5 text-xs rounded-lg bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/30 animate-pulse">🔴 2 Critical Alerts</button>
           )}
-          <button onClick={handleExport} className="px-4 py-1.5 text-xs rounded-lg font-semibold text-black" style={{ background: "linear-gradient(135deg, #FFD700, #B8960C)" }}>
+          <button onClick={handleExport} className="px-4 py-1.5 text-xs rounded-lg font-semibold text-black" style={{ background: "linear-gradient(135deg, #D4A843, #C49A3C)" }}>
             {exportState === "loading" ? "Generating..." : exportState === "done" ? "✅ Exported!" : "Export Schedule"}
           </button>
         </div>
