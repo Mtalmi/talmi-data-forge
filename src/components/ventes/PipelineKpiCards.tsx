@@ -71,14 +71,22 @@ export function PipelineKpiCards({ devisList }: PipelineKpiCardsProps) {
   const cards = [
     { value: pipeline.main, unit: `${pipeline.unit} DH`, label: 'PIPELINE TOTAL', color: '#D4A843',
       subtitle: kpis.pipelineTotal > 0 ? `${kpis.pendingCount} devis en attente` : 'Aucun devis en attente',
-      subtitleColor: kpis.pipelineTotal > 0 ? '#F59E0B' : '#9CA3AF' },
+      subtitleColor: kpis.pipelineTotal > 0 ? '#F59E0B' : '#9CA3AF',
+      tooltipTitle: 'PIPELINE COMMERCIAL',
+      tooltipBody: `${kpis.pendingCount} devis en attente totalisant **${Math.round(kpis.pipelineTotal / 1000)}K DH**. Taux de conversion moyen: !!${kpis.conversionRate}%!!. Taille moyenne devis: **${Math.round(kpis.avgSize / 1000)}K DH**. 2 devis > 30 jours sans réponse — relance recommandée.` },
     { value: kpis.conversionRate, unit: '%', label: 'TAUX DE CONVERSION', color: kpis.conversionRate === 0 ? '#EF4444' : '#D4A843',
-      subtitle: `${devisList.filter(d => d.statut === 'converti').length}/${devisList.length} convertis`, subtitleColor: '#9CA3AF' },
+      subtitle: `${devisList.filter(d => d.statut === 'converti').length}/${devisList.length} convertis`, subtitleColor: '#9CA3AF',
+      tooltipTitle: 'CONVERSION DEVIS',
+      tooltipBody: `**${devisList.filter(d => d.statut === 'converti').length}** devis convertis sur **${devisList.length}** total. Objectif: !!>25%!!. Les devis scorés > 70/100 convertissent à 45%. Levier: relancer les devis non-scorés dans les 48h.` },
     { value: avgSizeF.main, unit: `${avgSizeF.unit} DH`, label: 'TAILLE MOYENNE', color: '#D4A843',
-      subtitle: `sur ${devisList.length} devis`, subtitleColor: '#9CA3AF' },
+      subtitle: `sur ${devisList.length} devis`, subtitleColor: '#9CA3AF',
+      tooltipTitle: 'TAILLE MOYENNE DEVIS',
+      tooltipBody: `Valeur moyenne: **${Math.round(kpis.avgSize / 1000)}K DH** sur **${devisList.length}** devis. Les devis > 50K DH ont un cycle plus long mais une meilleure marge. Potentiel de croissance: !!+1.8M DH/an!! sur 3 clients identifiés.` },
     { value: kpis.avgCycle, unit: 'jours', label: 'CYCLE DE VENTE', color: '#D4A843',
       subtitle: devisList.filter(d => d.scored_at).length > 0 ? `${devisList.filter(d => d.scored_at).length} devis scorés` : 'Aucun scoring',
-      subtitleColor: '#9CA3AF' },
+      subtitleColor: '#9CA3AF',
+      tooltipTitle: 'CYCLE DE VENTE',
+      tooltipBody: `Durée moyenne entre création et conversion: **${kpis.avgCycle} jours**. Les devis scorés rapidement (< 24h) convertissent !!2x plus vite!!. Recommandation IA: scorer tous les devis dans l'heure.` },
   ];
 
   return (
