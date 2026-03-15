@@ -70,6 +70,31 @@ export const gridProps = {
   strokeDasharray: undefined as undefined | string,
 } as const;
 
+/* ── Crosshair Cursor (for line/area charts) ── */
+export const crosshairCursor = {
+  stroke: CHART_COLORS.primary,
+  strokeDasharray: '4 4',
+  strokeOpacity: 0.35,
+  strokeWidth: 1,
+} as const;
+
+/* ── Bar hover cursor ── */
+export const barCursor = {
+  fill: 'rgba(212, 168, 67, 0.05)',
+} as const;
+
+/* ── Enhanced active dot for line/area charts ── */
+export function EnhancedActiveDot(props: any) {
+  const { cx, cy, fill } = props;
+  const color = fill || CHART_COLORS.primary;
+  return (
+    <g>
+      <circle cx={cx} cy={cy} r={8} fill={color} fillOpacity={0.15} />
+      <circle cx={cx} cy={cy} r={5} fill={color} stroke="#0F1629" strokeWidth={2} />
+    </g>
+  );
+}
+
 /* ── Tooltip Style ── */
 export const tooltipStyle = {
   contentStyle: {
@@ -95,7 +120,7 @@ export const tooltipStyle = {
     fontSize: 11,
     marginBottom: 4,
   },
-  cursor: { stroke: CHART_COLORS.primary, strokeOpacity: 0.3, strokeDasharray: '4 4' },
+  cursor: crosshairCursor,
 } as const;
 
 /* ── Bar Chart Gradient Definition (insert as child of <BarChart>) ── */
@@ -186,4 +211,33 @@ export const barRadius = [3, 3, 0, 0] as [number, number, number, number];
 export function donutRadii(outerRadius: number) {
   const innerRadius = outerRadius * 0.75; // ~25% thickness
   return { innerRadius, outerRadius };
+}
+
+/* ── Unified TBOS Tooltip Component ── */
+export function TbosChartTooltip({ active, payload, label, unit, currencySymbol }: any) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{
+      background: CHART_COLORS.tooltipBg,
+      border: `1px solid ${CHART_COLORS.tooltipBorder}`,
+      borderRadius: 8,
+      padding: '8px 12px',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+      backdropFilter: 'blur(12px)',
+      fontFamily: MONO,
+    }}>
+      {label && <p style={{ color: '#9CA3AF', fontSize: 10, marginBottom: 4 }}>{label}</p>}
+      {payload.map((entry: any, i: number) => {
+        const val = typeof entry.value === 'number'
+          ? entry.value.toLocaleString('fr-FR')
+          : entry.value;
+        return (
+          <p key={i} style={{ color: entry.color || CHART_COLORS.primary, fontSize: 12, fontFamily: MONO }}>
+            {entry.name && entry.name !== 'value' ? `${entry.name}: ` : ''}
+            {currencySymbol || ''}{val}{unit ? ` ${unit}` : ''}
+          </p>
+        );
+      })}
+    </div>
+  );
 }
