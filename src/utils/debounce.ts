@@ -13,14 +13,25 @@ export function debounce<T extends (...args: any[]) => any>(fn: T, ms: number): 
   return debounced;
 }
 
-/** Throttle: limits execution to at most once per `ms`. */
-export function throttle<T extends (...args: any[]) => any>(fn: T, ms: number): T {
+/** Throttle: limits execution to at most once per `ms`, with trailing call guaranteed. */
+export function throttle<T extends (...args: any[]) => any>(fn: T, ms: number): T & { cancel: () => void } {
   let last = 0;
-  return ((...args: any[]) => {
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  const throttled = ((...args: any[]) => {
     const now = Date.now();
-    if (now - last >= ms) {
+    const remaining = ms - (now - last);
+    if (remaining <= 0) {
+      if (timer) { clearTimeout(timer); timer = null; }
       last = now;
       fn(...args);
+    } else if (!timer) {
+      timer = setTimeout(() => {
+        last = Date.now();
+        timer = null;
+        fn(...args);
+      }, remaining);
     }
-  }) as T;
+  }) as T & { cancel: () => void };
+  throttled.cancel = () => { if (timer) { clearTimeout(timer); timer = null; } };
+  return throttled;
 }
