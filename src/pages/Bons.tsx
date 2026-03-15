@@ -50,7 +50,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, Printer, List, LayoutGrid, FileCheck, Search, AlertTriangle, X, Sparkles, ChevronDown, Phone, Mail, ArrowUpRight, ChevronRight, Download, Filter, TrendingUp, BarChart3, Users, Zap, Shield, Target } from 'lucide-react';
+import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, Printer, List, LayoutGrid, FileCheck, Search, AlertTriangle, X, Sparkles, ChevronDown, Phone, Mail, ArrowUpRight, ChevronRight, Download, Filter, TrendingUp, BarChart3, Users, Zap, Shield, Target, MoreVertical } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import { RawTableSkeletonRows, RawTableEmptyState, RawTableFilteredEmpty } from '@/components/ui/TableStates';
 import { format, isToday, differenceInDays, getDaysInMonth, getDate, startOfMonth, subMonths, endOfMonth } from 'date-fns';
