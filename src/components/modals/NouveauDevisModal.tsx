@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useFormDirty } from '@/hooks/useFormDirty';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -10,6 +10,7 @@ import {
 import { formatNumber } from '@/utils/formatters';
 import { useClients } from '@/hooks/useModalData';
 import { sanitizeInput } from '@/lib/security';
+import { safeDivide, roundCurrency, roundPercent } from '@/utils/rounding';
 
 const FORMULES = [
   { value: 'F-B20', label: 'F-B20 (20 MPa)', price: 750 },
@@ -43,7 +44,7 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
   const total = useMemo(() => {
     const v = parseFloat(volume);
     const p = parseFloat(effectivePrice);
-    return v > 0 && p > 0 ? v * p : 0;
+    return v > 0 && p > 0 ? roundCurrency(v * p) : 0;
   }, [volume, effectivePrice]);
 
   const isSigmaSelected = client === SIGMA_CLIENT_ID;
@@ -58,24 +59,23 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
     const e: Record<string, string> = {};
     const w: string[] = [];
 
-    if (!client) e.client = 'Champ requis';
-    if (!sanitizeInput(chantier)) e.chantier = 'Champ requis';
-    if (!formule) e.formule = 'Champ requis';
+    if (!client) e.client = 'Champ obligatoire';
+    if (!sanitizeInput(chantier)) e.chantier = 'Champ obligatoire';
+    if (!formule) e.formule = 'Champ obligatoire';
 
     const vol = parseFloat(volume);
-    if (!volume || isNaN(vol)) e.volume = 'Champ requis';
-    else if (vol <= 0) e.volume = 'Valeur doit être supérieure à 0';
-    else if (vol > 10000) e.volume = 'Volume max 10 000 m³';
+    if (!volume || isNaN(vol)) e.volume = 'Champ obligatoire';
+    else if (vol <= 0) e.volume = 'Le volume doit être supérieur à 0';
     else if (vol > 500) w.push('Volume exceptionnel (>500 m³) — vérifier avec le client');
 
     const prix = parseFloat(effectivePrice);
-    if (!effectivePrice || isNaN(prix) || prix <= 0) e.prix = 'Prix unitaire requis';
+    if (!effectivePrice || isNaN(prix) || prix <= 0) e.prix = 'Champ obligatoire';
     else {
       if (prix < 500) w.push('Prix inférieur au coût de revient (<500 DH)');
       if (prix > 2000) w.push('Prix exceptionnellement élevé (>2000 DH)');
     }
 
-    if (!dateLivraison) e.dateLivraison = 'Champ requis';
+    if (!dateLivraison) e.dateLivraison = 'Champ obligatoire';
     else {
       const selected = new Date(dateLivraison);
       const today = new Date();
@@ -98,11 +98,12 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
       const vol = parseFloat(volume);
       const prix = parseFloat(effectivePrice);
 
-      const cutPerM3 = prix * 0.5;
+      const cutPerM3 = roundCurrency(prix * 0.5);
       const fixedCostPerM3 = 50;
       const transportExtra = 30;
-      const totalCostPerM3 = cutPerM3 + fixedCostPerM3 + transportExtra;
-      const marginPct = ((prix - totalCostPerM3) / prix) * 100;
+      const totalCostPerM3 = roundCurrency(cutPerM3 + fixedCostPerM3 + transportExtra);
+      const marginPct = roundPercent(safeDivide(prix - totalCostPerM3, prix) * 100);
+      const totalHT = roundCurrency(vol * prix);
 
       const { error } = await supabase.from('devis').insert({
         devis_id: devisId,
@@ -114,8 +115,8 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
         fixed_cost_per_m3: fixedCostPerM3,
         transport_extra_per_m3: transportExtra,
         total_cost_per_m3: totalCostPerM3,
-        margin_pct: Math.round(marginPct * 10) / 10,
-        total_ht: vol * prix,
+        margin_pct: marginPct,
+        total_ht: totalHT,
         distance_km: 15,
         statut: 'brouillon',
         notes: sanitizeInput(notes) || null,
@@ -126,14 +127,14 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
 
       await supabase.from('activity_log').insert({
         type: 'action',
-        message: `Devis ${devisId} créé — ${clientLabel} · ${formule} · ${formatNumber(vol, { decimals: 1 })} m³ · ${formatNumber(vol * prix)} DH`,
+        message: `Devis ${devisId} créé — ${clientLabel} · ${formule} · ${formatNumber(vol, { decimals: 1 })} m³ · ${formatNumber(totalHT)} DH`,
         source_page: 'ventes',
         severite: 'info',
       }).then(() => {});
 
       const devis = {
         id: devisId, client: clientLabel, chantier: sanitizeInput(chantier), formule, volume: vol,
-        prix_unitaire: prix, total: vol * prix, date_livraison: dateLivraison, notes: sanitizeInput(notes), statut: 'Brouillon',
+        prix_unitaire: prix, total: totalHT, date_livraison: dateLivraison, notes: sanitizeInput(notes), statut: 'Brouillon',
         created_at: new Date().toISOString(),
       };
       onCreated?.(devis);
@@ -141,10 +142,18 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
       resetAndClose();
     } catch (error: any) {
       console.error('Error creating devis:', error);
-      toast.error(`Erreur: ${error?.message || 'Impossible de créer le devis'}`);
+      toast.error(`Erreur lors de la création du devis`);
       setLoading(false);
     }
   };
+
+  const handleClose = useCallback(() => {
+    if (isDirty) {
+      const confirmed = window.confirm('Modifications non sauvegardées. Voulez-vous quitter ?');
+      if (!confirmed) return;
+    }
+    resetAndClose();
+  }, [isDirty]);
 
   const resetAndClose = () => {
     setClient(''); setChantier(''); setFormule(''); setVolume(''); setPrixUnit('');
@@ -153,9 +162,9 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
   };
 
   return (
-    <TBOSModal open={open} onClose={resetAndClose} title="Nouveau Devis" footer={
+    <TBOSModal open={open} onClose={handleClose} title="Nouveau Devis" footer={
       <>
-        <TBOSGhostButton onClick={resetAndClose}>Annuler</TBOSGhostButton>
+        <TBOSGhostButton onClick={handleClose}>Annuler</TBOSGhostButton>
         <TBOSPrimaryButton onClick={handleSubmit} loading={loading} disabled={loading || !client || !chantier || !formule || !volume || !dateLivraison}>
           Créer Devis
         </TBOSPrimaryButton>
@@ -201,7 +210,7 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
               hasError={!!errors.formule} options={FORMULES.map(f => ({ value: f.value, label: f.label }))} placeholder="Sélectionner" />
           </TBOSField>
           <TBOSField label="Volume (m³)" required error={errors.volume}>
-            <TBOSInput data-field="volume" type="number" step="0.5" min="0.1" max="10000" value={volume}
+            <TBOSInput data-field="volume" type="number" step="0.001" min="0.001" value={volume}
               onChange={e => setVolume(e.target.value)} hasError={!!errors.volume} placeholder="0" style={{ textAlign: 'right' }} />
           </TBOSField>
           <TBOSField label="Prix unitaire (DH/m³)" error={errors.prix}>
