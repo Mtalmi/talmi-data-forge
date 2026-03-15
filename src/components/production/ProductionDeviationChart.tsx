@@ -26,7 +26,7 @@ interface ProductionDeviationChartProps {
   className?: string;
 }
 
-export function ProductionDeviationChart({ bons, formules, className }: ProductionDeviationChartProps) {
+export const ProductionDeviationChart = React.memo(function ProductionDeviationChart({ bons, formules, className }: ProductionDeviationChartProps) {
   const chartData = useMemo(() => {
     return bons.slice(0, 8).map(bon => {
       const formule = formules.find(f => f.formule_id === bon.formule_id);
