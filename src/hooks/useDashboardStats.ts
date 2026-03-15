@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfMonth, endOfMonth, subMonths, subDays, format } from 'date-fns';
+import { safeDivide } from '@/utils/rounding';
 
 
 export interface DashboardStats {
