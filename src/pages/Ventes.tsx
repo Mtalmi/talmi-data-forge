@@ -377,12 +377,12 @@ export default function Ventes() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', paddingBottom: 8 }}>
             {/* Branding */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #FFD700, #B8860B)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #D4A843, #C49A3C)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <BarChart3 size={18} color="#0B1120" />
               </div>
               <div>
                 <span style={{ color: '#94A3B8', fontWeight: 700, fontSize: 13 }}>TBOS </span>
-                <span style={{ color: '#FFD700', fontWeight: 800, fontSize: 13 }}>Ventes</span>
+                <span style={{ color: '#D4A843', fontWeight: 800, fontSize: 13 }}>Ventes</span>
                 <p style={{ color: '#9CA3AF', fontSize: 12, lineHeight: 1.2, marginTop: 2 }}>Gestion des devis et bons de commande</p>
               </div>
             </div>

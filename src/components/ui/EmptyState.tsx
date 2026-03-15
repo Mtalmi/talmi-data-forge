@@ -46,7 +46,7 @@ export function EmptyState({
       >
         <Icon
           className={cn(variant === 'default' ? 'h-7 w-7' : 'h-5 w-5')}
-          style={{ color: '#FFD700' }}
+          style={{ color: '#D4A843' }}
         />
       </div>
 
@@ -74,9 +74,9 @@ export function EmptyState({
           size={variant === 'default' ? 'default' : 'sm'}
           className="gap-2 rounded-xl font-medium"
           style={{
-            background: '#FFD700',
+            background: '#D4A843',
             color: '#000',
-            boxShadow: '0 4px 16px rgba(255, 215, 0, 0.25)',
+            boxShadow: '0 4px 16px rgba(212, 168, 67, 0.25)',
           }}
         >
           {ActionIcon && <ActionIcon className="h-4 w-4" />}

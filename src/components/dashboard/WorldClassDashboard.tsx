@@ -128,9 +128,9 @@ const T = {
   textSec: '#94A3B8',
   textDim: '#475569',
   textFaint: '#334155',
-  dotOk: '#34D399',
-  dotWarn: '#FBBF24',
-  dotCrit: '#F87171',
+  dotOk: '#22C55E',
+  dotWarn: '#F59E0B',
+  dotCrit: '#EF4444',
 };
 
 // ─── Animated counter ───

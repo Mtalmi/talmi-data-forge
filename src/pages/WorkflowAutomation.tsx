@@ -173,9 +173,9 @@ export default function WorkflowAutomation() {
     setToast(next === 'active' ? '⚡ Workflow activated' : '⏸️ Workflow paused');
   };
 
-  const barColor = (b: string) => b === 'gold' ? '#FFD700' : b === 'blue' ? '#3B82F6' : '#10B981';
+  const barColor = (b: string) => b === 'gold' ? '#D4A843' : b === 'blue' ? '#D4A843' : '#22C55E';
   const statusBadge = (s: string) => {
-    if (s === 'active') return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider" style={{ background: '#10B98120', color: '#10B981' }}>● Active</span>;
+    if (s === 'active') return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider" style={{ background: '#22C55E20', color: '#22C55E' }}>● Active</span>;
     if (s === 'paused') return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider" style={{ background: '#F59E0B20', color: '#F59E0B' }}>⏸ Paused</span>;
     return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider" style={{ background: '#B0B8C120', color: '#B0B8C1' }}>Draft</span>;
   };

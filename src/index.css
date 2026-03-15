@@ -185,15 +185,15 @@
   --navy: #0f172a;
   --navy-card: #1e293b;
   --navy-border: #334155;
-  --gold: #ffd700;
-  --gold-soft: rgba(255, 215, 0, 0.12);
-  --gold-glow-rgba: rgba(255, 215, 0, 0.25);
+  --gold: #D4A843;
+  --gold-soft: rgba(212, 168, 67, 0.12);
+  --gold-glow-rgba: rgba(212, 168, 67, 0.25);
   --white: #f8fafc;
   --gray: #94a3b8;
-  --success-hex: #10b981;
+  --success-hex: #22c55e;
   --warning-hex: #f59e0b;
   --danger: #ef4444;
-  --info: #3b82f6;
+  --info: #D4A843;
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -3642,8 +3642,8 @@ select:focus {
   animation: breathe 2s ease-in-out infinite;
 }
 .status-dot-green {
-  background: #10b981;
-  color: #10b981;
+  background: #22c55e;
+  color: #22c55e;
 }
 .status-dot-yellow {
   background: #f59e0b;
@@ -3656,8 +3656,8 @@ select:focus {
   animation-duration: 1s;
 }
 .status-dot-gold {
-  background: #ffd700;
-  color: #ffd700;
+  background: #D4A843;
+  color: #D4A843;
 }
 
 /* ─── Tab transitions ─── */
@@ -3804,11 +3804,11 @@ nav,
 
 /* ─── Supplemental semantic tokens ─── */
 :root {
-  --clr-success: #10b981;
+  --clr-success: #22c55e;
   --clr-warning: #f59e0b;
   --clr-danger: #ef4444;
-  --clr-info: #3b82f6;
-  --clr-gold: #ffd700;
+  --clr-info: #D4A843;
+  --clr-gold: #D4A843;
   --clr-navy: #0f172a;
   --clr-card-dark: #1f2937;
   --clr-border-dark: #374151;
@@ -3990,8 +3990,8 @@ hr,
 /* ─── Premium animated status pills ─── */
 .status-badge-success {
   background: hsl(142 72% 29% / 0.15);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.3);
   border-radius: 100px;
   padding: 2px 10px;
   font-size: 11px;
@@ -4148,8 +4148,8 @@ textarea.error {
 }
 input:not([type="checkbox"]):not([type="radio"]).valid,
 textarea.valid {
-  border-color: #10b981 !important;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+  border-color: #22c55e !important;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15) !important;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -4274,7 +4274,7 @@ textarea.valid {
 
 /* ──── KPI trend arrows ──── */
 .trend-up {
-  color: #10b981;
+  color: #22c55e;
 }
 .trend-down {
   color: #ef4444;
@@ -4500,7 +4500,7 @@ textarea.valid {
   border-color: hsl(var(--primary) / 0.4);
 }
 .truck-card[data-status="available"] {
-  border-left: 3px solid #10b981;
+  border-left: 3px solid #22c55e;
 }
 .truck-card[data-status="maintenance"] {
   border-left: 3px solid #f59e0b;
@@ -4543,12 +4543,12 @@ textarea.valid {
   box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
 }
 .timeline-item[data-status="transit"]::before {
-  background: #3b82f6;
-  box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+  background: #D4A843;
+  box-shadow: 0 0 8px rgba(212, 168, 67, 0.5);
 }
 .timeline-item[data-status="done"]::before {
-  background: #10b981;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
 }
 .timeline-item[data-status="late"]::before {
   background: #ef4444;
@@ -4631,7 +4631,7 @@ textarea.valid {
 .check-success {
   stroke-dasharray: 24;
   animation: checkDraw 0.4s var(--ease-out) forwards;
-  stroke: #10b981;
+  stroke: #22c55e;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -4662,7 +4662,7 @@ textarea.valid {
   border-left: 3px solid #f59e0b;
 }
 [data-risk="low"] {
-  border-left: 3px solid #10b981;
+  border-left: 3px solid #22c55e;
 }
 
 /* ══════════════════════════════════════════════════════════════

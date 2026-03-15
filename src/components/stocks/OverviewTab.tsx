@@ -50,12 +50,12 @@ function OverviewApproveAllBtn() {
 
 const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
 const T = {
-  amber: '#FFD700',
-  amberGrid: 'rgba(245, 158, 11, 0.08)',
-  amberSubtle: 'rgba(255, 215, 0, 0.04)',
+  amber: '#D4A843',
+  amberGrid: 'rgba(212, 168, 67, 0.08)',
+  amberSubtle: 'rgba(212, 168, 67, 0.04)',
   cardBg: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
-  cardBorder: 'rgba(245, 158, 11, 0.15)',
-  success: '#10B981',
+  cardBorder: 'rgba(212, 168, 67, 0.15)',
+  success: '#22C55E',
   danger: '#EF4444',
   textPri: '#F1F5F9',
   textSec: '#94A3B8',
@@ -95,8 +95,8 @@ function SectionHeader({ icon: Icon, label, right }: { icon: any; label: string;
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
       <Icon size={16} color={T.amber} />
-      <span style={{ color: '#FFD700', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em' }}>{label}</span>
-      <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(255,215,0,0.4), transparent 80%)' }} />
+      <span style={{ color: '#D4A843', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em' }}>{label}</span>
+      <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(212,168,67,0.4), transparent 80%)' }} />
       {right}
     </div>
   );

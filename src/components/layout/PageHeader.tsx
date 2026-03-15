@@ -77,7 +77,7 @@ export function PageHeader({
                 width: 36,
                 height: 36,
                 borderRadius: 10,
-                background: 'linear-gradient(135deg, #D4A843, #B8860B)',
+                background: 'linear-gradient(135deg, #D4A843, #C49A3C)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',

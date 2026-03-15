@@ -38,7 +38,7 @@ function Sparkline({ data, color, height = 40 }: { data: number[]; color: string
 function GoldTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-[#FFD700]/30 bg-[#161D26] px-3 py-2 text-xs shadow-xl">
+    <div className="rounded-lg border border-[#D4A843]/30 bg-[#141929] px-3 py-2 text-xs shadow-xl">
       <p className="text-[#B0B8C1] mb-1">{label}</p>
       {payload.map((p: any, i: number) => (
         <p key={i} style={{ color: p.color }} className="font-mono font-semibold">{p.name}: {typeof p.value === 'number' ? p.value.toLocaleString() : p.value}</p>
@@ -166,39 +166,39 @@ export default function PredictiveMaintenance() {
     ? Object.values(equipmentData)
     : [equipmentData[activePlant]].filter(Boolean);
 
-  const healthColor = (h: number) => h > 80 ? "#10B981" : h > 50 ? "#F59E0B" : "#EF4444";
+  const healthColor = (h: number) => h > 80 ? "#22C55E" : h > 50 ? "#F59E0B" : "#EF4444";
   const statusBadge = (s: string) => {
     const map: Record<string, string> = {
       CRITICAL: "bg-[#EF4444]/20 text-[#EF4444] border-[#EF4444]/30",
-      "AI Recommended": "bg-[#FFD700]/10 text-[#FFD700] border-[#FFD700]/30",
-      Scheduled: "bg-[#3B82F6]/15 text-[#3B82F6] border-[#3B82F6]/30",
+      "AI Recommended": "bg-[#D4A843]/10 text-[#D4A843] border-[#D4A843]/30",
+      Scheduled: "bg-[#D4A843]/15 text-[#D4A843] border-[#D4A843]/30",
       Due: "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30",
-      Upcoming: "bg-[#B0B8C1]/10 text-[#B0B8C1] border-[#B0B8C1]/30",
+      Upcoming: "bg-[#9CA3AF]/10 text-[#9CA3AF] border-[#9CA3AF]/30",
     };
-    return map[s] || "bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30";
+    return map[s] || "bg-[#22C55E]/15 text-[#22C55E] border-[#22C55E]/30";
   };
 
   return (
-    <div className="min-h-screen text-white relative overflow-x-hidden max-w-full w-full" style={{ background: "#0F1419", backgroundImage: "radial-gradient(rgba(255,215,0,0.02) 1px, transparent 1px)", backgroundSize: "20px 20px" }}>
+    <div className="min-h-screen text-white relative overflow-x-hidden max-w-full w-full" style={{ background: "#0F1629", backgroundImage: "radial-gradient(rgba(212,168,67,0.02) 1px, transparent 1px)", backgroundSize: "20px 20px" }}>
       {/* Gold shimmer bar */}
-      <div className="h-[2px] w-full" style={{ background: "linear-gradient(90deg, #FFD700, transparent 40%, transparent 60%, #FFD700)" }} />
+      <div className="h-[2px] w-full" style={{ background: "linear-gradient(90deg, #D4A843, transparent 40%, transparent 60%, #D4A843)" }} />
 
       {/* Top bar */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[#2A3545]">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-[#2A3048]">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-[#FFD700] flex items-center justify-center font-bold text-black text-sm" style={{ fontFamily: "Poppins, sans-serif" }}>T</div>
-          <span className="text-[#FFD700] text-sm font-semibold tracking-[0.2em] uppercase" style={{ fontFamily: "Poppins, sans-serif" }}>Predictive Maintenance</span>
+          <div className="w-9 h-9 rounded-lg bg-[#D4A843] flex items-center justify-center font-bold text-black text-sm" style={{ fontFamily: "Poppins, sans-serif" }}>T</div>
+          <span className="text-[#D4A843] text-sm font-semibold tracking-[0.2em] uppercase" style={{ fontFamily: "Poppins, sans-serif" }}>Predictive Maintenance</span>
         </div>
         <div className="flex items-center gap-1">
           {plants.map(p => (
-            <button key={p} onClick={() => setActivePlant(p)} className={`px-3 py-1.5 text-xs rounded-lg transition-all duration-200 ${activePlant === p ? "text-[#FFD700] border-b-2 border-[#FFD700]" : "text-[#B0B8C1] hover:text-white"}`}>{p}</button>
+            <button key={p} onClick={() => setActivePlant(p)} className={`px-3 py-1.5 text-xs rounded-lg transition-all duration-200 ${activePlant === p ? "text-[#D4A843] border-b-2 border-[#D4A843]" : "text-[#9CA3AF] hover:text-white"}`}>{p}</button>
           ))}
         </div>
         <div className="flex items-center gap-3">
           {!alertDismissed && (
             <button className="px-3 py-1.5 text-xs rounded-lg bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/30 animate-pulse">🔴 2 Critical Alerts</button>
           )}
-          <button onClick={handleExport} className="px-4 py-1.5 text-xs rounded-lg font-semibold text-black" style={{ background: "linear-gradient(135deg, #FFD700, #B8960C)" }}>
+          <button onClick={handleExport} className="px-4 py-1.5 text-xs rounded-lg font-semibold text-black" style={{ background: "linear-gradient(135deg, #D4A843, #C49A3C)" }}>
             {exportState === "loading" ? "Generating..." : exportState === "done" ? "✅ Exported!" : "Export Schedule"}
           </button>
         </div>

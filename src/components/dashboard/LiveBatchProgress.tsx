@@ -6,9 +6,9 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 const T = {
-  gold: '#D4AF37',
-  dotOk: '#34D399',
-  dotWarn: '#FBBF24',
+  gold: '#D4A843',
+  dotOk: '#22C55E',
+  dotWarn: '#F59E0B',
 };
 
 interface BatchData {

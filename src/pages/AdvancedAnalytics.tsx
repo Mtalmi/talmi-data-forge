@@ -14,18 +14,18 @@ import {
 
 // ─── COLORS ─────────────────────────────────────────────────────────
 const C = {
-  bgBase: '#0F1419',
-  bgCard: '#161D26',
-  bgElevated: '#1C2533',
-  gold: '#FFD700',
-  goldDim: '#B8960C',
-  goldGlow: 'rgba(255,215,0,0.09)',
+  bgBase: '#0F1629',
+  bgCard: '#141929',
+  bgElevated: '#1A1F35',
+  gold: '#D4A843',
+  goldDim: '#C49A3C',
+  goldGlow: 'rgba(212,168,67,0.09)',
   text1: '#FFFFFF',
-  text2: '#B0B8C1',
-  success: '#10B981',
+  text2: '#9CA3AF',
+  success: '#22C55E',
   warning: '#F59E0B',
   danger: '#EF4444',
-  border: '#2A3545',
+  border: '#2A3048',
 };
 
 // ─── ANIMATED COUNTER ───────────────────────────────────────────────

@@ -323,11 +323,11 @@ export default function OperationsAgent() {
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden max-w-full w-full" style={{
-      backgroundImage: "radial-gradient(rgba(255,215,0,0.015) 1px, transparent 1px)",
+      backgroundImage: "radial-gradient(rgba(212,168,67,0.015) 1px, transparent 1px)",
       backgroundSize: "20px 20px",
     }}>
       {/* Gold shimmer top bar */}
-      <div className="h-0.5 w-full" style={{ background: "linear-gradient(90deg, transparent, #FFD700, transparent)" }} />
+      <div className="h-0.5 w-full" style={{ background: "linear-gradient(90deg, transparent, #D4A843, transparent)" }} />
 
       <div className="w-full px-4 py-6">
         {/* Header */}
@@ -336,12 +336,12 @@ export default function OperationsAgent() {
             <ArrowLeft className="w-4 h-4 mr-1" /> Back
           </Button>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #FFD700, #B8960C)" }}>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #D4A843, #C49A3C)" }}>
               <Brain className="w-5 h-5 text-black" />
             </div>
             <div>
               <h1 className="text-xl font-bold" style={{ fontFamily: "Poppins, sans-serif" }}>
-                TBOS <span style={{ color: "#FFD700" }}>OPERATIONS AGENT</span>
+                TBOS <span style={{ color: "#D4A843" }}>OPERATIONS AGENT</span>
               </h1>
               <p className="text-xs text-muted-foreground">7 autonomous AI workflows · n8n orchestration</p>
             </div>

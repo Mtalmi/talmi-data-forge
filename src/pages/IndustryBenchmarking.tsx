@@ -11,12 +11,12 @@ import { Download, ChevronDown, CheckCircle, Sparkles, Trophy, Target, TrendingU
 
 // ─── COLORS ─────────────────────────────────────────
 const C = {
-  bgBase: '#0F1419', bgCard: '#161D26', bgElevated: '#1C2533',
-  gold: '#FFD700', goldDim: '#B8960C', goldGlow: 'rgba(255,215,0,0.07)',
-  text1: '#FFFFFF', text2: '#B0B8C1',
-  success: '#10B981', warning: '#F59E0B', danger: '#EF4444',
-  border: '#2A3545',
-  you: '#FFD700', industry: '#3B82F6', top10: '#10B981',
+  bgBase: '#0F1629', bgCard: '#141929', bgElevated: '#1A1F35',
+  gold: '#D4A843', goldDim: '#C49A3C', goldGlow: 'rgba(212,168,67,0.07)',
+  text1: '#FFFFFF', text2: '#9CA3AF',
+  success: '#22C55E', warning: '#F59E0B', danger: '#EF4444',
+  border: '#2A3048',
+  you: '#D4A843', industry: '#D4A843', top10: '#22C55E',
 };
 
 // ─── STAGGER ────────────────────────────────────────

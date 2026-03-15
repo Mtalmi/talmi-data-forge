@@ -4,13 +4,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 
 const T = {
-  gold: '#FFD700',
-  goldDim: 'rgba(255,215,0,0.15)',
-  goldBorder: 'rgba(255,215,0,0.3)',
-  success: '#10B981',
+  gold: '#D4A843',
+  goldDim: 'rgba(212,168,67,0.15)',
+  goldBorder: 'rgba(212,168,67,0.3)',
+  success: '#22C55E',
   warning: '#F59E0B',
   danger: '#EF4444',
-  info: '#60A5FA',
+  info: '#D4A843',
   textPri: '#F1F5F9',
   textSec: '#94A3B8',
   textDim: '#64748B',
