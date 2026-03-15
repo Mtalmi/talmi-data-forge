@@ -136,7 +136,7 @@ const ExecutiveGauge = forwardRef<HTMLDivElement, GaugeProps>(
           </span>
           <span className="font-semibold text-xs">{label}</span>
         </div>
-        <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">{subtitle}</p>
+        <p className="text-xs text-muted-foreground mt-0.5 leading-tight">{subtitle}</p>
       </div>
     </div>
   );
