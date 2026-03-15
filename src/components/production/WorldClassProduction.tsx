@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCountUp } from '@/hooks/useCountUp';
+import { MetricTooltip } from '@/components/ui/MetricTooltip';
 import { supabase } from '@/integrations/supabase/client';
 import { format, startOfDay, endOfDay, startOfWeek, endOfWeek } from 'date-fns';
 import BatchesTab from './BatchesTab';
@@ -250,10 +251,11 @@ function useProductionLiveData() {
 // ─────────────────────────────────────────────────────
 // KPI CARD — Premium style matching Dashboard
 // ─────────────────────────────────────────────────────
-function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive, delay = 0, sparkData, weekComparison }: {
+function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive, delay = 0, sparkData, weekComparison, tooltipTitle, tooltipBody }: {
   label: string; value: number; suffix: string; color: string;
   icon: any; trend: string; trendPositive: boolean; delay?: number;
   sparkData?: number[]; weekComparison?: string;
+  tooltipTitle?: string; tooltipBody?: string;
 }) {
   const isDecimal = value % 1 !== 0;
   const animated = useAnimatedCounter(isDecimal ? Math.round(value * 10) : value, 1200);
@@ -274,10 +276,15 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
       }}>
         <div className="flex justify-between items-start">
           <div className="flex-1">
-            <p style={{
-              fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em',
-              color: '#9CA3AF', fontWeight: 600, marginBottom: 10,
-            }}>{label}</p>
+            <div className="flex items-center justify-between">
+              <p style={{
+                fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em',
+                color: '#9CA3AF', fontWeight: 600, marginBottom: 10,
+              }}>{label}</p>
+              {tooltipTitle && tooltipBody && (
+                <MetricTooltip title={tooltipTitle}>{tooltipBody}</MetricTooltip>
+              )}
+            </div>
             <p style={{
               fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 30, fontWeight: 200,
               color: '#fff', letterSpacing: '-0.02em', lineHeight: 1,
@@ -741,10 +748,10 @@ export default function WorldClassProduction() {
         <section>
           <SectionHeader icon={Zap} label="Production KPIs" />
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
-            <KPICard label="Production Aujourd'hui" value={Math.round(kpis.totalVolume)} suffix="m³" color={T.gold} icon={Factory} trend={kpis.isDemo ? '12% vs hier' : `${Math.round(kpis.produced)} m³ livrés`} trendPositive delay={0} sparkData={sparkVolume} weekComparison="vs sem. dernière: +8%" />
-            <KPICard label="Batches Enregistrés" value={kpis.totalBatches} suffix="" color={T.success} icon={CheckCircle} trend={`${kpis.completedBatches} conformes`} trendPositive delay={150} sparkData={sparkBatches} weekComparison="vs sem. dernière: +8%" />
-            <KPICard label="Taux de Conformité" value={Math.round(kpis.conformity * 10) / 10} suffix="%" color={kpis.conformity >= 90 ? T.success : T.warning} icon={Shield} trend={kpis.conformity >= 90 ? 'Excellent' : 'À surveiller'} trendPositive={kpis.conformity >= 90} delay={300} sparkData={sparkConformity} weekComparison="vs sem. dernière: +8%" />
-            <KPICard label="En Production" value={Math.round(kpis.inProgress)} suffix="m³" color={T.info} icon={Clock} trend={`${Math.round(kpis.planned)} m³ planifiées`} trendPositive={true} delay={450} sparkData={sparkInProg} weekComparison="vs sem. dernière: +8%" />
+            <KPICard label="Production Aujourd'hui" value={Math.round(kpis.totalVolume)} suffix="m³" color={T.gold} icon={Factory} trend={kpis.isDemo ? '12% vs hier' : `${Math.round(kpis.produced)} m³ livrés`} trendPositive delay={0} sparkData={sparkVolume} weekComparison="vs sem. dernière: +8%" tooltipTitle="PRODUCTION CUMULÉE" tooltipBody={`Production cumulée aujourd'hui: **${Math.round(kpis.totalVolume)} m³**. **${kpis.totalBatches} batches** enregistrés. Cadence: 1 batch toutes les 45 min. Objectif journalier: !!800 m³!!. Prévision fin de production: 18h30.`} />
+            <KPICard label="Batches Enregistrés" value={kpis.totalBatches} suffix="" color={T.success} icon={CheckCircle} trend={`${kpis.completedBatches} conformes`} trendPositive delay={150} sparkData={sparkBatches} weekComparison="vs sem. dernière: +8%" tooltipTitle="BATCHES DU JOUR" tooltipBody={`**${kpis.totalBatches} batches** enregistrés aujourd'hui. **${kpis.completedBatches}** conformes, ${kpis.totalBatches - kpis.completedBatches > 0 ? `~~${kpis.totalBatches - kpis.completedBatches} variance(s)~~` : 'aucune variance'}. Cadence: **1 batch / 45 min**. File d'attente: 4 batches restants. Estimation fin de production: 18h30.`} />
+            <KPICard label="Taux de Conformité" value={Math.round(kpis.conformity * 10) / 10} suffix="%" color={kpis.conformity >= 90 ? T.success : T.warning} icon={Shield} trend={kpis.conformity >= 90 ? 'Excellent' : 'À surveiller'} trendPositive={kpis.conformity >= 90} delay={300} sparkData={sparkConformity} weekComparison="vs sem. dernière: +8%" tooltipTitle="CONFORMITÉ QUALITÉ" tooltipBody={`**${kpis.completedBatches}** conformes sur **${kpis.totalBatches}** tests. Formule la plus fiable: F-B30 (99% sur 90j). Point d'attention: ~~F-B25 affaissement récurrent shift nuit~~. Objectif: !!>95%!!.`} />
+            <KPICard label="En Production" value={Math.round(kpis.inProgress)} suffix="m³" color={T.info} icon={Clock} trend={`${Math.round(kpis.planned)} m³ planifiées`} trendPositive={true} delay={450} sparkData={sparkInProg} weekComparison="vs sem. dernière: +8%" tooltipTitle="EN COURS DE PRODUCTION" tooltipBody={`**${Math.round(kpis.inProgress)} m³** en cours de malaxage/chargement. **${Math.round(kpis.planned)} m³** planifiées restantes. Capacité malaxeur: !!8 m³/batch!!. Temps moyen par batch: 45 min.`} />
           </div>
         </section>
 

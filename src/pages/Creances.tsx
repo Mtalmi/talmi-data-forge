@@ -87,6 +87,7 @@ import { format, parseISO } from 'date-fns';
 import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { MetricTooltip } from '@/components/ui/MetricTooltip';
 
 const AGING_COLORS = ['hsl(var(--success))', 'hsl(var(--warning))', 'hsl(var(--accent))', 'hsl(var(--destructive))', 'hsl(142, 76%, 36%)'];
 
@@ -954,7 +955,12 @@ export default function Creances() {
                       fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
                       fontSize: 32, fontWeight: 200, color: rateColor, lineHeight: 1, letterSpacing: '-0.02em', marginTop: -4,
                     }}>{rate.toFixed(1)}<span style={{ fontSize: 14, color: '#9CA3AF' }}>%</span></p>
-                    <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 4 }}>Taux Recouvrement</p>
+                    <div className="flex items-center gap-1.5">
+                      <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 4 }}>Taux Recouvrement</p>
+                      <MetricTooltip title="TAUX DE RECOUVREMENT">
+                        {`Taux actuel: **${rate.toFixed(1)}%**. Encours total: **${Math.round(stats.totalOutstanding / 1000)}K DH**. À risque (60j+): ~~${Math.round(stats.atRiskAmount / 1000)}K DH~~. **${stats.clientsWithOverdue}** client${stats.clientsWithOverdue > 1 ? 's' : ''} en retard. DSO moyen: **${stats.dsoAverage}j**. Objectif: !!>85%!!. Sans les clients à risque, le taux serait **${Math.min(99.2, stats.collectionRate + 5).toFixed(1)}%**.`}
+                      </MetricTooltip>
+                    </div>
                   </div>
                 );
               })()}

@@ -43,6 +43,7 @@ const TaxComplianceWidget = lazy(() => import('@/components/compliance').then(m 
 
 import { useCountUp } from '@/hooks/useCountUp';
 import { TiltCard } from '@/components/dashboard/TiltCard';
+import { MetricTooltip } from '@/components/ui/MetricTooltip';
 
 // ─── Sparkline data (hourly production) ───
 const SPARKLINE_DATA = [
@@ -923,8 +924,13 @@ export default function Dashboard() {
                   </div>
                 </div>
                 {/* DAILY SCORE GAUGE */}
-                <div className="hidden md:block" data-tour="score-gauge">
+                <div className="hidden md:block relative" data-tour="score-gauge">
                   <DailyScoreGauge score={demoData.score} deltaVsYesterday={3} streak={demoData.streak} weeklyRecord={{ score: demoData.recordScore, day: 'jeudi' }} />
+                  <div className="absolute top-1 right-1">
+                    <MetricTooltip title="SCORE OPÉRATIONNEL">
+                      {`Score composite **${demoData.score}/100** calculé à partir de: Production vs objectif (85/100), Conformité qualité (96/100), Ponctualité livraisons (88/100), Santé stocks (72/100), Recouvrement créances (94/100). Pénalisé par: ~~stock adjuvant bas (−8pts)~~, ~~retard livraison Résidences Atlas (−5pts)~~. Série en cours: !!${demoData.streak} jours!! > 80.`}
+                    </MetricTooltip>
+                  </div>
                 </div>
               </div>
 
@@ -955,10 +961,13 @@ export default function Dashboard() {
                 <div className="w-px h-10 bg-white/10 flex-shrink-0" />
 
                 {/* Production */}
-                <div className="flex flex-col">
+                <div className="flex flex-col relative">
                   <div className="flex items-baseline">
                     <span className="tbos-hero-stat-number text-2xl text-white" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200, textShadow: '0 0 15px rgba(255, 255, 255, 0.08)' }}>{prodVolume}</span>
                     <span className="text-sm text-white/40 ml-1">{plantData.production.volumeUnit}</span>
+                    <MetricTooltip title="PRODUCTION CUMULÉE" className="ml-1.5">
+                      {`Production cumulée aujourd'hui. **14 batches** complétés. Cadence actuelle: **47 m³/h**. Objectif journalier: !!800 m³!! (84% atteint). Formule dominante: F-B25 (60%). Prévision fin de journée: ~780 m³ si cadence maintenue.`}
+                    </MetricTooltip>
                   </div>
                   <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">PRODUCTION DU JOUR</span>
                 </div>
@@ -967,9 +976,12 @@ export default function Dashboard() {
                 <div className="w-px h-10 bg-white/10 flex-shrink-0" />
 
                 {/* Marge */}
-                <div className="flex flex-col">
+                <div className="flex flex-col relative">
                   <div className="flex items-baseline">
                      <span className="tbos-hero-stat-number text-2xl" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200, color: '#D4A843', letterSpacing: '-0.02em' }}>{marge}<span className="text-sm" style={{ color: 'rgba(212,168,67,0.5)', margin: 0, padding: 0, letterSpacing: 0 }}>%</span></span>
+                     <MetricTooltip title="MARGE BRUTE" className="ml-1.5">
+                       {`Marge brute = (Revenu − Coût matières) / Revenu. Revenu: **75,600 DH**. Coût matières: **37,800 DH**. La marge est stable vs hier (+0.1pt). Objectif: !!>45%!!. Principal levier: optimisation dosage ciment F-B25 (~~−24.8% sur-dosage~~ identifié = !!+14 DH/m³!! récupérable).`}
+                     </MetricTooltip>
                    </div>
                    <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">MARGE BRUTE</span>
                 </div>
@@ -1198,6 +1210,8 @@ export default function Dashboard() {
               secondaryValue: `${uf.fmtVolume(demoData.production.volume, 0)} / ${uf.fmtVolume(3200, 0)}`,
               target: uf.rawVolume(280),
               targetLabel: 'OBJ',
+              tooltipTitle: 'PRODUCTION CUMULÉE',
+              tooltipBody: `Production cumulée aujourd'hui. **14 batches** complétés. Cadence actuelle: **47 m³/h**. Objectif journalier: !!800 m³!! (84% atteint). Formule dominante: F-B25 (60%). Prévision fin de journée: ~780 m³ si cadence maintenue.`,
             },
             {
               label: 'REVENUE',
@@ -1211,6 +1225,8 @@ export default function Dashboard() {
               sparkline: '0,26 20,22 40,28 60,20 80,16 100,12 120,8',
               secondaryLabel: 'Objectif',
               secondaryValue: `${uf.fmtCurrencyK(250000)} · 30%`,
+              tooltipTitle: 'CHIFFRE D\'AFFAIRES',
+              tooltipBody: `Revenu total facturé aujourd'hui. **11 factures** émises. Client principal: **TGCC** (32%). Taux de conversion devis→commande: !!17%!!. Pipeline actif: **155K DH** en attente. Objectif mensuel: 250K DH (30% atteint).`,
             },
             {
               label: 'MARGE',
@@ -1227,6 +1243,8 @@ export default function Dashboard() {
               secondaryValue: `Net: ${uf.fmtCurrencyK(demoData.profitNet.total)}`,
               target: 32,
               targetLabel: 'OBJ',
+              tooltipTitle: 'MARGE BRUTE',
+              tooltipBody: `Marge brute = (Revenu − Coût matières) / Revenu. Revenu: **75,600 DH**. Coût matières: **37,800 DH**. Stable vs hier (+0.1pt). Objectif: !!>45%!!. Levier: optimisation dosage ciment F-B25 (~~−24.8% sur-dosage~~ = !!+14 DH/m³!! récupérable).`,
             },
             {
               label: 'TRÉSORERIE',
@@ -1241,6 +1259,8 @@ export default function Dashboard() {
               sparkline: '0,26 20,22 40,24 60,18 80,14 100,10 120,4',
               secondaryLabel: 'Net',
               secondaryValue: `+${uf.fmtCurrencyK(demoData.profitNet.total * 2)}`,
+              tooltipTitle: 'TRÉSORERIE',
+              tooltipBody: `Solde disponible en banque. Entrées prévues: **72K DH** (TGCC + Saudi Readymix cette semaine). Sorties prévues: **45K DH** (ciment + carburant). Prévision fin de mois: **${uf.fmtCurrencyK(demoData.tresorerie.value * 0.9)}**. Taux recouvrement: !!94%!!.`,
             },
           ].map((kpi, i) => {
             const kpiRoutes = ['/production', '/ventes', '/production', '/creances'];
@@ -1271,8 +1291,13 @@ export default function Dashboard() {
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4A843]/60 to-transparent" />
               <div className="relative z-[1] flex flex-col flex-1" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ flex: '1 1 auto' }}>
-                  <div className="mb-5" style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: 'rgb(100,116,139)' }}>
+                  <div className="mb-5 flex items-center justify-between" style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: 'rgb(100,116,139)' }}>
                     {kpi.label}
+                    {'tooltipTitle' in kpi && (
+                      <MetricTooltip title={(kpi as any).tooltipTitle}>
+                        {(kpi as any).tooltipBody}
+                      </MetricTooltip>
+                    )}
                   </div>
                   <div className="flex items-baseline gap-2 leading-none">
                      <span className={`tbos-hero-stat-number text-3xl font-mono tracking-tight text-white ${flashClass}`} style={{

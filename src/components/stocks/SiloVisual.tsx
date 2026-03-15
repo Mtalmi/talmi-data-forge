@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { AlertTriangle, TrendingDown, Clock, Gauge } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nContext';
 import { useState } from 'react';
+import { MetricTooltip } from '@/components/ui/MetricTooltip';
 
 const MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace';
 
@@ -278,6 +279,9 @@ export function SiloVisual({
             <span style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF' }}>
               {t.pages.stocks.estimatedAutonomy}
             </span>
+            <MetricTooltip title={`AUTONOMIE ${materiau.toUpperCase()}`}>
+              {`Stock actuel: **${quantite.toLocaleString('fr-FR')} ${unite}**. ${avgDailyUsage ? `Consommation moyenne: **${avgDailyUsage.toFixed(0)} ${unite}/jour**. ` : ''}${daysRemaining !== undefined ? `Rupture estimée dans !!${displayAutonomy}!!. ` : ''}${daysRemaining !== undefined && daysRemaining <= 7 ? `~~Commande urgente recommandée~~. ` : ''}Capacité max: ${capacite.toLocaleString('fr-FR')} ${unite} (${percentage.toFixed(0)}% rempli).`}
+            </MetricTooltip>
           </div>
           <div className="mt-1 text-center" style={{
             fontFamily: MONO,
