@@ -360,7 +360,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
                       >
                         <item.icon
                           className="flex-shrink-0 transition-colors duration-200"
-                          size={16}
+                          size={20}
                           strokeWidth={1.5}
                           style={{ color: active ? '#D4A843' : '#9CA3AF', marginRight: 10 }}
                         />
