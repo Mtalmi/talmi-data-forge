@@ -199,7 +199,7 @@ export function ProductionLiveMetrics({
           </div>
           <div className="flex items-baseline gap-2">
             <span className={cn(
-              "text-2xl font-bold",
+              "text-2xl font-extralight",
               lateOrders.length > 0 ? "text-destructive" : "text-muted-foreground"
             )}>
               {lateOrders.length}

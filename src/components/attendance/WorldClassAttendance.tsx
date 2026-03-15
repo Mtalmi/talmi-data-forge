@@ -756,7 +756,7 @@ export default function WorldClassAttendance() {
                   <div style={{ fontFamily: SANS, fontSize: 11, color: T.textDim }}>{ot.poste}</div>
                 </div>
                 <div style={{ textAlign: 'center', minWidth: 64 }}>
-                  <div style={{ fontFamily: MONO, fontSize: 16, fontWeight: 800, color: T.gold }}>{ot.heures}h</div>
+                  <div style={{ fontFamily: MONO, fontSize: 16, fontWeight: 200, color: T.gold }}>{ot.heures}h</div>
                   <div style={{ fontFamily: SANS, fontSize: 10, color: T.textDim }}>Heures supp.</div>
                 </div>
                 <div style={{ textAlign: 'center', minWidth: 72 }}>

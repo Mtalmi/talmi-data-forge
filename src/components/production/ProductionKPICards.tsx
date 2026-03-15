@@ -103,7 +103,7 @@ export function ProductionKPICards({
             <span className="text-xs text-muted-foreground">Alertes</span>
           </div>
           <p className={cn(
-            "text-2xl font-bold mt-1",
+            "text-2xl font-extralight mt-1",
             deviationCount > 0 || criticalStocks.length > 0 ? "text-destructive" : "text-muted-foreground"
           )}>
             {deviationCount + criticalStocks.length}
