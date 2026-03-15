@@ -120,9 +120,14 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
           {/* Notifications */}
           <NotificationCenter />
 
-          {/* Settings gear */}
+          {/* Settings gear — navigates to /settings */}
           <button
             style={iconBtnStyle}
+            onClick={() => {
+              const navigate = (window as any).__tbos_navigate;
+              if (navigate) navigate('/settings');
+              else window.location.href = '/settings';
+            }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#9CA3AF'; }}
             title="Paramètres"

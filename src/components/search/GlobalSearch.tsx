@@ -26,6 +26,8 @@ const QUICK_ACCESS: SearchResult[] = [
   { type: 'page', id: 'logistique', icon: '🚛', title: 'Logistique', subtitle: 'Flotte & livraisons', url: '/logistique', shortcut: 'G T' },
   { type: 'page', id: 'bons', icon: '📋', title: 'Bons de Commande', subtitle: 'Suivi livraisons', url: '/bons', shortcut: 'G B' },
   { type: 'page', id: 'creances', icon: '💳', title: 'Créances', subtitle: 'Suivi paiements', url: '/creances', shortcut: 'G C' },
+  { type: 'page', id: 'clients', icon: '👤', title: 'Clients', subtitle: 'Portefeuille clients', url: '/clients' },
+  { type: 'page', id: 'planning', icon: '📅', title: 'Planning', subtitle: 'Dispatch & planification', url: '/planning' },
 ];
 
 const QUICK_ACTIONS: SearchResult[] = [
@@ -42,12 +44,35 @@ const IA_ITEMS: SearchResult[] = [
   { type: 'ia', id: 'recommandations', icon: '💡', title: 'Recommandations IA', subtitle: 'Actions suggérées par Claude Opus', url: '/dashboard' },
 ];
 
-// Static demo results for specific searches
+// Static demo results for specific searches — extended index
 const DEMO_SEARCH_RESULTS: Record<string, SearchResult[]> = {
   sigma: [{ type: 'client', id: 'sigma', icon: '👤', title: 'Sigma Bâtiment', subtitle: 'Score: 23/100 · 189K DH impayés · 78% risque défaut', url: '/clients', subtitleColor: '#EF4444' }],
+  tgcc: [{ type: 'client', id: 'tgcc', icon: '👤', title: 'TGCC', subtitle: 'Client majeur · Pipeline actif', url: '/clients' }],
+  constructions: [{ type: 'client', id: 'cm', icon: '👤', title: 'Constructions Modernes SA', subtitle: 'Client régulier', url: '/clients' }],
+  btp: [{ type: 'client', id: 'btp', icon: '👤', title: 'BTP Maroc SARL', subtitle: 'Client actif', url: '/clients' }],
+  't-04': [{ type: 'truck', id: 't04', icon: '🚛', title: 'Toupie T-04', subtitle: 'En service · Livraison en cours', url: '/logistique' }],
+  't-07': [{ type: 'truck', id: 't07', icon: '🚛', title: 'Toupie T-07', subtitle: 'En service', url: '/logistique' }],
   't-09': [{ type: 'truck', id: 't09', icon: '🚛', title: 'Toupie T-09', subtitle: 'En maintenance · Retour prévu 15/03', url: '/logistique', subtitleColor: '#F59E0B' }],
+  't-12': [{ type: 'truck', id: 't12', icon: '🚛', title: 'Toupie T-12', subtitle: 'En service', url: '/logistique' }],
+  'trk-': [{ type: 'truck', id: 'trk01', icon: '🚛', title: 'TRK-01 (Liberty)', subtitle: 'Demo US fleet', url: '/logistique' }],
+  'lkw-': [{ type: 'truck', id: 'lkw01', icon: '🚛', title: 'LKW-01 (EuroBeton)', subtitle: 'Demo EU fleet', url: '/logistique' }],
+  b20: [{ type: 'formule', id: 'b20', icon: '🧪', title: 'Formule F-B20', subtitle: '300 kg/m³ ciment', url: '/production' }],
   b25: [{ type: 'formule', id: 'b25', icon: '🧪', title: 'Formule F-B25', subtitle: '350 kg/m³ ciment · 60% des batches', url: '/production' }],
+  b30: [{ type: 'formule', id: 'b30', icon: '🧪', title: 'Formule F-B30', subtitle: '400 kg/m³ ciment', url: '/production' }],
+  b35: [{ type: 'formule', id: 'b35', icon: '🧪', title: 'Formule F-B35', subtitle: '450 kg/m³ ciment · Haute performance', url: '/production' }],
+  'c25': [{ type: 'formule', id: 'c2530', icon: '🧪', title: 'C25/30 (EU)', subtitle: 'EN 206 · Demo EU', url: '/production' }],
+  psi: [{ type: 'formule', id: '3500psi', icon: '🧪', title: '3500 PSI (US)', subtitle: 'ASTM C94 · Demo US', url: '/production' }],
   'bn-0140': [{ type: 'batch', id: 'bn0140', icon: '⚠', title: 'Batch BN-0140', subtitle: 'Non-conforme · Slump +10%', url: '/laboratoire', subtitleColor: '#EF4444' }],
+  'bn-0': [{ type: 'batch', id: 'bn0139', icon: '✅', title: 'Batch BN-0139', subtitle: 'Conforme · B25 · 8m³', url: '/laboratoire' }],
+  ciment: [{ type: 'page', id: 'ciment', icon: '📦', title: 'Ciment — Stock', subtitle: 'Niveau actuel · Seuil alerte', url: '/stocks' }],
+  sable: [{ type: 'page', id: 'sable', icon: '📦', title: 'Sable — Stock', subtitle: 'Niveau actuel', url: '/stocks' }],
+  adjuvant: [{ type: 'page', id: 'adj', icon: '📦', title: 'Adjuvant — Stock', subtitle: 'CRITIQUE · 6,7j autonomie', url: '/stocks', subtitleColor: '#EF4444' }],
+  gravette: [{ type: 'page', id: 'grav', icon: '📦', title: 'Gravette — Stock', subtitle: 'Niveau actuel', url: '/stocks' }],
+  eau: [{ type: 'page', id: 'eau', icon: '📦', title: 'Eau — Stock', subtitle: 'Niveau actuel', url: '/stocks' }],
+  'fac-': [{ type: 'facture', id: 'fac001', icon: '📄', title: 'FAC-2025-001', subtitle: 'Recherche en base…', url: '/creances' }],
+  youssef: [{ type: 'client', id: 'driver-y', icon: '🚛', title: 'Youssef Benali (Chauffeur)', subtitle: 'T-04 · En service', url: '/logistique' }],
+  karim: [{ type: 'client', id: 'driver-k', icon: '🚛', title: 'Karim Idrissi (Chauffeur)', subtitle: 'T-07 · En service', url: '/logistique' }],
+  mehdi: [{ type: 'client', id: 'driver-m', icon: '🚛', title: 'Mehdi Tazi (Chauffeur)', subtitle: 'T-09 · En maintenance', url: '/logistique' }],
 };
 
 function ShortcutBadge({ shortcut }: { shortcut: string }) {
