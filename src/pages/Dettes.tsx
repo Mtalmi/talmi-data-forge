@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { NouvelleFactureModal } from '@/components/modals/NouvelleFactureModal';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
 import MainLayout from '@/components/layout/MainLayout';
