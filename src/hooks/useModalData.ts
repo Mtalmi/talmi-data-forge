@@ -9,11 +9,11 @@ export function useClients() {
 
   useEffect(() => {
     const fetch = async () => {
-      const { data } = await supabase
+      const { data } = await (supabase
         .from('clients')
         .select('client_id, nom_client, segment, score_sante')
         .eq('statut', 'actif')
-        .order('nom_client') as any;
+        .order('nom_client') as any);
       if (data) {
         setClients(data.map((c: any) => ({
           value: c.client_id,
