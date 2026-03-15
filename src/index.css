@@ -4873,6 +4873,53 @@ textarea.valid {
   /* Force print color rendering */
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   th { color: #333 !important; background: #F0F0F0 !important; }
+
+  /* ── no-print utility ── */
+  .no-print,
+  .no-print * { display: none !important; }
+
+  /* ── Page-specific print headers ── */
+  .print-page-header {
+    display: block !important;
+    text-align: center;
+    font-family: 'DM Sans', ui-monospace, sans-serif;
+    font-size: 14pt;
+    font-weight: 700;
+    color: #8B6914 !important;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #8B6914;
+  }
+
+  /* ── DASHBOARD print ── */
+  [data-print-page="dashboard"] .print-page-header::after {
+    content: "TBOS — Tableau de Bord — Imprimé le " attr(data-print-date);
+  }
+  [data-print-page="dashboard"] svg { max-width: 100% !important; }
+
+  /* ── VENTES print ── */
+  [data-print-page="ventes"] .print-page-header::after {
+    content: "TBOS — Ventes & Devis — Imprimé le " attr(data-print-date);
+  }
+  [data-print-page="ventes"] table { page-break-inside: auto; }
+  [data-print-page="ventes"] tr { page-break-inside: avoid; page-break-after: auto; }
+  [data-print-page="ventes"] thead { display: table-header-group; }
+
+  /* ── CRÉANCES print ── */
+  [data-print-page="creances"] .print-page-header::after {
+    content: "TBOS — État des Créances — Imprimé le " attr(data-print-date);
+  }
+  [data-print-page="creances"] table { page-break-inside: auto; }
+  [data-print-page="creances"] tr { page-break-inside: avoid; }
+  [data-print-page="creances"] thead { display: table-header-group; }
+
+  /* ── LABORATOIRE print ── */
+  [data-print-page="laboratoire"] .print-page-header::after {
+    content: "TBOS — Rapport Laboratoire — Imprimé le " attr(data-print-date);
+  }
+  [data-print-page="laboratoire"] table { page-break-inside: auto; }
+  [data-print-page="laboratoire"] tr { page-break-inside: avoid; }
+  [data-print-page="laboratoire"] thead { display: table-header-group; }
 }
 
 /* ══════════════════════════════════════════════════════════════

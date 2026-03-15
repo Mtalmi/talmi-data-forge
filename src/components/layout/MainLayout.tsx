@@ -110,7 +110,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
 
         {/* Top Bar with hamburger — sticky */}
         <header
-          className="tbos-top-navbar-shell flex items-center shrink-0 sticky top-0 z-30"
+          className="tbos-top-navbar-shell no-print flex items-center shrink-0 sticky top-0 z-30"
           style={{ height: 56, minHeight: 56, background: '#0F1629' }}
         >
           <button
@@ -162,14 +162,15 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
         </footer>
 
         {/* Back to top */}
-        <BackToTop />
-        {/* Quick Action FAB */}
-        <QuickActionFAB />
-        <CommandPalette />
-        <ShortcutsHelpModal />
-        <ScreenReaderAnnouncer />
-        <PWAInstallPrompt />
-        <NotificationSettings />
+        <div className="no-print">
+          <BackToTop />
+          <QuickActionFAB />
+          <CommandPalette />
+          <ShortcutsHelpModal />
+          <ScreenReaderAnnouncer />
+          <PWAInstallPrompt />
+          <NotificationSettings />
+        </div>
 
         {/* Mobile Bottom Navigation */}
         {!hideBottomNav && showMobileNav && <MobileBottomNav />}

@@ -360,8 +360,10 @@ export default function Ventes() {
   return (
     <TooltipProvider>
       <MainLayout>
+        <div data-print-page="ventes" data-print-date={new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}>
+        <div className="print-page-header hidden" style={{ display: 'none' }} />
         {/* Ambient Atmosphere */}
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: 'none', zIndex: 0 }}>
+        <div className="no-print" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: 'none', zIndex: 0 }}>
           <div style={{ position: 'absolute', top: '-15%', left: '30%', width: '50%', height: '40%', background: 'radial-gradient(ellipse, rgba(253,185,19,0.04) 0%, transparent 70%)', filter: 'blur(80px)' }}/>
           <div style={{ position: 'absolute', top: '20%', right: '-5%', width: '30%', height: '35%', background: 'radial-gradient(ellipse, rgba(0,217,255,0.02) 0%, transparent 70%)', filter: 'blur(60px)' }}/>
         </div>
@@ -806,6 +808,7 @@ export default function Ventes() {
             if (isEmergency) navigate(`/planning?date=${format(new Date(), 'yyyy-MM-dd')}&focus=pending`);
           }}
         />
+        </div>
       </MainLayout>
     </TooltipProvider>
   );

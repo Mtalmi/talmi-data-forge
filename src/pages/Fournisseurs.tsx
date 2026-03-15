@@ -134,6 +134,8 @@ export default function Fournisseurs() {
 
   return (
     <MainLayout>
+      <div data-print-page="creances" data-print-date={new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}>
+      <div className="print-page-header hidden" style={{ display: 'none' }} />
       <div className="space-y-4 sm:space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -706,6 +708,7 @@ export default function Fournisseurs() {
           fournisseurs={fournisseurs}
           onSubmit={createAchat}
         />
+      </div>
       </div>
     </MainLayout>
   );
