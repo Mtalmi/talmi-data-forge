@@ -151,6 +151,7 @@ const App = () => (
   <I18nProvider>
   <UnitProvider>
   <PlantProvider>
+  <ActivityProvider>
     <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <TooltipProvider>
