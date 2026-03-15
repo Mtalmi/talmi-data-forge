@@ -139,6 +139,11 @@ function RouteLoader() {
   );
 }
 
+function PageTitleManager() {
+  usePageTitle();
+  return null;
+}
+
 const App = () => (
   <I18nProvider>
   <UnitProvider>
