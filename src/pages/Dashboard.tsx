@@ -19,6 +19,7 @@ import { IntelligenceBriefingCard } from '@/components/dashboard/IntelligenceBri
 import { ResumeIABar } from '@/components/dashboard/ResumeIABar';
 import { DailyScoreGauge } from '@/components/dashboard/DailyScoreGauge';
 import { MultiMarketCalendar } from '@/components/dashboard/MultiMarketCalendar';
+import { ScenarioSimulator } from '@/components/dashboard/ScenarioSimulator';
 
 // Lazy-loaded heavy widgets
 const WorldClassDashboard = lazy(() => import('@/components/dashboard/WorldClassDashboard').then(m => ({ default: m.WorldClassDashboard })));
@@ -2202,6 +2203,9 @@ export default function Dashboard() {
             </div>
           );
         })()}
+
+        {/* ── SIMULATEUR DE SCÉNARIOS ── */}
+        <ScenarioSimulator />
 
         {/* ── ÉCOSYSTÈME D'INTÉGRATIONS ── */}
         {(() => {
