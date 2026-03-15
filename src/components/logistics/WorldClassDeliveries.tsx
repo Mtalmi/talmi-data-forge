@@ -270,7 +270,7 @@ const FLEET_HEALTH_RAW = [
   { name: 'T-12 Toupie 8m³', score: 86, insight: 'Visite technique dans 3 semaines', fullDiag: 'Moteur: optimal · Pneus: 80% · Vidange: OK · Batterie: 95% · Freins: 88% · VT prévue 28/03', revenuRaw: 8300, driver: 'Mehdi Tazi', driverKm: 45, driverScore: 94, driverLivr: 1, maintenance: { text: 'Prochaine maintenance: visite technique dans 3 semaines ✓', color: T.textDim } },
 ];
 
-function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; delay?: number }) {
+function FleetHealthCard({ v, delay = 0, uf }: { v: typeof FLEET_HEALTH_RAW[0]; delay?: number; uf: ReturnType<typeof useUnitFormat> }) {
   const [visible, setVisible] = useState(false);
   const [hov, setHov] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
