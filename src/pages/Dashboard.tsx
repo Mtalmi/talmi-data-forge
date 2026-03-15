@@ -1057,7 +1057,7 @@ export default function Dashboard() {
               </div>
               {/* Line 2: Detail */}
               <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, color: '#9CA3AF', marginBottom: 6, lineHeight: 1.6 }}>
-                Adjuvant insuffisant pour production prévue. Stock actuel: 200 L (6,7j). Commandes confirmées J+4 à J+7: 380 L nécessaires. Déficit: <span style={{ color: '#F59E0B', fontWeight: 600 }}>180 L</span>.
+                <SmartLabel term="Adjuvant" /> insuffisant pour production prévue. Stock actuel: 200 L (6,7j). Commandes confirmées J+4 à J+7: 380 L nécessaires. Déficit: <span style={{ color: '#F59E0B', fontWeight: 600 }}>180 L</span>.
               </div>
               {/* Line 3: Cost */}
               <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, color: '#EF4444', marginBottom: 6 }}>
