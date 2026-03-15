@@ -924,8 +924,13 @@ export default function Dashboard() {
                   </div>
                 </div>
                 {/* DAILY SCORE GAUGE */}
-                <div className="hidden md:block" data-tour="score-gauge">
+                <div className="hidden md:block relative" data-tour="score-gauge">
                   <DailyScoreGauge score={demoData.score} deltaVsYesterday={3} streak={demoData.streak} weeklyRecord={{ score: demoData.recordScore, day: 'jeudi' }} />
+                  <div className="absolute top-1 right-1">
+                    <MetricTooltip title="SCORE OPÉRATIONNEL">
+                      {`Score composite **${demoData.score}/100** calculé à partir de: Production vs objectif (85/100), Conformité qualité (96/100), Ponctualité livraisons (88/100), Santé stocks (72/100), Recouvrement créances (94/100). Pénalisé par: ~~stock adjuvant bas (−8pts)~~, ~~retard livraison Résidences Atlas (−5pts)~~. Série en cours: !!${demoData.streak} jours!! > 80.`}
+                    </MetricTooltip>
+                  </div>
                 </div>
               </div>
 
