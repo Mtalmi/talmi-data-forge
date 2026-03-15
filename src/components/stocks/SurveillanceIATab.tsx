@@ -73,6 +73,11 @@ export function SurveillanceIATab() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <AIAgentCard type="reorder_recommendation" title="Recommandations Réappro" />
+        <AIAgentCard type="stock_autonomy" title="Autonomie Stocks" />
+        <AIAgentCard type="stock_quality_prediction" title="Prédiction Qualité" />
+      </div>
       <style>{`
         @keyframes survPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:0.4} }
       `}</style>
