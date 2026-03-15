@@ -545,7 +545,7 @@ export default function WorldClassProduction() {
     for (let h = 6; h <= 18; h++) hourMap[`${h}h`] = 0;
 
     // Primary: use production_batches completed_at/created_at
-    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    const todayStr = getMoroccoToday();
     const todayBatches = batches.filter(b => b.created_at?.startsWith(todayStr) && b.status === 'complete');
     if (todayBatches.length > 0) {
       todayBatches.forEach(b => {
