@@ -49,7 +49,7 @@ export default function DesignGuardian() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Shield className="w-7 h-7" style={{ color: '#FFD700' }} />
+            <Shield className="w-7 h-7" style={{ color: '#D4A843' }} />
             TBOS Design Guardian
             <Sparkles className="w-4 h-4 text-yellow-400/60" />
           </h1>
