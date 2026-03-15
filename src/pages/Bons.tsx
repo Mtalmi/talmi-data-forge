@@ -55,6 +55,7 @@ import { toast } from 'sonner';
 import { format, isToday, differenceInDays, getDaysInMonth, getDate, startOfMonth, subMonths, endOfMonth } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { ResponsiveContainer, AreaChart, Area, ReferenceLine, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Bar, BarChart, ComposedChart, Line, PieChart, Pie, Cell, FunnelChart, Funnel, LabelList } from 'recharts';
+import { CopyableText } from '@/components/ui/CopyableText';
 
 // ─── Constants ───
 const MONO = 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace';

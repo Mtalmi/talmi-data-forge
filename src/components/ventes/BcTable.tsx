@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { CopyableText } from '@/components/ui/CopyableText';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';

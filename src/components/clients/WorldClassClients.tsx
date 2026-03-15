@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { CopyableText } from '@/components/ui/CopyableText';
 import { useNavigate } from 'react-router-dom';
 import { NouveauClientModal } from '@/components/modals/NouveauClientModal';
 import { FlaggedClientName, CrossPageHint, CrossRef } from '@/lib/cross-page-data';

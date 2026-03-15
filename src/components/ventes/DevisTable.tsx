@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { CopyableText } from '@/components/ui/CopyableText';
 import { useTableSort } from '@/hooks/useTableSort';
 import { SortableTableHead } from '@/components/ui/SortableHeader';
 import { TablePagination } from '@/components/ui/TablePagination';

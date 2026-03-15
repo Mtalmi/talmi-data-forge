@@ -29,6 +29,7 @@ import { useFournisseurs, Fournisseur, Achat, FactureFournisseur } from '@/hooks
 import { format } from 'date-fns';
 
 import PurchaseOrderForm from '@/components/suppliers/PurchaseOrderForm';
+import { CopyableText } from '@/components/ui/CopyableText';
 
 const statusColors: Record<string, string> = {
   en_attente: 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30',
