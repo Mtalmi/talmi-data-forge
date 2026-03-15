@@ -2067,6 +2067,7 @@ export default function WorldClassLaboratory() {
         onTabChange={setActiveTab}
         actions={
           <button
+            onClick={() => setShowTestModal(true)}
             onMouseEnter={() => setHoverNew(true)} onMouseLeave={() => setHoverNew(false)}
             style={{
               display: 'flex', alignItems: 'center', gap: 7, padding: '7px 16px',
@@ -2080,8 +2081,6 @@ export default function WorldClassLaboratory() {
         }
       />
 
-      {/* Duplicate tab bar removed — using PageHeader tabs only */}
-
       {/* TAB CONTENT */}
       <div style={{ padding: '32px 32px 0', animation: 'lab-tab-fade 0.35s ease-out' }} key={activeTab}>
         {activeTab === 'essais' && <EssaisDuJourTab labKpis={labKpis} />}
@@ -2089,6 +2088,8 @@ export default function WorldClassLaboratory() {
         {activeTab === 'analytique' && <AnalytiqueTab />}
         {activeTab === 'ia' && <IntelligenceIATab />}
       </div>
+
+      <NouveauTestModal open={showTestModal} onClose={() => setShowTestModal(false)} />
     </div>
   );
 }
