@@ -3485,7 +3485,10 @@ html {
 .tbos-card-recessed {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(212, 168, 67, 0.06);
+  border-top: 2px solid rgba(212, 168, 67, 0.4);
   border-radius: 8px !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;

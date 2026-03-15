@@ -15,7 +15,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
         "tbos-card bg-[rgba(255,255,255,0.02)] text-card-foreground relative overflow-hidden",
         className
       )}
-      style={{ borderRadius: CARD_RADIUS, border: '1px solid rgba(212, 168, 67, 0.08)', ...style }}
+      style={{ borderRadius: CARD_RADIUS, ...style }}
       {...props}
     />
   )
