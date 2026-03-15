@@ -1258,18 +1258,71 @@ export default function WorldClassProduction() {
             <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>Généré par IA · Claude Opus</span>
           </div>
           <div style={{
-            background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
-            border: `1px solid ${T.cardBorder}`,
-            borderTop: '2px solid #F59E0B',
-            borderLeft: '3px solid #D4A843',
-            borderRadius: 12, padding: 20,
+            background: 'rgba(255,255,255,0.015)',
+            border: `1px solid rgba(212,168,67,0.08)`,
+            borderTop: '3px solid #F59E0B',
+            borderRadius: 12, padding: 24,
           }}>
-            <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-              Malaxeur principal: prochain entretien dans <span style={{ color: '#fff', fontWeight: 600 }}>48h</span>. Usure courroie détectée à <span style={{ color: '#F59E0B', fontWeight: 700 }}>73%</span>. Tapis convoyeur #2: vibrations anormales (<span style={{ color: '#F59E0B', fontWeight: 700 }}>+15% vs baseline</span>). Recommandation: planifier remplacement courroie avant lundi. Risque de panne non planifiée: <span style={{ color: '#F59E0B', fontWeight: 700 }}>12%</span>.
-            </p>
-            <div className="flex gap-2 mt-3">
-              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, border: '1px solid #D4A843', color: '#D4A843' }}>Confiance: 88%</span>
-              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(245,158,11,0.06)', color: '#F59E0B', border: '1px solid #F59E0B' }}>Risque Modéré</span>
+            {/* KPI Triplet */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 20 }}>
+              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,168,67,0.06)', borderRadius: 8, padding: 16 }}>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase', marginBottom: 6 }}>Prochain Entretien</div>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: 28, color: '#F59E0B', lineHeight: 1.1 }}>48h</div>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>malaxeur principal</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,168,67,0.06)', borderRadius: 8, padding: 16 }}>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase', marginBottom: 6 }}>Usure Courroie</div>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: 28, color: '#F59E0B', lineHeight: 1.1 }}>73%</div>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>remplacement requis</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,168,67,0.06)', borderRadius: 8, padding: 16 }}>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase', marginBottom: 6 }}>Risque Panne</div>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: 28, color: '#22C55E', lineHeight: 1.1 }}>12%</div>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>non planifiée</div>
+              </div>
+            </div>
+
+            {/* Data table */}
+            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,168,67,0.06)', borderRadius: 8, overflow: 'hidden', marginBottom: 16 }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid rgba(212,168,67,0.12)' }}>
+                    {['ÉQUIPEMENT', 'ÉTAT', 'PROCHAINE ACTION', 'URGENCE'].map(h => (
+                      <th key={h} style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '1.5px', padding: '10px 14px', textAlign: 'left' }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { equip: 'Malaxeur principal', etat: 'Opérationnel', action: 'Entretien préventif dans 48h', urgence: 'Modéré', uColor: '#F59E0B' },
+                    { equip: 'Courroie convoyeur', etat: 'Usure 73%', action: 'Remplacement avant lundi', urgence: 'Élevé', uColor: '#EF4444' },
+                    { equip: 'Tapis convoyeur #2', etat: 'Vibrations +15%', action: 'Inspection requise', urgence: 'Modéré', uColor: '#F59E0B' },
+                    { equip: 'Doseur ciment', etat: 'Normal', action: 'Calibrage mensuel J-5', urgence: 'Faible', uColor: '#22C55E' },
+                  ].map((r, i) => (
+                    <tr key={r.equip} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)' }}>
+                      <td style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'ui-monospace, monospace', color: '#D4A843' }}>{r.equip}</td>
+                      <td style={{ padding: '10px 14px', fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>{r.etat}</td>
+                      <td style={{ padding: '10px 14px', fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>{r.action}</td>
+                      <td style={{ padding: '10px 14px' }}>
+                        <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 999, color: r.uColor, background: `${r.uColor}1A`, border: `1px solid ${r.uColor}40` }}>{r.urgence}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Recommendation box */}
+            <div style={{ borderLeft: '4px solid #F59E0B', background: 'rgba(245,158,11,0.03)', padding: 16, borderRadius: '0 8px 8px 0' }}>
+              <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: '#9CA3AF', lineHeight: 1.6 }}>
+                <span style={{ color: '#F59E0B', fontWeight: 600 }}>Recommandation :</span> Planifier remplacement courroie convoyeur avant lundi. Tapis convoyeur #2 présente des vibrations anormales (+15% vs baseline). Risque de panne non planifiée estimé à 12%. Coût préventif : <span style={{ color: '#D4A843', fontWeight: 600 }}>3,200 DH</span> vs coût curatif : <span style={{ color: '#EF4444', fontWeight: 600 }}>18,000 DH</span>.
+              </p>
+            </div>
+
+            {/* Footer */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(212,168,67,0.08)' }}>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: 'rgba(212,168,67,0.5)' }}>Généré par IA · Claude Opus</span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>il y a 12min</span>
             </div>
           </div>
         </section>
@@ -1284,18 +1337,68 @@ export default function WorldClassProduction() {
             <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)' }}>Généré par IA · Claude Opus</span>
           </div>
           <div style={{
-            background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(212, 168, 67, 0.02) 100%)',
-            border: `1px solid ${T.cardBorder}`,
-            borderTop: '2px solid #D4A843',
-            borderLeft: '3px solid #D4A843',
-            borderRadius: 12, padding: 20,
+            background: 'rgba(255,255,255,0.015)',
+            border: `1px solid rgba(212,168,67,0.08)`,
+            borderTop: '3px solid #D4A843',
+            borderRadius: 12, padding: 24,
           }}>
-            <p style={{ color: 'rgba(255,255,255,0.80)', fontSize: 13, lineHeight: 1.7 }}>
-              Formule F-B30 marge <span style={{ color: '#34d399', fontWeight: 600 }}>+12%</span> vs F-B25 aujourd'hui grâce au prix gravette favorable. Recommandation: prioriser F-B30 pour les 3 prochains batches clients flexibles. Économie estimée: <span style={{ color: '#D4A843', fontWeight: 700 }}>2 400 DH/jour</span>. Alerte prix ciment: hausse <span style={{ color: '#D4A843', fontWeight: 700 }}>+3%</span> prévue semaine prochaine — considérer pré-commande.
-            </p>
-            <div className="flex gap-2 mt-3">
-              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, background: 'rgba(212,168,67,0.06)', color: '#D4A843', border: '1px solid #D4A843' }}>Économie: 2,400 DH</span>
-              <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500, border: '1px solid #D4A843', color: '#D4A843' }}>Confiance: 84%</span>
+            {/* KPI Triplet */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 20 }}>
+              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,168,67,0.06)', borderRadius: 8, padding: 16 }}>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase', marginBottom: 6 }}>Marge F-B30</div>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: 28, color: '#22C55E', lineHeight: 1.1 }}>+12%</div>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>vs F-B25 aujourd'hui</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,168,67,0.06)', borderRadius: 8, padding: 16 }}>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase', marginBottom: 6 }}>Économie Estimée</div>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: 28, color: '#D4A843', lineHeight: 1.1 }}>2 400</div>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>DH/jour</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,168,67,0.06)', borderRadius: 8, padding: 16 }}>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase', marginBottom: 6 }}>Alerte Prix</div>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: 28, color: '#F59E0B', lineHeight: 1.1 }}>+3%</div>
+                <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>hausse ciment prévue</div>
+              </div>
+            </div>
+
+            {/* Data table */}
+            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,168,67,0.06)', borderRadius: 8, overflow: 'hidden', marginBottom: 16 }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid rgba(212,168,67,0.12)' }}>
+                    {['FORMULE', 'MARGE ACTUELLE', 'COÛT M³', 'RECOMMANDATION'].map(h => (
+                      <th key={h} style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '1.5px', padding: '10px 14px', textAlign: 'left' }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { formule: 'F-B30', marge: '41%', margeColor: '#22C55E', cout: '680 DH', reco: 'Prioriser — meilleure marge' },
+                    { formule: 'F-B25', marge: '29%', margeColor: '#F59E0B', cout: '750 DH', reco: 'Volume standard — maintenir' },
+                    { formule: 'F-B20', marge: '34%', margeColor: '#D4A843', cout: '620 DH', reco: 'Marge correcte — stable' },
+                  ].map((r, i) => (
+                    <tr key={r.formule} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: i % 2 === 0 ? 'transparent' : 'rgba(212,168,67,0.03)' }}>
+                      <td style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'ui-monospace, monospace', color: '#D4A843', fontWeight: 700 }}>{r.formule}</td>
+                      <td style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'ui-monospace, monospace', color: r.margeColor, fontWeight: 200 }}>{r.marge}</td>
+                      <td style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'ui-monospace, monospace', color: 'rgba(255,255,255,0.7)', fontWeight: 200 }}>{r.cout}</td>
+                      <td style={{ padding: '10px 14px', fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>{r.reco}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Recommendation box */}
+            <div style={{ borderLeft: '4px solid #D4A843', background: 'rgba(212,168,67,0.03)', padding: 16, borderRadius: '0 8px 8px 0' }}>
+              <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: '#9CA3AF', lineHeight: 1.6 }}>
+                <span style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation :</span> Prioriser F-B30 pour les 3 prochains batches clients flexibles. Économie estimée : <span style={{ color: '#D4A843', fontWeight: 600 }}>2 400 DH/jour</span>. Alerte prix ciment : hausse <span style={{ color: '#F59E0B', fontWeight: 600 }}>+3%</span> prévue semaine prochaine — considérer pré-commande de 50 tonnes.
+              </p>
+            </div>
+
+            {/* Footer */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(212,168,67,0.08)' }}>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: 'rgba(212,168,67,0.5)' }}>Généré par IA · Claude Opus</span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>il y a 8min</span>
             </div>
           </div>
         </section>
