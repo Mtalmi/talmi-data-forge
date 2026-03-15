@@ -527,7 +527,7 @@ export default function WorldClassAttendance() {
                 {/* Départ */}
                 <div style={{ fontFamily: MONO, fontSize: 12, color: T.textDim }}>{emp.depart}</div>
                 {/* Heures */}
-                <div style={{ fontFamily: MONO, fontSize: 13, fontWeight: 800, color: hoursColor }}>
+                <div style={{ fontFamily: MONO, fontSize: 13, fontWeight: 400, color: hoursColor }}>
                   {emp.heures === 0 ? '0h' : `${emp.heures}h`}
                 </div>
                 {/* Pause */}
