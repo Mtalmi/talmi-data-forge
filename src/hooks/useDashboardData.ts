@@ -157,7 +157,7 @@ export function useDashboardData() {
       const margeValue = effectiveRevenue > 0 ? ((effectiveRevenue - effectiveCost) / effectiveRevenue) * 100 : 0;
 
       // Trésorerie
-      const tresorerieValue = (paidThisMonth.data || []).reduce((s, f) => s + (f.montant_ttc || 0), 0);
+      const tresorerieValue = (paidThisMonth.data || []).reduce((s, f) => s + (f.total_ttc || 0), 0);
 
       // Pipeline
       const pipelineValue = (devisActive.data || []).reduce((s, d) => s + (d.montant_total || 0), 0);
