@@ -2073,6 +2073,9 @@ function IntelligenceIATab() {
 // ═════════════════════════════════════════════════════
 export default function WorldClassDeliveries() {
   const [activeTab, setActiveTab] = useState('flotte');
+  const [showVehiculeModal, setShowVehiculeModal] = useState(false);
+  const [showCarburantModal, setShowCarburantModal] = useState(false);
+  const [showRoutesModal, setShowRoutesModal] = useState(false);
   const { todayBons, weekBons, allBons, fleet, loading } = useDeliveriesLiveData();
 
   const activePipeline = todayBons.length > 0 ? todayBons : SEEDED_DELIVERIES;
