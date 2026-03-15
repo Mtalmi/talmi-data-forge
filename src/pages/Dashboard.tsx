@@ -1195,7 +1195,7 @@ export default function Dashboard() {
               value: marge,
               unit: '%',
               watermark: '%',
-              sub: `${uf.fmtCurrencyK(37800)} coûts matières`,
+              sub: `${uf.fmtCurrencyK(demoData.profitNet.matieres)} coûts matières`,
               trend: '↗ +1.2%',
               healthyGlow: true,
               accentColor: '#FDB913',
