@@ -208,6 +208,7 @@ export default function RecentDeliveries() {
           <div
             key={d.id}
             className="group flex items-center gap-4 py-2 cursor-pointer rounded-md px-1"
+            onClick={() => navigate('/logistique')}
             style={{ 
               borderBottom: '1px solid rgba(255,255,255,0.03)',
               transition: 'background 200ms ease',

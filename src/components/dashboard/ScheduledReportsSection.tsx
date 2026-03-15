@@ -1,4 +1,5 @@
 import { CalendarClock, Plus } from 'lucide-react';
+import { tbosToast } from '@/hooks/useTbosToast';
 
 const MONO = 'ui-monospace, SFMono-Regular, monospace';
 
@@ -9,6 +10,8 @@ const SCHEDULES = [
 ];
 
 export function ScheduledReportsSection() {
+  const handleToast = () => tbosToast('Fonctionnalité de modification disponible prochainement');
+
   return (
     <div style={{ padding: '0 16px 16px' }}>
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 14, marginBottom: 12 }}>
@@ -39,32 +42,34 @@ export function ScheduledReportsSection() {
               }}>
                 Actif
               </span>
-              {i === 0 && (
-                <button style={{
+              <button
+                onClick={handleToast}
+                style={{
                   fontFamily: MONO, fontSize: 10, color: '#64748B',
                   background: 'transparent', border: 'none', cursor: 'pointer',
                   padding: '2px 6px',
                 }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#64748B'; }}
-                >
-                  Modifier
-                </button>
-              )}
+              >
+                {i === 0 ? 'Programmer' : 'Modifier'}
+              </button>
             </div>
           ))}
 
-          <button style={{
-            fontFamily: MONO, fontSize: 11, fontWeight: 600,
-            display: 'flex', alignItems: 'center', gap: 6,
-            padding: '8px 16px', borderRadius: 8,
-            background: 'transparent',
-            border: '1px solid rgba(212,168,67,0.3)',
-            color: '#D4A843', cursor: 'pointer',
-            transition: 'background 150ms',
-          }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(212,168,67,0.08)'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+          <button
+            onClick={handleToast}
+            style={{
+              fontFamily: MONO, fontSize: 11, fontWeight: 600,
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '8px 16px', borderRadius: 8,
+              background: 'transparent',
+              border: '1px solid rgba(212,168,67,0.3)',
+              color: '#D4A843', cursor: 'pointer',
+              transition: 'background 150ms',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(212,168,67,0.08)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
           >
             <Plus size={13} />
             Nouveau Rapport
