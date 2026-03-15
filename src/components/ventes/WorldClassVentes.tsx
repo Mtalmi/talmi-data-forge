@@ -964,6 +964,7 @@ export function WorldClassVentes() {
               fontFamily: 'DM Sans, sans-serif', fontWeight: 700,
               transition: 'all 150ms', whiteSpace: 'nowrap',
             }}
+            onClick={() => setShowDevisModal(true)}
             onMouseEnter={e => (e.currentTarget.style.background = 'rgba(253,185,19,0.08)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
             >
@@ -981,6 +982,8 @@ export function WorldClassVentes() {
         {activeTab === 'previsions' && <ForecastSection />}
         {activeTab === 'activites' && <ActivitiesSection />}
       </div>
+
+      <NouveauDevisModal open={showDevisModal} onClose={() => setShowDevisModal(false)} />
     </div>
   );
 }
