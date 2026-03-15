@@ -1158,11 +1158,12 @@ export default function Dashboard() {
                   Voir Analyse Complète
                 </button>
                 {/* AI badge */}
-                <span className="ml-auto" style={{
+                <span className="ml-auto tbos-ai-badge" style={{
                   fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
                   fontSize: 9, letterSpacing: '0.5px', color: '#D4A843',
                   background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.2)',
                   borderRadius: 20, padding: '3px 10px', whiteSpace: 'nowrap',
+                  transition: 'box-shadow 200ms ease',
                 }}>
                   ✨ Généré par IA · Claude Opus
                 </span>
