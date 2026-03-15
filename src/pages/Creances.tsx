@@ -84,6 +84,7 @@ import {
   Download,
   Sparkles,
   ChevronDown,
+  MoreVertical,
   FileSpreadsheet,
   Briefcase,
   Eye,
