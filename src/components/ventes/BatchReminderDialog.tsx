@@ -302,7 +302,7 @@ export function BatchReminderDialog({ open, onOpenChange, devisList, onSuccess }
                                     {br.noEmail}
                                   </Badge>
                                 </div>
-                                <p className="text-sm text-muted-foreground truncate">
+                                <p className="text-sm text-muted-foreground truncate" title={`${devis.client?.nom_client} · ${formatMontant(devis.total_ht)} DH`}>
                                   {devis.client?.nom_client} · {formatMontant(devis.total_ht)} DH
                                 </p>
                               </div>

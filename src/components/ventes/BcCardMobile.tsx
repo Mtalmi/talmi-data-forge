@@ -147,7 +147,7 @@ export function BcCardMobile({
         {formuleName && (
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">{s.formula}</span>
-            <span className="text-sm font-medium truncate max-w-[150px]">{formuleName}</span>
+            <span className="text-sm font-medium truncate max-w-[150px]" title={formuleName}>{formuleName}</span>
           </div>
         )}
 
