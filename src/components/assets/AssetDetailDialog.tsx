@@ -124,7 +124,7 @@ export function AssetDetailDialog({ asset, open, onOpenChange }: AssetDetailDial
                   <CardTitle className="text-sm font-medium text-muted-foreground">{dt.accumulatedDepr}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-orange-500">-{asset.accumulated_depreciation.toLocaleString()} DH</p>
+                  <p className="text-2xl font-bold text-orange-500">-{asset.accumulated_depreciation.toLocaleString('fr-FR')} DH</p>
                 </CardContent>
               </Card>
               <Card>
