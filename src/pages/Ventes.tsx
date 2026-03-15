@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { PageHeader } from '@/components/layout/PageHeader';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { useI18n } from '@/i18n/I18nContext';
 import { supabase } from '@/integrations/supabase/client';

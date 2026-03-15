@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip,
