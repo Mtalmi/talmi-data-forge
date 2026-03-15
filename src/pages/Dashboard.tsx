@@ -1837,7 +1837,7 @@ export default function Dashboard() {
                       <span className="text-[10px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#403-068</span>
                       <button onClick={() => tbosToast('Déchargement initié pour batch #403-068')} style={{ border: '1px solid #D4A843', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '4px 12px', cursor: 'pointer', fontSize: '13px', marginLeft: 'auto' }}>Déchargement</button>
                     </div>
-                    <div className="text-[8px] text-slate-400 mb-1.5">{uf.grade('F-B25')} · {uf.fmtVolume(8)} · BTP Maroc</div>
+                    <div className="text-[8px] text-slate-400 mb-1.5">{plantData.formules[1] || uf.grade('F-B25')} · {uf.fmtVolume(8)} · {plantData.clients[2] || 'BTP Maroc'}</div>
                     <div className="flex items-center gap-2">
                       <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
                         <div className="h-1.5 rounded-full relative overflow-hidden" style={{ width: '72%', background: 'linear-gradient(90deg, #D4A843, #E8C96A)', animation: 'progressGrow 1s ease forwards' }}>
