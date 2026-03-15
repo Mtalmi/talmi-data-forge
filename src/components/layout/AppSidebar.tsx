@@ -85,13 +85,13 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       key: 'operations',
       label: nav.sectionOperations || 'OPÉRATIONS',
       items: [
-        { title: nav.sales || 'Ventes', url: '/ventes', icon: ShoppingCart, badge: 6 },
+        { title: nav.sales || 'Ventes', url: '/ventes', icon: ShoppingCart },
         { title: nav.clients || 'Clients', url: '/clients', icon: Users },
         { title: nav.stocks || 'Stocks', url: '/stocks', icon: Package },
         { title: nav.laboratory || 'Laboratoire', url: '/laboratoire', icon: FlaskConical },
         { title: nav.logistics || 'Logistique', url: '/logistique', icon: Truck },
-        { title: nav.deliveries || 'Bons de Cmd.', url: '/bons', icon: FileText, badge: 3 },
-        { title: nav.receivables || 'Créances', url: '/creances', icon: Receipt, badge: 2 },
+        { title: nav.deliveries || 'Bons de Cmd.', url: '/bons', icon: FileText },
+        { title: nav.receivables || 'Créances', url: '/creances', icon: Receipt },
       ],
     },
     {
@@ -360,7 +360,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
                       >
                         <item.icon
                           className="flex-shrink-0 transition-colors duration-200"
-                          size={16}
+                          size={20}
                           strokeWidth={1.5}
                           style={{ color: active ? '#D4A843' : '#9CA3AF', marginRight: 10 }}
                         />
