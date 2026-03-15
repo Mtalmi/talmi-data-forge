@@ -2082,7 +2082,7 @@ export default function Dashboard() {
           </div>
 
           {/* Additional Production Widgets */}
-          <div className="grid grid-cols-3 gap-4 mt-5 relative z-[1] items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5 relative z-[1] items-stretch">
             <div className="min-w-0 h-full">
               <Suspense fallback={<div className="h-48 rounded-lg bg-white/[0.02] animate-pulse" />}>
                 <LiveBatchProgress />

@@ -115,7 +115,7 @@ export function TBOSModal({ open, onClose, title, children, footer, width = 600 
             aria-label="Fermer"
             style={{
               background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF',
-              width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: 44, height: 44, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
               transition: 'color 150ms',
             }}
             onMouseEnter={e => (e.currentTarget.style.color = '#D4A843')}
