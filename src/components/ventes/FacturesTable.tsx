@@ -196,7 +196,7 @@ export function FacturesTable({
     }
   }, [factures, fetchPartialPayments]);
 
-  const filteredFactures = factures.filter(f => {
+  const filteredFactures = useMemo(() => factures.filter(f => {
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
     return (
@@ -205,7 +205,14 @@ export function FacturesTable({
       f.bl_id.toLowerCase().includes(term) ||
       f.bc_id?.toLowerCase().includes(term)
     );
-  });
+  }).map(f => ({
+    ...f,
+    _date: f.date_facture || '',
+    _total_ht: f.total_ht ?? 0,
+    _statut: f.statut || '',
+  })), [factures, searchTerm]);
+
+  const { sortedData: sortedFactures, sortKey, sortDirection, handleSort } = useTableSort(filteredFactures, '_date', 'desc');
 
   const handleSelectAll = (checked: boolean) => {
     if (!onSelectionChange) return;
