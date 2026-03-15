@@ -148,6 +148,13 @@ export function DevisTable({
   })), [devisList]);
   const { sortedData: sortedDevis, sortKey, sortDirection, handleSort } = useTableSort(sortableDevis, '_date', 'desc');
 
+  const PAGE_SIZE = 25;
+  const [currentPage, setCurrentPage] = useState(1);
+  // Reset page when data changes (filter applied)
+  const prevLen = useMemo(() => sortedDevis.length, [sortedDevis.length]);
+  useMemo(() => { setCurrentPage(1); }, [devisList.length]);
+  const paginatedDevis = sortedDevis.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
   const scoreDevis = async (devisId: string, devisDbId: string) => {
     setScoringId(devisDbId);
     try {
