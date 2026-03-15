@@ -540,14 +540,31 @@ export default function WorldClassProduction() {
   const hourlyData = useMemo(() => {
     const hourMap: Record<string, number> = {};
     for (let h = 6; h <= 18; h++) hourMap[`${h}h`] = 0;
-    bons.forEach(b => {
-      if (b.production_batch_time || b.heure_prevue) {
-        const timeStr = b.production_batch_time || b.heure_prevue;
-        const hour = parseInt(timeStr?.split(':')[0] || '0', 10);
-        const key = `${hour}h`;
-        if (hourMap[key] !== undefined) hourMap[key] += b.volume_m3 || 0;
-      }
-    });
+
+    // Primary: use production_batches completed_at/created_at
+    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    const todayBatches = batches.filter(b => b.created_at?.startsWith(todayStr) && b.status === 'complete');
+    if (todayBatches.length > 0) {
+      todayBatches.forEach(b => {
+        const ts = b.completed_at || b.created_at;
+        if (ts) {
+          const hour = new Date(ts).getHours();
+          const key = `${hour}h`;
+          if (hourMap[key] !== undefined) hourMap[key] += b.volume_m3 || 0;
+        }
+      });
+    } else {
+      // Fallback: use bons
+      bons.forEach(b => {
+        if (b.production_batch_time || b.heure_prevue) {
+          const timeStr = b.production_batch_time || b.heure_prevue;
+          const hour = parseInt(timeStr?.split(':')[0] || '0', 10);
+          const key = `${hour}h`;
+          if (hourMap[key] !== undefined) hourMap[key] += b.volume_m3 || 0;
+        }
+      });
+    }
+
     const liveData = Object.entries(hourMap).map(([hour, volume]) => ({ hour, volume: Math.round(volume), objectif: 90, lastWeek: 0 }));
     const hasLive = liveData.some(d => d.volume > 0);
     if (hasLive) return liveData;
@@ -561,7 +578,7 @@ export default function WorldClassProduction() {
       '12h': 48, '13h': 85, '14h': 78, '15h': 68, '16h': 62, '17h': 50, '18h': 3,
     };
     return Object.entries(demoVolumes).map(([hour, volume]) => ({ hour, volume, objectif: 90, lastWeek: lastWeekVolumes[hour] || 0 }));
-  }, [bons]);
+  }, [bons, batches]);
 
   const hasHourlyData = hourlyData.some(d => d.volume > 0);
 
