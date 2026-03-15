@@ -80,7 +80,7 @@ export function ProductionKPICards({
             <Wifi className="h-4 w-4 text-success" />
             <span className="text-xs text-muted-foreground">Sync Machine</span>
           </div>
-          <p className="text-2xl font-bold text-success mt-1">{machineSyncCount}</p>
+          <p className="text-2xl font-extralight text-success mt-1">{machineSyncCount}</p>
           <p className="text-xs text-muted-foreground">
             {totalBons > 0 ? Math.round((machineSyncCount / totalBons) * 100) : 0}%
           </p>
