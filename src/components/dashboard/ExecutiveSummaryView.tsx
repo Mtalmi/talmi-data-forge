@@ -91,7 +91,7 @@ export function ExecutiveSummaryView({ periodStats, dashboardStats, onClose }: E
   const metrics: MetricTileProps[] = [
     {
       label: 'Volume Total',
-      value: `${periodStats.totalVolume.toFixed(0)} m³`,
+      value: `${periodStats.totalVolume.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} m³`,
       numericValue: periodStats.totalVolume,
       trend: periodStats.volumeTrend,
       icon: Package,
