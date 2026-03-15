@@ -15,29 +15,55 @@ interface TBOSModalProps {
 export function TBOSModal({ open, onClose, title, children, footer, width = 600 }: TBOSModalProps) {
   const [visible, setVisible] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const titleId = useRef(`tbos-modal-title-${Math.random().toString(36).slice(2, 8)}`).current;
 
   useEffect(() => {
     if (open) {
-      requestAnimationFrame(() => setVisible(true));
+      previousFocusRef.current = document.activeElement as HTMLElement;
+      requestAnimationFrame(() => {
+        setVisible(true);
+        // Focus the first focusable element inside dialog
+        setTimeout(() => {
+          const focusable = dialogRef.current?.querySelector<HTMLElement>(
+            'input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled])'
+          );
+          focusable?.focus();
+        }, 50);
+      });
     } else {
       setVisible(false);
+      // Restore focus to trigger element
+      setTimeout(() => previousFocusRef.current?.focus(), 50);
     }
   }, [open]);
 
-  const handleEscape = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape') onClose();
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') { onClose(); return; }
+    // Focus trap
+    if (e.key === 'Tab' && dialogRef.current) {
+      const focusables = dialogRef.current.querySelectorAll<HTMLElement>(
+        'input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
   }, [onClose]);
 
   useEffect(() => {
     if (open) {
-      document.addEventListener('keydown', handleEscape);
+      document.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
     }
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = '';
     };
-  }, [open, handleEscape]);
+  }, [open, handleKeyDown]);
 
   if (!open) return null;
 
@@ -54,30 +80,42 @@ export function TBOSModal({ open, onClose, title, children, footer, width = 600 
         transition: 'opacity 200ms ease',
       }}
     >
-      <div style={{
-        width, maxWidth: '95vw', maxHeight: '80vh',
-        background: '#1A2332',
-        border: '1px solid rgba(212,168,67,0.15)',
-        borderRadius: 12,
-        boxShadow: '0 16px 64px rgba(0,0,0,0.6)',
-        display: 'flex', flexDirection: 'column',
-        transform: visible ? 'scale(1)' : 'scale(0.95)',
-        opacity: visible ? 1 : 0,
-        transition: 'transform 200ms ease, opacity 200ms ease',
-      }}>
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        style={{
+          width, maxWidth: '95vw', maxHeight: '80vh',
+          background: '#1A2332',
+          border: '1px solid rgba(212,168,67,0.15)',
+          borderRadius: 12,
+          boxShadow: '0 16px 64px rgba(0,0,0,0.6)',
+          display: 'flex', flexDirection: 'column',
+          transform: visible ? 'scale(1)' : 'scale(0.95)',
+          opacity: visible ? 1 : 0,
+          transition: 'transform 200ms ease, opacity 200ms ease',
+        }}
+      >
         {/* Header */}
         <div style={{
           padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           borderBottom: '1px solid rgba(212,168,67,0.08)',
         }}>
-          <h2 style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: '#FFFFFF', letterSpacing: '1.5px', textTransform: 'uppercase', margin: 0 }}>
+          <h2
+            id={titleId}
+            style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: '#FFFFFF', letterSpacing: '1.5px', textTransform: 'uppercase', margin: 0 }}
+          >
             {title}
           </h2>
-          <button onClick={onClose} style={{
-            background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF',
-            width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            transition: 'color 150ms',
-          }}
+          <button
+            onClick={onClose}
+            aria-label="Fermer"
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF',
+              width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              transition: 'color 150ms',
+            }}
             onMouseEnter={e => (e.currentTarget.style.color = '#D4A843')}
             onMouseLeave={e => (e.currentTarget.style.color = '#9CA3AF')}
           >
@@ -135,7 +173,7 @@ export function TBOSField({ label, required, error, children, style }: TBOSField
         {required && <span style={{ color: '#EF4444' }}>*</span>}
       </label>
       {children}
-      {error && <span style={{ fontFamily: MONO, fontSize: 11, color: '#EF4444' }}>{error}</span>}
+      {error && <span role="alert" style={{ fontFamily: MONO, fontSize: 11, color: '#EF4444' }}>{error}</span>}
     </div>
   );
 }
@@ -149,6 +187,7 @@ export function TBOSInput({ hasError, style, onFocus, onBlur, ...props }: TBOSIn
   return (
     <input
       {...props}
+      aria-invalid={hasError || undefined}
       style={{
         ...inputBaseStyle,
         ...(hasError ? errorInputStyle : {}),
@@ -172,6 +211,7 @@ export function TBOSSelect({ hasError, options, placeholder, style, ...props }: 
   return (
     <select
       {...props}
+      aria-invalid={hasError || undefined}
       style={{
         ...inputBaseStyle,
         ...(hasError ? errorInputStyle : {}),
@@ -201,6 +241,7 @@ export function TBOSTextarea({ hasError, style, ...props }: TBOSTextareaProps) {
   return (
     <textarea
       {...props}
+      aria-invalid={hasError || undefined}
       style={{
         ...inputBaseStyle, minHeight: 80, resize: 'vertical',
         ...(hasError ? errorInputStyle : {}),
@@ -217,8 +258,8 @@ export function TBOSDisplayField({ label, value }: { label: string; value: strin
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <label style={labelStyle}>{label}</label>
-      <div style={{ ...inputBaseStyle, background: 'rgba(255,255,255,0.02)', color: '#D4A843', fontWeight: 600, cursor: 'default' }}>
-        {value}
+      <div style={{ ...inputBaseStyle, background: 'rgba(255,255,255,0.02)', color: '#D4A843', fontWeight: 600, cursor: 'default' }} aria-readonly="true">
+        {value ?? '—'}
       </div>
     </div>
   );
@@ -231,7 +272,7 @@ export function TBOSPrimaryButton({ children, loading, disabled, onClick, danger
 }) {
   const bg = danger ? '#EF4444' : '#D4A843';
   return (
-    <button onClick={onClick} disabled={disabled || loading} style={{
+    <button onClick={onClick} disabled={disabled || loading} aria-busy={loading || undefined} style={{
       fontFamily: MONO, fontSize: 12, fontWeight: 700, letterSpacing: '0.5px',
       padding: '10px 24px', borderRadius: 6, border: 'none', cursor: disabled || loading ? 'not-allowed' : 'pointer',
       background: bg, color: danger ? '#FFFFFF' : '#0F1629',
@@ -261,10 +302,14 @@ export function TBOSGhostButton({ children, onClick }: { children: ReactNode; on
 
 function GoldSpinner() {
   return (
-    <span style={{
-      display: 'inline-block', width: 16, height: 16, border: '2px solid rgba(212,168,67,0.3)',
-      borderTopColor: '#D4A843', borderRadius: '50%', animation: 'tbos-spin 0.8s linear infinite',
-    }}>
+    <span
+      role="status"
+      aria-label="Chargement"
+      style={{
+        display: 'inline-block', width: 16, height: 16, border: '2px solid rgba(212,168,67,0.3)',
+        borderTopColor: '#D4A843', borderRadius: '50%', animation: 'tbos-spin 0.8s linear infinite',
+      }}
+    >
       <style>{`@keyframes tbos-spin { to { transform: rotate(360deg); } }`}</style>
     </span>
   );
@@ -273,8 +318,9 @@ function GoldSpinner() {
 /* ── SUCCESS TOAST ── */
 
 export function showFormSuccess(message: string) {
-  // Create floating success bar
   const el = document.createElement('div');
+  el.setAttribute('role', 'status');
+  el.setAttribute('aria-live', 'polite');
   el.style.cssText = `
     position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:200;
     background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);

@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/TBOSModal';
 import { formatNumber } from '@/utils/formatters';
 import { useClients } from '@/hooks/useModalData';
+import { sanitizeInput } from '@/lib/security';
 
 const FORMULES = [
   { value: 'F-B20', label: 'F-B20 (20 MPa)', price: 750 },
@@ -30,6 +31,7 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
   const [dateLivraison, setDateLivraison] = useState('');
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [warnings, setWarnings] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   const selectedFormule = FORMULES.find(f => f.value === formule);
@@ -48,21 +50,37 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
     if (f) setPrixUnit(String(f.price));
   };
 
-  const sanitize = (s: string) => s.replace(/<[^>]*>/g, '').trim();
-
   const validate = () => {
     const e: Record<string, string> = {};
+    const w: string[] = [];
+
     if (!client) e.client = 'Champ requis';
-    if (!sanitize(chantier)) e.chantier = 'Champ requis';
+    if (!sanitizeInput(chantier)) e.chantier = 'Champ requis';
     if (!formule) e.formule = 'Champ requis';
+
     const vol = parseFloat(volume);
     if (!volume || isNaN(vol)) e.volume = 'Champ requis';
     else if (vol <= 0) e.volume = 'Valeur doit être supérieure à 0';
     else if (vol > 10000) e.volume = 'Volume max 10 000 m³';
+    else if (vol > 500) w.push('Volume exceptionnel (>500 m³) — vérifier avec le client');
+
     const prix = parseFloat(effectivePrice);
     if (!effectivePrice || isNaN(prix) || prix <= 0) e.prix = 'Prix unitaire requis';
+    else {
+      if (prix < 500) w.push('Prix inférieur au coût de revient (<500 DH)');
+      if (prix > 2000) w.push('Prix exceptionnellement élevé (>2000 DH)');
+    }
+
     if (!dateLivraison) e.dateLivraison = 'Champ requis';
+    else {
+      const selected = new Date(dateLivraison);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (selected < today) e.dateLivraison = 'La date doit être dans le futur';
+    }
+
     setErrors(e);
+    setWarnings(w);
     return Object.keys(e).length === 0;
   };
 
@@ -96,7 +114,7 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
         total_ht: vol * prix,
         distance_km: 15,
         statut: 'brouillon',
-        notes: sanitize(notes) || null,
+        notes: sanitizeInput(notes) || null,
         date_livraison_souhaitee: dateLivraison || null,
       });
 
@@ -110,8 +128,8 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
       }).then(() => {});
 
       const devis = {
-        id: devisId, client: clientLabel, chantier: sanitize(chantier), formule, volume: vol,
-        prix_unitaire: prix, total: vol * prix, date_livraison: dateLivraison, notes: sanitize(notes), statut: 'Brouillon',
+        id: devisId, client: clientLabel, chantier: sanitizeInput(chantier), formule, volume: vol,
+        prix_unitaire: prix, total: vol * prix, date_livraison: dateLivraison, notes: sanitizeInput(notes), statut: 'Brouillon',
         created_at: new Date().toISOString(),
       };
       onCreated?.(devis);
@@ -126,7 +144,7 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
 
   const resetAndClose = () => {
     setClient(''); setChantier(''); setFormule(''); setVolume(''); setPrixUnit('');
-    setDateLivraison(''); setNotes(''); setErrors({}); setLoading(false);
+    setDateLivraison(''); setNotes(''); setErrors({}); setWarnings([]); setLoading(false);
     onClose();
   };
 
@@ -141,13 +159,24 @@ export function NouveauDevisModal({ open, onClose, onCreated }: Props) {
     }>
       <TBOSFormStack>
         {isSigmaSelected && (
-          <div style={{
+          <div role="alert" style={{
             fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
             fontSize: 11, padding: '10px 14px', borderRadius: 6,
             background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
             color: '#EF4444',
           }}>
             ⚠ ATTENTION — Sigma Bâtiment : 189K DH impayés · Score 23/100 · Livraisons suspendues
+          </div>
+        )}
+
+        {warnings.length > 0 && (
+          <div role="status" style={{
+            fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
+            fontSize: 11, padding: '10px 14px', borderRadius: 6,
+            background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.2)',
+            color: '#EAB308',
+          }}>
+            {warnings.map((w, i) => <div key={i}>⚠ {w}</div>)}
           </div>
         )}
 
