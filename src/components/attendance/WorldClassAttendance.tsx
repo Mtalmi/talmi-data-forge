@@ -416,7 +416,7 @@ export default function WorldClassAttendance() {
                   <Users size={12} color={T.green} />
                   <span style={{ fontFamily: SANS, fontSize: 10, color: T.textDim }}>Présents</span>
                 </div>
-                <div style={{ fontFamily: MONO, fontSize: 24, fontWeight: 800, color: T.green }}>14</div>
+                <div style={{ fontFamily: MONO, fontSize: 24, fontWeight: 200, color: T.green }}>14</div>
               </div>
               {/* Absents box */}
               <div style={{
