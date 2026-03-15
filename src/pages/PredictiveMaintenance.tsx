@@ -542,33 +542,33 @@ export default function PredictiveMaintenance() {
       {scheduleModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center" onClick={() => setScheduleModal(null)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="rounded-xl border border-[#2A3545] bg-[#161D26] p-6 w-[420px] space-y-4" onClick={e => e.stopPropagation()} style={{ boxShadow: "0 8px 40px rgba(0,0,0,0.6)" }}>
-            <h3 className="font-bold text-sm" style={{ fontFamily: "Poppins, sans-serif" }}>Schedule Repair — {scheduleModal}</h3>
+            <h3 className="font-bold text-sm" style={{ fontFamily: "Poppins, sans-serif" }}>Planifier Réparation — {scheduleModal}</h3>
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-[#B0B8C1] block mb-1">Urgency</label>
+                <label className="text-xs text-[#B0B8C1] block mb-1">Urgence</label>
                 <select className="w-full bg-[#1C2533] border border-[#2A3545] rounded-lg px-3 py-2 text-xs text-white focus:border-[#FFD700] outline-none">
-                  <option>🔴 Critical — Immediate</option>
-                  <option>🟠 High — Within 48h</option>
-                  <option>🟡 Medium — This Week</option>
+                  <option>🔴 Critique — Immédiat</option>
+                  <option>🟠 Élevé — Sous 48h</option>
+                  <option>🟡 Moyen — Cette semaine</option>
                 </select>
               </div>
               <div>
-                <label className="text-xs text-[#B0B8C1] block mb-1">Technician</label>
+                <label className="text-xs text-[#B0B8C1] block mb-1">Technicien</label>
                 <select className="w-full bg-[#1C2533] border border-[#2A3545] rounded-lg px-3 py-2 text-xs text-white focus:border-[#FFD700] outline-none">
                   <option>Ahmed K.</option>
                   <option>Hassan M.</option>
                   <option>Said A.</option>
-                  <option>External Contractor</option>
+                  <option>Prestataire Externe</option>
                 </select>
               </div>
               <div>
-                <label className="text-xs text-[#B0B8C1] block mb-1">Scheduled Date</label>
+                <label className="text-xs text-[#B0B8C1] block mb-1">Date Planifiée</label>
                 <input type="date" className="w-full bg-[#1C2533] border border-[#2A3545] rounded-lg px-3 py-2 text-xs text-white focus:border-[#FFD700] outline-none" />
               </div>
             </div>
             <div className="flex gap-2 pt-2">
-              <button onClick={() => { setScheduleModal(null); }} className="flex-1 py-2 rounded-lg text-xs font-semibold text-black" style={{ background: "linear-gradient(135deg, #FFD700, #B8960C)" }}>Confirm & Create Work Order</button>
-              <button onClick={() => setScheduleModal(null)} className="px-4 py-2 rounded-lg text-xs text-[#B0B8C1] border border-[#2A3545] hover:text-white transition-colors">Cancel</button>
+              <button onClick={() => { setScheduleModal(null); }} className="flex-1 py-2 rounded-lg text-xs font-semibold text-black" style={{ background: "linear-gradient(135deg, #FFD700, #B8960C)" }}>Confirmer & Créer Ordre de Travail</button>
+              <button onClick={() => setScheduleModal(null)} className="px-4 py-2 rounded-lg text-xs text-[#B0B8C1] border border-[#2A3545] hover:text-white transition-colors">Annuler</button>
             </div>
           </motion.div>
         </div>
