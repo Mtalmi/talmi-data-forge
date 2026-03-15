@@ -47,6 +47,7 @@ export function useDashboardData() {
   const fetchIdRef = useRef(0);
 
   const fetchAll = useCallback(async () => {
+    const currentFetchId = ++fetchIdRef.current;
     try {
       const today = new Date().toISOString().split('T')[0];
       const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
