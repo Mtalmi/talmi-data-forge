@@ -341,7 +341,7 @@ export function EmergencyBcActionItemsPanel({
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="text-center p-2 rounded-lg bg-muted/50">
-              <p className="text-2xl font-bold text-primary">{progressPercent}%</p>
+              <p className="text-2xl font-extralight text-primary">{progressPercent}%</p>
               <p className="text-xs text-muted-foreground">Complété</p>
             </div>
             {overdueCount > 0 && (
