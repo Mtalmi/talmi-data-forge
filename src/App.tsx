@@ -1,4 +1,6 @@
 import { lazy, Suspense } from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
+import { OfflineIndicator } from "@/components/layout/OfflineIndicator";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
