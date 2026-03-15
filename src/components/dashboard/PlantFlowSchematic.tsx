@@ -90,10 +90,12 @@ export default function PlantFlowSchematic() {
           <div style={{
             position: 'absolute',
             top: 0,
+            left: 0,
             bottom: 0,
             width: '30%',
             background: 'linear-gradient(90deg, rgba(212,168,67,0) 0%, rgba(212,168,67,0.15) 50%, rgba(212,168,67,0) 100%)',
             animation: 'fluxScanSweep 4s linear infinite',
+            willChange: 'transform',
           }} />
         </div>
 
