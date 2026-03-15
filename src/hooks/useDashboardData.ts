@@ -44,6 +44,7 @@ const INITIAL: DashboardLiveData = {
 export function useDashboardData() {
   const [data, setData] = useState<DashboardLiveData>(INITIAL);
   const mountedRef = useRef(true);
+  const fetchIdRef = useRef(0);
 
   const fetchAll = useCallback(async () => {
     try {
