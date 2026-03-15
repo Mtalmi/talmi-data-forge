@@ -77,6 +77,9 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
           <GlobalSearch />
         </div>
 
+        {/* Plant selector */}
+        <PlantSelector />
+
         {/* Center — breathing room */}
         <div className="flex-1" />
 
