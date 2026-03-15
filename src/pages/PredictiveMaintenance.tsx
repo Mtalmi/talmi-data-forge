@@ -179,19 +179,19 @@ export default function PredictiveMaintenance() {
   };
 
   return (
-    <div className="min-h-screen text-white relative overflow-x-hidden max-w-full w-full" style={{ background: "#0F1419", backgroundImage: "radial-gradient(rgba(255,215,0,0.02) 1px, transparent 1px)", backgroundSize: "20px 20px" }}>
+    <div className="min-h-screen text-white relative overflow-x-hidden max-w-full w-full" style={{ background: "#0F1629", backgroundImage: "radial-gradient(rgba(212,168,67,0.02) 1px, transparent 1px)", backgroundSize: "20px 20px" }}>
       {/* Gold shimmer bar */}
-      <div className="h-[2px] w-full" style={{ background: "linear-gradient(90deg, #FFD700, transparent 40%, transparent 60%, #FFD700)" }} />
+      <div className="h-[2px] w-full" style={{ background: "linear-gradient(90deg, #D4A843, transparent 40%, transparent 60%, #D4A843)" }} />
 
       {/* Top bar */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[#2A3545]">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-[#2A3048]">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-[#FFD700] flex items-center justify-center font-bold text-black text-sm" style={{ fontFamily: "Poppins, sans-serif" }}>T</div>
-          <span className="text-[#FFD700] text-sm font-semibold tracking-[0.2em] uppercase" style={{ fontFamily: "Poppins, sans-serif" }}>Predictive Maintenance</span>
+          <div className="w-9 h-9 rounded-lg bg-[#D4A843] flex items-center justify-center font-bold text-black text-sm" style={{ fontFamily: "Poppins, sans-serif" }}>T</div>
+          <span className="text-[#D4A843] text-sm font-semibold tracking-[0.2em] uppercase" style={{ fontFamily: "Poppins, sans-serif" }}>Predictive Maintenance</span>
         </div>
         <div className="flex items-center gap-1">
           {plants.map(p => (
-            <button key={p} onClick={() => setActivePlant(p)} className={`px-3 py-1.5 text-xs rounded-lg transition-all duration-200 ${activePlant === p ? "text-[#FFD700] border-b-2 border-[#FFD700]" : "text-[#B0B8C1] hover:text-white"}`}>{p}</button>
+            <button key={p} onClick={() => setActivePlant(p)} className={`px-3 py-1.5 text-xs rounded-lg transition-all duration-200 ${activePlant === p ? "text-[#D4A843] border-b-2 border-[#D4A843]" : "text-[#9CA3AF] hover:text-white"}`}>{p}</button>
           ))}
         </div>
         <div className="flex items-center gap-3">
