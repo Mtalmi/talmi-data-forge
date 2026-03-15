@@ -264,7 +264,7 @@ export default function Dettes() {
               Exporter Excel
             </Button>
 
-            <Button size="sm" onClick={() => toast.info('Formulaire nouvelle facture...')} style={{ background: 'linear-gradient(135deg, #D4A843, #b8922e)', color: '#000', fontWeight: 600, border: 'none' }}>
+            <Button size="sm" onClick={() => setShowFactureModal(true)} style={{ background: 'linear-gradient(135deg, #D4A843, #b8922e)', color: '#000', fontWeight: 600, border: 'none' }}>
               <Plus className="h-4 w-4 mr-1" />
               Nouvelle Facture
             </Button>
