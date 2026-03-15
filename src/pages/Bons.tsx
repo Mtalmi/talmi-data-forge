@@ -752,7 +752,7 @@ export default function Bons() {
           ))}
         </div>
 
-        {loading ? (
+        {loading && bons.length === 0 ? (
           <div className="p-8 text-center"><Loader2 className="h-8 w-8 mx-auto animate-spin text-muted-foreground" /></div>
         ) : (
           <>
