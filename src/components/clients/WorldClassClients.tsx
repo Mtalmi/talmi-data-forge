@@ -62,9 +62,9 @@ function useFadeIn(delay = 0) {
 }
 
 function useLiveClock() {
-  const [time, setTime] = useState(format(new Date(), 'HH:mm:ss'));
+  const [time, setTime] = useState(getMoroccoClockTime());
   useEffect(() => {
-    const id = setInterval(() => setTime(format(new Date(), 'HH:mm:ss')), 1000);
+    const id = setInterval(() => setTime(getMoroccoClockTime()), 1000);
     return () => clearInterval(id);
   }, []);
   return time;
