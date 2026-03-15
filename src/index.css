@@ -534,17 +534,12 @@ html {
   animation: tbosTabFadeIn 200ms ease forwards;
 }
 
-/* ─── Content wrapper centering on ultrawide ─── */
+/* ─── Content wrapper — full width, no cap ─── */
 .tbos-content-wrapper {
-  max-width: 1600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-@media (min-width: 1800px) {
-  .tbos-content-wrapper {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
+  width: 100%;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 /* ─── Responsive KPI grid ─── */
