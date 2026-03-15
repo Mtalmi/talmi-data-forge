@@ -2204,6 +2204,9 @@ export default function Dashboard() {
           );
         })()}
 
+        {/* ── SIMULATEUR DE SCÉNARIOS ── */}
+        <ScenarioSimulator />
+
         {/* ── ÉCOSYSTÈME D'INTÉGRATIONS ── */}
         {(() => {
           const MN = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace";
