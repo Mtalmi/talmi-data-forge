@@ -1283,7 +1283,7 @@ export default function Dashboard() {
           </div>
 
           {/* (3) 4 KPI Cards Row */}
-          <div data-tour="kpi-cards" className="tbos-kpi-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch', animation: 'ccSectionIn 300ms ease-out 200ms both' }}>
+          <div data-tour="kpi-cards" className="tbos-kpi-grid grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch', animation: 'ccSectionIn 300ms ease-out 200ms both' }}>
           {[
             {
               label: 'VOLUME',
