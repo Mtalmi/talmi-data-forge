@@ -54,7 +54,7 @@ export function PassationButton({ shiftInfo }: { shiftInfo?: string }) {
           </span>
         </div>
         {shiftInfo && (
-          <span style={{ fontFamily: MONO, fontSize: 11, color: '#9CA3AF' }}>{shiftInfo}</span>
+          <span style={{ fontFamily: MONO, fontSize: 12, color: '#9CA3AF' }}>{shiftInfo}</span>
         )}
       </div>
       {state === 'done' && (
