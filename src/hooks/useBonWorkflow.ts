@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { safeDivide, roundPercent } from '@/utils/rounding';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 
