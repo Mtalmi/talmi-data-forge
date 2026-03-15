@@ -1523,7 +1523,17 @@ export default function WorldClassContractors() {
             <>
               <div onClick={closeProlonger} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 10000 }} />
               <div
-                onKeyDown={(e) => { if (e.key === 'Escape') closeProlonger(); }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') closeProlonger();
+                  if (e.key === 'Tab') {
+                    const container = e.currentTarget;
+                    const focusables = container.querySelectorAll<HTMLElement>('input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+                    if (focusables.length === 0) return;
+                    const first = focusables[0]; const last = focusables[focusables.length - 1];
+                    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+                    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+                  }
+                }}
                 tabIndex={-1}
                 ref={(el) => el?.focus()}
                 style={{
