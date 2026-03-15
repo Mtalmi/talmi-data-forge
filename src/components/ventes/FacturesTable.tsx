@@ -145,10 +145,10 @@ export function FacturesTable({
       const clientIds = [...new Set((facturesData || []).map(f => f.client_id))];
       const { data: clientsData } = await supabase
         .from('clients')
-        .select('client_id, nom')
+        .select('client_id, nom_client')
         .in('client_id', clientIds);
       
-      const clientMap = new Map((clientsData || []).map(c => [c.client_id, c.nom]));
+      const clientMap = new Map((clientsData || []).map(c => [c.client_id, c.nom_client]));
 
       // Fetch formule designations
       const formuleIds = [...new Set((facturesData || []).map(f => f.formule_id))];
