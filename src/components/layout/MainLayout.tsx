@@ -1,4 +1,5 @@
 import { ReactNode, useState, useEffect } from 'react';
+import { SectionErrorBoundary } from '@/components/error/SectionErrorBoundary';
 import { useUnits } from '@/i18n/UnitContext';
 import { usePlant } from '@/contexts/PlantContext';
 import { TopNavBar } from './TopNavBar';
@@ -137,9 +138,11 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
           )}
           <div className="mobile-content safe-area-bottom overflow-x-hidden w-full min-w-0" style={{ padding: '0 32px', margin: 0 }}>
             <div className="tbos-content-wrapper w-full">
-              <PageTransition>
-                {children}
-              </PageTransition>
+              <SectionErrorBoundary section="Contenu principal">
+                <PageTransition>
+                  {children}
+                </PageTransition>
+              </SectionErrorBoundary>
             </div>
           </div>
         </main>

@@ -4829,6 +4829,21 @@ textarea.valid {
   th { color: #333 !important; }
 }
 
+/* ══════════════════════════════════════════════════════════════
+   AUTOFILL — Prevent browser autofill from breaking dark theme
+   ══════════════════════════════════════════════════════════════ */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+select:-webkit-autofill,
+textarea:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px #1A2332 inset !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  caret-color: #FFFFFF !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 /* (tbos-card and tbos-stagger classes defined above — single source of truth) */
 
 /* ══════════════════════════════════════════════════════════════

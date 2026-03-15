@@ -187,6 +187,7 @@ export function TBOSInput({ hasError, style, onFocus, onBlur, ...props }: TBOSIn
   return (
     <input
       {...props}
+      autoComplete={props.autoComplete ?? 'off'}
       aria-invalid={hasError || undefined}
       style={{
         ...inputBaseStyle,
@@ -211,6 +212,7 @@ export function TBOSSelect({ hasError, options, placeholder, style, ...props }: 
   return (
     <select
       {...props}
+      autoComplete="off"
       aria-invalid={hasError || undefined}
       style={{
         ...inputBaseStyle,
@@ -241,6 +243,7 @@ export function TBOSTextarea({ hasError, style, ...props }: TBOSTextareaProps) {
   return (
     <textarea
       {...props}
+      autoComplete="off"
       aria-invalid={hasError || undefined}
       style={{
         ...inputBaseStyle, minHeight: 80, resize: 'vertical',
