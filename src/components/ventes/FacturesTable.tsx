@@ -261,11 +261,41 @@ export function FacturesTable({
   const paidCount = filteredFactures.filter(f => f.statut === 'payee').length;
   const pendingCount = filteredFactures.filter(f => f.statut !== 'payee').length;
 
+  const COL_COUNT = onSelectionChange ? 11 : 10;
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="space-y-4">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>N° Facture</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Client</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>BL/BC</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Date</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Vol.</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Total HT</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>TTC</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Marge</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Statut</TableHead>
+              <TableHead style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF', textTransform: 'uppercase' }}>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableSkeletonRows columns={10} />
+          </TableBody>
+        </Table>
       </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <Table>
+        <TableBody>
+          <TableErrorState columns={COL_COUNT} onRetry={fetchFactures} />
+        </TableBody>
+      </Table>
     );
   }
 
