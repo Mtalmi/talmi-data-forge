@@ -18,7 +18,11 @@ interface LeakageBon {
 export default function LeakageAlertBanner() {
   const [leakages, setLeakages] = useState<LeakageBon[]>([]);
   const [loading, setLoading] = useState(true);
-  const [dismissed, setDismissed] = useState<string[]>([]);
+  const [dismissed, setDismissed] = useState<string[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('tbos_dismissed_leakages') || '[]');
+    } catch { return []; }
+  });
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
@@ -45,7 +49,11 @@ export default function LeakageAlertBanner() {
   };
 
   const dismissLeakage = (blId: string) => {
-    setDismissed(prev => [...prev, blId]);
+    setDismissed(prev => {
+      const next = [...prev, blId];
+      localStorage.setItem('tbos_dismissed_leakages', JSON.stringify(next));
+      return next;
+    });
   };
 
   const visibleLeakages = leakages.filter(l => !dismissed.includes(l.bl_id));
