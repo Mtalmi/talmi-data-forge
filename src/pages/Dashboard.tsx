@@ -1789,7 +1789,7 @@ export default function Dashboard() {
                         <div className="absolute bottom-0 left-0 right-0 z-[3] p-2.5" style={{ background: 'rgba(212,168,67,0.04)', borderTop: '1px solid rgba(212,168,67,0.15)' }}>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <span className="text-[10px] text-white/80 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>47 m³/h</span>
+                              <span className="text-[10px] text-white/80 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{uf.fmtVolumeRate(47)}</span>
                               <span className="w-px h-3 bg-white/10" />
                               <span className="text-[10px] text-emerald-400/80" style={{ fontFamily: "'JetBrains Mono', monospace" }}>94%</span>
                             </div>
