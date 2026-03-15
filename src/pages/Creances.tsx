@@ -1394,9 +1394,9 @@ export default function Creances() {
                     <TableRow>
                        <TableHead>{t.pages.creances.client}</TableHead>
                        <TableHead>{t.pages.creances.invoice}</TableHead>
-                       <TableHead className="text-center">{t.pages.creances.dueDate}</TableHead>
-                       <TableHead className="text-right">{t.pages.creances.amount}</TableHead>
-                       <TableHead className="text-center">{t.pages.creances.delay}</TableHead>
+                       <SortableTableHead label={t.pages.creances.dueDate} sortKey="_due_date" currentKey={crSortKey} direction={crSortDir} onSort={crHandleSort} align="center" />
+                       <SortableTableHead label={t.pages.creances.amount} sortKey="_amount" currentKey={crSortKey} direction={crSortDir} onSort={crHandleSort} align="right" />
+                       <SortableTableHead label={t.pages.creances.delay} sortKey="_delay" currentKey={crSortKey} direction={crSortDir} onSort={crHandleSort} align="center" />
                        <TableHead className="text-center">{t.pages.creances.status}</TableHead>
                        <TableHead className="text-center">Prédiction IA</TableHead>
                        <TableHead className="text-center" style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '1.5px', color: '#9CA3AF' }}>📎</TableHead>
