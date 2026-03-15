@@ -74,6 +74,7 @@ const AGING_COLORS = ['hsl(var(--success))', 'hsl(142, 76%, 36%)', 'hsl(var(--wa
 
 export default function Dettes() {
   const { t, lang } = useI18n();
+  const [showFactureModal, setShowFactureModal] = useState(false);
   const dateLocale = getDateLocale(lang);
   const d = t.pages.dettes;
   const { isCeo, role } = useAuth();
