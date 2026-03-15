@@ -43,7 +43,7 @@ export function WeatherAlertBanner() {
         </p>
       </div>
       <button
-        onClick={() => {/* scroll or navigate to forecast */}}
+        onClick={() => navigate('/logistique', { state: { activeTab: 'analytique' } })}
         style={{
           padding: '5px 14px', borderRadius: 6,
           background: 'transparent', border: '1px solid #D4A843',
