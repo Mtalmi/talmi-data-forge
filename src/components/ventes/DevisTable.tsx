@@ -137,6 +137,16 @@ export function DevisTable({
   const [scoringId, setScoringId] = useState<string | null>(null);
   const [localScores, setLocalScores] = useState<Record<string, { score_ia: number; niveau_score: string; ai_recommandation: string; probabilite_conversion: string; scored_at: string }>>({});
 
+  // Sortable data
+  const sortableDevis = useMemo(() => devisList.map(d => ({
+    ...d,
+    _total_ht: d.total_ht ?? 0,
+    _volume: d.volume_m3 ?? 0,
+    _date: d.created_at || '',
+    _statut: d.statut || '',
+  })), [devisList]);
+  const { sortedData: sortedDevis, sortKey, sortDirection, handleSort } = useTableSort(sortableDevis, '_date', 'desc');
+
   const scoreDevis = async (devisId: string, devisDbId: string) => {
     setScoringId(devisDbId);
     try {
