@@ -171,9 +171,14 @@ export function MultiMarketCalendar() {
             </thead>
             <tbody>
               {certifications.map((c, i) => (
-                <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+                <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', cursor: c.status === 'Urgent' || c.status === 'Conforme' ? 'pointer' : 'default' }}
+                  onClick={() => {
+                    if (c.status === 'Urgent') navigate('/laboratoire');
+                    else if (c.status === 'Conforme') navigate('/laboratoire');
+                  }}
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,215,0,0.04)'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                  title={c.status === 'À obtenir' ? 'Certification non démarrée' : undefined}
                 >
                   <td style={{ padding: '10px 12px', color: WHITE, fontWeight: 600 }}>{c.market}</td>
                   <td style={{ padding: '10px 12px', color: GOLD, fontWeight: 600 }}>{c.norm}</td>
