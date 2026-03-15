@@ -1205,6 +1205,8 @@ export default function Dashboard() {
               secondaryValue: `${uf.fmtVolume(demoData.production.volume, 0)} / ${uf.fmtVolume(3200, 0)}`,
               target: uf.rawVolume(280),
               targetLabel: 'OBJ',
+              tooltipTitle: 'PRODUCTION CUMULÉE',
+              tooltipBody: `Production cumulée aujourd'hui. **14 batches** complétés. Cadence actuelle: **47 m³/h**. Objectif journalier: !!800 m³!! (84% atteint). Formule dominante: F-B25 (60%). Prévision fin de journée: ~780 m³ si cadence maintenue.`,
             },
             {
               label: 'REVENUE',
@@ -1218,6 +1220,8 @@ export default function Dashboard() {
               sparkline: '0,26 20,22 40,28 60,20 80,16 100,12 120,8',
               secondaryLabel: 'Objectif',
               secondaryValue: `${uf.fmtCurrencyK(250000)} · 30%`,
+              tooltipTitle: 'CHIFFRE D\'AFFAIRES',
+              tooltipBody: `Revenu total facturé aujourd'hui. **11 factures** émises. Client principal: **TGCC** (32%). Taux de conversion devis→commande: !!17%!!. Pipeline actif: **155K DH** en attente. Objectif mensuel: 250K DH (30% atteint).`,
             },
             {
               label: 'MARGE',
@@ -1234,6 +1238,8 @@ export default function Dashboard() {
               secondaryValue: `Net: ${uf.fmtCurrencyK(demoData.profitNet.total)}`,
               target: 32,
               targetLabel: 'OBJ',
+              tooltipTitle: 'MARGE BRUTE',
+              tooltipBody: `Marge brute = (Revenu − Coût matières) / Revenu. Revenu: **75,600 DH**. Coût matières: **37,800 DH**. Stable vs hier (+0.1pt). Objectif: !!>45%!!. Levier: optimisation dosage ciment F-B25 (~~−24.8% sur-dosage~~ = !!+14 DH/m³!! récupérable).`,
             },
             {
               label: 'TRÉSORERIE',
@@ -1248,6 +1254,8 @@ export default function Dashboard() {
               sparkline: '0,26 20,22 40,24 60,18 80,14 100,10 120,4',
               secondaryLabel: 'Net',
               secondaryValue: `+${uf.fmtCurrencyK(demoData.profitNet.total * 2)}`,
+              tooltipTitle: 'TRÉSORERIE',
+              tooltipBody: `Solde disponible en banque. Entrées prévues: **72K DH** (TGCC + Saudi Readymix cette semaine). Sorties prévues: **45K DH** (ciment + carburant). Prévision fin de mois: **${uf.fmtCurrencyK(demoData.tresorerie.value * 0.9)}**. Taux recouvrement: !!94%!!.`,
             },
           ].map((kpi, i) => {
             const kpiRoutes = ['/production', '/ventes', '/production', '/creances'];
