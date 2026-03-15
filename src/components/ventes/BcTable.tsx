@@ -403,7 +403,7 @@ export function BcTable({
             className="gap-2 text-[13px] cursor-pointer rounded-md px-3 py-2 hover:bg-white/[0.06]"
             onClick={(e) => e.stopPropagation()}
           >
-            <span>💬</span>
+            <MessageCircle className="h-3.5 w-3.5" />
             <span className="flex-1">Message Client</span>
           </DropdownMenuItem>
 
