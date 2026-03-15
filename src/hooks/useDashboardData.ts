@@ -251,6 +251,9 @@ export function useDashboardData() {
     }
   }, []);
 
+  // Throttle real-time callbacks to max 1 refresh per 2 seconds
+  const throttledFetch = useMemo(() => throttle(() => fetchAll(), 2000), [fetchAll]);
+
   useEffect(() => {
     mountedRef.current = true;
     fetchAll();
@@ -258,14 +261,14 @@ export function useDashboardData() {
     const interval = setInterval(fetchAll, 60000);
 
     const channel = supabase.channel('dashboard-live-data')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, () => fetchAll())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'production_batches' }, () => fetchAll())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'stocks' }, () => fetchAll())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'tests_laboratoire' }, () => fetchAll())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'factures' }, () => fetchAll())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'devis' }, () => fetchAll())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'alertes' }, () => fetchAll())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'daily_scores' }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, () => throttledFetch())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'production_batches' }, () => throttledFetch())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'stocks' }, () => throttledFetch())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tests_laboratoire' }, () => throttledFetch())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'factures' }, () => throttledFetch())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'devis' }, () => throttledFetch())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'alertes' }, () => throttledFetch())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'daily_scores' }, () => throttledFetch())
       .subscribe();
 
     return () => {
@@ -273,7 +276,7 @@ export function useDashboardData() {
       clearInterval(interval);
       supabase.removeChannel(channel);
     };
-  }, [fetchAll]);
+  }, [fetchAll, throttledFetch]);
 
   return { ...data, refresh: fetchAll };
 }
