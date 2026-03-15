@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useTableSort } from '@/hooks/useTableSort';
 import { SortableTableHead } from '@/components/ui/SortableHeader';
+import { TablePagination } from '@/components/ui/TablePagination';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
