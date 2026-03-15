@@ -150,6 +150,8 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
         {/* Quick Action FAB */}
         <QuickActionFAB />
         <CommandPalette />
+        <ShortcutsHelpModal />
+        <ScreenReaderAnnouncer />
         <PWAInstallPrompt />
         <NotificationSettings />
 
