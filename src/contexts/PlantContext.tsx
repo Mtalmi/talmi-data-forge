@@ -40,7 +40,7 @@ const PLANTS: Record<PlantId, PlantData> = {
     flag: '🇲🇦',
     pillLabel: 'Atlas Concrete Morocco',
     live: true,
-    stats: '14 mars · 671 m³ · 14 batches · Score 87/100',
+    stats: 'Production en cours · Score 87/100',
     unitSystem: 'mena',
     currency: 'DH',
     clients: ATLAS_CONCRETE.clients.map(c => c.name),
