@@ -14,7 +14,7 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import WorldClassDeliveryArchive from '@/components/archive/WorldClassDeliveryArchive';
 import { FleetGPSMap } from '@/components/fleet/FleetGPSMap';
 import { useGPSTracking } from '@/hooks/useGPSTracking';
-import { Shield, Map as MapIcon, Users, TrendingDown, Minus } from 'lucide-react';
+import { Shield, Map as MapIcon, Users, TrendingDown, Minus, Leaf } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { format, startOfWeek, endOfWeek, subDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
