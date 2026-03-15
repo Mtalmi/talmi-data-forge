@@ -150,7 +150,7 @@ export function CeoCodeRequestDialog({
         .from('ceo_emergency_codes')
         .select('status, code')
         .eq('id', requestId)
-        .single();
+        .maybeSingle();
 
       if (data?.status === 'approved') {
         setStatus('entering_code');

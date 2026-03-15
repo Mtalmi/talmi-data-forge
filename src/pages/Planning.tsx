@@ -759,7 +759,7 @@ export default function Planning() {
           .from('bons_commande')
           .select('volume_livre, volume_m3, nb_livraisons')
           .eq('bc_id', bon.bc_id)
-          .single();
+          .maybeSingle();
 
         if (bc) {
           const newVolumeLivre = Math.max(0, (bc.volume_livre || 0) - bon.volume_m3);
