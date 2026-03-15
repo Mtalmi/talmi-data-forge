@@ -3,6 +3,7 @@
  * Centralized personality-driven messages for the entire platform.
  * fontFamily: 'ui-monospace' throughout. Emojis sparingly — only in greetings, streaks, and tips.
  */
+import { getMoroccoHour, getMoroccoMonth, getMoroccoDay } from '@/utils/timezone';
 
 /* ─── GREETING BASED ON SCORE ─── */
 export function getScoreGreeting(greeting: string, name: string, score: number, alertCount: number): string {
