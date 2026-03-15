@@ -132,7 +132,16 @@ export default function Dashboard() {
   const [showExecutiveSummary, setShowExecutiveSummary] = useState(false);
   const [hoveredChartIdx, setHoveredChartIdx] = useState<number | null>(null);
   const [alertDismissed, setAlertDismissed] = useState(false);
-  const [activeTab, setActiveTab] = useState<'command' | 'production' | 'operations' | 'intelligence'>('command');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTabRaw] = useState<'command' | 'production' | 'operations' | 'intelligence'>(() => {
+    const urlTab = searchParams.get('tab');
+    if (urlTab && ['command', 'production', 'operations', 'intelligence'].includes(urlTab)) return urlTab as any;
+    return 'command';
+  });
+  const setActiveTab = (tab: typeof activeTab) => {
+    setActiveTabRaw(tab);
+    setSearchParams({ tab }, { replace: true });
+  };
   const [searchFocused, setSearchFocused] = useState(false);
   const [bellOpen, setBellOpen] = useState(false);
   const [bellSeen, setBellSeen] = useState(false);
