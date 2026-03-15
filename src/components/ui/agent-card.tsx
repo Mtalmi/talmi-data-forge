@@ -58,7 +58,7 @@ export function AgentContainer({ children, severity = 'predictive', index, class
             alignItems: 'center',
             justifyContent: 'center',
             fontFamily: MONO,
-            fontSize: 10,
+            fontSize: 12,
             color: '#D4A843',
             flexShrink: 0,
           }}>
