@@ -30,7 +30,7 @@ export function ProductionKPICards({
             <Factory className="h-4 w-4 text-primary" />
             <span className="text-xs text-muted-foreground">En Production</span>
           </div>
-          <p className="text-2xl font-bold text-primary mt-1">{totalBons}</p>
+          <p className="text-2xl font-extralight text-primary mt-1">{totalBons}</p>
           <p className="text-xs text-muted-foreground">bons</p>
         </CardContent>
       </Card>
