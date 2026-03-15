@@ -17,8 +17,8 @@ interface EmptyStateProps {
 
 export function EmptyState({
   icon: Icon = Inbox,
-  title = 'Contenu en cours de déploiement...',
-  subtitle = 'Cette section sera disponible prochainement.',
+  title = 'Rien à signaler pour le moment.',
+  subtitle = 'Le prochain événement apparaîtra ici automatiquement.',
   className = '',
 }: EmptyStateProps) {
   return (
@@ -85,7 +85,7 @@ export function ChartEmptyState({
 }
 
 /* ─── TABLE EMPTY STATE ─── */
-export function TableEmptyState({ colSpan = 1, message = 'Aucun résultat' }: { colSpan?: number; message?: string }) {
+export function TableEmptyState({ colSpan = 1, message = 'Rien à signaler pour le moment.' }: { colSpan?: number; message?: string }) {
   return (
     <tr>
       <td colSpan={colSpan} style={{ textAlign: 'center', padding: '40px 16px' }}>

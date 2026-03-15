@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useI18n } from '@/i18n/I18nContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Sun, Cloud, CloudRain, Snowflake, Factory, Shield } from 'lucide-react';
+import { getScoreStatusMessage } from '@/utils/tbos-microcopy';
 
 interface WeatherData {
   temp: number;
@@ -94,9 +95,7 @@ export function HawaiiGreeting() {
   };
 
   const getStatusMessage = () => {
-    if (efficiency.status === 'optimal') return t.greeting.allUnderControl;
-    if (efficiency.status === 'good') return t.greeting.stablePerformance;
-    return t.greeting.attentionRequired;
+    return getScoreStatusMessage(efficiency.percentage);
   };
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Master';

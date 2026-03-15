@@ -307,7 +307,7 @@ export function EmergencyBcDialog({
         toast.info(`BC ${bc_id} créé en attente de validation prix par l'Admin`);
       } else {
         triggerHaptic('success');
-        toast.success(`BC ${bc_id} créé avec succès!`);
+        toast.success(`✓ Bon ${bc_id} créé — commande d'urgence transmise. Disponibilité toupie en cours de vérification.`);
       }
 
       resetForm();

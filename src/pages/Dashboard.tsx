@@ -44,6 +44,7 @@ const TaxComplianceWidget = lazy(() => import('@/components/compliance').then(m 
 import { useCountUp } from '@/hooks/useCountUp';
 import { TiltCard } from '@/components/dashboard/TiltCard';
 import { MetricTooltip } from '@/components/ui/MetricTooltip';
+import { getShutdownUrgency, getTimeContextualTip, getSeasonalTip } from '@/utils/tbos-microcopy';
 
 // ─── Sparkline data (hourly production) ───
 const SPARKLINE_DATA = [
@@ -903,7 +904,14 @@ export default function Dashboard() {
                     {showCursor && <span className="inline-block w-[2px] h-[20px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
                   </h1>
                   <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 13, color: '#9CA3AF', marginTop: 4 }}>
-                    Briefing matinal prêt. <span style={{ color: '#F59E0B' }}>{demoData.shutdownRisk.active ? '3 alertes' : '0 alertes'}</span> nécessitent votre attention.
+                    {demoData.score > 90
+                      ? <>Excellente journée — votre centrale tourne comme une horloge suisse. 🎯</>
+                      : demoData.score >= 80
+                        ? <>Briefing matinal prêt. <span style={{ color: '#F59E0B' }}>{demoData.shutdownRisk.active ? '3 alertes' : '0 alertes'}</span> nécessitent votre attention.</>
+                        : demoData.score >= 70
+                          ? <>Journée mitigée — quelques points d'attention nécessitent votre regard.</>
+                          : <>Journée difficile — plusieurs actions critiques en attente. Commençons par les priorités.</>
+                    }
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5 mt-1" style={{ fontSize: 11 }}>
                     <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full" style={{ background: 'rgba(34, 197, 94, 0.08)', boxShadow: '0 0 8px rgba(34, 197, 94, 0.2)' }}>
@@ -1087,6 +1095,20 @@ export default function Dashboard() {
               <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, color: '#9CA3AF', lineHeight: 1.7, margin: 0 }}>
                 Production nominale prévue à <strong style={{ color: '#D4A843' }}>{uf.fmtVolume(demoData.production.volume, 0)}</strong>. Stock {demoData.shutdownRisk.material} à <strong style={{ color: '#D4A843' }}>{demoData.shutdownRisk.currentStock}</strong>. <strong style={{ color: '#D4A843' }}>{demoData.production.batches} batches</strong>. Pipeline commercial : <strong style={{ color: '#D4A843' }}>{uf.fmtCurrencyK(demoData.pipeline.value)}</strong>, {demoData.pipeline.devis} devis en attente. Point critique : {demoData.riskClient.name} — <strong style={{ color: '#EF4444' }}>{uf.fmtCurrencyK(demoData.riskClient.amount)} impayés</strong>, probabilité défaut <strong style={{ color: '#EF4444' }}>{demoData.riskClient.defaultProb}%</strong>, livraisons suspendues.
               </p>
+              {/* Time-contextual suggestion */}
+              <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 12, color: '#D4A843', lineHeight: 1.6, margin: '10px 0 0', padding: '8px 12px', background: 'rgba(212,168,67,0.04)', borderRadius: 6, borderLeft: '2px solid rgba(212,168,67,0.3)' }}>
+                💡 {getTimeContextualTip()}
+              </p>
+              {/* Seasonal tip */}
+              {(() => {
+                const seasonal = getSeasonalTip(activePlant === 'eu' ? 'eu' : activePlant === 'us' ? 'us' : 'mena', demoData.weather.temp);
+                if (!seasonal) return null;
+                return (
+                  <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 12, color: '#F59E0B', lineHeight: 1.6, margin: '6px 0 0', padding: '8px 12px', background: 'rgba(245,158,11,0.04)', borderRadius: 6, borderLeft: '2px solid rgba(245,158,11,0.3)' }}>
+                    {seasonal}
+                  </p>
+                );
+              })()}
               {/* Action buttons */}
               <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
                 <button onClick={() => setActiveTab('intelligence')} style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 11, fontWeight: 600, padding: '8px 16px', borderRadius: 6, background: '#D4A843', color: '#0F1629', border: 'none', cursor: 'pointer', letterSpacing: '0.05em' }}>
@@ -1136,16 +1158,20 @@ export default function Dashboard() {
 
           {/* (2b) PRÉDICTION ARRÊT USINE */}
           <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" data-tour="shutdown-prediction" style={{ animation: 'ccSectionIn 300ms ease-out 150ms both' }}>
+            {(() => {
+              const urgency = getShutdownUrgency(demoData.shutdownRisk.daysUntil, uf.fmtCurrency(demoData.shutdownRisk.costPerDay));
+              return (
             <div className="tbos-shutdown-pulse" style={{
-              background: 'rgba(245, 158, 11, 0.05)',
-              borderLeft: '4px solid #F59E0B',
+              background: urgency.bgColor,
+              borderLeft: `4px solid ${urgency.borderColor}`,
               borderRadius: 8,
               padding: '16px 20px',
               position: 'relative',
+              animation: urgency.pulse ? 'pulse-alert 2s ease-in-out infinite' : undefined,
             }}>
               {/* Line 1: Alert headline */}
-              <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 14, fontWeight: 600, color: '#F59E0B', marginBottom: 8 }}>
-                ⚠ RISQUE ARRÊT DANS {demoData.shutdownRisk.daysUntil} JOURS
+              <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 14, fontWeight: 600, color: urgency.color, marginBottom: 8 }}>
+                {urgency.headline}
               </div>
               {/* Line 2: Detail */}
               <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 12, color: '#9CA3AF', marginBottom: 6, lineHeight: 1.6 }}>
@@ -1191,6 +1217,8 @@ export default function Dashboard() {
                 </span>
               </div>
             </div>
+              );
+            })()}
           </div>
 
           {/* (3) 4 KPI Cards Row */}

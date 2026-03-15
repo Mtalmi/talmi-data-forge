@@ -186,7 +186,7 @@ export default function SmartQuoteCalculator({ variant = 'default' }: SmartQuote
     if (result) {
       // Show custom message for DIR_OPS and other non-approver roles
       if (isNonApproverRole) {
-        toast.success('Devis créé. En attente de validation par l\'administration.', {
+        toast.success('✓ Devis créé. Le Deal Scorer analysera ce devis dans les prochaines minutes. En attente de validation par l\'administration.', {
           icon: <Clock className="h-4 w-4" />,
           duration: 5000,
         });

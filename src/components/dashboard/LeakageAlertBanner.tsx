@@ -68,9 +68,9 @@ export default function LeakageAlertBanner() {
           <CheckCircle2 className="h-4 w-4 text-emerald-400" />
         </div>
         <div className="flex items-center gap-2 flex-wrap min-w-0">
-          <span style={{ fontSize: 14, fontWeight: 500, color: 'rgba(52,211,153,0.9)' }}>Aucune alerte active</span>
+          <span style={{ fontSize: 14, fontWeight: 500, color: 'rgba(52,211,153,0.9)' }}>✓ Aucune alerte active — votre centrale fonctionne parfaitement</span>
           <span style={{ color: 'rgba(52,211,153,0.3)' }}>—</span>
-          <span style={{ fontSize: 12, color: 'rgba(52,211,153,0.4)' }}>Opérations normales · Dernière vérification: il y a 12 min</span>
+          <span style={{ fontSize: 12, color: 'rgba(52,211,153,0.4)' }}>Continuez comme ça · Dernière vérification: il y a 12 min</span>
         </div>
         <div className="ml-auto flex-shrink-0">
           <span className="relative flex h-2 w-2">

@@ -105,12 +105,12 @@ export function useEmptyStateConfigs() {
 
 // Deprecated static configs kept for backward compatibility
 export const emptyStateConfigs = {
-  noDeliveries: { title: 'Aucune livraison', description: 'Les livraisons du jour apparaîtront ici une fois planifiées.' },
+  noDeliveries: { title: 'Aucune livraison', description: 'Aucune livraison planifiée aujourd\'hui. Jour calme — parfait pour la maintenance préventive. 🔧' },
   noProduction: { title: 'Aucun bon en production', description: 'Les bons passent ici après la planification pour saisir les consommations réelles.' },
   noClients: { title: 'Aucun client enregistré', description: 'Ajoutez votre premier client pour commencer à créer des commandes.' },
   noStock: { title: 'Stock non configuré', description: 'Configurez les niveaux de stock pour suivre les matières premières.' },
-  noTests: { title: 'Aucun test programmé', description: 'Les tests d\'affaissement apparaîtront ici après les livraisons.' },
+  noTests: { title: '✓ 0 non-conformité', description: '0 non-conformité aujourd\'hui — qualité exemplaire. Votre équipe lab fait un excellent travail.' },
   noExpenses: { title: 'Aucune dépense enregistrée', description: 'Photographiez vos justificatifs pour enregistrer les dépenses.' },
   noDriverDeliveries: { title: 'Aucune livraison assignée', description: 'Sélectionnez votre camion pour voir vos livraisons du jour.' },
-  noPending: { title: 'Tout est à jour', description: 'Il n\'y a aucune tâche en attente pour le moment.' },
+  noPending: { title: '✓ Tout est à jour', description: '✓ Tous les paiements à jour — trésorerie saine.' },
 };

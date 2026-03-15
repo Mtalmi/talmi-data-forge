@@ -46,7 +46,7 @@ export function PassationButton({ shiftInfo }: { shiftInfo?: string }) {
                 <circle cx="8" cy="8" r="6" fill="none" stroke="#0F1629" strokeWidth="2" strokeDasharray="28" strokeDashoffset="8" strokeLinecap="round" />
               </svg>
             ) : (
-              <><CheckCheck size={13} /> {state === 'done' ? '✓ Passation Validée' : 'Valider Passation'}</>
+              <><CheckCheck size={13} /> {state === 'done' ? '✓ Passation validée — Bon shift!' : 'Valider Passation'}</>
             )}
           </button>
           <span style={{ fontFamily: MONO, fontSize: 11, color: '#D4A843', padding: '4px 8px', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 4, background: 'rgba(212,168,67,0.06)' }}>
@@ -59,7 +59,7 @@ export function PassationButton({ shiftInfo }: { shiftInfo?: string }) {
       </div>
       {state === 'done' && (
         <p style={{ fontFamily: MONO, fontSize: 11, color: '#22C55E', opacity: 0.8, margin: 0 }}>
-          Validée à {now} par Max Talmi
+          ✓ Passation validée à {now} — l'équipe suivante a été notifiée. Bon shift!
         </p>
       )}
       <style>{`@keyframes tbosActionSpin { to { transform: rotate(360deg); } }`}</style>

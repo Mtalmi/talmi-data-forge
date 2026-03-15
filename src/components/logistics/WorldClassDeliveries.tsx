@@ -914,8 +914,8 @@ function CarteGPSTab() {
                 {alerts.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '30px 0' }}>
                     <Shield size={40} color={T.success} style={{ margin: '0 auto 10px' }} />
-                    <p style={{ fontFamily: MONO, fontSize: 13, color: T.success, fontWeight: 600 }}>Aucune alerte</p>
-                    <p style={{ fontSize: 12, color: T.textDim, marginTop: 4 }}>Toutes les zones sécurisées</p>
+                     <p style={{ fontFamily: MONO, fontSize: 13, color: T.success, fontWeight: 600 }}>✓ Aucune alerte active</p>
+                     <p style={{ fontSize: 12, color: T.textDim, marginTop: 4 }}>Votre centrale fonctionne parfaitement. Continuez comme ça.</p>
                   </div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
