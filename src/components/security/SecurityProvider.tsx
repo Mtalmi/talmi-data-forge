@@ -12,6 +12,7 @@ import { useSessionTimeout } from '@/hooks/useSessionTimeout';
 import { enforceHttps, logSecurityStatus } from '@/lib/security';
 import { applySecurityHeaders } from '@/lib/securityHeaders';
 import { useAuth } from '@/hooks/useAuth';
+import { useVisibilityRefresh } from '@/hooks/useVisibilityRefresh';
 
 interface SecurityProviderProps {
   children: ReactNode;
