@@ -1404,7 +1404,7 @@ export default function Creances() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredReceivables.length === 0 ? (
+                    {sortedReceivables.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={canManageReceivables ? 9 : 8} className="h-32 text-center">
                           <div className="flex flex-col items-center gap-2 text-muted-foreground">
@@ -1418,7 +1418,7 @@ export default function Creances() {
                           </div>
                         </TableCell>
                       </TableRow>
-                    ) : filteredReceivables.slice(0, 50).map((receivable) => {
+                    ) : sortedReceivables.slice(0, 50).map((receivable) => {
                       const statusConfig = STATUS_CONFIG[receivable.status];
                       // Dispute detection: partial payment from same client
                       const isPartialPayment = receivable.amount_paid > 0 && receivable.amount_paid < receivable.amount && receivable.status !== 'paid';
