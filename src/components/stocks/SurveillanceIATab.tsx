@@ -125,7 +125,7 @@ export function SurveillanceIATab() {
           {kpiCard('COÛT ANOMALIES / MOIS', <><AnimCounter target={38400} suffix=" MAD" /></>, 'perte directe estimée', '#EF4444', true)}
         </div>
 
-        <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 12, overflow: 'hidden' }}>
+        <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(212,168,67,0.15)', borderTop: '2px solid #D4A843', borderRadius: 8, overflow: 'hidden', backdropFilter: 'blur(8px)' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(212,168,67,0.12)' }}>
