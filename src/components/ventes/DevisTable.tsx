@@ -408,7 +408,7 @@ export function DevisTable({
                 className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
               />
             </TableHead>
-            {(['N° Devis', 'Client', 'Formule', 'Vol (m³)', 'Total HT (DH)', 'Statut', 'Score IA', 'Conversion', 'Prté', 'Actions'] as const).map((label, i) => (
+            {(['N° Devis', 'Client', 'Formule', 'Vol (m³)', 'Total HT (DH)', 'Statut', 'Score IA', 'Conversion', 'Date', 'Prté', 'Actions'] as const).map((label, i) => (
               <TableHead
                 key={label}
                 style={{
