@@ -53,7 +53,7 @@ import {
   Shield,
   Lock,
   ShieldCheck,
-  ChevronDown,
+  MoreVertical,
   Ban,
 } from 'lucide-react';
 import { Devis } from '@/hooks/useSalesWorkflow';
