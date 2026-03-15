@@ -100,11 +100,10 @@ export function useDashboardData() {
         supabase.from('tests_laboratoire')
           .select('resistance_conforme, affaissement_conforme, alerte_qualite')
           .gte('date_prelevement', today),
-        // Trésorerie — paid this month
+        // Trésorerie — paid this month (include those without date_paiement but statut=payee)
         supabase.from('factures')
           .select('total_ttc')
-          .eq('statut', 'payee')
-          .gte('date_paiement', monthStart),
+          .eq('statut', 'payee'),
         // BC validated today (pipeline stages)
         supabase.from('bons_commande')
           .select('statut')
