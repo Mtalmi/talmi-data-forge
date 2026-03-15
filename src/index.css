@@ -4844,9 +4844,9 @@ textarea.valid {
     text-align: center;
   }
 
-  /* Force text to be black */
-  * { color: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  th { color: #333 !important; }
+  /* Force print color rendering */
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  th { color: #333 !important; background: #F0F0F0 !important; }
 }
 
 /* ══════════════════════════════════════════════════════════════
