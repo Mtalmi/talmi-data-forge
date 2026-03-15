@@ -416,7 +416,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
             </div>
           );
         })}
-      </nav>
+      </div>
 
       {/* ── USER PROFILE CARD ── */}
       <div className="shrink-0" style={{ borderTop: '1px solid rgba(212, 168, 67, 0.08)', background: 'rgba(0, 0, 0, 0.15)' }}>
