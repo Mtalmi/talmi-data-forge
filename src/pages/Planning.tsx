@@ -1568,7 +1568,7 @@ export default function Planning() {
                 <div className="p-1.5 rounded-lg bg-[#D4A843]/10 shrink-0"><Navigation className="h-4 w-4" style={{ color: '#D4A843' }} /></div>
                 <div className="min-w-0">
                   <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 36, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#D4A843' }}>{displayEnLivraison.length}</p>
-                  <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.onRoute}</p>
+                  <p className="text-xs text-white/40 uppercase leading-tight whitespace-nowrap">{t.pages.planning.onRoute}</p>
                 </div>
               </div>
             </div>
