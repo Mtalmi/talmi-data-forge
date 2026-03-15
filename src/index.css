@@ -558,6 +558,7 @@ input, textarea, select {
 /* ─── Tab content minimum height ─── */
 .tbos-tab-content {
   min-height: calc(100vh - 140px);
+  min-height: calc(100dvh - 140px);
   animation: tbosTabFadeIn 200ms ease forwards;
 }
 
