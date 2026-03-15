@@ -442,6 +442,14 @@ export default function Creances() {
               {new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
             </span>
             <Button
+              size="sm"
+              onClick={() => setShowFactureModal(true)}
+              style={{ background: 'linear-gradient(135deg, #D4A843, #b8922e)', color: '#000', fontWeight: 600, border: 'none' }}
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              Nouvelle Facture
+            </Button>
+            <Button
               variant="outline"
               size="sm"
               onClick={refetch}
