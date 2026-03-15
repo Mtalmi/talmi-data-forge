@@ -135,6 +135,19 @@ function Metric({ value, suffix = '', prefix = '', size = 30, color = T.gold }: 
   );
 }
 
+const funnelBase = [
+  { stageKey: 'leads' as const, count: 48, value: 1200, rate: 100, width: '100%', stage: 'Leads' },
+  { stageKey: 'quotesSent' as const, count: 24, value: 847, rate: 50, width: '72%', stage: 'Devis Envoyés' },
+  { stageKey: 'activePOs' as const, count: 12, value: 504, rate: 25, width: '45%', stage: 'BC Actifs' },
+  { stageKey: 'closedDeals' as const, count: 8, value: 338, rate: 17, width: '28%', stage: 'Conclus' },
+];
+const donutBase = [
+  { nameKey: 'leads' as const, value: 1200, name: 'Leads' },
+  { nameKey: 'quotesLabel' as const, value: 847, name: 'Devis' },
+  { nameKey: 'activePOs' as const, value: 504, name: 'BC Actifs' },
+  { nameKey: 'closedDeals' as const, value: 338, name: 'Conclus' },
+];
+
 /* ─── LIVE DATA HOOK ─── */
 function useVentesLiveData() {
   const [devis, setDevis] = useState<any[]>([]);
